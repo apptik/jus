@@ -1,0 +1,26 @@
+// NOTE: The only changes that belong in this file are the definitions
+// of tool versions (gradle plugin, compile SDK, build tools), so that
+// Jus can be built via gradle as a standalone project.
+//
+// Any other changes to the build config belong in rules.gradle, which
+// is used by projects that depend on Jus but define their own
+// tools versions across all dependencies to ensure a consistent build.
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:1.0.0'
+    }
+}
+
+apply plugin: 'com.android.library'
+
+
+android {
+    compileSdkVersion 21
+    buildToolsVersion = '21.1.2'
+}
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
