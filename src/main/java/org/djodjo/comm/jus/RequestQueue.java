@@ -284,4 +284,12 @@ public class RequestQueue {
             }
         }
     }
+
+    public int getCurrentRequests() {
+        return mCurrentRequests.size();
+    }
+
+    public int getWaitingRequests() {
+        return mWaitingRequests.size();
+    }
 }
