@@ -24,7 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-/** Logging helper class. */
+/**
+ * Logging helper class.
+ * <p/>
+ * to see Jus logs call:<br/>
+ * {@code <android-sdk>/platform-tools/adb shell setprop log.tag.Jus VERBOSE}
+ */
 public class JusLog {
     public static String TAG = "Jus";
 

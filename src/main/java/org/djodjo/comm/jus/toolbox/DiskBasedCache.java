@@ -63,7 +63,7 @@ public class DiskBasedCache implements Cache {
     private static final float HYSTERESIS_FACTOR = 0.9f;
 
     /** Magic number for current version of cache file format. */
-    private static final int CACHE_MAGIC = 0x20140623;
+    private static final int CACHE_MAGIC = 0x20150306;
 
     /**
      * Constructs an instance of the DiskBasedCache at the specified directory.
@@ -350,6 +350,9 @@ public class DiskBasedCache implements Cache {
         /** Date of this response as reported by the server. */
         public long serverDate;
 
+        /** The last modified date for the requested object. */
+        public long lastModified;
+
         /** TTL for this record. */
         public long ttl;
 
@@ -371,6 +374,7 @@ public class DiskBasedCache implements Cache {
             this.size = entry.data.length;
             this.etag = entry.etag;
             this.serverDate = entry.serverDate;
+            this.lastModified = entry.lastModified;
             this.ttl = entry.ttl;
             this.softTtl = entry.softTtl;
             this.responseHeaders = entry.responseHeaders;
@@ -394,6 +398,7 @@ public class DiskBasedCache implements Cache {
                 entry.etag = null;
             }
             entry.serverDate = readLong(is);
+            entry.lastModified = readLong(is);
             entry.ttl = readLong(is);
             entry.softTtl = readLong(is);
             entry.responseHeaders = readStringStringMap(is);
@@ -408,6 +413,7 @@ public class DiskBasedCache implements Cache {
             e.data = data;
             e.etag = etag;
             e.serverDate = serverDate;
+            e.lastModified = lastModified;
             e.ttl = ttl;
             e.softTtl = softTtl;
             e.responseHeaders = responseHeaders;
@@ -424,6 +430,7 @@ public class DiskBasedCache implements Cache {
                 writeString(os, key);
                 writeString(os, etag == null ? "" : etag);
                 writeLong(os, serverDate);
+                writeLong(os, lastModified);
                 writeLong(os, ttl);
                 writeLong(os, softTtl);
                 writeStringStringMap(responseHeaders, os);

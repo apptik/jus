@@ -17,16 +17,17 @@
 
 package org.djodjo.comm.jus.toolbox;
 
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
+import android.widget.ImageView.ScaleType;
+
 import org.djodjo.comm.jus.DefaultRetryPolicy;
 import org.djodjo.comm.jus.JusLog;
 import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.ParseError;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.Response;
-
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 
 /**
  * A canned request for getting an image at a given URL and calling
@@ -46,6 +47,7 @@ public class ImageRequest extends Request<Bitmap> {
     private final Config mDecodeConfig;
     private final int mMaxWidth;
     private final int mMaxHeight;
+    private ScaleType mScaleType;
 
     /** Decoding lock so that we don't decode more than one image at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
@@ -64,11 +66,12 @@ public class ImageRequest extends Request<Bitmap> {
      * @param maxWidth Maximum width to decode this bitmap to, or zero for none
      * @param maxHeight Maximum height to decode this bitmap to, or zero for
      *            none
+     * @param scaleType The ImageViews ScaleType used to calculate the needed image size.
      * @param decodeConfig Format to decode the bitmap to
      * @param errorListener Error listener, or null to ignore errors
      */
     public ImageRequest(String url, Response.Listener<Bitmap> listener, int maxWidth, int maxHeight,
-            Config decodeConfig, Response.ErrorListener errorListener) {
+                        ScaleType scaleType, Config decodeConfig, Response.ErrorListener errorListener) {
         super(Method.GET, url, errorListener);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
@@ -76,6 +79,18 @@ public class ImageRequest extends Request<Bitmap> {
         mDecodeConfig = decodeConfig;
         mMaxWidth = maxWidth;
         mMaxHeight = maxHeight;
+        mScaleType = scaleType;
+    }
+
+    /**
+     * For API compatibility with the pre-ScaleType variant of the constructor. Equivalent to
+     * the normal constructor with {@code ScaleType.CENTER_INSIDE}.
+     */
+    @Deprecated
+    public ImageRequest(String url, Response.Listener<Bitmap> listener, int maxWidth, int maxHeight,
+                        Config decodeConfig, Response.ErrorListener errorListener) {
+        this(url, listener, maxWidth, maxHeight,
+                ScaleType.CENTER_INSIDE, decodeConfig, errorListener);
     }
 
     @Override
@@ -93,12 +108,22 @@ public class ImageRequest extends Request<Bitmap> {
      *        maintain aspect ratio with primary dimension
      * @param actualPrimary Actual size of the primary dimension
      * @param actualSecondary Actual size of the secondary dimension
+     * @param scaleType The ScaleType used to calculate the needed image size.
      */
     private static int getResizedDimension(int maxPrimary, int maxSecondary, int actualPrimary,
-            int actualSecondary) {
+                                           int actualSecondary, ScaleType scaleType) {
+
         // If no dominant value at all, just return the actual.
-        if (maxPrimary == 0 && maxSecondary == 0) {
+        if ((maxPrimary == 0) && (maxSecondary == 0)) {
             return actualPrimary;
+        }
+
+        // If ScaleType.FIT_XY fill the whole rectangle, ignore ratio.
+        if (scaleType == ScaleType.FIT_XY) {
+            if (maxPrimary == 0) {
+                return actualPrimary;
+            }
+            return maxPrimary;
         }
 
         // If primary is unspecified, scale primary to match secondary's scaling ratio.
@@ -113,7 +138,16 @@ public class ImageRequest extends Request<Bitmap> {
 
         double ratio = (double) actualSecondary / (double) actualPrimary;
         int resized = maxPrimary;
-        if (resized * ratio > maxSecondary) {
+
+        // If ScaleType.CENTER_CROP fill the whole rectangle, preserve aspect ratio.
+        if (scaleType == ScaleType.CENTER_CROP) {
+            if ((resized * ratio) < maxSecondary) {
+                resized = (int) (maxSecondary / ratio);
+            }
+            return resized;
+        }
+
+        if ((resized * ratio) > maxSecondary) {
             resized = (int) (maxSecondary / ratio);
         }
         return resized;
@@ -151,9 +185,9 @@ public class ImageRequest extends Request<Bitmap> {
 
             // Then compute the dimensions we would ideally like to decode to.
             int desiredWidth = getResizedDimension(mMaxWidth, mMaxHeight,
-                    actualWidth, actualHeight);
+                    actualWidth, actualHeight, mScaleType);
             int desiredHeight = getResizedDimension(mMaxHeight, mMaxWidth,
-                    actualHeight, actualWidth);
+                    actualHeight, actualWidth, mScaleType);
 
             // Decode to the nearest power of two scaling factor.
             decodeOptions.inJustDecodeBounds = false;
