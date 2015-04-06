@@ -79,6 +79,14 @@ public class ImageLoader {
     /**
      * Constructs a new ImageLoader.
      * @param queue The RequestQueue to use for making image requests.
+     */
+    public ImageLoader(RequestQueue queue) {
+         this(queue, new DefaultBitmapLruCache(1024 * 1024 * 10));
+    }
+
+    /**
+     * Constructs a new ImageLoader.
+     * @param queue The RequestQueue to use for making image requests.
      * @param imageCache The cache to use as an L1 cache.
      */
     public ImageLoader(RequestQueue queue, ImageCache imageCache) {

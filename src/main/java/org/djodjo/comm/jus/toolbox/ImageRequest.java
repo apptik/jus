@@ -38,7 +38,7 @@ public class ImageRequest extends Request<Bitmap> {
     private static final int IMAGE_TIMEOUT_MS = 1000;
 
     /** Default number of retries for image requests */
-    private static final int IMAGE_MAX_RETRIES = 2;
+    private static final int IMAGE_MAX_RETRIES = 3;
 
     /** Default backoff multiplier for image requests */
     private static final float IMAGE_BACKOFF_MULT = 2f;

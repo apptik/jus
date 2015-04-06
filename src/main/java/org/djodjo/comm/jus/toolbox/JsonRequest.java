@@ -69,22 +69,6 @@ public abstract class JsonRequest<T> extends Request<T> {
     @Override
     abstract protected Response<T> parseNetworkResponse(NetworkResponse response);
 
-    /**
-     * @deprecated Use {@link #getBodyContentType()}.
-     */
-    @Override
-    public String getPostBodyContentType() {
-        return getBodyContentType();
-    }
-
-    /**
-     * @deprecated Use {@link #getBody()}.
-     */
-    @Override
-    public byte[] getPostBody() {
-        return getBody();
-    }
-
     @Override
     public String getBodyContentType() {
         return PROTOCOL_CONTENT_TYPE;
