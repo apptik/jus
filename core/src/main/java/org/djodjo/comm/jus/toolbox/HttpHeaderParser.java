@@ -68,6 +68,11 @@ public class HttpHeaderParser {
                 String token = tokens[i].trim();
                 if (token.equals("no-cache") || token.equals("no-store")) {
                     return null;
+                } else if (token.startsWith("max-age=")) {
+                    try {
+                        maxAge = Long.parseLong(token.substring(8));
+                    } catch (Exception e) {
+                    }
                 } else if (token.startsWith("stale-while-revalidate=")) {
                     try {
                         staleWhileRevalidate = Long.parseLong(token.substring(23));
@@ -95,7 +100,7 @@ public class HttpHeaderParser {
         // Cache-Control takes precedence over an Expires header, even if both exist and Expires
         // is more restrictive.
         if (hasCacheControl) {
-            softExpire = now + maxAge * 1000;
+            softExpire = lastModified>0?lastModified:now + maxAge * 1000;
             finalExpire = mustRevalidate
                     ? softExpire
                     : softExpire + staleWhileRevalidate * 1000;

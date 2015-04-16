@@ -16,16 +16,6 @@ buildscript {
     }
 }
 
-apply plugin: 'com.android.library'
 
 
-android {
-    compileSdkVersion 22
-    buildToolsVersion = '22.0.1'
-}
 
-dependencies {
-    compile 'com.android.support:support-v4:22.0.0'
-}
-
-apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
