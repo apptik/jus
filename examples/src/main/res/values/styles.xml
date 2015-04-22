@@ -1,0 +1,23 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Base.Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="windowActionBar">false</item>
+
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowFrame">@null</item>
+
+        <item name="theme">@style/MyToolbar</item>
+    </style>
+
+    <!-- Toolbar style -->
+    <style name="MyToolbar" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
+        <item name="android:background">#090</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">#f00</item>
+
+    </style>
+
+</resources>

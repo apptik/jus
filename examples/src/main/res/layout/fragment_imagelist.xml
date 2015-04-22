@@ -1,0 +1,21 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context="org.djodjo.comm.jus.examples.BlankFragment">
+
+    <android.support.v7.widget.RecyclerView
+
+        android:id="@+id/list_images"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="7dp"
+        android:layout_marginRight="7dp">
+
+
+    </android.support.v7.widget.RecyclerView>
+
+
+</FrameLayout>
