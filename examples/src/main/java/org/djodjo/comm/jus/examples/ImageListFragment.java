@@ -63,8 +63,8 @@ public class ImageListFragment extends Fragment {
         // Inflate the layout for this fragment
         ListScrollListener listScrollListener = new ListScrollListener();
         RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(
-               // MockData.getMockJsonArray(500, 500)
-                MockData.getImmoMock(getActivity())
+                MockData.getMockJsonArray(500, 500)
+                //MockData.getAssetsMock(getActivity())
                 , getActivity(), listScrollListener
         );
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);

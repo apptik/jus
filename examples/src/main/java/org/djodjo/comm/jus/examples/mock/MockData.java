@@ -31,7 +31,7 @@ public class MockData {
         return res;
     }
 
-    public static JsonArray getImmoMock(Activity activity) {
+    public static JsonArray getAssetsMock(Activity activity) {
         JsonArray res = new JsonArray();
         try {
             res = JsonElement.readFrom(new InputStreamReader(activity.getAssets()
