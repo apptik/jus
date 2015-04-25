@@ -1,8 +1,13 @@
 package org.djodjo.comm.jus.examples.mock;
 
+import android.app.Activity;
+
 import org.djodjo.json.JsonArray;
+import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Random;
 
 /**
@@ -24,5 +29,17 @@ public class MockData {
         }
 
         return res;
+    }
+
+    public static JsonArray getImmoMock(Activity activity) {
+        JsonArray res = new JsonArray();
+        try {
+            res = JsonElement.readFrom(new InputStreamReader(activity.getAssets()
+                    .open("pics.json"))).asJsonArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return res;
+
     }
 }

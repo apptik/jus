@@ -34,6 +34,9 @@ import org.djodjo.comm.jus.Response;
  * back with a decoded Bitmap.
  */
 public class ImageRequest extends Request<Bitmap> {
+
+    private static final boolean PREFER_QUALITY_OVER_SPEED = false;
+
     /** Socket timeout in milliseconds for image requests */
     private static final int IMAGE_TIMEOUT_MS = 1000;
 
@@ -191,8 +194,8 @@ public class ImageRequest extends Request<Bitmap> {
 
             // Decode to the nearest power of two scaling factor.
             decodeOptions.inJustDecodeBounds = false;
-            // TODO(ficus): Do we need this or is it okay since API 8 doesn't support it?
-            // decodeOptions.inPreferQualityOverSpeed = PREFER_QUALITY_OVER_SPEED;
+
+             decodeOptions.inPreferQualityOverSpeed = PREFER_QUALITY_OVER_SPEED;
             decodeOptions.inSampleSize =
                 findBestSampleSize(actualWidth, actualHeight, desiredWidth, desiredHeight);
             Bitmap tempBitmap =

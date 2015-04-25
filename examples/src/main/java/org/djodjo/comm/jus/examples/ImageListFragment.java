@@ -62,7 +62,11 @@ public class ImageListFragment extends Fragment {
         View v =  inflater.inflate(R.layout.fragment_imagelist, container, false);
         // Inflate the layout for this fragment
         ListScrollListener listScrollListener = new ListScrollListener();
-        RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(MockData.getMockJsonArray(500, 500), getActivity(), listScrollListener);
+        RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(
+               // MockData.getMockJsonArray(500, 500)
+                MockData.getImmoMock(getActivity())
+                , getActivity(), listScrollListener
+        );
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
         recyclerView.setOnScrollListener(listScrollListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
