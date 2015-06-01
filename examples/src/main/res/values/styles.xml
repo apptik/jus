@@ -1,14 +1,13 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Base.Theme.AppCompat">
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="windowActionBar">false</item>
 
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowFrame">@null</item>
 
-        <item name="theme">@style/MyToolbar</item>
+
     </style>
 
     <!-- Toolbar style -->
