@@ -5,7 +5,7 @@ import android.content.Context;
 
 import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.toolbox.ImageLoader;
-import org.djodjo.comm.jus.toolbox.Jus;
+import org.djodjo.comm.jus.Jus;
 
 public class JusHelper {
     private static RequestQueue mRequestQueue;

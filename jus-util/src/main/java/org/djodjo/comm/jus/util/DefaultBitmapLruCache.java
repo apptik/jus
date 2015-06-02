@@ -19,6 +19,7 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
 
     public static int getDefaultLruCacheSize() {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
+        //or ((ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryClass()
         final int cacheSize = maxMemory / 8;
         return cacheSize;
     }

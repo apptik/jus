@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -27,6 +27,8 @@ import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.stack.HttpClientStack;
 import org.djodjo.comm.jus.stack.HttpStack;
 import org.djodjo.comm.jus.stack.HurlStack;
+import org.djodjo.comm.jus.toolbox.BasicNetwork;
+import org.djodjo.comm.jus.toolbox.DiskBasedCache;
 
 import java.io.File;
 

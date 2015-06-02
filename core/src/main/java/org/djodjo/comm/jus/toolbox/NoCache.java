@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.util;
+package org.djodjo.comm.jus.toolbox;
 
 import org.djodjo.comm.jus.Cache;
 
