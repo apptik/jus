@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.djodjo.comm.jus.rx">
+          package="org.djodjo.comm.jus.util">
 
-    <application>
+    <application 
+        >
 
     </application>
 

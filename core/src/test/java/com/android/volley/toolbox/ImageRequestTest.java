@@ -22,6 +22,7 @@ import android.graphics.Bitmap.Config;
 
 import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.Response;
+import org.djodjo.comm.jus.request.ImageRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;

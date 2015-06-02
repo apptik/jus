@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.stack;
 
 import org.djodjo.comm.jus.AuthFailureError;
 import org.djodjo.comm.jus.Request;

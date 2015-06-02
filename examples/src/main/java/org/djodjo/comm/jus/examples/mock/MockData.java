@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
 
-/**
- * Created by sic on 22/04/15.
- */
+
 public class MockData {
 
     public static JsonArray getMockJsonArray(int noElements, int picSize) {

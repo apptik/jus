@@ -18,7 +18,8 @@ package org.djodjo.comm.jus.toolbox;
 
 import org.djodjo.comm.jus.Request.Method;
 import org.djodjo.comm.jus.mock.TestRequest;
-import org.djodjo.comm.jus.toolbox.HttpClientStack.HttpPatch;
+import org.djodjo.comm.jus.stack.HttpClientStack;
+import org.djodjo.comm.jus.stack.HttpClientStack.HttpPatch;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;

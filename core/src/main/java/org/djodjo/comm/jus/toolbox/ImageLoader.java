@@ -26,6 +26,7 @@ import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.Response.ErrorListener;
 import org.djodjo.comm.jus.Response.Listener;
+import org.djodjo.comm.jus.request.ImageRequest;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -74,14 +75,6 @@ public class ImageLoader {
     public interface ImageCache {
         public Bitmap getBitmap(String url);
         public void putBitmap(String url, Bitmap bitmap);
-    }
-
-    /**
-     * Constructs a new ImageLoader.
-     * @param queue The RequestQueue to use for making image requests.
-     */
-    public ImageLoader(RequestQueue queue) {
-         this(queue, new DefaultBitmapLruCache());
     }
 
     /**

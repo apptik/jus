@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.request;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -28,6 +28,7 @@ import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.ParseError;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.Response;
+import org.djodjo.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * A canned request for getting an image at a given URL and calling
@@ -157,7 +158,7 @@ public class ImageRequest extends Request<Bitmap> {
     }
 
     @Override
-    protected Response<Bitmap> parseNetworkResponse(NetworkResponse response) {
+    public Response<Bitmap> parseNetworkResponse(NetworkResponse response) {
         // Serialize all decode on a global lock to reduce concurrent heap usage.
         synchronized (sDecodeLock) {
             try {

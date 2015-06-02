@@ -40,6 +40,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.cookie.DateUtils;
+import org.djodjo.comm.jus.stack.HttpStack;
 
 import java.io.IOException;
 import java.io.InputStream;

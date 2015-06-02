@@ -24,6 +24,9 @@ import android.os.Build;
 
 import org.djodjo.comm.jus.Network;
 import org.djodjo.comm.jus.RequestQueue;
+import org.djodjo.comm.jus.stack.HttpClientStack;
+import org.djodjo.comm.jus.stack.HttpStack;
+import org.djodjo.comm.jus.stack.HurlStack;
 
 import java.io.File;
 

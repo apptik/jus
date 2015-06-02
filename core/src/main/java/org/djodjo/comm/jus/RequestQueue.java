@@ -137,14 +137,25 @@ public class RequestQueue {
         this(cache, network, DEFAULT_NETWORK_THREAD_POOL_SIZE);
     }
 
+
+    public RequestQueue withCacheDspather(CacheDispatcher cacheDspather) {
+        if (mCacheDispatcher != null) {
+            mCacheDispatcher.quit();
+        }
+        mCacheDispatcher = cacheDspather;
+        return this;
+    }
     /**
      * Starts the dispatchers in this queue.
      */
     public void start() {
         stop();  // Make sure any currently running dispatchers are stopped.
         // Create the cache dispatcher and start it.
-        mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
-        mCacheDispatcher.start();
+
+        if(mCacheDispatcher==null) {
+            mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
+            mCacheDispatcher.start();
+        }
 
         // Create network dispatchers (and corresponding threads) up to the pool size.
         for (int i = 0; i < mDispatchers.length; i++) {
@@ -274,7 +285,7 @@ public class RequestQueue {
      * <p>Releases waiting requests for <code>request.getCacheKey()</code> if
      *      <code>request.shouldCache()</code>.</p>
      */
-    <T> void finish(Request<T> request) {
+    <T> void  finish(Request<T> request) {
         // Remove from the set of requests currently being processed.
         synchronized (mCurrentRequests) {
             mCurrentRequests.remove(request);

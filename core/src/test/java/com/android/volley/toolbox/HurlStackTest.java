@@ -20,6 +20,7 @@ import org.djodjo.comm.jus.Request.Method;
 import org.djodjo.comm.jus.mock.MockHttpURLConnection;
 import org.djodjo.comm.jus.mock.TestRequest;
 
+import org.djodjo.comm.jus.stack.HurlStack;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

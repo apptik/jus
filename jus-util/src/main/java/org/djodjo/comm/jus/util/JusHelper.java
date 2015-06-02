@@ -1,4 +1,4 @@
-package org.djodjo.comm.jus.examples.api;
+package org.djodjo.comm.jus.util;
 
 
 import android.content.Context;
@@ -7,12 +7,12 @@ import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.toolbox.ImageLoader;
 import org.djodjo.comm.jus.toolbox.Jus;
 
-public class MyJus {
+public class JusHelper {
     private static RequestQueue mRequestQueue;
     private static ImageLoader mImageLoader;
 
 
-    private MyJus() {
+    private JusHelper() {
         // no instances
     }
 
@@ -22,7 +22,7 @@ public class MyJus {
 
         mImageLoader = new ImageLoader(mRequestQueue,
                 // new NoCache()
-                new BitmapLruCache()
+                new DefaultBitmapLruCache()
         );
     }
 

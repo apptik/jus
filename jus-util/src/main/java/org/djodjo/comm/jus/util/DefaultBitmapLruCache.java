@@ -1,8 +1,10 @@
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.util;
 
 
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
+
+import org.djodjo.comm.jus.toolbox.ImageLoader;
 
 public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
 
@@ -17,7 +19,7 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
 
     public static int getDefaultLruCacheSize() {
         final int maxMemory = (int) (Runtime.getRuntime().maxMemory() / 1024);
-        final int cacheSize = maxMemory / 4;
+        final int cacheSize = maxMemory / 8;
         return cacheSize;
     }
 

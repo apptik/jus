@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.request;
 
 import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.Response;
 import org.djodjo.comm.jus.Response.ErrorListener;
 import org.djodjo.comm.jus.Response.Listener;
+import org.djodjo.comm.jus.toolbox.HttpHeaderParser;
 
 import java.io.UnsupportedEncodingException;
 
@@ -62,7 +63,7 @@ public class StringRequest extends Request<String> {
     }
 
     @Override
-    protected Response<String> parseNetworkResponse(NetworkResponse response) {
+    public Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {
             parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));

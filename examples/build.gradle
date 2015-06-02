@@ -36,4 +36,5 @@ dependencies {
     compile 'org.djodjo.json:json-core:1.+'
     compile 'org.djodjo.json:json-wrapper:1.+'
     compile project(':core')
+    compile project(':jus-util')
 }

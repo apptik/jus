@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.request;
 
 import org.djodjo.comm.jus.Cache;
 import org.djodjo.comm.jus.NetworkResponse;
@@ -61,7 +61,7 @@ public class ClearCacheRequest extends Request<Object> {
     }
 
     @Override
-    protected Response<Object> parseNetworkResponse(NetworkResponse response) {
+    public Response<Object> parseNetworkResponse(NetworkResponse response) {
         return null;
     }
 

@@ -220,7 +220,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      *
      * <p>Also dumps all events from this request's event log; for debugging.</p>
      */
-    void finish(final String tag) {
+    public void finish(final String tag) {
         if (mRequestQueue != null) {
             mRequestQueue.finish(this);
         }
@@ -531,6 +531,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /**
      * Returns true if this request has had a response delivered for it.
+     * this is useful in case cache is returned and the new response is "not modified"
      */
     public boolean hasHadResponseDelivered() {
         return mResponseDelivered;
@@ -544,7 +545,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * @param response Response from the network
      * @return The parsed response, or null in the case of an error
      */
-    abstract protected Response<T> parseNetworkResponse(NetworkResponse response);
+    public abstract Response<T>  parseNetworkResponse(NetworkResponse response);
 
     /**
      * Subclasses can override this method to parse 'networkError' and return a more specific error.

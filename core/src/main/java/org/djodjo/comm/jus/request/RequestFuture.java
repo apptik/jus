@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.request;
 
 import org.djodjo.comm.jus.JusError;
 import org.djodjo.comm.jus.Request;

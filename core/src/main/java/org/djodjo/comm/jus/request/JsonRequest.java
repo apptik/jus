@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.request;
 
 import org.djodjo.comm.jus.JusLog;
 import org.djodjo.comm.jus.NetworkResponse;
@@ -67,7 +67,7 @@ public abstract class JsonRequest<T> extends Request<T> {
     }
 
     @Override
-    abstract protected Response<T> parseNetworkResponse(NetworkResponse response);
+    public abstract Response<T> parseNetworkResponse(NetworkResponse response);
 
     @Override
     public String getBodyContentType() {

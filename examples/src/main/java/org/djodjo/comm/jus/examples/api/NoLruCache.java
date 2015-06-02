@@ -7,7 +7,7 @@ import android.util.Log;
 import org.djodjo.comm.jus.toolbox.ImageLoader;
 
 
-public class NoCache
+public class NoLruCache
         implements ImageLoader.ImageCache {
 
     @Override

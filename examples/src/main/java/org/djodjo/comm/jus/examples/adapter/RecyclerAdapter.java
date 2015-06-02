@@ -31,8 +31,8 @@ import android.view.animation.Interpolator;
 
 import org.djodjo.comm.jus.examples.ImageListFragment;
 import org.djodjo.comm.jus.examples.R;
-import org.djodjo.comm.jus.examples.api.MyJus;
 import org.djodjo.comm.jus.toolbox.NetworkImageView;
+import org.djodjo.comm.jus.util.JusHelper;
 import org.djodjo.json.JsonArray;
 
 /**
@@ -122,7 +122,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         Log.d(TAG, "Element " + position + " set.");
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), MyJus.getImageLoader());
+        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), JusHelper.getImageLoader());
 
         /// COOL ANIM
         View v = (View) viewHolder.niv.getParent().getParent();
