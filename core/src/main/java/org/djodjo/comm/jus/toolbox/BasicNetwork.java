@@ -33,10 +33,14 @@ import org.djodjo.comm.jus.Network;
 import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.RetryPolicy;
+import org.djodjo.comm.jus.auth.Authenticator;
 import org.djodjo.comm.jus.error.AuthFailureError;
+import org.djodjo.comm.jus.error.AuthenticatorError;
+import org.djodjo.comm.jus.error.ForbiddenError;
 import org.djodjo.comm.jus.error.JusError;
 import org.djodjo.comm.jus.error.NetworkError;
 import org.djodjo.comm.jus.error.NoConnectionError;
+import org.djodjo.comm.jus.error.RequestError;
 import org.djodjo.comm.jus.error.ServerError;
 import org.djodjo.comm.jus.error.TimeoutError;
 import org.djodjo.comm.jus.stack.HttpStack;
@@ -65,20 +69,23 @@ public class BasicNetwork implements Network {
 
     protected final ByteArrayPool mPool;
 
+    protected final Authenticator authenticator;
+
     /**
      * @param httpStack HTTP stack to be used
      */
     public BasicNetwork(HttpStack httpStack) {
         // If a pool isn't passed in, then build a small default pool that will give us a lot of
         // benefit and not use too much memory.
-        this(httpStack, new ByteArrayPool(DEFAULT_POOL_SIZE));
+        this(httpStack, new ByteArrayPool(DEFAULT_POOL_SIZE), null);
     }
 
     /**
      * @param httpStack HTTP stack to be used
      * @param pool      a buffer pool that improves GC performance in copy operations
      */
-    public BasicNetwork(HttpStack httpStack, ByteArrayPool pool) {
+    public BasicNetwork(HttpStack httpStack, ByteArrayPool pool, Authenticator authenticator) {
+        this.authenticator = authenticator;
         mHttpStack = httpStack;
         mPool = pool;
     }
@@ -120,10 +127,10 @@ public class BasicNetwork implements Network {
                 }
 
                 // Some responses such as 204s do not have content.  We must check.
-                if (httpResponse.getEntity() != null) {
-                    if (httpResponse.getEntity().getContent() == null) {
-                        throw new ServerError(request);
-                    }
+                if (httpResponse.getEntity() != null
+                    //&& httpResponse.getEntity().getContentLength()>0
+                        ) {
+                    //TODO check for content and stated length and throw exception if needed
                     responseContents = entityToBytes(httpResponse.getEntity());
                 } else {
                     // Add 0 byte response as a way of honestly representing a
@@ -158,13 +165,32 @@ public class BasicNetwork implements Network {
                 if (responseContents != null) {
                     networkResponse = new NetworkResponse(statusCode, responseContents,
                             responseHeaders, false, SystemClock.elapsedRealtime() - requestStart);
-                    if (statusCode == HttpStatus.SC_UNAUTHORIZED ||
-                            statusCode == HttpStatus.SC_FORBIDDEN) {
-                        attemptRetryOnException("auth",
-                                request, new AuthFailureError(request, networkResponse));
+                    if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                        //makes sense to be thrown only when availabe Authenticator is available
+                        if(authenticator!=null) {
+                            try {
+                                //TODO call refresh token
+                                authenticator.getAuthToken();
+                            } catch (AuthenticatorError authenticatorError) {
+                                //finally we didn't succeed
+                                throw new AuthFailureError(request, authenticatorError.getResolutionIntent());
+                            }
+                            attemptRetryOnException("auth", request, new AuthFailureError(request, networkResponse));
+                        } else {
+                            throw new AuthFailureError(request, networkResponse);
+                        }
+                    } else if (statusCode == HttpStatus.SC_FORBIDDEN) {
+                        throw new ForbiddenError(request, networkResponse);
+                    } else if (statusCode > 399 && statusCode < 500) {
+                        //some request query error that does not make sense to retry assuming the service we use is deterministic
+                        throw new RequestError(request, networkResponse);
+                    } else if (statusCode > 499) {
+                        //TODO some server error might not need to be retried
+                        attemptRetryOnException("server",
+                                request, new ServerError(request, networkResponse));
                     } else {
-                        // TODO: Only throw ServerError for 5xx status codes.
-                        throw new ServerError(request, networkResponse);
+                        //unclassified error
+                        throw new JusError(request, networkResponse);
                     }
                 } else {
                     throw new NetworkError(request, networkResponse);
@@ -237,6 +263,9 @@ public class BasicNetwork implements Network {
         byte[] buffer = null;
         try {
             InputStream in = entity.getContent();
+            if (in == null) {
+                return new byte[0];
+            }
             buffer = mPool.getBuf(1024);
             int count;
             while ((count = in.read(buffer)) != -1) {

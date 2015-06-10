@@ -26,36 +26,36 @@ import org.djodjo.comm.jus.Request;
  * Error indicating that there was an authentication failure when performing a Request.
  */
 @SuppressWarnings("serial")
-public class AuthFailureError extends JusError {
+public class ForbiddenError extends JusError {
     /** An intent that can be used to resolve this exception. (Brings up the password dialog.) */
     private Intent mResolutionIntent;
 
-    public AuthFailureError(Request<?> request, Intent intent) {
+    public ForbiddenError(Request<?> request, Intent intent) {
         super(request);
         mResolutionIntent = intent;
     }
 
-    public AuthFailureError(Request<?> request, NetworkResponse networkResponse) {
+    public ForbiddenError(Request<?> request, NetworkResponse networkResponse) {
         super(request, networkResponse);
     }
 
-    public AuthFailureError(Request<?> request, NetworkResponse networkResponse, Intent intent) {
-        super(request, networkResponse);
+    public Intent getResolutionIntent() {
+        return mResolutionIntent;
     }
 
-    public AuthFailureError(Throwable cause, Request<?> request) {
+    public ForbiddenError(Throwable cause, Request<?> request) {
         super(cause, request);
     }
 
-    public AuthFailureError(String exceptionMessage, Throwable reason, Request<?> request) {
+    public ForbiddenError(String exceptionMessage, Throwable reason, Request<?> request) {
         super(exceptionMessage, reason, request);
     }
 
-    public AuthFailureError(String exceptionMessage, Request<?> request) {
+    public ForbiddenError(String exceptionMessage, Request<?> request) {
         super(exceptionMessage, request);
     }
 
-    public AuthFailureError(Request<?> request) {
+    public ForbiddenError(Request<?> request) {
         super(request);
     }
 
@@ -65,9 +65,5 @@ public class AuthFailureError extends JusError {
             return "User needs to (re)enter credentials.";
         }
         return super.getMessage();
-    }
-
-    public Intent getResolutionIntent() {
-        return mResolutionIntent;
     }
 }
