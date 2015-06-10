@@ -71,6 +71,8 @@ public class BasicNetwork implements Network {
 
     protected final Authenticator authenticator;
 
+    protected String authToken = null;
+
     /**
      * @param httpStack HTTP stack to be used
      */
@@ -101,6 +103,7 @@ public class BasicNetwork implements Network {
                 // Gather headers.
                 Map<String, String> headers = new HashMap<String, String>();
                 addCacheHeaders(headers, request.getCacheEntry());
+                addAuthHeaders(headers);
                 httpResponse = mHttpStack.performRequest(request, headers);
                 StatusLine statusLine = httpResponse.getStatusLine();
                 int statusCode = statusLine.getStatusCode();
@@ -167,15 +170,17 @@ public class BasicNetwork implements Network {
                             responseHeaders, false, SystemClock.elapsedRealtime() - requestStart);
                     if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
                         //makes sense to be thrown only when availabe Authenticator is available
-                        if(authenticator!=null) {
+                        if (authenticator != null) {
                             try {
-                                //TODO call refresh token
-                                authenticator.getAuthToken();
+                                //TODO call refresh token may be
+                               authToken = authenticator.getAuthToken();
                             } catch (AuthenticatorError authenticatorError) {
                                 //finally we didn't succeed
-                                throw new AuthFailureError(request, authenticatorError.getResolutionIntent());
+                                throw new AuthFailureError(request,
+                                        authenticatorError.getResolutionIntent());
                             }
-                            attemptRetryOnException("auth", request, new AuthFailureError(request, networkResponse));
+                            attemptRetryOnException("auth", request,
+                                    new AuthFailureError(request, networkResponse));
                         } else {
                             throw new AuthFailureError(request, networkResponse);
                         }
@@ -195,6 +200,10 @@ public class BasicNetwork implements Network {
                 } else {
                     throw new NetworkError(request, networkResponse);
                 }
+            } catch (AuthenticatorError authenticatorError) {
+                //we have failed to get a token so give it up
+                throw new AuthFailureError(request,
+                        authenticatorError.getResolutionIntent());
             }
         }
     }
@@ -231,6 +240,14 @@ public class BasicNetwork implements Network {
             throw e;
         }
         request.addMarker(String.format("%s-retry [timeout=%s]", logPrefix, oldTimeout));
+    }
+
+    private void addAuthHeaders(Map<String, String> headers) throws AuthenticatorError {
+        if (authenticator == null) return;
+        if(authToken==null) {
+            authToken = authenticator.getAuthToken();
+        }
+        headers.put("Authorization", "Bearer " +  authToken);
     }
 
     private void addCacheHeaders(Map<String, String> headers, Cache.Entry entry) {
