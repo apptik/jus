@@ -17,6 +17,8 @@
 
 package org.djodjo.comm.jus;
 
+import org.djodjo.comm.jus.error.JusError;
+
 /**
  * Retry policy for a request.
  */

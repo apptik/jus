@@ -15,23 +15,17 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.error;
 
-import org.djodjo.comm.jus.AuthFailureError;
+import org.djodjo.comm.jus.Request;
 
 /**
- * An interface for interacting with auth tokens.
+ * Indicates that the connection or the socket timed out.
  */
-public interface Authenticator {
-    /**
-     * Synchronously retrieves an auth token.
-     *
-     * @throws AuthFailureError If authentication did not succeed
-     */
-    public String getAuthToken() throws AuthFailureError;
+@SuppressWarnings("serial")
+public class TimeoutError extends JusError {
 
-    /**
-     * Invalidates the provided auth token.
-     */
-    public void invalidateAuthToken(String authToken);
+    public TimeoutError(Request<?> request) {
+        super(request);
+    }
 }

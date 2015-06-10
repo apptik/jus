@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.widget;
 
 import android.content.Context;
 import android.text.TextUtils;
@@ -21,7 +21,8 @@ import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
-import org.djodjo.comm.jus.JusError;
+import org.djodjo.comm.jus.error.JusError;
+import org.djodjo.comm.jus.toolbox.ImageLoader;
 import org.djodjo.comm.jus.toolbox.ImageLoader.ImageContainer;
 import org.djodjo.comm.jus.toolbox.ImageLoader.ImageListener;
 

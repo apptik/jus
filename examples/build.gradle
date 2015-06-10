@@ -37,4 +37,6 @@ dependencies {
     compile 'org.djodjo.json:json-wrapper:1.+'
     compile project(':core')
     compile project(':jus-util')
+
+    compile "io.reactivex:rxjava:1.0.11"
 }

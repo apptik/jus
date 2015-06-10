@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package org.djodjo.comm.jus.auth;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -24,12 +24,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import org.djodjo.comm.jus.AuthFailureError;
+import org.djodjo.comm.jus.error.AuthenticatorError;
 
 /**
  * An Authenticator that uses {@link AccountManager} to get auth
  * tokens of a specified type for a specified account.
  */
+//TODO make use of this
 public class AndroidAuthenticator implements Authenticator {
     private final AccountManager mAccountManager;
     private final Account mAccount;
@@ -77,25 +78,25 @@ public class AndroidAuthenticator implements Authenticator {
     // TODO: Figure out what to do about notifyAuthFailure
     @SuppressWarnings("deprecation")
     @Override
-    public String getAuthToken() throws AuthFailureError {
+    public String getAuthToken() throws AuthenticatorError {
         AccountManagerFuture<Bundle> future = mAccountManager.getAuthToken(mAccount,
                 mAuthTokenType, mNotifyAuthFailure, null, null);
         Bundle result;
         try {
             result = future.getResult();
         } catch (Exception e) {
-            throw new AuthFailureError("Error while retrieving auth token", e);
+            throw new AuthenticatorError("Error while retrieving auth token", e);
         }
         String authToken = null;
         if (future.isDone() && !future.isCancelled()) {
             if (result.containsKey(AccountManager.KEY_INTENT)) {
                 Intent intent = result.getParcelable(AccountManager.KEY_INTENT);
-                throw new AuthFailureError(intent);
+                throw new AuthenticatorError(intent);
             }
             authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
         }
         if (authToken == null) {
-            throw new AuthFailureError("Got null auth token for type: " + mAuthTokenType);
+            throw new AuthenticatorError("Got null auth token for type: " + mAuthTokenType);
         }
 
         return authToken;

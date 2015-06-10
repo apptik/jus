@@ -17,7 +17,7 @@
 
 package org.djodjo.comm.jus.mock;
 
-import org.djodjo.comm.jus.AuthFailureError;
+import org.djodjo.comm.jus.error.AuthFailureError;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.stack.HttpStack;
 

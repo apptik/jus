@@ -17,11 +17,11 @@
 
 package org.djodjo.comm.jus.mock;
 
-import org.djodjo.comm.jus.JusError;
+import org.djodjo.comm.jus.error.JusError;
 import org.djodjo.comm.jus.Network;
 import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.Request;
-import org.djodjo.comm.jus.ServerError;
+import org.djodjo.comm.jus.error.ServerError;
 
 public class MockNetwork implements Network {
     public final static int ALWAYS_THROW_EXCEPTIONS = -1;

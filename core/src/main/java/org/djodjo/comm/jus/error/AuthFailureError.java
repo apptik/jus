@@ -15,9 +15,12 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.error;
 
 import android.content.Intent;
+
+import org.djodjo.comm.jus.NetworkResponse;
+import org.djodjo.comm.jus.Request;
 
 /**
  * Error indicating that there was an authentication failure when performing a Request.
@@ -27,26 +30,33 @@ public class AuthFailureError extends JusError {
     /** An intent that can be used to resolve this exception. (Brings up the password dialog.) */
     private Intent mResolutionIntent;
 
-    public AuthFailureError() { }
-
-    public AuthFailureError(Intent intent) {
+    public AuthFailureError(Request<?> request, Intent intent) {
+        super(request);
         mResolutionIntent = intent;
     }
 
-    public AuthFailureError(NetworkResponse response) {
-        super(response);
-    }
-
-    public AuthFailureError(String message) {
-        super(message);
-    }
-
-    public AuthFailureError(String message, Exception reason) {
-        super(message, reason);
+    public AuthFailureError(Request<?> request, NetworkResponse networkResponse) {
+        super(request, networkResponse);
     }
 
     public Intent getResolutionIntent() {
         return mResolutionIntent;
+    }
+
+    public AuthFailureError(Throwable cause, Request<?> request) {
+        super(cause, request);
+    }
+
+    public AuthFailureError(String exceptionMessage, Throwable reason, Request<?> request) {
+        super(exceptionMessage, reason, request);
+    }
+
+    public AuthFailureError(String exceptionMessage, Request<?> request) {
+        super(exceptionMessage, request);
+    }
+
+    public AuthFailureError(Request<?> request) {
+        super(request);
     }
 
     @Override

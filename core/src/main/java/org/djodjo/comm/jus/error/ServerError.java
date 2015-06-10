@@ -15,34 +15,34 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.error;
 
-import org.djodjo.comm.jus.error.JusError;
+import org.djodjo.comm.jus.NetworkResponse;
+import org.djodjo.comm.jus.Request;
 
 /**
- * Indicates that the server's response could not be parsed.
+ * Indicates that the server responded with an error response.
  */
 @SuppressWarnings("serial")
-public class ParseError extends JusError {
+public class ServerError extends JusError {
 
-
-    public ParseError(Throwable cause, Request<?> request) {
+    public ServerError(Throwable cause, Request<?> request) {
         super(cause, request);
     }
 
-    public ParseError(String exceptionMessage, Throwable reason, Request<?> request) {
+    public ServerError(String exceptionMessage, Throwable reason, Request<?> request) {
         super(exceptionMessage, reason, request);
     }
 
-    public ParseError(String exceptionMessage, Request<?> request) {
+    public ServerError(String exceptionMessage, Request<?> request) {
         super(exceptionMessage, request);
     }
 
-    public ParseError(Request<?> request) {
+    public ServerError(Request<?> request) {
         super(request);
     }
 
-    public ParseError(Request<?> request, NetworkResponse response) {
+    public ServerError(Request<?> request, NetworkResponse response) {
         super(request, response);
     }
 }

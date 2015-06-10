@@ -17,6 +17,8 @@
 
 package org.djodjo.comm.jus;
 
+import org.djodjo.comm.jus.error.JusError;
+
 public interface ResponseDelivery {
     /**
      * Parses a response from the network or cache and delivers it.

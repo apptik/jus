@@ -15,22 +15,34 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.error;
+
+import org.djodjo.comm.jus.NetworkResponse;
+import org.djodjo.comm.jus.Request;
 
 /**
  * Indicates that there was a network error when performing a Jus request.
  */
 @SuppressWarnings("serial")
 public class NetworkError extends JusError {
-    public NetworkError() {
-        super();
+
+    public NetworkError(Throwable cause, Request<?> request) {
+        super(cause, request);
     }
 
-    public NetworkError(Throwable cause) {
-        super(cause);
+    public NetworkError(String exceptionMessage, Throwable reason, Request<?> request) {
+        super(exceptionMessage, reason, request);
     }
 
-    public NetworkError(NetworkResponse networkResponse) {
-        super(networkResponse);
+    public NetworkError(String exceptionMessage, Request<?> request) {
+        super(exceptionMessage, request);
+    }
+
+    public NetworkError(Request<?> request) {
+        super(request);
+    }
+
+    public NetworkError(Request<?> request, NetworkResponse response) {
+        super(request, response);
     }
 }

@@ -71,6 +71,7 @@ public class ImageListFragment extends Fragment {
         recyclerView.setOnScrollListener(listScrollListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerAdapter);
+
        return v;
     }
 

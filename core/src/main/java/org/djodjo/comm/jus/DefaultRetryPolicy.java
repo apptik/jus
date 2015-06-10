@@ -17,6 +17,8 @@
 
 package org.djodjo.comm.jus;
 
+import org.djodjo.comm.jus.error.JusError;
+
 /**
  * Default retry policy for requests.
  */
@@ -34,10 +36,10 @@ public class DefaultRetryPolicy implements RetryPolicy {
     private final float mBackoffMultiplier;
 
     /** The default socket timeout in milliseconds */
-    public static final int DEFAULT_TIMEOUT_MS = 5000;
+    public static final int DEFAULT_TIMEOUT_MS = 10000;
 
     /** The default number of retries */
-    public static final int DEFAULT_MAX_RETRIES = 3;
+    public static final int DEFAULT_MAX_RETRIES = 1;
 
     /** The default backoff multiplier */
     public static final float DEFAULT_BACKOFF_MULT = 2f;

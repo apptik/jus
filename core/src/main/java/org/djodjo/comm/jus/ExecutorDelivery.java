@@ -19,6 +19,8 @@ package org.djodjo.comm.jus;
 
 import android.os.Handler;
 
+import org.djodjo.comm.jus.error.JusError;
+
 import java.util.concurrent.Executor;
 
 /**

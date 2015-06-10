@@ -23,6 +23,8 @@ import android.os.Build;
 import android.os.Process;
 import android.os.SystemClock;
 
+import org.djodjo.comm.jus.error.JusError;
+
 import java.util.concurrent.BlockingQueue;
 
 /**
@@ -140,7 +142,7 @@ public class NetworkDispatcher extends Thread {
                 parseAndDeliverNetworkError(request, jusError);
             } catch (Exception e) {
                 JusLog.e(e, "Unhandled exception %s", e.toString());
-                JusError jusError = new JusError(e);
+                JusError jusError = new JusError(e, request);
                 jusError.setNetworkTimeMs(SystemClock.elapsedRealtime() - startTimeMs);
                 mDelivery.postError(request, jusError);
             }

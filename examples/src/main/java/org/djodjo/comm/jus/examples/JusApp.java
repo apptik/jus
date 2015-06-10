@@ -2,7 +2,7 @@ package org.djodjo.comm.jus.examples;
 
 import android.app.Application;
 
-import org.djodjo.comm.jus.util.JusHelper;
+import org.djodjo.comm.jus.examples.api.CustomJusHelper;
 
 
 public class JusApp extends Application {
@@ -11,7 +11,7 @@ public class JusApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        JusHelper.init(this);
+        CustomJusHelper.init(this);
 
     }
 

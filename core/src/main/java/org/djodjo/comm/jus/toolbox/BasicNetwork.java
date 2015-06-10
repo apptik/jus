@@ -19,20 +19,6 @@ package org.djodjo.comm.jus.toolbox;
 
 import android.os.SystemClock;
 
-import org.djodjo.comm.jus.AuthFailureError;
-import org.djodjo.comm.jus.Cache;
-import org.djodjo.comm.jus.Cache.Entry;
-import org.djodjo.comm.jus.JusError;
-import org.djodjo.comm.jus.JusLog;
-import org.djodjo.comm.jus.Network;
-import org.djodjo.comm.jus.NetworkError;
-import org.djodjo.comm.jus.NetworkResponse;
-import org.djodjo.comm.jus.NoConnectionError;
-import org.djodjo.comm.jus.Request;
-import org.djodjo.comm.jus.RetryPolicy;
-import org.djodjo.comm.jus.ServerError;
-import org.djodjo.comm.jus.TimeoutError;
-
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -40,6 +26,19 @@ import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.cookie.DateUtils;
+import org.djodjo.comm.jus.Cache;
+import org.djodjo.comm.jus.Cache.Entry;
+import org.djodjo.comm.jus.JusLog;
+import org.djodjo.comm.jus.Network;
+import org.djodjo.comm.jus.NetworkResponse;
+import org.djodjo.comm.jus.Request;
+import org.djodjo.comm.jus.RetryPolicy;
+import org.djodjo.comm.jus.error.AuthFailureError;
+import org.djodjo.comm.jus.error.JusError;
+import org.djodjo.comm.jus.error.NetworkError;
+import org.djodjo.comm.jus.error.NoConnectionError;
+import org.djodjo.comm.jus.error.ServerError;
+import org.djodjo.comm.jus.error.TimeoutError;
 import org.djodjo.comm.jus.stack.HttpStack;
 
 import java.io.IOException;
@@ -77,7 +76,7 @@ public class BasicNetwork implements Network {
 
     /**
      * @param httpStack HTTP stack to be used
-     * @param pool a buffer pool that improves GC performance in copy operations
+     * @param pool      a buffer pool that improves GC performance in copy operations
      */
     public BasicNetwork(HttpStack httpStack, ByteArrayPool pool) {
         mHttpStack = httpStack;
@@ -122,11 +121,14 @@ public class BasicNetwork implements Network {
 
                 // Some responses such as 204s do not have content.  We must check.
                 if (httpResponse.getEntity() != null) {
-                  responseContents = entityToBytes(httpResponse.getEntity());
+                    if (httpResponse.getEntity().getContent() == null) {
+                        throw new ServerError(request);
+                    }
+                    responseContents = entityToBytes(httpResponse.getEntity());
                 } else {
-                  // Add 0 byte response as a way of honestly representing a
-                  // no-content request.
-                  responseContents = new byte[0];
+                    // Add 0 byte response as a way of honestly representing a
+                    // no-content request.
+                    responseContents = new byte[0];
                 }
 
                 // if the request is slow, log it.
@@ -139,9 +141,9 @@ public class BasicNetwork implements Network {
                 return new NetworkResponse(statusCode, responseContents, responseHeaders, false,
                         SystemClock.elapsedRealtime() - requestStart);
             } catch (SocketTimeoutException e) {
-                attemptRetryOnException("socket", request, new TimeoutError());
+                attemptRetryOnException("socket", request, new TimeoutError(request));
             } catch (ConnectTimeoutException e) {
-                attemptRetryOnException("connection", request, new TimeoutError());
+                attemptRetryOnException("connection", request, new TimeoutError(request));
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Bad URL " + request.getUrl(), e);
             } catch (IOException e) {
@@ -150,7 +152,7 @@ public class BasicNetwork implements Network {
                 if (httpResponse != null) {
                     statusCode = httpResponse.getStatusLine().getStatusCode();
                 } else {
-                    throw new NoConnectionError(e);
+                    throw new NoConnectionError(e, request);
                 }
                 JusLog.e("Unexpected response code %d for %s", statusCode, request.getUrl());
                 if (responseContents != null) {
@@ -159,13 +161,13 @@ public class BasicNetwork implements Network {
                     if (statusCode == HttpStatus.SC_UNAUTHORIZED ||
                             statusCode == HttpStatus.SC_FORBIDDEN) {
                         attemptRetryOnException("auth",
-                                request, new AuthFailureError(networkResponse));
+                                request, new AuthFailureError(request, networkResponse));
                     } else {
                         // TODO: Only throw ServerError for 5xx status codes.
-                        throw new ServerError(networkResponse);
+                        throw new ServerError(request, networkResponse);
                     }
                 } else {
-                    throw new NetworkError(networkResponse);
+                    throw new NetworkError(request, networkResponse);
                 }
             }
         }
@@ -175,7 +177,7 @@ public class BasicNetwork implements Network {
      * Logs requests that took over SLOW_REQUEST_THRESHOLD_MS to complete.
      */
     private void logSlowRequests(long requestLifetime, Request<?> request,
-            byte[] responseContents, StatusLine statusLine) {
+                                 byte[] responseContents, StatusLine statusLine) {
         if (DEBUG || requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
             JusLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +
                             "[rc=%d], [retryCount=%s]", request, requestLifetime,
@@ -187,10 +189,11 @@ public class BasicNetwork implements Network {
     /**
      * Attempts to prepare the request for a retry. If there are no more attempts remaining in the
      * request's retry policy, a timeout exception is thrown.
+     *
      * @param request The request to use.
      */
     private static void attemptRetryOnException(String logPrefix, Request<?> request,
-            JusError exception) throws JusError {
+                                                JusError exception) throws JusError {
         RetryPolicy retryPolicy = request.getRetryPolicy();
         int oldTimeout = request.getTimeoutMs();
 
@@ -225,16 +228,15 @@ public class BasicNetwork implements Network {
         JusLog.v("HTTP ERROR(%s) %d ms to fetch %s", what, (now - start), url);
     }
 
-    /** Reads the contents of HttpEntity into a byte[]. */
+    /**
+     * Reads the contents of HttpEntity into a byte[].
+     */
     private byte[] entityToBytes(HttpEntity entity) throws IOException, ServerError {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(mPool, (int) entity.getContentLength());
         byte[] buffer = null;
         try {
             InputStream in = entity.getContent();
-            if (in == null) {
-                throw new ServerError();
-            }
             buffer = mPool.getBuf(1024);
             int count;
             while ((count = in.read(buffer)) != -1) {

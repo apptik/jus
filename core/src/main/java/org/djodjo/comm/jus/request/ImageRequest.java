@@ -165,7 +165,7 @@ public class ImageRequest extends Request<Bitmap> {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
                 JusLog.e("Caught OOM for %d byte image, url=%s", response.data.length, getUrl());
-                return Response.error(new ParseError(e));
+                return Response.error(new ParseError(e, this));
             }
         }
     }
@@ -214,7 +214,7 @@ public class ImageRequest extends Request<Bitmap> {
         }
 
         if (bitmap == null) {
-            return Response.error(new ParseError(response));
+            return Response.error(new ParseError(this, response));
         } else {
             return Response.success(bitmap, HttpHeaderParser.parseCacheHeaders(response));
         }

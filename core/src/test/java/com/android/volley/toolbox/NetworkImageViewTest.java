@@ -2,6 +2,7 @@ package org.djodjo.comm.jus.toolbox;
 
 import android.view.ViewGroup.LayoutParams;
 
+import org.djodjo.comm.jus.widget.NetworkImageView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

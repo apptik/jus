@@ -18,6 +18,7 @@
 package org.djodjo.comm.jus;
 
 import org.djodjo.comm.jus.Request.Priority;
+import org.djodjo.comm.jus.error.TimeoutError;
 import org.djodjo.comm.jus.mock.MockNetwork;
 import org.djodjo.comm.jus.mock.MockRequest;
 import org.djodjo.comm.jus.toolbox.NoCache;

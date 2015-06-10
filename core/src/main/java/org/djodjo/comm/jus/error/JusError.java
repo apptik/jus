@@ -15,40 +15,50 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.error;
+
+import org.djodjo.comm.jus.NetworkResponse;
+import org.djodjo.comm.jus.Request;
 
 /**
  * Exception style class encapsulating Jus errors
  */
 @SuppressWarnings("serial")
 public class JusError extends Exception {
+    public final Request<?> request;
     public final NetworkResponse networkResponse;
     private long networkTimeMs;
 
-    public JusError() {
+    public JusError(Request<?> request) {
+        this.request = request;
         networkResponse = null;
     }
 
-    public JusError(NetworkResponse response) {
+    public JusError(Request<?> request, NetworkResponse response) {
+        this.request = request;
         networkResponse = response;
     }
 
-    public JusError(String exceptionMessage) {
+    public JusError(String exceptionMessage, Request<?> request) {
        super(exceptionMessage);
-       networkResponse = null;
+        this.request = request;
+        networkResponse = null;
     }
 
-    public JusError(String exceptionMessage, Throwable reason) {
+    public JusError(String exceptionMessage, Throwable reason, Request<?> request) {
         super(exceptionMessage, reason);
+        this.request = request;
         networkResponse = null;
     }
 
-    public JusError(Throwable cause) {
+    public JusError(Throwable cause, Request<?> request) {
         super(cause);
+        this.request = request;
         networkResponse = null;
     }
 
-    /* package */ void setNetworkTimeMs(long networkTimeMs) {
+    /* package */
+    public void setNetworkTimeMs(long networkTimeMs) {
        this.networkTimeMs = networkTimeMs;
     }
 

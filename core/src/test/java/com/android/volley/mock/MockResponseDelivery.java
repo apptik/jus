@@ -17,7 +17,7 @@
 
 package org.djodjo.comm.jus.mock;
 
-import org.djodjo.comm.jus.JusError;
+import org.djodjo.comm.jus.error.JusError;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.Response;
 import org.djodjo.comm.jus.ResponseDelivery;

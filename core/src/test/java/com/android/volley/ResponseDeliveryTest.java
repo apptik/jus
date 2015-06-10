@@ -17,6 +17,7 @@
 
 package org.djodjo.comm.jus;
 
+import org.djodjo.comm.jus.error.ServerError;
 import org.djodjo.comm.jus.mock.MockRequest;
 import org.djodjo.comm.jus.utils.CacheTestUtils;
 import org.djodjo.comm.jus.utils.ImmediateResponseDelivery;

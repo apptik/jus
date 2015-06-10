@@ -21,7 +21,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import org.djodjo.comm.jus.JusError;
+import org.djodjo.comm.jus.error.JusError;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.Response.ErrorListener;

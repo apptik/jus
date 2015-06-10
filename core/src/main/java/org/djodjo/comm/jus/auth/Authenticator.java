@@ -15,18 +15,24 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.auth;
+
+import org.djodjo.comm.jus.error.AuthFailureError;
+import org.djodjo.comm.jus.error.AuthenticatorError;
 
 /**
- * Indicates that the server responded with an error response.
+ * An interface for interacting with auth tokens.
  */
-@SuppressWarnings("serial")
-public class ServerError extends JusError {
-    public ServerError(NetworkResponse networkResponse) {
-        super(networkResponse);
-    }
+public interface Authenticator {
+    /**
+     * Synchronously retrieves an auth token.
+     *
+     * @throws AuthFailureError If authentication did not succeed
+     */
+    public String getAuthToken() throws AuthenticatorError;
 
-    public ServerError() {
-        super();
-    }
+    /**
+     * Invalidates the provided auth token.
+     */
+    public void invalidateAuthToken(String authToken);
 }

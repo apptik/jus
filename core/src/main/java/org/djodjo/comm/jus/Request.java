@@ -25,6 +25,9 @@ import android.os.SystemClock;
 import android.text.TextUtils;
 
 import org.djodjo.comm.jus.JusLog.MarkerLog;
+import org.djodjo.comm.jus.error.AuthFailureError;
+import org.djodjo.comm.jus.error.JusError;
+import org.djodjo.comm.jus.error.TimeoutError;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;

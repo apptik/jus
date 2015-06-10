@@ -15,18 +15,21 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.error;
+
+import org.djodjo.comm.jus.Request;
 
 /**
  * Error indicating that no connection could be established when performing a Jus request.
  */
 @SuppressWarnings("serial")
 public class NoConnectionError extends NetworkError {
-    public NoConnectionError() {
-        super();
+
+    public NoConnectionError(Request<?> request) {
+        super(request);
     }
 
-    public NoConnectionError(Throwable reason) {
-        super(reason);
+    public NoConnectionError(Throwable cause, Request<?> request) {
+        super(cause, request);
     }
 }

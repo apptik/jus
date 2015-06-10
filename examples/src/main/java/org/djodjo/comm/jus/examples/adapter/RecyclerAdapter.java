@@ -31,8 +31,8 @@ import android.view.animation.Interpolator;
 
 import org.djodjo.comm.jus.examples.ImageListFragment;
 import org.djodjo.comm.jus.examples.R;
-import org.djodjo.comm.jus.toolbox.NetworkImageView;
-import org.djodjo.comm.jus.util.JusHelper;
+import org.djodjo.comm.jus.examples.api.CustomJusHelper;
+import org.djodjo.comm.jus.widget.NetworkImageView;
 import org.djodjo.json.JsonArray;
 
 /**
@@ -65,7 +65,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public static class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener  {
        // private final TextView textView;
 
        public final NetworkImageView niv ;
@@ -83,6 +83,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
           //  textView = (TextView) v.findViewById(R.id.textView);
         }
 
+        @Override
+        public void onClick(View v) {
+            CustomJusHelper.addDummyRequest("the key : " + getItemId(), "the value : " + getAdapterPosition() + " / " +  getOldPosition());
+        }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
 
@@ -122,7 +126,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         Log.d(TAG, "Element " + position + " set.");
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), JusHelper.getImageLoader());
+        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), CustomJusHelper.getImageLoader());
 
         /// COOL ANIM
         View v = (View) viewHolder.niv.getParent().getParent();
@@ -165,4 +169,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     public int getItemViewType(int position) {
         return 0;
     }
+
+
 }
