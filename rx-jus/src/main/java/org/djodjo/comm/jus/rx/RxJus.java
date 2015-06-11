@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package org.djodjo.comm.jus.rx;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import org.djodjo.comm.jus.Network;
+import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.stack.HttpStack;
 import org.djodjo.comm.jus.stack.HurlStack;
 import org.djodjo.comm.jus.toolbox.BasicNetwork;
@@ -27,7 +29,7 @@ import org.djodjo.comm.jus.toolbox.DiskBasedCache;
 
 import java.io.File;
 
-public class Jus {
+public class RxJus {
 
     /**
      * Default on-disk cache directory.
@@ -58,7 +60,7 @@ public class Jus {
 
         Network network = new BasicNetwork(stack);
 
-        RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
+        RxRequestQueue queue = new RxRequestQueue(new DiskBasedCache(cacheDir), network);
         queue.start();
 
         return queue;

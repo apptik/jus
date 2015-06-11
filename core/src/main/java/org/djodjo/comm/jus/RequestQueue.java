@@ -70,30 +70,30 @@ public class RequestQueue {
     private final Set<Request<?>> mCurrentRequests = new HashSet<Request<?>>();
 
     /** The cache triage queue. */
-    private final PriorityBlockingQueue<Request<?>> mCacheQueue =
+    protected final PriorityBlockingQueue<Request<?>> mCacheQueue =
         new PriorityBlockingQueue<Request<?>>();
 
     /** The queue of requests that are actually going out to the network. */
-    private final PriorityBlockingQueue<Request<?>> mNetworkQueue =
+    protected final PriorityBlockingQueue<Request<?>> mNetworkQueue =
         new PriorityBlockingQueue<Request<?>>();
 
     /** Number of network request dispatcher threads to start. */
-    private static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
+    public static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
 
     /** Cache interface for retrieving and storing responses. */
-    private final Cache mCache;
+    protected final Cache mCache;
 
     /** Network interface for performing requests. */
-    private final Network mNetwork;
+    protected final Network mNetwork;
 
     /** Response delivery mechanism. */
-    private final ResponseDelivery mDelivery;
+    protected final ResponseDelivery mDelivery;
 
     /** The network dispatchers. */
-    private NetworkDispatcher[] mDispatchers;
+    protected NetworkDispatcher[] mDispatchers;
 
     /** The cache dispatcher. */
-    private CacheDispatcher mCacheDispatcher;
+    protected CacheDispatcher mCacheDispatcher;
 
     private List<RequestFinishedListener> mFinishedListeners =
             new ArrayList<RequestFinishedListener>();
