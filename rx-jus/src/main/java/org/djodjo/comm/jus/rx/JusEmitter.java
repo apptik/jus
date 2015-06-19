@@ -14,7 +14,6 @@ public class JusEmitter {
     public static JusEmitter get() {
         if(inst==null) {
             inst = new JusEmitter();
-
         }
         return inst;
     }
@@ -25,10 +24,6 @@ public class JusEmitter {
 
     public BehaviorSubject<JusEvent> getJusSubject() {
         return jusSubject;
-    }
-
-    public void setJusSubject(BehaviorSubject<JusEvent> jusSubject) {
-        this.jusSubject = jusSubject;
     }
 
     BehaviorSubject<JusEvent> jusSubject = BehaviorSubject.create();
@@ -57,10 +52,10 @@ public class JusEmitter {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                if(event.response.getClass().isAssignableFrom(JusError.class)) {
-                   //TODO enable this when subject can deliver error but continues after that
-                   // doEmitError(requestSubject, (JusError) event.response);
-                }
+//                if(event.response.getClass().isAssignableFrom(JusError.class)) {
+//                   //TODO enable this when subject can deliver error but continues after that
+//                   doEmitError(requestSubject, (JusError) event.response);
+//                }
                 doEmit(requestSubject, event);
             }
         });

@@ -19,7 +19,7 @@ android {
 }
 
 dependencies {
-
+    //testCompile "org.robolectric:robolectric:2.4"
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
