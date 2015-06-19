@@ -23,3 +23,5 @@ dependencies {
     compile "io.reactivex:rxjava:1.0.11"
     compile project(':core')
 }
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
