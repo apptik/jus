@@ -17,7 +17,6 @@
 
 package org.djodjo.comm.jus.auth;
 
-import org.djodjo.comm.jus.error.AuthFailureError;
 import org.djodjo.comm.jus.error.AuthenticatorError;
 
 /**
@@ -27,7 +26,7 @@ public interface Authenticator {
     /**
      * Synchronously retrieves an auth token.
      *
-     * @throws AuthFailureError If authentication did not succeed
+     * @throws AuthenticatorError If authentication did not succeed
      */
     public String getAuthToken() throws AuthenticatorError;
 
