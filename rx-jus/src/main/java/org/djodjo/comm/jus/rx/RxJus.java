@@ -29,12 +29,18 @@ import org.djodjo.comm.jus.toolbox.DiskBasedCache;
 
 import java.io.File;
 
+import rx.subjects.BehaviorSubject;
+
+/**
+ * reactive jus.
+ * provides reactive request queue
+ */
 public class RxJus {
 
     /**
      * Default on-disk cache directory.
      */
-    private static final String DEFAULT_CACHE_DIR = "jus";
+    private static final String DEFAULT_CACHE_DIR = "rxjus";
 
     /**
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
@@ -46,7 +52,7 @@ public class RxJus {
     public static RequestQueue newRequestQueue(Context context, HttpStack stack) {
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
 
-        String userAgent = "jus/0";
+        String userAgent = "rxjus/0";
         try {
             String packageName = context.getPackageName();
             PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
@@ -74,5 +80,9 @@ public class RxJus {
      */
     public static RequestQueue newRequestQueue(Context context) {
         return newRequestQueue(context, null);
+    }
+
+    public BehaviorSubject<JusEvent> getJusSubject() {
+        return JusEmitter.get().getJusSubject();
     }
 }

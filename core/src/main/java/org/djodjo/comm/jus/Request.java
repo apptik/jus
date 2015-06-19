@@ -114,19 +114,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     private Object mTag;
 
     /**
-     * Creates a new request with the given URL and error listener.  Note that
-     * the normal response listener is not provided here as delivery of responses
-     * is provided by subclasses, who have a better idea of how to deliver an
-     * already-parsed response.
-     *
-     * @deprecated Use {@link #Request(int, String, org.djodjo.comm.jus.Response.ErrorListener)}.
-     */
-    @Deprecated
-    public Request(String url, Response.ErrorListener listener) {
-        this(Method.DEPRECATED_GET_OR_POST, url, listener);
-    }
-
-    /**
      * Creates a new request with the given method (one of the values from {@link Method}),
      * URL, and error listener.  Note that the normal response listener is not provided here as
      * delivery of responses is provided by subclasses, who have a better idea of how to deliver

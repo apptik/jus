@@ -26,6 +26,7 @@ import org.djodjo.comm.jus.utils.CacheTestUtils;
 import org.djodjo.comm.jus.utils.ImmediateResponseDelivery;
 
 import android.os.SystemClock;
+
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class RequestQueueTest {
      * @param count Number of requests to make
      */
     private List<MockRequest> makeRequests(int count) {
-        Request.Priority[] allPriorities = Request.Priority.values();
+        Priority[] allPriorities = Request.Priority.values();
         Random random = new Random();
 
         List<MockRequest> requests = new ArrayList<MockRequest>();
