@@ -26,8 +26,13 @@ public class JusEmitter {
         return jusSubject;
     }
 
+    public BehaviorSubject<RequestEvent> getRequestSubject() {
+        return requestSubject;
+    }
+
     BehaviorSubject<JusEvent> jusSubject = BehaviorSubject.create();
     BehaviorSubject<RequestEvent> requestSubject = BehaviorSubject.create();
+
     Handler handler;
 
     //emitter need to post onNext for the subject on the same thread
