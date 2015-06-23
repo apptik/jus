@@ -4,7 +4,7 @@ package org.djodjo.comm.jus.util;
 import android.graphics.Bitmap;
 import android.support.v4.util.LruCache;
 
-import org.djodjo.comm.jus.toolbox.ImageLoader;
+import org.djodjo.comm.jus.ui.ImageLoader;
 
 public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements ImageLoader.ImageCache {
 

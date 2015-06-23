@@ -32,7 +32,7 @@ import android.view.animation.Interpolator;
 import org.djodjo.comm.jus.examples.ImageListFragment;
 import org.djodjo.comm.jus.examples.R;
 import org.djodjo.comm.jus.examples.api.CustomJusHelper;
-import org.djodjo.comm.jus.widget.NetworkImageView;
+import org.djodjo.comm.jus.ui.NetworkImageView;
 import org.djodjo.json.JsonArray;
 
 /**

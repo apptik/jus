@@ -1,1 +1,1 @@
-include ':core', ':examples', ':rx-jus', ':jus-util', ':rx-examples'
+include ':jus-core', ':examples', ':rx-jus', ':jus-util', ':rx-examples', ':jus-ui'

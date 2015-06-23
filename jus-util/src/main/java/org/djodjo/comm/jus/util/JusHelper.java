@@ -4,7 +4,7 @@ package org.djodjo.comm.jus.util;
 import android.content.Context;
 
 import org.djodjo.comm.jus.RequestQueue;
-import org.djodjo.comm.jus.toolbox.ImageLoader;
+import org.djodjo.comm.jus.ui.ImageLoader;
 import org.djodjo.comm.jus.Jus;
 
 public class JusHelper {
