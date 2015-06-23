@@ -3,7 +3,7 @@ package org.djodjo.comm.jus.util;
 
 import android.graphics.Bitmap;
 
-import org.djodjo.comm.jus.toolbox.ImageLoader;
+import org.djodjo.comm.jus.ui.ImageLoader;
 
 
 public class NoLruCache
