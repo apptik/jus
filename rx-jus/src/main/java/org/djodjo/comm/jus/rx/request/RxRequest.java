@@ -43,7 +43,6 @@ public abstract class RxRequest<T> extends Request<T> {
         JusEmitter.get()
                 .emitRequestError(new RequestEvent("error", this, error));
         requestSubject.onError(error);
-        super.deliverError(error);
     }
 
     @Override
