@@ -25,16 +25,15 @@ public abstract class RxRequest<T> extends Request<T> {
     @Override
     protected void deliverResponse(T response) {
         JusEmitter.get()
-                .emitRequestEvent(new RequestEvent("response", this, response));
+                .emitRequestEvent(new RequestEvent("deliver response", this, response));
         requestSubject.onNext(new RequestEvent("deliver response", this, response));
-        requestSubject.onCompleted();
     }
 
     @Override
     public void addMarker(String tag) {
         JusEmitter.get()
-                .emitRequestEvent(new RequestEvent("response", this, null));
-        requestSubject.onNext(new RequestEvent("response", this, null));
+                .emitRequestEvent(new RequestEvent(tag, this, null));
+        requestSubject.onNext(new RequestEvent(tag, this, null));
         super.addMarker(tag);
 
     }
@@ -42,7 +41,7 @@ public abstract class RxRequest<T> extends Request<T> {
     @Override
     public void deliverError(JusError error) {
         JusEmitter.get()
-                .emitRequestError(new RequestEvent("response", this, error));
+                .emitRequestError(new RequestEvent("error", this, error));
         requestSubject.onError(error);
         super.deliverError(error);
     }

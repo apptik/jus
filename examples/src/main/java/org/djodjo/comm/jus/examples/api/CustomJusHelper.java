@@ -9,7 +9,7 @@ import org.djodjo.comm.jus.error.JusError;
 import org.djodjo.comm.jus.Request;
 import org.djodjo.comm.jus.RequestQueue;
 import org.djodjo.comm.jus.Response;
-import org.djodjo.comm.jus.toolbox.ImageLoader;
+import org.djodjo.comm.jus.ui.ImageLoader;
 import org.djodjo.comm.jus.util.DefaultBitmapLruCache;
 
 public class CustomJusHelper {
