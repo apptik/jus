@@ -20,7 +20,6 @@ package org.djodjo.comm.jus.stack;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.ProtocolVersion;
 import org.apache.http.StatusLine;
 import org.apache.http.entity.BasicHttpEntity;
@@ -138,9 +137,9 @@ public class HurlStack implements HttpStack {
      */
     private static boolean hasResponseBody(int requestMethod, int responseCode) {
         return requestMethod != Request.Method.HEAD
-                && !(HttpStatus.SC_CONTINUE <= responseCode && responseCode < HttpStatus.SC_OK)
-                && responseCode != HttpStatus.SC_NO_CONTENT
-                && responseCode != HttpStatus.SC_NOT_MODIFIED;
+                && !(100 <= responseCode && responseCode < HttpURLConnection.HTTP_OK)
+                && responseCode != HttpURLConnection.HTTP_NO_CONTENT
+                && responseCode != HttpURLConnection.HTTP_NOT_MODIFIED;
     }
 
     /**

@@ -22,7 +22,6 @@ import android.os.SystemClock;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.StatusLine;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.cookie.DateUtils;
@@ -47,6 +46,7 @@ import org.djodjo.comm.jus.stack.HttpStack;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.Collections;
@@ -110,11 +110,11 @@ public class BasicNetwork implements Network {
 
                 responseHeaders = convertHeaders(httpResponse.getAllHeaders());
                 // Handle cache validation.
-                if (statusCode == HttpStatus.SC_NOT_MODIFIED) {
+                if (statusCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
 
                     Entry entry = request.getCacheEntry();
                     if (entry == null) {
-                        return new NetworkResponse(HttpStatus.SC_NOT_MODIFIED, null,
+                        return new NetworkResponse(HttpURLConnection.HTTP_NOT_MODIFIED, null,
                                 responseHeaders, true,
                                 SystemClock.elapsedRealtime() - requestStart);
                     }
@@ -124,7 +124,7 @@ public class BasicNetwork implements Network {
                     // the new ones from the response.
                     // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
                     entry.responseHeaders.putAll(responseHeaders);
-                    return new NetworkResponse(HttpStatus.SC_NOT_MODIFIED, entry.data,
+                    return new NetworkResponse(HttpURLConnection.HTTP_NOT_MODIFIED, entry.data,
                             entry.responseHeaders, true,
                             SystemClock.elapsedRealtime() - requestStart);
                 }
@@ -168,7 +168,7 @@ public class BasicNetwork implements Network {
                 if (responseContents != null) {
                     networkResponse = new NetworkResponse(statusCode, responseContents,
                             responseHeaders, false, SystemClock.elapsedRealtime() - requestStart);
-                    if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
+                    if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         //makes sense to be thrown only when availabe Authenticator is available
                         if (authenticator != null) {
                             try {
@@ -184,7 +184,7 @@ public class BasicNetwork implements Network {
                         } else {
                             throw new AuthFailureError(networkResponse);
                         }
-                    } else if (statusCode == HttpStatus.SC_FORBIDDEN) {
+                    } else if (statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         throw new ForbiddenError( networkResponse);
                     } else if (statusCode > 399 && statusCode < 500) {
                         //some request query error that does not make sense to retry assuming the service we use is deterministic

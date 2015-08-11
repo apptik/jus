@@ -35,16 +35,16 @@ import org.apache.http.protocol.HttpContext;
 
 
 public class MockHttpClient implements HttpClient {
-    private int mStatusCode = HttpStatus.SC_OK;
+    private int mStatusCode = HttpURLConnection.HTTP_OK;
     private HttpEntity mResponseEntity = null;
 
     public void setResponseData(HttpEntity entity) {
-        mStatusCode = HttpStatus.SC_OK;
+        mStatusCode = HttpURLConnection.HTTP_OK;
         mResponseEntity = entity;
     }
 
     public void setErrorCode(int statusCode) {
-        if (statusCode == HttpStatus.SC_OK) {
+        if (statusCode == HttpURLConnection.HTTP_OK) {
             throw new IllegalArgumentException("statusCode cannot be 200 for an error");
         }
         mStatusCode = statusCode;
