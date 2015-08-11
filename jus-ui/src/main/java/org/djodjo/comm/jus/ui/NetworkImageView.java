@@ -183,7 +183,7 @@ public class NetworkImageView extends ImageView {
         mImageContainer = newContainer;
     }
 
-    private void setDefaultImageOrNull() {
+    public void setDefaultImageOrNull() {
         if(mDefaultImageId != 0) {
             setImageResource(mDefaultImageId);
         }

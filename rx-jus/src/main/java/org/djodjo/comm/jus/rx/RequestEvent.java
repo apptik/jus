@@ -8,8 +8,12 @@ import org.djodjo.comm.jus.Request;
  */
 public class RequestEvent {
 
+    //any message normally a marker description
     public final String message;
+    //the request
     public final Request request;
+    //actual response pojo or wahtever was requested or an Error
+    //if JusError then it normally should contain the network response also
     public final Object response;
 
     public RequestEvent(String message, Request request, Object response) {

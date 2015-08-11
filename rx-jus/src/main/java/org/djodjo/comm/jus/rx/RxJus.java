@@ -58,6 +58,8 @@ public class RxJus {
             PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
             userAgent = packageName + "/" + info.versionCode;
         } catch (NameNotFoundException e) {
+            //should not happen
+            throw new RuntimeException(e);
         }
 
         if (stack == null) {

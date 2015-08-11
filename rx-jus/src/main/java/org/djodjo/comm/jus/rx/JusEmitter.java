@@ -57,10 +57,6 @@ public class JusEmitter {
         handler.post(new Runnable() {
             @Override
             public void run() {
-//                if(event.response.getClass().isAssignableFrom(JusError.class)) {
-//                   //TODO enable this when subject can deliver error but continues after that
-//                   doEmitError(requestSubject, (JusError) event.response);
-//                }
                 doEmit(requestSubject, event);
             }
         });
