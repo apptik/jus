@@ -17,10 +17,10 @@
 
 package org.djodjo.comm.jus.stack;
 
-import org.djodjo.comm.jus.error.AuthFailureError;
+import org.djodjo.comm.jus.NetworkResponse;
 import org.djodjo.comm.jus.Request;
-
-import org.apache.http.HttpResponse;
+import org.djodjo.comm.jus.error.AuthFailureError;
+import org.djodjo.comm.jus.toolbox.ByteArrayPool;
 
 import java.io.IOException;
 import java.util.Map;
@@ -40,7 +40,7 @@ public interface HttpStack {
      *         {@link Request#getHeaders()}
      * @return the HTTP response
      */
-    public HttpResponse performRequest(Request<?> request, Map<String, String> additionalHeaders)
+    public NetworkResponse performRequest(Request<?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
         throws IOException, AuthFailureError;
 
 }

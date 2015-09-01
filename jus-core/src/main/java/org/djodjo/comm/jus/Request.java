@@ -50,7 +50,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
      * Supported request methods.
      */
     public interface Method {
-        int DEPRECATED_GET_OR_POST = -1;
         int GET = 0;
         int POST = 1;
         int PUT = 2;
@@ -341,53 +340,6 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     @Deprecated
     protected Map<String, String> getPostParams() throws AuthFailureError {
         return getParams();
-    }
-
-    /**
-     * Returns which encoding should be used when converting POST parameters returned by
-     * {@link #getPostParams()} into a raw POST body.
-     *
-     * <p>This controls both encodings:
-     * <ol>
-     *     <li>The string encoding used when converting parameter names and values into bytes prior
-     *         to URL encoding them.</li>
-     *     <li>The string encoding used when converting the URL encoded parameters into a raw
-     *         byte array.</li>
-     * </ol>
-     *
-     * @deprecated Use {@link #getParamsEncoding()} instead.
-     */
-    @Deprecated
-    protected String getPostParamsEncoding() {
-        return getParamsEncoding();
-    }
-
-    /**
-     * @deprecated Use {@link #getBodyContentType()} instead.
-     */
-    @Deprecated
-    public String getPostBodyContentType() {
-        return getBodyContentType();
-    }
-
-    /**
-     * Returns the raw POST body to be sent.
-     *
-     * @throws AuthFailureError In the event of auth failure
-     *
-     * @deprecated Use {@link #getBody()} instead.
-     */
-    @Deprecated
-    public byte[] getPostBody() throws AuthFailureError {
-        // Note: For compatibility with legacy clients of jus, this implementation must remain
-        // here instead of simply calling the getBody() function because this function must
-        // call getPostParams() and getPostParamsEncoding() since legacy clients would have
-        // overridden these two member functions for POST requests.
-        Map<String, String> postParams = getPostParams();
-        if (postParams != null && postParams.size() > 0) {
-            return encodeParameters(postParams, getPostParamsEncoding());
-        }
-        return null;
     }
 
     /**

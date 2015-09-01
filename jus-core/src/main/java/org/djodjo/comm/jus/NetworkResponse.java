@@ -17,8 +17,7 @@
 
 package org.djodjo.comm.jus;
 
-import org.apache.http.HttpStatus;
-
+import java.net.HttpURLConnection;
 import java.util.Collections;
 import java.util.Map;
 

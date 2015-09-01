@@ -19,10 +19,9 @@ package org.djodjo.comm.jus.toolbox;
 
 import org.djodjo.comm.jus.Cache;
 import org.djodjo.comm.jus.NetworkResponse;
-
-import org.apache.http.impl.cookie.DateParseException;
-import org.apache.http.impl.cookie.DateUtils;
-import org.apache.http.protocol.HTTP;
+import org.djodjo.comm.jus.http.DateParseException;
+import org.djodjo.comm.jus.http.DateUtils;
+import org.djodjo.comm.jus.http.HTTP;
 
 import java.util.Map;
 
