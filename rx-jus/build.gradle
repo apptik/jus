@@ -23,7 +23,7 @@ android {
 
 dependencies {
     compile project(':jus-core')
-    compile 'io.reactivex:rxjava:1.0.12'
+    compile 'io.reactivex:rxjava:1.0.14'
 }
 
 
