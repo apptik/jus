@@ -24,7 +24,6 @@ android {
 dependencies {
     compile project(':jus-core')
     compile project(':jus-ui')
-    compile 'com.android.support:support-v4:23.0.0'
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
