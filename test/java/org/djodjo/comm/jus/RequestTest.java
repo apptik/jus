@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package io.apptik.comm.jus;
 
-import org.djodjo.comm.jus.NetworkResponse;
-import org.djodjo.comm.jus.Request;
-import org.djodjo.comm.jus.Request.Priority;
-import org.djodjo.comm.jus.Response;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.Request.Priority;
+import io.apptik.comm.jus.Response;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;

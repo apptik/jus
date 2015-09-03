@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="org.djodjo.comm.jus.rx.examples" >
+    package="io.apptik.comm.jus.rx.examples" >
 
     <application
         android:allowBackup="true"

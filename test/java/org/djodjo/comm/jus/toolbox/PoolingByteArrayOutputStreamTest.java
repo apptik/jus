@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
 import java.io.IOException;
 import java.util.Arrays;

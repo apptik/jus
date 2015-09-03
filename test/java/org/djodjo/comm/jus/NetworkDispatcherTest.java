@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package io.apptik.comm.jus;
 
-import org.djodjo.comm.jus.mock.MockCache;
-import org.djodjo.comm.jus.mock.MockNetwork;
-import org.djodjo.comm.jus.mock.MockRequest;
-import org.djodjo.comm.jus.mock.MockResponseDelivery;
-import org.djodjo.comm.jus.mock.WaitableQueue;
+import io.apptik.comm.jus.mock.MockCache;
+import io.apptik.comm.jus.mock.MockNetwork;
+import io.apptik.comm.jus.mock.MockRequest;
+import io.apptik.comm.jus.mock.MockResponseDelivery;
+import io.apptik.comm.jus.mock.WaitableQueue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

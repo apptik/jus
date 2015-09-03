@@ -33,7 +33,7 @@
               android:layout_width="@dimen/navigation_drawer_width"
               android:layout_height="match_parent"
               android:layout_gravity="start"
-              android:name="org.djodjo.comm.jus.examples.nav.NavigationDrawerFragment"
+              android:name="io.apptik.comm.jus.examples.nav.NavigationDrawerFragment"
               tools:layout="@layout/fragment_navigation_drawer"/>
 
 </android.support.v4.widget.DrawerLayout>

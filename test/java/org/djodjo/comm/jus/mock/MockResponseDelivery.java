@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.mock;
+package io.apptik.comm.jus.mock;
 
-import org.djodjo.comm.jus.error.JusError;
-import org.djodjo.comm.jus.Request;
-import org.djodjo.comm.jus.Response;
-import org.djodjo.comm.jus.ResponseDelivery;
+import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.Response;
+import io.apptik.comm.jus.ResponseDelivery;
 
 public class MockResponseDelivery implements ResponseDelivery {
 

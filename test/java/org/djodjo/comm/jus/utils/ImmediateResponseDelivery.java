@@ -1,8 +1,8 @@
 // Copyright 2011 Google Inc. All rights reserved.
 
-package org.djodjo.comm.jus.utils;
+package io.apptik.comm.jus.utils;
 
-import org.djodjo.comm.jus.ExecutorDelivery;
+import io.apptik.comm.jus.ExecutorDelivery;
 
 import java.util.concurrent.Executor;
 

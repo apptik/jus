@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.mock;
+package io.apptik.comm.jus.mock;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;

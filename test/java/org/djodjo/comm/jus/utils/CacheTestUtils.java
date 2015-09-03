@@ -1,8 +1,8 @@
 // Copyright 2011 Google Inc. All Rights Reserved.
 
-package org.djodjo.comm.jus.utils;
+package io.apptik.comm.jus.utils;
 
-import org.djodjo.comm.jus.Cache;
+import io.apptik.comm.jus.Cache;
 
 import java.util.Random;
 

@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.mock;
+package io.apptik.comm.jus.mock;
 
-import org.djodjo.comm.jus.Cache;
+import io.apptik.comm.jus.Cache;
 
 public class MockCache implements Cache {
 

@@ -1,8 +1,8 @@
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
 import android.view.ViewGroup.LayoutParams;
 
-import org.djodjo.comm.jus.ui.NetworkImageView;
+import io.apptik.comm.jus.ui.NetworkImageView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

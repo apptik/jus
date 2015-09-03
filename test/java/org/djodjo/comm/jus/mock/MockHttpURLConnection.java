@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.mock;
+package io.apptik.comm.jus.mock;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.mock;
+package io.apptik.comm.jus.mock;
 
-import org.djodjo.comm.jus.NetworkResponse;
-import org.djodjo.comm.jus.Request;
-import org.djodjo.comm.jus.Response;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.Response;
 
 import java.util.HashMap;
 import java.util.Map;

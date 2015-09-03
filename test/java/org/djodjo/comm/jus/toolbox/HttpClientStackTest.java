@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
-import org.djodjo.comm.jus.Request.Method;
-import org.djodjo.comm.jus.mock.TestRequest;
-import org.djodjo.comm.jus.stack.HttpClientStack;
-import org.djodjo.comm.jus.stack.HttpClientStack.HttpPatch;
+import io.apptik.comm.jus.Request.Method;
+import io.apptik.comm.jus.mock.TestRequest;
+import io.apptik.comm.jus.stack.HttpClientStack;
+import io.apptik.comm.jus.stack.HttpClientStack.HttpPatch;
 
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;

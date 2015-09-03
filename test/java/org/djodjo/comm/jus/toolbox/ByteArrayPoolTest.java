@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
 import org.junit.After;
 import org.junit.Before;

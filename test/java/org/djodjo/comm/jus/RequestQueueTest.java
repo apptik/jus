@@ -15,15 +15,15 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package io.apptik.comm.jus;
 
-import org.djodjo.comm.jus.Request.Priority;
-import org.djodjo.comm.jus.error.TimeoutError;
-import org.djodjo.comm.jus.mock.MockNetwork;
-import org.djodjo.comm.jus.mock.MockRequest;
-import org.djodjo.comm.jus.toolbox.NoCache;
-import org.djodjo.comm.jus.utils.CacheTestUtils;
-import org.djodjo.comm.jus.utils.ImmediateResponseDelivery;
+import io.apptik.comm.jus.Request.Priority;
+import io.apptik.comm.jus.error.TimeoutError;
+import io.apptik.comm.jus.mock.MockNetwork;
+import io.apptik.comm.jus.mock.MockRequest;
+import io.apptik.comm.jus.toolbox.NoCache;
+import io.apptik.comm.jus.utils.CacheTestUtils;
+import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
 
 import android.os.SystemClock;
 

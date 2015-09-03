@@ -5,7 +5,7 @@ android {
     buildToolsVersion "23.0.0"
 
     defaultConfig {
-        applicationId "org.djodjo.comm.jus.rx.examples"
+        applicationId "io.apptik.comm.jus.rx.examples"
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1

@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
-import org.djodjo.comm.jus.Request.Method;
-import org.djodjo.comm.jus.mock.MockHttpURLConnection;
-import org.djodjo.comm.jus.mock.TestRequest;
+import io.apptik.comm.jus.Request.Method;
+import io.apptik.comm.jus.mock.MockHttpURLConnection;
+import io.apptik.comm.jus.mock.TestRequest;
 
-import org.djodjo.comm.jus.stack.HurlStack;
+import io.apptik.comm.jus.stack.HurlStack;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

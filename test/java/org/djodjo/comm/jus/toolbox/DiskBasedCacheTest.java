@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
-import org.djodjo.comm.jus.Cache;
-import org.djodjo.comm.jus.toolbox.DiskBasedCache.CacheHeader;
+import io.apptik.comm.jus.Cache;
+import io.apptik.comm.jus.toolbox.DiskBasedCache.CacheHeader;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;

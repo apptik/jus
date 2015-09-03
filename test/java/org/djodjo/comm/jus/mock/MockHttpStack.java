@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.mock;
+package io.apptik.comm.jus.mock;
 
-import org.djodjo.comm.jus.error.AuthFailureError;
-import org.djodjo.comm.jus.Request;
-import org.djodjo.comm.jus.stack.HttpStack;
+import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.stack.HttpStack;
 
 import org.apache.http.HttpResponse;
 

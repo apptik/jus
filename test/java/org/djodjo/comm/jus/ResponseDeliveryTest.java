@@ -15,12 +15,12 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus;
+package io.apptik.comm.jus;
 
-import org.djodjo.comm.jus.error.ServerError;
-import org.djodjo.comm.jus.mock.MockRequest;
-import org.djodjo.comm.jus.utils.CacheTestUtils;
-import org.djodjo.comm.jus.utils.ImmediateResponseDelivery;
+import io.apptik.comm.jus.error.ServerError;
+import io.apptik.comm.jus.mock.MockRequest;
+import io.apptik.comm.jus.utils.CacheTestUtils;
+import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
 
 import org.junit.After;
 import org.junit.Before;

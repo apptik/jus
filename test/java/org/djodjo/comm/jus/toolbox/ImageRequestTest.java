@@ -15,14 +15,14 @@
  * limitations under the License.
  */
 
-package org.djodjo.comm.jus.toolbox;
+package io.apptik.comm.jus.toolbox;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 
-import org.djodjo.comm.jus.NetworkResponse;
-import org.djodjo.comm.jus.Response;
-import org.djodjo.comm.jus.request.ImageRequest;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Response;
+import io.apptik.comm.jus.request.ImageRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.robolectric.RobolectricTestRunner;
