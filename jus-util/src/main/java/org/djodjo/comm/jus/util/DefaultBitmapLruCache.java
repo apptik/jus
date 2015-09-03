@@ -2,7 +2,7 @@ package org.djodjo.comm.jus.util;
 
 
 import android.graphics.Bitmap;
-import android.support.v4.util.LruCache;
+import android.util.LruCache;
 
 import org.djodjo.comm.jus.ui.ImageLoader;
 
