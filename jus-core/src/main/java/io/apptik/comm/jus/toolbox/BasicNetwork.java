@@ -101,7 +101,7 @@ public class BasicNetwork implements Network {
 
                 // Handle cache validation.
                 if (httpResponse.statusCode == HttpURLConnection.HTTP_NOT_MODIFIED
-                        && request.getCacheEntry()!=null) {
+                        && request.getCacheEntry() != null) {
 
                     Entry entry = request.getCacheEntry();
 
@@ -128,21 +128,20 @@ public class BasicNetwork implements Network {
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Bad URL " + request.getUrl(), e);
             } catch (IOException e) {
-                int statusCode = 0;
                 NetworkResponse networkResponse = null;
                 if (httpResponse != null) {
-                    statusCode = httpResponse.statusCode;
+                    networkResponse = httpResponse;
                 } else {
                     throw new NoConnectionError(e);
                 }
-                JusLog.e("Unexpected response code %d for %s", statusCode, request.getUrl());
+                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode, request.getUrl());
                 if (networkResponse != null) {
-                    if (statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                        //makes sense to be thrown only when availabe Authenticator is available
+                    if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                        // thrown when available Authenticator is available
                         if (authenticator != null) {
                             try {
                                 //TODO call refresh token may be
-                               authToken = authenticator.getAuthToken();
+                                authToken = authenticator.getAuthToken();
                             } catch (AuthenticatorError authenticatorError) {
                                 //finally we didn't succeed
                                 throw new AuthFailureError(
@@ -151,14 +150,15 @@ public class BasicNetwork implements Network {
                             attemptRetryOnException("auth", request,
                                     new AuthFailureError(networkResponse));
                         } else {
+                            //or if another way of auth is used
                             throw new AuthFailureError(networkResponse);
                         }
-                    } else if (statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
-                        throw new ForbiddenError( networkResponse);
-                    } else if (statusCode > 399 && statusCode < 500) {
+                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
+                        throw new ForbiddenError(networkResponse);
+                    } else if (networkResponse.statusCode > 399 && networkResponse.statusCode < 500) {
                         //some request query error that does not make sense to retry, assuming the service we use is deterministic
                         throw new RequestError(networkResponse);
-                    } else if (statusCode > 499) {
+                    } else if (networkResponse.statusCode > 499) {
                         //TODO some server error might not need to be retried
                         attemptRetryOnException("server",
                                 request, new ServerError(request, networkResponse));
@@ -213,10 +213,10 @@ public class BasicNetwork implements Network {
 
     private void addAuthHeaders(Map<String, String> headers) throws AuthenticatorError {
         if (authenticator == null) return;
-        if(authToken==null) {
+        if (authToken == null) {
             authToken = authenticator.getAuthToken();
         }
-        headers.put("Authorization", "Bearer " +  authToken);
+        headers.put("Authorization", "Bearer " + authToken);
     }
 
     private void addCacheHeaders(Map<String, String> headers, Cache.Entry entry) {
