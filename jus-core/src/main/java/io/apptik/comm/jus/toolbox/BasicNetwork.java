@@ -19,8 +19,6 @@ package io.apptik.comm.jus.toolbox;
 
 import android.os.SystemClock;
 
-import org.apache.http.conn.ConnectTimeoutException;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -123,8 +121,6 @@ public class BasicNetwork implements Network {
                 return httpResponse;
             } catch (SocketTimeoutException e) {
                 attemptRetryOnException("socket", request, new TimeoutError());
-            } catch (ConnectTimeoutException e) {
-                attemptRetryOnException("connection", request, new TimeoutError());
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Bad URL " + request.getUrl(), e);
             } catch (IOException e) {
@@ -155,6 +151,10 @@ public class BasicNetwork implements Network {
                         }
                     } else if (networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         throw new ForbiddenError(networkResponse);
+                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_CLIENT_TIMEOUT) {
+                        attemptRetryOnException("http-client", request, new TimeoutError());
+                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_GATEWAY_TIMEOUT) {
+                        attemptRetryOnException("gateway-client", request, new TimeoutError());
                     } else if (networkResponse.statusCode > 399 && networkResponse.statusCode < 500) {
                         //some request query error that does not make sense to retry, assuming the service we use is deterministic
                         throw new RequestError(networkResponse);
