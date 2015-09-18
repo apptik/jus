@@ -97,25 +97,39 @@ public class BasicNetwork implements Network {
 
                 httpResponse = mHttpStack.performRequest(request, headers, mPool);
 
-                // Handle cache validation.
-                if (httpResponse.statusCode == HttpURLConnection.HTTP_NOT_MODIFIED
-                        && request.getCacheEntry() != null) {
-
-                    Entry entry = request.getCacheEntry();
-
-                    // A HTTP 304 response does not have all header fields. We
-                    // have to use the header fields from the cache entry plus
-                    // the new ones from the response.
-                    // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
-                    entry.responseHeaders.putAll(httpResponse.headers);
-                    httpResponse.headers.putAll(entry.responseHeaders);
-                }
-
                 // if the request is slow, log it.
                 long requestLifetime = SystemClock.elapsedRealtime() - requestStart;
                 logSlowRequests(requestLifetime, request, httpResponse.data, httpResponse.statusCode);
 
-                if (httpResponse.statusCode < 200 || httpResponse.statusCode > 299) {
+                // Handle cache validation.
+                if (httpResponse.statusCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
+
+                    Entry entry = request.getCacheEntry();
+
+                    if(entry !=null) {
+
+                        // A HTTP 304 response does not have all header fields. We
+                        // have to use the header fields from the cache entry plus
+                        // the new ones from the response.
+                        // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
+                        entry.responseHeaders.putAll(httpResponse.headers);
+
+                        httpResponse = new NetworkResponse(
+                                httpResponse.statusCode,
+                                entry.data, entry.responseHeaders,
+                                true,
+                                SystemClock.elapsedRealtime() - requestStart
+                        );
+                    } else {
+                        httpResponse = new NetworkResponse(
+                                httpResponse.statusCode,
+                                null,
+                                httpResponse.headers,
+                                true,
+                                SystemClock.elapsedRealtime() - requestStart
+                        );
+                    }
+                } else if (httpResponse.statusCode < 200 || httpResponse.statusCode > 299) {
                     throw new IOException();
                 }
                 return httpResponse;

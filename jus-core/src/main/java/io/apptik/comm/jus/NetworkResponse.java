@@ -69,5 +69,6 @@ public class NetworkResponse {
 
     /** Network roundtrip time in milliseconds. */
     public final long networkTimeMs;
+
 }
 
