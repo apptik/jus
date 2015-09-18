@@ -20,7 +20,7 @@ android {
 
 dependencies {
     compile project(':jus-core')
-    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile rootProject.ext.supportAppCompat
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
