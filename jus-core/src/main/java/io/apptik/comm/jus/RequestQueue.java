@@ -246,7 +246,7 @@ public class RequestQueue {
 
         // Process requests in the order they are added.
         request.setSequence(getSequenceNumber());
-        request.addMarker("add-to-queue");
+        request.addMarker(Request.EVENT_ADD_TO_QUEUE);
 
         // If the request is uncacheable, skip the cache queue and go straight to the network.
         if (!request.shouldCache()) {

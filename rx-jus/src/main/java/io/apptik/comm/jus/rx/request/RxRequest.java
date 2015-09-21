@@ -11,6 +11,8 @@ import rx.subjects.BehaviorSubject;
 public abstract class RxRequest<T> extends Request<T> {
 
 
+    public static final String EVENT_DELIVER_RESPONSE = "deliver response";
+    public static final String EVENT_DELIVER_ERROR = "deliver error";
     private BehaviorSubject<RequestEvent> requestSubject = BehaviorSubject.create();
 
     public RxRequest(int method, String url) {
@@ -25,8 +27,8 @@ public abstract class RxRequest<T> extends Request<T> {
     @Override
     protected void deliverResponse(T response) {
         JusEmitter.get()
-                .emitRequestEvent(new RequestEvent("deliver response", this, response));
-        requestSubject.onNext(new RequestEvent("deliver response", this, response));
+                .emitRequestEvent(new RequestEvent(EVENT_DELIVER_RESPONSE, this, response));
+        requestSubject.onNext(new RequestEvent(EVENT_DELIVER_RESPONSE, this, response));
     }
 
     @Override
@@ -41,7 +43,7 @@ public abstract class RxRequest<T> extends Request<T> {
     @Override
     public void deliverError(JusError error) {
         JusEmitter.get()
-                .emitRequestError(new RequestEvent("error", this, error));
+                .emitRequestError(new RequestEvent(EVENT_DELIVER_ERROR, this, error));
         requestSubject.onError(error);
     }
 

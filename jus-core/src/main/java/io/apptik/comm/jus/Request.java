@@ -24,15 +24,15 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
-import io.apptik.comm.jus.JusLog.MarkerLog;
-import io.apptik.comm.jus.error.AuthFailureError;
-import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.error.TimeoutError;
-
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
+
+import io.apptik.comm.jus.JusLog.MarkerLog;
+import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.error.TimeoutError;
 
 /**
  * Base class for all network requests.
@@ -41,6 +41,26 @@ import java.util.Map;
  */
 public abstract class Request<T> implements Comparable<Request<T>> {
 
+    public static final String EVENT_CACHE_HIT_EXPIRED = "cache-hit-expired";
+    public static final String EVENT_POST_ERROR = "post-error";
+    public static final String EVENT_POST_RESPONSE = "post-response";
+    public static final String EVENT_INTERMEDIATE_RESPONSE = "intermediate-response";
+    public static final String EVENT_CANCELED_AT_DELIVERY = "canceled-at-delivery";
+    public static final String EVENT_DONE = "done";
+    public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
+    public static final String EVENT_NETWORK_DISCARD_CANCELLED = "network-discard-cancelled";
+    public static final String EVENT_NETWORK_HTTP_COMPLETE = "network-http-complete";
+    public static final String EVENT_NOT_MODIFIED = "not-modified";
+    public static final String EVENT_NETWORK_PARSE_COMPLETE = "network-parse-complete";
+    public static final String EVENT_NETWORK_CACHE_WRITTEN = "network-cache-written";
+    public static final String EVENT_ADD_TO_QUEUE = "add-to-queue";
+    public static final String EVENT_CACHE_QUEUE_TAKE = "cache-queue-take";
+    public static final String EVENT_CACHE_DISCARD_CANCELED = "cache-discard-canceled";
+    public static final String EVENT_CACHE_MISS = "cache-miss";
+    public static final String EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT = "cache-hit-expired, but will deliver it";
+    public static final String EVENT_CACHE_HIT = "cache-hit";
+    public static final String EVENT_CACHE_HIT_PARSED = "cache-hit-parsed";
+    public static final String EVENT_CACHE_HIT_REFRESH_NEEDED = "cache-hit-refresh-needed";
     /**
      * Default encoding for POST or PUT parameters. See {@link #getParamsEncoding()}.
      */

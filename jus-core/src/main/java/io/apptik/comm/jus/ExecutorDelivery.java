@@ -19,9 +19,9 @@ package io.apptik.comm.jus;
 
 import android.os.Handler;
 
-import io.apptik.comm.jus.error.JusError;
-
 import java.util.concurrent.Executor;
+
+import io.apptik.comm.jus.error.JusError;
 
 /**
  * Delivers responses and errors.
@@ -61,13 +61,13 @@ public class ExecutorDelivery implements ResponseDelivery {
     @Override
     public void postResponse(Request<?> request, Response<?> response, Runnable runnable) {
         request.markDelivered();
-        request.addMarker("post-response");
+        request.addMarker(Request.EVENT_POST_RESPONSE);
         mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, runnable));
     }
 
     @Override
     public void postError(Request<?> request, JusError error) {
-        request.addMarker("post-error");
+        request.addMarker(Request.EVENT_POST_ERROR);
         Response<?> response = Response.error(error);
         mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, null));
     }
@@ -93,7 +93,7 @@ public class ExecutorDelivery implements ResponseDelivery {
         public void run() {
             // If this request has canceled, finish it and don't deliver.
             if (mRequest.isCanceled()) {
-                mRequest.finish("canceled-at-delivery");
+                mRequest.finish(Request.EVENT_CANCELED_AT_DELIVERY);
                 return;
             }
 
@@ -107,9 +107,9 @@ public class ExecutorDelivery implements ResponseDelivery {
             // If this is an intermediate response, add a marker, otherwise we're done
             // and the request can be finished.
             if (mResponse.intermediate) {
-                mRequest.addMarker("intermediate-response");
+                mRequest.addMarker(Request.EVENT_INTERMEDIATE_RESPONSE);
             } else {
-                mRequest.finish("done");
+                mRequest.finish(Request.EVENT_DONE);
             }
 
             // If we have been provided a post-delivery runnable, run it.

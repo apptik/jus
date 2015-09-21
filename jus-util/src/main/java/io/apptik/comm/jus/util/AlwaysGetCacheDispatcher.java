@@ -2,6 +2,8 @@ package io.apptik.comm.jus.util;
 
 import android.os.Process;
 
+import java.util.concurrent.BlockingQueue;
+
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.CacheDispatcher;
 import io.apptik.comm.jus.JusLog;
@@ -10,12 +12,11 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.ResponseDelivery;
 
-import java.util.concurrent.BlockingQueue;
-
 // Unless if not fully unexpired, dispatches all as Soft-expired cache hit, while keeping the original caches. i.e. We can deliver the cached response,
 // but we need to also send the request to the network for
 // refreshing.
 public class AlwaysGetCacheDispatcher extends CacheDispatcher {
+
     /**
      * Creates a new cache triage dispatcher thread.  You must call {@link #start()}
      * in order to begin processing.
@@ -42,18 +43,18 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                 // Get a request from the cache triage queue, blocking until
                 // at least one is available.
                 final Request<?> request = mCacheQueue.take();
-                request.addMarker("cache-queue-take");
+                request.addMarker(Request.EVENT_CACHE_QUEUE_TAKE);
 
                 // If the request has been canceled, don't bother dispatching it.
                 if (request.isCanceled()) {
-                    request.finish("cache-discard-canceled");
+                    request.finish(Request.EVENT_CACHE_DISCARD_CANCELED);
                     continue;
                 }
 
                 // Attempt to retrieve this item from cache.
                 Cache.Entry entry = mCache.get(request.getCacheKey());
                 if (entry == null) {
-                    request.addMarker("cache-miss");
+                    request.addMarker(Request.EVENT_CACHE_MISS);
                     // Cache miss; send off to the network dispatcher.
                     mNetworkQueue.put(request);
                     continue;
@@ -61,7 +62,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
 
                 // If it is completely expired, just send it to the network.
                 if (entry.isExpired()) {
-                    request.addMarker("cache-hit-expired, but will deliver it");
+                    request.addMarker(Request.EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT);
                     Response<?> response = request.parseNetworkResponse(
                             new NetworkResponse(entry.data, entry.responseHeaders));
                     request.setCacheEntry(entry);
@@ -83,10 +84,10 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                 }
 
                 // We have a cache hit; parse its data for delivery back to the request.
-                request.addMarker("cache-hit");
+                request.addMarker(Request.EVENT_CACHE_HIT);
                 Response<?> response = request.parseNetworkResponse(
                         new NetworkResponse(entry.data, entry.responseHeaders));
-                request.addMarker("cache-hit-parsed");
+                request.addMarker(Request.EVENT_CACHE_HIT_PARSED);
 
                 if (!entry.refreshNeeded()) {
                     // Completely unexpired cache hit. Just deliver the response.
@@ -95,7 +96,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                     // Soft-expired cache hit. We can deliver the cached response,
                     // but we need to also send the request to the network for
                     // refreshing.
-                    request.addMarker("cache-hit-refresh-needed");
+                    request.addMarker(Request.EVENT_CACHE_HIT_REFRESH_NEEDED);
                     request.setCacheEntry(entry);
 
                     // Mark the response as intermediate.

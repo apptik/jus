@@ -100,12 +100,12 @@ public class NetworkDispatcher extends Thread {
             }
 
             try {
-                request.addMarker("network-queue-take");
+                request.addMarker(Request.EVENT_NETWORK_QUEUE_TAKE);
 
                 // If the request was cancelled already, do not perform the
                 // network request.
                 if (request.isCanceled()) {
-                    request.finish("network-discard-cancelled");
+                    request.finish(Request.EVENT_NETWORK_DISCARD_CANCELLED);
                     continue;
                 }
 
@@ -113,25 +113,25 @@ public class NetworkDispatcher extends Thread {
 
                 // Perform the network request.
                 NetworkResponse networkResponse = mNetwork.performRequest(request);
-                request.addMarker("network-http-complete");
+                request.addMarker(Request.EVENT_NETWORK_HTTP_COMPLETE);
 
                 // If the server returned 304 AND we delivered a response already,
                 // we're done -- don't deliver a second identical response.
                 if (networkResponse.notModified && request.hasHadResponseDelivered()) {
-                    request.finish("not-modified");
+                    request.finish(Request.EVENT_NOT_MODIFIED);
                     continue;
                 }
 
                 // Parse the response here on the worker thread.
                 Response<?> response = request.parseNetworkResponse(networkResponse);
-                request.addMarker("network-parse-complete");
+                request.addMarker(Request.EVENT_NETWORK_PARSE_COMPLETE);
 
                 // Write to cache if applicable.
                 // response.cacheEntry must not be null
                 // TODO: Only update cache metadata instead of entire record for 304s.
                 if (request.shouldCache() && response.cacheEntry != null) {
                     mCache.put(request.getCacheKey(), response.cacheEntry);
-                    request.addMarker("network-cache-written");
+                    request.addMarker(Request.EVENT_NETWORK_CACHE_WRITTEN);
                 }
 
                 // Post the response back.
