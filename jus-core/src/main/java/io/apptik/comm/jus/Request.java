@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2014 Kalin Maldzhanski
  * Copyright (C) 2011 The Android Open Source Project
  *
@@ -146,6 +147,8 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
         mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);
     }
+
+    public abstract Request<T> clone();
 
     /**
      * Return the method for this request.  Can be one of the values in {@link Method}.

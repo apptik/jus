@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2014 Kalin Maldzhanski
  * Copyright (C) 2011 The Android Open Source Project
  *
@@ -17,14 +18,14 @@
 
 package io.apptik.comm.jus.request;
 
+import java.io.UnsupportedEncodingException;
+
 import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.Response.ErrorListener;
 import io.apptik.comm.jus.Response.Listener;
-
-import java.io.UnsupportedEncodingException;
 
 /**
  * A request for retrieving a T type response body at a given URL that also
