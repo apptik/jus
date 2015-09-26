@@ -18,17 +18,18 @@
 
 package io.apptik.comm.jus.request;
 
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.ParseError;
-import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
-
-import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
+
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.ParseError;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.Response;
+import io.apptik.comm.jus.Response.ErrorListener;
+import io.apptik.comm.jus.Response.Listener;
+import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * A request for retrieving a {@link JSONArray} response body at a given URL.
@@ -43,6 +44,11 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
      */
     public JsonArrayRequest(String url, Listener<JSONArray> listener, ErrorListener errorListener) {
         super(Method.GET, url, null, listener, errorListener);
+    }
+
+    @Override
+    public Request<JSONArray> clone() {
+        return new JsonArrayRequest(getUrl(), mListener, mErrorListener);
     }
 
     @Override

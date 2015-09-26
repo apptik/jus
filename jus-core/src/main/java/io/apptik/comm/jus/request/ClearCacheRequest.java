@@ -18,13 +18,13 @@
 
 package io.apptik.comm.jus.request;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-
-import android.os.Handler;
-import android.os.Looper;
 
 /**
  * A synthetic request used for clearing the cache.
@@ -43,6 +43,11 @@ public class ClearCacheRequest extends Request<Object> {
         super(Method.GET, null, null);
         mCache = cache;
         mCallback = callback;
+    }
+
+    @Override
+    public Request<Object> clone() {
+        return new ClearCacheRequest(mCache, mCallback);
     }
 
     @Override

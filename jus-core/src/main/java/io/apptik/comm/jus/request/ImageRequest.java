@@ -88,6 +88,12 @@ public class ImageRequest extends Request<Bitmap> {
     }
 
     @Override
+    public Request<Bitmap> clone() {
+        return new ImageRequest(getUrl(), mListener, mMaxWidth, mMaxHeight,
+                mScaleType,mDecodeConfig,mErrorListener);
+    }
+
+    @Override
     public Priority getPriority() {
         return Priority.LOW;
     }

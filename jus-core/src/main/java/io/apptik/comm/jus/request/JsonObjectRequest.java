@@ -18,17 +18,18 @@
 
 package io.apptik.comm.jus.request;
 
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.ParseError;
-import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
-
-import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
+
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.ParseError;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.Response;
+import io.apptik.comm.jus.Response.ErrorListener;
+import io.apptik.comm.jus.Response.Listener;
+import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * A request for retrieving a {@link JSONObject} response body at a given URL, allowing for an
@@ -46,21 +47,20 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
      * @param errorListener Error listener, or null to ignore errors.
      */
     public JsonObjectRequest(int method, String url, JSONObject jsonRequest,
-            Listener<JSONObject> listener, ErrorListener errorListener) {
+                             Listener<JSONObject> listener, ErrorListener errorListener) {
         super(method, url, (jsonRequest == null) ? null : jsonRequest.toString(), listener,
-                    errorListener);
+                errorListener);
     }
 
-    /**
-     * Constructor which defaults to <code>GET</code> if <code>jsonRequest</code> is
-     * <code>null</code>, <code>POST</code> otherwise.
-     *
-     * @see #JsonObjectRequest(int, String, JSONObject, Listener, ErrorListener)
-     */
-    public JsonObjectRequest(String url, JSONObject jsonRequest, Listener<JSONObject> listener,
-            ErrorListener errorListener) {
-        this(jsonRequest == null ? Method.GET : Method.POST, url, jsonRequest,
-                listener, errorListener);
+    public JsonObjectRequest(int method, String url, String jsonRequest,
+                             Listener<JSONObject> listener, ErrorListener errorListener) {
+        super(method, url, jsonRequest, listener,
+                errorListener);
+    }
+
+    @Override
+    public Request<JSONObject> clone() {
+        return new JsonObjectRequest(getMethod(), getUrl(), mRequestBody, mListener, mErrorListener);
     }
 
     @Override
