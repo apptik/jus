@@ -41,8 +41,8 @@ public abstract class JsonRequest<T> extends Request<T> {
     private static final String PROTOCOL_CONTENT_TYPE =
         String.format("application/json; charset=%s", PROTOCOL_CHARSET);
 
-    private final Listener<T> mListener;
-    private final String mRequestBody;
+    protected final Listener<T> mListener;
+    protected final String mRequestBody;
 
     public JsonRequest(int method, String url, String requestBody, Listener<T> listener,
             ErrorListener errorListener) {
