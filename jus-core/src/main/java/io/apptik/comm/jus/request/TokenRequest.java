@@ -2,18 +2,19 @@ package io.apptik.comm.jus.request;
 
 import android.util.Base64;
 
-import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.error.AuthFailureError;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.Response;
+import io.apptik.comm.jus.error.AuthFailureError;
 
 public class TokenRequest extends StringRequest {
 
     protected final String key;
     protected final String secret;
 
-    TokenRequest(int method, String url, String key, String secret, Response.Listener<String> listener, Response.ErrorListener errorListener) {
+    TokenRequest(int method, String url, String key, String secret, Listener.ResponseListener<String> listener, Listener.ErrorListener errorListener) {
         super(method, url, listener, errorListener);
         this.key = key;
         this.secret = secret;

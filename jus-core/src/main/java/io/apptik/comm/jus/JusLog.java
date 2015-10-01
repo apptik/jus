@@ -107,13 +107,13 @@ public class JusLog {
     /**
      * A simple event log with records containing a name, thread ID, and timestamp.
      */
-    static class MarkerLog {
+    public static class MarkerLog {
         public static final boolean ENABLED = JusLog.DEBUG;
 
         /** Minimum duration from first marker to last in an marker log to warrant logging. */
         private static final long MIN_DURATION_FOR_LOGGING_MS = 0;
 
-        private static class Marker {
+        public static class Marker {
             public final String name;
             public final long thread;
             public final long time;
@@ -126,12 +126,12 @@ public class JusLog {
         }
 
         private final List<Marker> mMarkers = new ArrayList<Marker>();
-        private boolean mFinished = false;
+        private volatile boolean mFinished = false;
 
         /** Adds a marker to this log with the specified name. */
         public synchronized void add(String name, long threadId) {
             if (mFinished) {
-                throw new IllegalStateException("Marker added to finished log");
+                throw new IllegalStateException("Marker added to finished request");
             }
 
             mMarkers.add(new Marker(name, threadId, SystemClock.elapsedRealtime()));

@@ -27,21 +27,6 @@ import io.apptik.comm.jus.error.JusError;
  */
 public class Response<T> {
 
-    /** Callback interface for delivering parsed responses. */
-    public interface Listener<T> {
-        /** Called when a response is received. */
-        public void onResponse(T response);
-    }
-
-    /** Callback interface for delivering error responses. */
-    public interface ErrorListener {
-        /**
-         * Callback method that an error has been occurred with the
-         * provided error code and optional user-readable message.
-         */
-        public void onErrorResponse(JusError error);
-    }
-
     /** Returns a successful response containing the parsed result. */
     public static <T> Response<T> success(T result, Cache.Entry cacheEntry) {
         return new Response<T>(result, cacheEntry);

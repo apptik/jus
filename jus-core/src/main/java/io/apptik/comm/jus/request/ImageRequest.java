@@ -25,6 +25,7 @@ import android.widget.ImageView.ScaleType;
 
 import io.apptik.comm.jus.DefaultRetryPolicy;
 import io.apptik.comm.jus.JusLog;
+import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
@@ -48,7 +49,6 @@ public class ImageRequest extends Request<Bitmap> {
     /** Default backoff multiplier for image requests */
     private static final float IMAGE_BACKOFF_MULT = 2f;
 
-    private final Response.Listener<Bitmap> mListener;
     private final Config mDecodeConfig;
     private final int mMaxWidth;
     private final int mMaxHeight;
@@ -75,12 +75,13 @@ public class ImageRequest extends Request<Bitmap> {
      * @param decodeConfig Format to decode the bitmap to
      * @param errorListener Error listener, or null to ignore errors
      */
-    public ImageRequest(String url, Response.Listener<Bitmap> listener, int maxWidth, int maxHeight,
-                        ScaleType scaleType, Config decodeConfig, Response.ErrorListener errorListener) {
-        super(Method.GET, url, errorListener);
+    public ImageRequest(String url, Listener.ResponseListener<Bitmap> listener, int maxWidth, int maxHeight,
+                        ScaleType scaleType, Config decodeConfig, Listener.ErrorListener errorListener) {
+        super(Method.GET, url);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
-        mListener = listener;
+        setErrorListener(errorListener);
+        setResponseListener(listener);
         mDecodeConfig = decodeConfig;
         mMaxWidth = maxWidth;
         mMaxHeight = maxHeight;
@@ -89,8 +90,8 @@ public class ImageRequest extends Request<Bitmap> {
 
     @Override
     public Request<Bitmap> clone() {
-        return new ImageRequest(getUrl(), mListener, mMaxWidth, mMaxHeight,
-                mScaleType,mDecodeConfig,mErrorListener);
+        return new ImageRequest(getUrl(), getResponseListener(), mMaxWidth, mMaxHeight,
+                mScaleType,mDecodeConfig, getErrorListener());
     }
 
     @Override
@@ -214,11 +215,6 @@ public class ImageRequest extends Request<Bitmap> {
         } else {
             return Response.success(bitmap, HttpHeaderParser.parseCacheHeaders(response));
         }
-    }
-
-    @Override
-    protected void deliverResponse(Bitmap response) {
-        mListener.onResponse(response);
     }
 
     /**

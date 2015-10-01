@@ -20,18 +20,17 @@ package io.apptik.comm.jus.request;
 
 import java.io.UnsupportedEncodingException;
 
+import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * A canned request for retrieving the response body at a given URL as a String.
  */
 public class StringRequest extends Request<String> {
-    private final Listener<String> mListener;
 
     /**
      * Creates a new request with the given method.
@@ -41,10 +40,11 @@ public class StringRequest extends Request<String> {
      * @param listener Listener to receive the String response
      * @param errorListener Error listener, or null to ignore errors
      */
-    public StringRequest(int method, String url, Listener<String> listener,
-            ErrorListener errorListener) {
-        super(method, url, errorListener);
-        mListener = listener;
+    public StringRequest(int method, String url, Listener.ResponseListener<String> listener,
+            Listener.ErrorListener errorListener) {
+        super(method, url);
+        setResponseListener(listener);
+        setErrorListener(errorListener);
     }
 
     /**
@@ -54,18 +54,13 @@ public class StringRequest extends Request<String> {
      * @param listener Listener to receive the String response
      * @param errorListener Error listener, or null to ignore errors
      */
-    public StringRequest(String url, Listener<String> listener, ErrorListener errorListener) {
+    public StringRequest(String url, Listener.ResponseListener<String> listener, ErrorListener errorListener) {
         this(Method.GET, url, listener, errorListener);
     }
 
     @Override
-    protected void deliverResponse(String response) {
-        mListener.onResponse(response);
-    }
-
-    @Override
     public Request<String> clone() {
-        return new StringRequest(getMethod(), getUrl(), mListener, mErrorListener);
+        return new StringRequest(getMethod(), getUrl(), getResponseListener(), getErrorListener());
     }
 
     @Override

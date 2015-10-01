@@ -24,8 +24,8 @@ import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
+import io.apptik.comm.jus.Listener.ErrorListener;
+import io.apptik.comm.jus.Listener.ResponseListener;
 
 /**
  * A request for retrieving a T type response body at a given URL that also
@@ -41,20 +41,16 @@ public abstract class JsonRequest<T> extends Request<T> {
     private static final String PROTOCOL_CONTENT_TYPE =
         String.format("application/json; charset=%s", PROTOCOL_CHARSET);
 
-    protected final Listener<T> mListener;
     protected final String mRequestBody;
 
-    public JsonRequest(int method, String url, String requestBody, Listener<T> listener,
+    public JsonRequest(int method, String url, String requestBody, ResponseListener<T> listener,
             ErrorListener errorListener) {
-        super(method, url, errorListener);
-        mListener = listener;
+        super(method, url);
+        setResponseListener(listener);
+        setErrorListener(errorListener);
         mRequestBody = requestBody;
     }
 
-    @Override
-    protected void deliverResponse(T response) {
-        mListener.onResponse(response);
-    }
 
     @Override
     public abstract Response<T> parseNetworkResponse(NetworkResponse response);
