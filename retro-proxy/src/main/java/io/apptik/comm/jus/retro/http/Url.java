@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2015 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,13 +20,14 @@ import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
-import retrofit.Retrofit;
+
+import io.apptik.comm.jus.retro.RetroProxy;
 
 import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Relative URL resolved against the {@linkplain Retrofit#baseUrl() base URL}.
+ * Relative URL resolved against the {@linkplain RetroProxy#baseUrl() base URL}.
  * <pre>
  * &#64;GET
  * void list(@Url String url);

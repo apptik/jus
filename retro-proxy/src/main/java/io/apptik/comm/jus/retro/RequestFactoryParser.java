@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2013 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");

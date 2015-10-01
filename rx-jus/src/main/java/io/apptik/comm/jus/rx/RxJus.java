@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2012 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,15 +21,14 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 
+import java.io.File;
+
 import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
 import io.apptik.comm.jus.toolbox.BasicNetwork;
 import io.apptik.comm.jus.toolbox.DiskBasedCache;
-
-import java.io.File;
-
 import rx.subjects.BehaviorSubject;
 
 /**

@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2012 Square, Inc.
  * Copyright (C) 2007 The Guava Authors
  *
