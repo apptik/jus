@@ -87,6 +87,7 @@ public class ExecutorDelivery implements ResponseDelivery {
             mRequest = request;
             mResponse = response;
             mRunnable = runnable;
+            mRequest.response = mResponse;
         }
 
         @SuppressWarnings("unchecked")

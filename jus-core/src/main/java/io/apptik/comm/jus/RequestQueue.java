@@ -139,11 +139,11 @@ public class RequestQueue {
     }
 
 
-    public RequestQueue withCacheDspather(CacheDispatcher cacheDspather) {
+    public RequestQueue withCacheDispatcher(CacheDispatcher cacheDispatcher) {
         if (mCacheDispatcher != null) {
             mCacheDispatcher.quit();
         }
-        mCacheDispatcher = cacheDspather;
+        mCacheDispatcher = cacheDispatcher;
         return this;
     }
     /**

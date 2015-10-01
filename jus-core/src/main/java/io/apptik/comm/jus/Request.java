@@ -100,7 +100,7 @@ public abstract class Request<T> implements Comparable<Request<T>> {
     private final Response.ErrorListener mErrorListener;
 
     /** Sequence number of this request, used to enforce FIFO ordering. */
-    private Integer mSequence;
+    protected Integer mSequence;
 
     /** The request queue this request is associated with. */
     private RequestQueue mRequestQueue;
@@ -132,6 +132,8 @@ public abstract class Request<T> implements Comparable<Request<T>> {
 
     /** An opaque token tagging this request; used for bulk cancellation. */
     private Object mTag;
+
+    volatile Response<T> response;
 
     /**
      * Creates a new request with the given method (one of the values from {@link Method}),
@@ -544,6 +546,8 @@ public abstract class Request<T> implements Comparable<Request<T>> {
             mErrorListener.onErrorResponse(error);
         }
     }
+
+
 
     /**
      * Our comparator sorts from high to low priority, and secondarily by

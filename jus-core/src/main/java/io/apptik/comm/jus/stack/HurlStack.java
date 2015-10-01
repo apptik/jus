@@ -20,14 +20,6 @@ package io.apptik.comm.jus.stack;
 
 import android.os.SystemClock;
 
-import io.apptik.comm.jus.JusLog;
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Request.Method;
-import io.apptik.comm.jus.error.AuthFailureError;
-import io.apptik.comm.jus.toolbox.ByteArrayPool;
-import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
-
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +33,14 @@ import java.util.TreeMap;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
+
+import io.apptik.comm.jus.JusLog;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.Request.Method;
+import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.toolbox.ByteArrayPool;
+import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
 
 /**
  * An {@link HttpStack} based on {@link HttpURLConnection}.
@@ -92,9 +92,7 @@ public class HurlStack implements HttpStack {
         int statusCode;
         byte[] data;
         Map<String, String> headers = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
-        boolean notModified;
-        long networkTimeMs;
-        ///
+          ///
         requestHeaders.putAll(request.getHeaders());
         requestHeaders.putAll(additionalHeaders);
         if (mUrlRewriter != null) {

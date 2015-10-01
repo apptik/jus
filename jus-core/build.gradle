@@ -21,6 +21,7 @@ android {
 
 dependencies {
     //testCompile "org.robolectric:robolectric:2.4"
+    compile 'com.squareup.okio:okio:1.6.0'
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
