@@ -27,8 +27,8 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
+import io.apptik.comm.jus.Listener.ErrorListener;
+import io.apptik.comm.jus.Listener.ResponseListener;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
@@ -42,13 +42,13 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
      * @param listener Listener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
-    public JsonArrayRequest(String url, Listener<JSONArray> listener, ErrorListener errorListener) {
+    public JsonArrayRequest(String url, ResponseListener<JSONArray> listener, ErrorListener errorListener) {
         super(Method.GET, url, null, listener, errorListener);
     }
 
     @Override
     public Request<JSONArray> clone() {
-        return new JsonArrayRequest(getUrl(), mListener, mErrorListener);
+        return new JsonArrayRequest(getUrl(), getResponseListener(), getErrorListener());
     }
 
     @Override

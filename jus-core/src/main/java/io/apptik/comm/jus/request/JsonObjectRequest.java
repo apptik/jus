@@ -27,8 +27,8 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
+import io.apptik.comm.jus.Listener.ErrorListener;
+import io.apptik.comm.jus.Listener.ResponseListener;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
@@ -47,20 +47,21 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
      * @param errorListener Error listener, or null to ignore errors.
      */
     public JsonObjectRequest(int method, String url, JSONObject jsonRequest,
-                             Listener<JSONObject> listener, ErrorListener errorListener) {
+                             ResponseListener<JSONObject> listener, ErrorListener errorListener) {
         super(method, url, (jsonRequest == null) ? null : jsonRequest.toString(), listener,
                 errorListener);
     }
 
     public JsonObjectRequest(int method, String url, String jsonRequest,
-                             Listener<JSONObject> listener, ErrorListener errorListener) {
+                             ResponseListener<JSONObject> listener, ErrorListener errorListener) {
         super(method, url, jsonRequest, listener,
                 errorListener);
     }
 
     @Override
     public Request<JSONObject> clone() {
-        return new JsonObjectRequest(getMethod(), getUrl(), mRequestBody, mListener, mErrorListener);
+        return new JsonObjectRequest(getMethod(), getUrl(), mRequestBody, getResponseListener(),
+                getErrorListener());
     }
 
     @Override

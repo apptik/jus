@@ -21,15 +21,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
-import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.Response.ErrorListener;
-import io.apptik.comm.jus.Response.Listener;
-import io.apptik.comm.jus.request.ImageRequest;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import io.apptik.comm.jus.Listener.ErrorListener;
+import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestQueue;
+import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.request.ImageRequest;
 
 /**
  * Helper that handles loading and caching images from remote URLs.
@@ -249,7 +250,7 @@ public class ImageLoader {
 
     protected Request<Bitmap> makeImageRequest(String requestUrl, int maxWidth, int maxHeight,
                                                ScaleType scaleType, final String cacheKey) {
-        return new ImageRequest(requestUrl, new Listener<Bitmap>() {
+        return new ImageRequest(requestUrl, new ResponseListener<Bitmap>() {
             @Override
             public void onResponse(Bitmap response) {
                 onGetImageSuccess(cacheKey, response);

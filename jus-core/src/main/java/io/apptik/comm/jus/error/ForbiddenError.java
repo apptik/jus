@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 Apptik Project
+ * Copyright (C) 2015 AppTik Project
  * Copyright (C) 2014 Kalin Maldzhanski
  * Copyright (C) 2011 The Android Open Source Project
  *

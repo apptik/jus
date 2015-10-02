@@ -5,10 +5,10 @@ import android.content.Context;
 import android.util.Log;
 
 import io.apptik.comm.jus.Jus;
-import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.Response;
+import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.DefaultBitmapLruCache;
 
@@ -62,13 +62,13 @@ public class CustomJusHelper {
 
     public static void addDummyRequest(String key, String val) {
         addRequest(Requests.getDummyRequest(key, val,
-                new Response.Listener<String>() {
+                new Listener.ResponseListener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Jus-Test", "jus response : " + response);
                     }
                 },
-                new Response.ErrorListener() {
+                new Listener.ErrorListener() {
                     @Override
                     public void onErrorResponse(JusError error) {
                         Log.d("Jus-Test", "jus error : " + error);

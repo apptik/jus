@@ -1,8 +1,8 @@
 package io.apptik.comm.jus.examples.api;
 
 
+import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.request.StringRequest;
 
 public class Requests {
@@ -18,8 +18,8 @@ public class Requests {
         return null;
     }
 
-    public static Request<String> getBeerRequest(String q, Response.Listener<String> listener,
-                                          Response.ErrorListener errorListener) {
+    public static Request<String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
+                                          Listener.ErrorListener errorListener) {
         Request<String> res;
 
         final String userString = "c6266a50b6603fe87d681ef34fe11e3e";
@@ -44,8 +44,8 @@ public class Requests {
 
     }
 
-    public static Request<String> getWeatherRequest(String q, Response.Listener<String> listener,
-                                             Response.ErrorListener errorListener) {
+    public static Request<String> getWeatherRequest(String q, Listener.ResponseListener<String> listener,
+                                             Listener.ErrorListener errorListener) {
 
         Request<String> res = null;
 
@@ -58,8 +58,8 @@ public class Requests {
         return res;
     }
 
-    public static Request<String> getDummyRequest(String key, String val, Response.Listener<String> listener,
-                                           Response.ErrorListener errorListener) {
+    public static Request<String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
+                                           Listener.ErrorListener errorListener) {
         Request<String> res =
                 new StringRequest("http://validate.jsontest.com/?json={'" + key + "':'" + val + "'}", listener, errorListener);
 

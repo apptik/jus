@@ -18,14 +18,14 @@
 
 package io.apptik.comm.jus.request;
 
-import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Response;
-
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+
+import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.error.JusError;
 
 /**
  * A Future that represents a Jus request.
@@ -53,8 +53,8 @@ import java.util.concurrent.TimeoutException;
  *
  * @param <T> The type of parsed response this future expects.
  */
-public class RequestFuture<T> implements Future<T>, Response.Listener<T>,
-       Response.ErrorListener {
+public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>,
+       Listener.ErrorListener {
     private Request<?> mRequest;
     private boolean mResultReceived = false;
     private T mResult;

@@ -40,7 +40,7 @@ public class ClearCacheRequest extends Request<Object> {
      * or null for none
      */
     public ClearCacheRequest(Cache cache, Runnable callback) {
-        super(Method.GET, null, null);
+        super(Method.GET, null);
         mCache = cache;
         mCallback = callback;
     }
@@ -71,7 +71,4 @@ public class ClearCacheRequest extends Request<Object> {
         return null;
     }
 
-    @Override
-    protected void deliverResponse(Object response) {
-    }
 }
