@@ -22,7 +22,7 @@ import android.content.pm.PackageManager.NameNotFoundException;
 
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
-import io.apptik.comm.jus.toolbox.BasicNetwork;
+import io.apptik.comm.jus.toolbox.HttpNetwork;
 import io.apptik.comm.jus.toolbox.DiskBasedCache;
 
 import java.io.File;
@@ -56,7 +56,7 @@ public class Jus {
             stack = new HurlStack();
         }
 
-        Network network = new BasicNetwork(stack);
+        Network network = new HttpNetwork(stack);
 
         RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
         queue.start();

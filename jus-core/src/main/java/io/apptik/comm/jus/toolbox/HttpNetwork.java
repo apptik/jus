@@ -51,7 +51,7 @@ import io.apptik.comm.jus.stack.HttpStack;
 /**
  * A network performing Jus requests over an {@link HttpStack}.
  */
-public class BasicNetwork implements Network {
+public class HttpNetwork implements Network {
     protected static final boolean DEBUG = JusLog.DEBUG;
 
     private static int SLOW_REQUEST_THRESHOLD_MS = 3000;
@@ -69,7 +69,7 @@ public class BasicNetwork implements Network {
     /**
      * @param httpStack HTTP stack to be used
      */
-    public BasicNetwork(HttpStack httpStack) {
+    public HttpNetwork(HttpStack httpStack) {
         // If a pool isn't passed in, then build a small default pool that will give us a lot of
         // benefit and not use too much memory.
         this(httpStack, new ByteArrayPool(DEFAULT_POOL_SIZE), null);
@@ -79,7 +79,7 @@ public class BasicNetwork implements Network {
      * @param httpStack HTTP stack to be used
      * @param pool      a buffer pool that improves GC performance in copy operations
      */
-    public BasicNetwork(HttpStack httpStack, ByteArrayPool pool, Authenticator authenticator) {
+    public HttpNetwork(HttpStack httpStack, ByteArrayPool pool, Authenticator authenticator) {
         this.authenticator = authenticator;
         mHttpStack = httpStack;
         mPool = pool;

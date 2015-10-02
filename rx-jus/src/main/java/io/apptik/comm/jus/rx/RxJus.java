@@ -27,7 +27,7 @@ import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
-import io.apptik.comm.jus.toolbox.BasicNetwork;
+import io.apptik.comm.jus.toolbox.HttpNetwork;
 import io.apptik.comm.jus.toolbox.DiskBasedCache;
 import rx.subjects.BehaviorSubject;
 
@@ -66,7 +66,7 @@ public class RxJus {
             stack = new HurlStack();
         }
 
-        Network network = new BasicNetwork(stack);
+        Network network = new HttpNetwork(stack);
 
         RxRequestQueue queue = new RxRequestQueue(new DiskBasedCache(cacheDir), network);
         queue.start();

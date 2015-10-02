@@ -18,13 +18,13 @@
 
 package io.apptik.comm.jus.stack;
 
+import java.io.IOException;
+import java.util.Map;
+
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
-
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * An HTTP stack abstraction.
@@ -41,7 +41,9 @@ public interface HttpStack {
      *         {@link Request#getHeaders()}
      * @return the HTTP response
      */
-    public NetworkResponse performRequest(Request<?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
+    public NetworkResponse performRequest(Request<?> request,
+                                          Map<String, String> additionalHeaders,
+                                          ByteArrayPool byteArrayPool)
         throws IOException, AuthFailureError;
 
 }
