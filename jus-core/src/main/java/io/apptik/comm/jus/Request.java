@@ -25,6 +25,7 @@ import android.os.Looper;
 import android.os.SystemClock;
 import android.text.TextUtils;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Collections;
@@ -35,6 +36,7 @@ import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.request.FlexiRequest;
+import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * Base class for all network requests.
@@ -51,7 +53,7 @@ import io.apptik.comm.jus.request.FlexiRequest;
  *
  * @param <T> The type of parsed response this request expects.
  */
-public abstract class Request<T> implements Comparable<Request<T>>, Cloneable {
+public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     public static final String EVENT_CACHE_HIT_EXPIRED = "cache-hit-expired";
     public static final String EVENT_POST_ERROR = "post-error";
@@ -182,21 +184,28 @@ public abstract class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     private boolean logSlowRequests = false;
 
+    private final Converter<NetworkResponse, T> converterFromResponse;
+    private Converter<?, NetworkRequest> converterToRequest;
+
+
     /**
      * Creates a new request with the given method (one of the values from {@link Method}),
      * URL, and error listener.  Note that the normal response listener is not provided here as
      * delivery of responses is provided by subclasses, who have a better idea of how to deliver
      * an already-parsed response.
      */
-    public Request(int method, String url) {
+    public Request(int method, String url, Converter<NetworkResponse, T> converterFromResponse) {
         mMethod = method;
         mUrl = url;
+        this.converterFromResponse = converterFromResponse;
         setRetryPolicy(new DefaultRetryPolicy(
         ));
         mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);
     }
 
-    public abstract Request<T> clone();
+    public Request<T> clone() {
+        return new Request<>(getMethod(), getUrl(), converterFromResponse);
+    }
 
     /**
      * Return the method for this request.  Can be one of the values in {@link Method}.
@@ -211,6 +220,9 @@ public abstract class Request<T> implements Comparable<Request<T>>, Cloneable {
     public String getUrl() {
         return mUrl;
     }
+
+
+
 
     public Listener.ResponseListener getResponseListener() {
         return responseListener;
@@ -576,7 +588,7 @@ public abstract class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     /**
-     * Subclasses must implement this to parse the raw network response
+     * Subclasses can implement this to parse the raw network response
      * and return an appropriate response type. This method will be
      * called from a worker thread.  The response will not be delivered
      * if you return null.
@@ -584,7 +596,15 @@ public abstract class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @param response Response from the network
      * @return The parsed response, or null in the case of an error
      */
-    public abstract Response<T> parseNetworkResponse(NetworkResponse response);
+    public Response<T> parseNetworkResponse(NetworkResponse response) {
+        T parsed = null;
+        try {
+            parsed = converterFromResponse.convert(response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+    }
 
     /**
      * Subclasses can override this method to parse 'networkError' and return a more specific error.
