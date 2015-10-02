@@ -34,9 +34,20 @@ import io.apptik.comm.jus.JusLog.MarkerLog;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
+import io.apptik.comm.jus.request.FlexiRequest;
 
 /**
  * Base class for all network requests.
+ *
+ * for more simple and customizable requests using {@link Converter}
+ * extend from {@link FlexiRequest}
+ *
+ * One Should implement:
+ * {@link #getBody()} in case of Post or Put
+ * {@link #getHeaders()} in case of specific headers
+ * {@link #getBodyContentType()} in case of specific content type
+ * Note that if {@link #getBodyContentType() != null} it will be added to the headers of the request
+ *
  *
  * @param <T> The type of parsed response this request expects.
  */

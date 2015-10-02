@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import io.apptik.comm.jus.Converter;
-import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
@@ -21,7 +20,7 @@ public abstract class FlexiRequest<F, T> extends Request<T>{
     private final NetworkRequest networkRequest;
 
 
-    public FlexiRequest(int method, String url, Listener.ErrorListener listener,
+    public FlexiRequest(int method, String url,
                         Converter.Factory<F, T> converter, F requestData) {
         super(method, url);
         this.requestData = requestData;
@@ -46,11 +45,9 @@ public abstract class FlexiRequest<F, T> extends Request<T>{
      *
      * @param method
      * @param url
-     * @param listener
      */
-    public FlexiRequest(int method, String url, Listener.ErrorListener listener,
-                        Converter.Factory<F, T> converter) {
-        this(method, url, listener, converter, null);
+    public FlexiRequest(int method, String url, Converter.Factory<F, T> converter) {
+        this(method, url, converter, null);
     }
 
     @Override
