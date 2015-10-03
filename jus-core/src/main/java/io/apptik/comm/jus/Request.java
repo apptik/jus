@@ -40,20 +40,19 @@ import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * Base class for all network requests.
- *
+ * <p/>
  * for more simple and customizable requests using {@link Converter}
  * extend from {@link FlexiRequest}
- *
+ * <p/>
  * One Should implement:
  * {@link #getBody()} in case of Post or Put
  * {@link #getHeaders()} in case of specific headers
  * {@link #getBodyContentType()} in case of specific content type
  * Note that if {@link #getBodyContentType() != null} it will be added to the headers of the request
  *
- *
  * @param <T> The type of parsed response this request expects.
  */
-public class Request<T> implements Comparable<Request<T>>, Cloneable {
+public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
 
     public static final String EVENT_CACHE_HIT_EXPIRED = "cache-hit-expired";
     public static final String EVENT_POST_ERROR = "post-error";
@@ -75,10 +74,12 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_CACHE_HIT = "cache-hit";
     public static final String EVENT_CACHE_HIT_PARSED = "cache-hit-parsed";
     public static final String EVENT_CACHE_HIT_REFRESH_NEEDED = "cache-hit-refresh-needed";
+
     /**
      * Default encoding for POST or PUT parameters. See {@link #getParamsEncoding()}.
      */
     private static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
+
 
     /**
      * Supported request methods.
@@ -103,12 +104,12 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Request method of this request.  Currently supports GET, POST, PUT, DELETE, HEAD, OPTIONS,
      * TRACE, and PATCH.
      */
-    private final int mMethod;
+    private final int method;
 
     /**
      * URL of this request.
      */
-    private final String mUrl;
+    private final String url;
 
     /**
      * Default tag for {@link TrafficStats}.
@@ -133,30 +134,30 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * Sequence number of this request, used to enforce FIFO ordering.
      */
-    protected Integer mSequence;
+    protected Integer sequence;
 
     /**
      * The request queue this request is associated with.
      */
-    private RequestQueue mRequestQueue;
+    private RequestQueue requestQueue;
 
     /**
      * Whether or not responses to this request should be cached.
      */
-    private boolean mShouldCache = true;
+    private boolean shouldCache = true;
 
     /**
      * Whether or not this request has been canceled.
      */
-    private boolean mCanceled = false;
+    private boolean canceled = false;
 
     /**
      * Whether or not a response has been delivered for this request yet.
      */
-    private boolean mResponseDelivered = false;
+    private boolean responseDelivered = false;
 
     // A cheap variant of request tracing used to dump slow requests.
-    private long mRequestBirthTime = 0;
+    private long requestBirthTime = 0;
 
     /**
      * Threshold at which we should log the request (even when debug logging is not enabled).
@@ -166,26 +167,28 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * The retry policy for this request.
      */
-    private RetryPolicy mRetryPolicy;
+    private RetryPolicy retryPolicy;
 
     /**
      * When a request can be retrieved from cache but must be refreshed from
      * the network, the cache entry will be stored here so that in the event of
      * a "Not Modified" response, we can be sure it hasn't been evicted from cache.
      */
-    private Cache.Entry mCacheEntry = null;
+    private Cache.Entry cacheEntry = null;
 
     /**
      * An opaque token tagging this request; used for bulk cancellation.
      */
-    private Object mTag;
+    private Object tag;
 
     volatile Response<T> response;
 
     private boolean logSlowRequests = false;
 
+    private F networkRequest;
+    private NetworkRequest innerNetworkRequest;
     private final Converter<NetworkResponse, T> converterFromResponse;
-    private Converter<?, NetworkRequest> converterToRequest;
+    private Converter<F, NetworkRequest> converterToRequest;
 
 
     /**
@@ -195,15 +198,21 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * an already-parsed response.
      */
     public Request(int method, String url, Converter<NetworkResponse, T> converterFromResponse) {
-        mMethod = method;
-        mUrl = url;
+        this.method = method;
+        this.url = url;
         this.converterFromResponse = converterFromResponse;
         setRetryPolicy(new DefaultRetryPolicy(
         ));
         mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);
     }
 
-    public Request<T> clone() {
+    private void checkIfActive() {
+        if (requestQueue != null) {
+            throw new IllegalStateException("Request already added to a queue");
+        }
+    }
+
+    public Request<F, T> clone() {
         return new Request<>(getMethod(), getUrl(), converterFromResponse);
     }
 
@@ -211,24 +220,76 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Return the method for this request.  Can be one of the values in {@link Method}.
      */
     public int getMethod() {
-        return mMethod;
+        return method;
     }
 
     /**
      * Returns the URL of this request.
      */
     public String getUrl() {
-        return mUrl;
+        return url;
     }
 
+    public F getNetworkRequest() {
+        return networkRequest;
+    }
 
+    public Request<F, T> setNetworkRequest(F networkRequest) {
+        checkIfActive();
+        this.networkRequest = networkRequest;
+        //todo display warning if not set
+        if (converterToRequest != null && networkRequest != null && !(networkRequest instanceof Void)) {
+            try {
+                innerNetworkRequest = converterToRequest.convert(networkRequest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return this;
+    }
 
+    public NetworkRequest getInnerNetworkRequest() {
+        if (innerNetworkRequest == null && networkRequest != null &&
+                converterToRequest != null && !(networkRequest instanceof Void)) {
+            try {
+                innerNetworkRequest = converterToRequest.convert(networkRequest);
+            } catch (IOException e) {
+                throw new IllegalStateException("cannot convert Network Request", e);
+            }
+        } else if(innerNetworkRequest != null && !(networkRequest instanceof Void) &&
+                ( networkRequest != null || converterToRequest != null)) {
+            throw new IllegalStateException("networkRequest and converterToRequest cannot be null" +
+                    " for non Void input types");
+        }
+
+        return innerNetworkRequest;
+    }
+
+    public Converter<F, NetworkRequest> getConverterToRequest() {
+        return converterToRequest;
+    }
+
+    public Request<F, T> setConverterToRequest(Converter<F, NetworkRequest> converterToRequest) {
+        checkIfActive();
+        this.converterToRequest = converterToRequest;
+        //todo display warning if not set
+        if (converterToRequest != null && networkRequest != null && !(networkRequest instanceof Void)) {
+            try {
+                innerNetworkRequest = converterToRequest.convert(networkRequest);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return this;
+    }
+
+    //--> Listeners
 
     public Listener.ResponseListener getResponseListener() {
         return responseListener;
     }
 
-    public Request<?> setResponseListener(Listener.ResponseListener responseListener) {
+    public Request<F, T> setResponseListener(Listener.ResponseListener responseListener) {
         this.responseListener = responseListener;
         return this;
     }
@@ -237,7 +298,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return markerListener;
     }
 
-    public Request<?> setMarkerListener(Listener.MarkerListener markerListener) {
+    public Request<F, T> setMarkerListener(Listener.MarkerListener markerListener) {
         this.markerListener = markerListener;
         return this;
     }
@@ -246,16 +307,18 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return errorListener;
     }
 
-    public Request<?> setErrorListener(Listener.ErrorListener errorListener) {
+    public Request<F, T> setErrorListener(Listener.ErrorListener errorListener) {
         this.errorListener = errorListener;
         return this;
     }
+
+    //<-- Listeners
 
     public boolean isLogSlowRequests() {
         return logSlowRequests;
     }
 
-    public Request<?> setLogSlowRequests(boolean logSlowRequests) {
+    public Request<F, T> setLogSlowRequests(boolean logSlowRequests) {
         this.logSlowRequests = logSlowRequests;
         return this;
     }
@@ -266,8 +329,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<?> setTag(Object tag) {
-        mTag = tag;
+    public Request<F, T> setTag(Object tag) {
+        checkIfActive();
+        this.tag = tag;
         return this;
     }
 
@@ -277,7 +341,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @see Request#setTag(Object)
      */
     public Object getTag() {
-        return mTag;
+        return tag;
     }
 
     /**
@@ -308,15 +372,24 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<?> setRetryPolicy(RetryPolicy retryPolicy) {
-        mRetryPolicy = retryPolicy;
+    public Request<F, T> setRetryPolicy(RetryPolicy retryPolicy) {
+        checkIfActive();
+        this.retryPolicy = retryPolicy;
         return this;
     }
 
     /**
+     * Returns the retry policy that should be used  for this request.
+     */
+    public RetryPolicy getRetryPolicy() {
+        return retryPolicy;
+    }
+
+
+    /**
      * Adds an event to this request's event log; for debugging.
      */
-    public Request<?> addMarker(String tag, String... args) {
+    public Request<F, T> addMarker(String tag, String... args) {
         if (markerListener != null) {
             markerListener.onMarker(
                     new MarkerLog.Marker(tag, Thread.currentThread().getId(),
@@ -327,8 +400,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         if (MarkerLog.ENABLED) {
             mEventLog.add(tag, Thread.currentThread().getId());
         }
-        if (logSlowRequests && mRequestBirthTime == 0) {
-            mRequestBirthTime = SystemClock.elapsedRealtime();
+        if (logSlowRequests && requestBirthTime == 0) {
+            requestBirthTime = SystemClock.elapsedRealtime();
         }
 
         return this;
@@ -340,8 +413,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * <p>Also dumps all events from this request's event log; for debugging.</p>
      */
     public void finish(final String tag) {
-        if (mRequestQueue != null) {
-            mRequestQueue.finish(this);
+        if (requestQueue != null) {
+            requestQueue.finish(this);
         }
         addMarker(tag);
         if (MarkerLog.ENABLED) {
@@ -362,7 +435,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             mEventLog.finish(this.toString());
         }
         if (logSlowRequests) {
-            long requestTime = SystemClock.elapsedRealtime() - mRequestBirthTime;
+            long requestTime = SystemClock.elapsedRealtime() - requestBirthTime;
             if (requestTime >= SLOW_REQUEST_THRESHOLD_MS) {
                 JusLog.d("%d ms: %s", requestTime, this.toString());
             }
@@ -375,8 +448,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<?> setRequestQueue(RequestQueue requestQueue) {
-        mRequestQueue = requestQueue;
+    public Request<F, T> setRequestQueue(RequestQueue requestQueue) {
+        checkIfActive();
+        this.requestQueue = requestQueue;
         return this;
     }
 
@@ -385,8 +459,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public final Request<?> setSequence(int sequence) {
-        mSequence = sequence;
+    public final Request<F, T> setSequence(int sequence) {
+        checkIfActive();
+        this.sequence = sequence;
         return this;
     }
 
@@ -394,10 +469,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Returns the sequence number of this request.
      */
     public final int getSequence() {
-        if (mSequence == null) {
+        if (sequence == null) {
             throw new IllegalStateException("getSequence called before setSequence");
         }
-        return mSequence;
+        return sequence;
     }
 
     /**
@@ -413,30 +488,30 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<?> setCacheEntry(Cache.Entry entry) {
-        mCacheEntry = entry;
-        return this;
+    public <F, T> Request<F, T> setCacheEntry(Cache.Entry entry) {
+        cacheEntry = entry;
+        return (Request<F, T>) this;
     }
 
     /**
      * Returns the annotated cache entry, or null if there isn't one.
      */
     public Cache.Entry getCacheEntry() {
-        return mCacheEntry;
+        return cacheEntry;
     }
 
     /**
      * Mark this request as canceled.  No callback will be delivered.
      */
     public void cancel() {
-        mCanceled = true;
+        canceled = true;
     }
 
     /**
      * Returns true if this request has been canceled.
      */
     public boolean isCanceled() {
-        return mCanceled;
+        return canceled;
     }
 
     /**
@@ -447,6 +522,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @throws AuthFailureError In the event of auth failure
      */
     public Map<String, String> getHeaders() throws AuthFailureError {
+        NetworkRequest networkRequest = getInnerNetworkRequest();
+        if (networkRequest != null && networkRequest.headers != null) {
+            return networkRequest.headers.toMap();
+        }
         return Collections.emptyMap();
     }
 
@@ -459,6 +538,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @throws AuthFailureError in the event of auth failure
      */
     protected Map<String, String> getParams() throws AuthFailureError {
+        //TODO
         return null;
     }
 
@@ -475,6 +555,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * </ol>
      */
     protected String getParamsEncoding() {
+        //TODO
         return DEFAULT_PARAMS_ENCODING;
     }
 
@@ -482,7 +563,12 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Returns the content type of the POST or PUT body.
      */
     public String getBodyContentType() {
-        return "application/x-www-form-urlencoded; charset=" + getParamsEncoding();
+        NetworkRequest networkRequest = getInnerNetworkRequest();
+        if (networkRequest != null) {
+            return networkRequest.contentType.toString();
+        }
+        return null;
+        //return "application/x-www-form-urlencoded; charset=" + getParamsEncoding();
     }
 
     /**
@@ -495,10 +581,15 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @throws AuthFailureError in the event of auth failure
      */
     public byte[] getBody() throws AuthFailureError {
-        Map<String, String> params = getParams();
-        if (params != null && params.size() > 0) {
-            return encodeParameters(params, getParamsEncoding());
+        NetworkRequest networkRequest = getInnerNetworkRequest();
+        if (networkRequest != null) {
+            return networkRequest.data;
         }
+        //TODO
+//        Map<String, String> params = getParams();
+//        if (params != null && params.size() > 0) {
+//            return encodeParameters(params, getParamsEncoding());
+//        }
         return null;
     }
 
@@ -525,8 +616,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public final Request<?> setShouldCache(boolean shouldCache) {
-        mShouldCache = shouldCache;
+    public final Request<F, T> setShouldCache(boolean shouldCache) {
+        checkIfActive();
+        this.shouldCache = shouldCache;
         return this;
     }
 
@@ -534,18 +626,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Returns true if responses to this request should be cached.
      */
     public final boolean shouldCache() {
-        return mShouldCache;
-    }
-
-    /**
-     * Priority values.  Requests will be processed from higher priorities to
-     * lower priorities, in FIFO order.
-     */
-    public enum Priority {
-        LOW,
-        NORMAL,
-        HIGH,
-        IMMEDIATE
+        return shouldCache;
     }
 
     /**
@@ -561,14 +642,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * attempts remaining, this will cause delivery of a {@link TimeoutError} error.
      */
     public final int getTimeoutMs() {
-        return mRetryPolicy.getCurrentTimeout();
-    }
-
-    /**
-     * Returns the retry policy that should be used  for this request.
-     */
-    public RetryPolicy getRetryPolicy() {
-        return mRetryPolicy;
+        return retryPolicy.getCurrentTimeout();
     }
 
     /**
@@ -576,7 +650,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * later in the request's lifetime for suppressing identical responses.
      */
     public void markDelivered() {
-        mResponseDelivered = true;
+        responseDelivered = true;
     }
 
     /**
@@ -584,7 +658,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * this is useful in case cache is returned and the new response is "not modified"
      */
     public boolean hasHadResponseDelivered() {
-        return mResponseDelivered;
+        return responseDelivered;
     }
 
     /**
@@ -650,21 +724,32 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * sequence number to provide FIFO ordering.
      */
     @Override
-    public int compareTo(Request<T> other) {
+    public int compareTo(Request<F, T> other) {
         Priority left = this.getPriority();
         Priority right = other.getPriority();
 
         // High-priority requests are "lesser" so they are sorted to the front.
         // Equal priorities are sorted by sequence number to provide FIFO ordering.
         return left == right ?
-                this.mSequence - other.mSequence :
+                this.sequence - other.sequence :
                 right.ordinal() - left.ordinal();
     }
 
     @Override
     public String toString() {
         String trafficStatsTag = "0x" + Integer.toHexString(getTrafficStatsTag());
-        return (mCanceled ? "[X] " : "[ ] ") + getUrl() + " " + trafficStatsTag + " "
-                + getPriority() + " " + mSequence;
+        return (canceled ? "[X] " : "[ ] ") + getUrl() + " " + trafficStatsTag + " "
+                + getPriority() + " " + sequence;
+    }
+
+    /**
+     * Priority values.  Requests will be processed from higher priorities to
+     * lower priorities, in FIFO order.
+     */
+    public enum Priority {
+        LOW,
+        NORMAL,
+        HIGH,
+        IMMEDIATE
     }
 }

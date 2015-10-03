@@ -26,12 +26,12 @@ import java.lang.reflect.Type;
 public interface Converter<F, T> {
   T convert(F value) throws IOException;
 
-  abstract class Factory<F, T> {
+  abstract class Factory {
     /**
      * Create a {@link Converter} for converting an HTTP response body to {@code type} or null if it
      * cannot be handled by this factory.
      */
-    public Converter<NetworkResponse, T> fromResponseBody(Type type, Annotation[] annotations) {
+    public Converter<NetworkResponse, ?> fromResponseBody(Type type, Annotation[] annotations) {
       return null;
     }
 
@@ -39,7 +39,7 @@ public interface Converter<F, T> {
      * Create a {@link Converter} for converting {@code type} to an HTTP request body or null if it
      * cannot be handled by this factory.
      */
-    public Converter<F, NetworkRequest> toRequestBody(Type type, Annotation[] annotations) {
+    public Converter<?, NetworkRequest> toRequestBody(Type type, Annotation[] annotations) {
       return null;
     }
   }
