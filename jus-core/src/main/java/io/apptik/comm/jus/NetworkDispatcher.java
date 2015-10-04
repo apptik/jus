@@ -38,7 +38,7 @@ import io.apptik.comm.jus.error.JusError;
  */
 public class NetworkDispatcher extends Thread {
     /** The queue of requests to service. */
-    private final BlockingQueue<Request<?>> mQueue;
+    private final BlockingQueue<Request<?,?>> mQueue;
     /** The network interface for processing requests. */
     private final Network mNetwork;
     /** The cache to write to. */
@@ -57,7 +57,7 @@ public class NetworkDispatcher extends Thread {
      * @param cache Cache interface to use for writing responses to cache
      * @param delivery Delivery interface to use for posting responses
      */
-    public NetworkDispatcher(BlockingQueue<Request<?>> queue,
+    public NetworkDispatcher(BlockingQueue<Request<?,?>> queue,
             Network network, Cache cache,
             ResponseDelivery delivery) {
         mQueue = queue;
@@ -76,7 +76,7 @@ public class NetworkDispatcher extends Thread {
     }
 
     @TargetApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    private void addTrafficStatsTag(Request<?> request) {
+    private void addTrafficStatsTag(Request<?,?> request) {
         // Tag the request (if API >= 14)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
             TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
@@ -88,7 +88,7 @@ public class NetworkDispatcher extends Thread {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
         while (true) {
             long startTimeMs = SystemClock.elapsedRealtime();
-            Request<?> request;
+            Request<?,?> request;
             try {
                 // Take a request from the queue.
                 request = mQueue.take();
@@ -150,7 +150,7 @@ public class NetworkDispatcher extends Thread {
         }
     }
 
-    private void parseAndDeliverNetworkError(Request<?> request, JusError error) {
+    private void parseAndDeliverNetworkError(Request<?,?> request, JusError error) {
         error = request.parseNetworkError(error);
         mDelivery.postError(request, error);
     }

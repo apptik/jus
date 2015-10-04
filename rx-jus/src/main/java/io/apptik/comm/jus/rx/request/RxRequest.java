@@ -8,7 +8,7 @@ import io.apptik.comm.jus.rx.RequestEvent;
 
 import rx.subjects.BehaviorSubject;
 
-public abstract class RxRequest<T> extends Request<T> {
+public abstract class RxRequest<F,T> extends Request<F,T> {
 
 
     public static final String EVENT_DELIVER_RESPONSE = "deliver response";
@@ -32,12 +32,12 @@ public abstract class RxRequest<T> extends Request<T> {
     }
 
     @Override
-    public void addMarker(String tag) {
+    public RxRequest<F,T> addMarker(String tag, String... args) {
         JusEmitter.get()
                 .emitRequestEvent(new RequestEvent(tag, this, null));
         requestSubject.onNext(new RequestEvent(tag, this, null));
         super.addMarker(tag);
-
+        return this;
     }
 
     @Override

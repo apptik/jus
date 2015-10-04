@@ -55,19 +55,19 @@ public class ExecutorDelivery implements ResponseDelivery {
     }
 
     @Override
-    public void postResponse(Request<?> request, Response<?> response) {
+    public void postResponse(Request<?,?> request, Response<?> response) {
         postResponse(request, response, null);
     }
 
     @Override
-    public void postResponse(Request<?> request, Response<?> response, Runnable runnable) {
+    public void postResponse(Request<?,?> request, Response<?> response, Runnable runnable) {
         request.markDelivered();
         request.addMarker(Request.EVENT_POST_RESPONSE);
         mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, runnable));
     }
 
     @Override
-    public void postError(Request<?> request, JusError error) {
+    public void postError(Request<?,?> request, JusError error) {
         request.addMarker(Request.EVENT_POST_ERROR);
         Response<?> response = Response.error(error);
         mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, null));

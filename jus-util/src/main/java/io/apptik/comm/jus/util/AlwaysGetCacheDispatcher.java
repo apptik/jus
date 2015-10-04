@@ -26,7 +26,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
      * @param cache        Cache interface to use for resolution
      * @param delivery     Delivery interface to use for posting responses
      */
-    public AlwaysGetCacheDispatcher(BlockingQueue<Request<?>> cacheQueue, BlockingQueue<Request<?>> networkQueue, Cache cache, ResponseDelivery delivery) {
+    public AlwaysGetCacheDispatcher(BlockingQueue<Request<?,?>> cacheQueue, BlockingQueue<Request<?,?>> networkQueue, Cache cache, ResponseDelivery delivery) {
         super(cacheQueue, networkQueue, cache, delivery);
     }
 
@@ -42,7 +42,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
             try {
                 // Get a request from the cache triage queue, blocking until
                 // at least one is available.
-                final Request<?> request = mCacheQueue.take();
+                final Request<?,?> request = mCacheQueue.take();
                 request.addMarker(Request.EVENT_CACHE_QUEUE_TAKE);
 
                 // If the request has been canceled, don't bother dispatching it.

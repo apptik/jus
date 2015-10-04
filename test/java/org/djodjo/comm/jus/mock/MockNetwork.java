@@ -42,10 +42,10 @@ public class MockNetwork implements Network {
         mDataToReturn = data;
     }
 
-    public Request<?> requestHandled = null;
+    public Request<?,?> requestHandled = null;
 
     @Override
-    public NetworkResponse performRequest(Request<?> request) throws JusError {
+    public NetworkResponse performRequest(Request<?,?> request) throws JusError {
         if (mNumExceptionsToThrow > 0 || mNumExceptionsToThrow == ALWAYS_THROW_EXCEPTIONS) {
             if (mNumExceptionsToThrow != ALWAYS_THROW_EXCEPTIONS) {
                 mNumExceptionsToThrow--;

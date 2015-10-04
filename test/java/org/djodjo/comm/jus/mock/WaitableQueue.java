@@ -29,8 +29,8 @@ import java.util.concurrent.TimeoutException;
 
 // TODO: the name of this class sucks
 @SuppressWarnings("serial")
-public class WaitableQueue extends PriorityBlockingQueue<Request<?>> {
-    private final Request<?> mStopRequest = new MagicStopRequest();
+public class WaitableQueue extends PriorityBlockingQueue<Request<?,?>> {
+    private final Request<?,?> mStopRequest = new MagicStopRequest();
     private final Semaphore mStopEvent = new Semaphore(0);
 
     // TODO: this isn't really "until empty" it's "until next call to take() after empty"
@@ -43,8 +43,8 @@ public class WaitableQueue extends PriorityBlockingQueue<Request<?>> {
     }
 
     @Override
-    public Request<?> take() throws InterruptedException {
-        Request<?> item = super.take();
+    public Request<?,?> take() throws InterruptedException {
+        Request<?,?> item = super.take();
         if (item == mStopRequest) {
             mStopEvent.release();
             return take();

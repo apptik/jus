@@ -14,13 +14,13 @@ public class Requests {
     // http://validate.jsontest.com/?json={'key':'value'}
     // http://echo.jsontest.com/key/value/one/two
 
-    public static Request<String> addOsmRequest() {
+    public static Request<Void,String> addOsmRequest() {
         return null;
     }
 
-    public static Request<String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
+    public static Request<Void,String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
                                           Listener.ErrorListener errorListener) {
-        Request<String> res;
+        Request<Void,String> res;
 
         final String userString = "c6266a50b6603fe87d681ef34fe11e3e";
         final String baseUrl = "http://beermapping.com/webservice/";
@@ -44,10 +44,10 @@ public class Requests {
 
     }
 
-    public static Request<String> getWeatherRequest(String q, Listener.ResponseListener<String> listener,
+    public static Request<Void,String> getWeatherRequest(String q, Listener.ResponseListener<String> listener,
                                              Listener.ErrorListener errorListener) {
 
-        Request<String> res = null;
+        Request<Void,String> res = null;
 
         if (q == null) {
             q = "London,uk";
@@ -58,9 +58,9 @@ public class Requests {
         return res;
     }
 
-    public static Request<String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
+    public static Request<Void,String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
                                            Listener.ErrorListener errorListener) {
-        Request<String> res =
+        Request<Void,String> res =
                 new StringRequest("http://validate.jsontest.com/?json={'" + key + "':'" + val + "'}", listener, errorListener);
 
         return res;

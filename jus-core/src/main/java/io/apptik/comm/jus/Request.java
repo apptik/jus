@@ -35,16 +35,15 @@ import io.apptik.comm.jus.JusLog.MarkerLog;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
-import io.apptik.comm.jus.request.FlexiRequest;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
  * Base class for all network requests.
- * <p/>
- * for more simple and customizable requests using {@link Converter}
- * extend from {@link FlexiRequest}
- * <p/>
- * One Should implement:
+ * {@link Converter} can be used to transform to {@link NetworkRequest}
+ * and from {@link NetworkResponse}.
+ *
+ * If more complex logic is required and request is extended then
+ * one should implement:
  * {@link #getBody()} in case of Post or Put
  * {@link #getHeaders()} in case of specific headers
  * {@link #getBodyContentType()} in case of specific content type

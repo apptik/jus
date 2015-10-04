@@ -43,7 +43,7 @@ public class ServerError extends JusError {
         super();
     }
 
-    public ServerError(Request<?> request, NetworkResponse response) {
+    public ServerError(Request<?,?> request, NetworkResponse response) {
         super(response);
     }
 }

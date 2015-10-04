@@ -81,7 +81,7 @@ public class RequestQueueTest {
         OrderCheckingNetwork network = new OrderCheckingNetwork();
         RequestQueue queue = new RequestQueue(new NoCache(), network, 1, mDelivery);
 
-        for (Request<?> request : makeRequests(requestsToMake)) {
+        for (Request<?,?> request : makeRequests(requestsToMake)) {
             queue.add(request);
         }
 
@@ -160,7 +160,7 @@ public class RequestQueueTest {
         }
 
         @Override
-        public NetworkResponse performRequest(Request<?> request) {
+        public NetworkResponse performRequest(Request<?,?> request) {
             Priority thisPriority = request.getPriority();
             int thisSequence = request.getSequence();
 

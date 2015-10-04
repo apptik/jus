@@ -19,7 +19,7 @@ public class RxNetworkDispatcher extends NetworkDispatcher {
      * @param cache    Cache interface to use for writing responses to cache
      * @param delivery Delivery interface to use for posting responses
      */
-    public RxNetworkDispatcher(BlockingQueue<Request<?>> queue, Network network, Cache cache, ResponseDelivery delivery) {
+    public RxNetworkDispatcher(BlockingQueue<Request<?,?>> queue, Network network, Cache cache, ResponseDelivery delivery) {
         super(queue, network, cache, delivery);
     }
 }

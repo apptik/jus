@@ -44,7 +44,7 @@ public class RequestQueue {
     /** Callback interface for completed requests. */
     public static interface RequestFinishedListener<T> {
         /** Called when a request has finished processing. */
-        public void onRequestFinished(Request<T> request);
+        public void onRequestFinished(Request<?,T> request);
     }
 
     /** Used for generating monotonically-increasing sequence numbers for requests. */
@@ -60,23 +60,23 @@ public class RequestQueue {
      *          is <em>not</em> contained in that list. Is null if no requests are staged.</li>
      * </ul>
      */
-    private final Map<String, Queue<Request<?>>> mWaitingRequests =
-            new HashMap<String, Queue<Request<?>>>();
+    private final Map<String, Queue<Request<?,?>>> mWaitingRequests =
+            new HashMap<String, Queue<Request<?,?>>>();
 
     /**
      * The set of all requests currently being processed by this RequestQueue. A Request
      * will be in this set if it is waiting in any queue or currently being processed by
      * any dispatcher.
      */
-    private final Set<Request<?>> mCurrentRequests = new HashSet<Request<?>>();
+    private final Set<Request<?,?>> mCurrentRequests = new HashSet<Request<?,?>>();
 
     /** The cache triage queue. */
-    protected final PriorityBlockingQueue<Request<?>> mCacheQueue =
-        new PriorityBlockingQueue<Request<?>>();
+    protected final PriorityBlockingQueue<Request<?,?>> mCacheQueue =
+        new PriorityBlockingQueue<Request<?,?>>();
 
     /** The queue of requests that are actually going out to the network. */
-    protected final PriorityBlockingQueue<Request<?>> mNetworkQueue =
-        new PriorityBlockingQueue<Request<?>>();
+    protected final PriorityBlockingQueue<Request<?,?>> mNetworkQueue =
+        new PriorityBlockingQueue<Request<?,?>>();
 
     /** Number of network request dispatcher threads to start. */
     public static final int DEFAULT_NETWORK_THREAD_POOL_SIZE = 4;
@@ -200,7 +200,7 @@ public class RequestQueue {
      * {@link RequestQueue#cancelAll(RequestFilter)}.
      */
     public interface RequestFilter {
-        public boolean apply(Request<?> request);
+        public boolean apply(Request<?,?> request);
     }
 
     /**
@@ -209,7 +209,7 @@ public class RequestQueue {
      */
     public void cancelAll(RequestFilter filter) {
         synchronized (mCurrentRequests) {
-            for (Request<?> request : mCurrentRequests) {
+            for (Request<?,?> request : mCurrentRequests) {
                 if (filter.apply(request)) {
                     request.cancel();
                 }
@@ -227,7 +227,7 @@ public class RequestQueue {
         }
         cancelAll(new RequestFilter() {
             @Override
-            public boolean apply(Request<?> request) {
+            public boolean apply(Request<?,?> request) {
                 return request.getTag() == tag;
             }
         });
@@ -238,7 +238,7 @@ public class RequestQueue {
      * @param request The request to service
      * @return The passed-in request
      */
-    public <T> Request<T> add(Request<T> request) {
+    public <F,T> Request<F,T> add(Request<F,T> request) {
         // Tag the request as belonging to this queue and add it to the set of current requests.
         request.setRequestQueue(this);
         synchronized (mCurrentRequests) {
@@ -260,9 +260,9 @@ public class RequestQueue {
             String cacheKey = request.getCacheKey();
             if (mWaitingRequests.containsKey(cacheKey)) {
                 // There is already a request in flight. Queue up.
-                Queue<Request<?>> stagedRequests = mWaitingRequests.get(cacheKey);
+                Queue<Request<?,?>> stagedRequests = mWaitingRequests.get(cacheKey);
                 if (stagedRequests == null) {
-                    stagedRequests = new LinkedList<Request<?>>();
+                    stagedRequests = new LinkedList<Request<?,?>>();
                 }
                 stagedRequests.add(request);
                 mWaitingRequests.put(cacheKey, stagedRequests);
@@ -286,7 +286,7 @@ public class RequestQueue {
      * <p>Releases waiting requests for <code>request.getCacheKey()</code> if
      *      <code>request.shouldCache()</code>.</p>
      */
-    <T> void  finish(Request<T> request) {
+    <F,T> void  finish(Request<F,T> request) {
         // Remove from the set of requests currently being processed.
         synchronized (mCurrentRequests) {
             mCurrentRequests.remove(request);
@@ -299,7 +299,7 @@ public class RequestQueue {
         if (request.shouldCache()) {
             synchronized (mWaitingRequests) {
                 String cacheKey = request.getCacheKey();
-                Queue<Request<?>> waitingRequests = mWaitingRequests.remove(cacheKey);
+                Queue<Request<?,?>> waitingRequests = mWaitingRequests.remove(cacheKey);
                 if (waitingRequests != null) {
                     if (JusLog.DEBUG) {
                         JusLog.v("Releasing %d waiting requests for cacheKey=%s.",
