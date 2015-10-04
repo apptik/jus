@@ -30,7 +30,7 @@ import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 /**
  * A canned request for retrieving the response body at a given URL as a String.
  */
-public class StringRequest extends Request<String> {
+public class StringRequest extends Request<Void,String> {
 
     /**
      * Creates a new request with the given method.
@@ -59,7 +59,7 @@ public class StringRequest extends Request<String> {
     }
 
     @Override
-    public Request<String> clone() {
+    public StringRequest clone() {
         return new StringRequest(getMethod(), getUrl(), getResponseListener(), getErrorListener());
     }
 

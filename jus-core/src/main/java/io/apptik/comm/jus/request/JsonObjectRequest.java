@@ -23,12 +23,11 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.ParseError;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.ParseError;
+import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
@@ -59,7 +58,7 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
     }
 
     @Override
-    public Request<JSONObject> clone() {
+    public JsonObjectRequest clone() {
         return new JsonObjectRequest(getMethod(), getUrl(), mRequestBody, getResponseListener(),
                 getErrorListener());
     }

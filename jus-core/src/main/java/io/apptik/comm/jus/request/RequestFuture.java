@@ -55,7 +55,7 @@ import io.apptik.comm.jus.error.JusError;
  */
 public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>,
        Listener.ErrorListener {
-    private Request<?> mRequest;
+    private Request<?, ?> mRequest;
     private boolean mResultReceived = false;
     private T mResult;
     private JusError mException;
@@ -66,7 +66,7 @@ public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>
 
     private RequestFuture() {}
 
-    public void setRequest(Request<?> request) {
+    public void setRequest(Request<?, ?> request) {
         mRequest = request;
     }
 

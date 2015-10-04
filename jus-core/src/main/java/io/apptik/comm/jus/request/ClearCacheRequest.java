@@ -29,7 +29,7 @@ import io.apptik.comm.jus.Response;
 /**
  * A synthetic request used for clearing the cache.
  */
-public class ClearCacheRequest extends Request<Object> {
+public class ClearCacheRequest extends Request<Void,Object> {
     private final Cache mCache;
     private final Runnable mCallback;
 
@@ -40,13 +40,13 @@ public class ClearCacheRequest extends Request<Object> {
      * or null for none
      */
     public ClearCacheRequest(Cache cache, Runnable callback) {
-        super(Method.GET, null);
+        super(Method.GET, null, null);
         mCache = cache;
         mCallback = callback;
     }
 
     @Override
-    public Request<Object> clone() {
+    public ClearCacheRequest clone() {
         return new ClearCacheRequest(mCache, mCallback);
     }
 

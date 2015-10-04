@@ -23,12 +23,11 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.ParseError;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.ParseError;
+import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
 /**
@@ -47,7 +46,7 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
     }
 
     @Override
-    public Request<JSONArray> clone() {
+    public JsonArrayRequest clone() {
         return new JsonArrayRequest(getUrl(), getResponseListener(), getErrorListener());
     }
 

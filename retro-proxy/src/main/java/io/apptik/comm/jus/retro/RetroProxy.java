@@ -24,8 +24,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,7 +35,7 @@ import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.converter.BasicConverter;
+import io.apptik.comm.jus.converter.BasicConverterFactory;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.retro.http.Body;
 import io.apptik.comm.jus.retro.http.DELETE;
@@ -248,7 +246,7 @@ public final class RetroProxy {
         public Builder() {
             // Add the built-in converter factory first. This prevents overriding its behavior but also
             // ensures correct behavior when using converters that consume all types.
-            converters.add(new BasicConverter());
+            converters.add(new BasicConverterFactory());
         }
 
         /**
