@@ -16,6 +16,8 @@
 package io.apptik.comm.jus.retro;
 
 
+import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestBuilder;
 import io.apptik.comm.jus.http.Headers;
@@ -47,9 +49,9 @@ final class RequestFactory {
     this.requestBuilderActions = requestBuilderActions;
   }
 
-  Request create(Object... args) {
+  Request create(Converter<NetworkResponse, ?> responseConverter, Object... args) {
     RequestBuilder requestBuilder =
-        new RequestBuilder(method, baseUrl, relativeUrl, headers, contentType, hasBody,
+        new RequestBuilder(method, baseUrl, relativeUrl, responseConverter, headers, contentType, hasBody,
             isFormEncoded, isMultipart);
 
     if (args != null) {

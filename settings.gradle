@@ -1,1 +1,1 @@
-include ':jus-core', ':examples', ':rx-jus', ':jus-util', ':rx-examples', ':jus-ui', ':retro-proxy'
+include ':jus-android', ':examples', ':rx-jus', ':android-util', ':rx-examples', ':jus-ui', ':retro-proxy', ':jus-java', ':java-log', ':android-log'

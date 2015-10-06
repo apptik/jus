@@ -17,8 +17,6 @@
  */
 package io.apptik.comm.jus.retro;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
@@ -30,20 +28,6 @@ import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 
 final class Utils {
-  static <T> T checkNotNull(T object, String message) {
-    if (object == null) {
-      throw new NullPointerException(message);
-    }
-    return object;
-  }
-
-  static void closeQuietly(Closeable closeable) {
-    if (closeable == null) return;
-    try {
-      closeable.close();
-    } catch (IOException ignored) {
-    }
-  }
 
   /** Returns true if {@code annotations} contains an instance of {@code cls}. */
   static boolean isAnnotationPresent(Annotation[] annotations,

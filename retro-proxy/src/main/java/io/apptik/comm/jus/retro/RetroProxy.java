@@ -34,6 +34,7 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.converter.BasicConverterFactory;
 import io.apptik.comm.jus.http.HttpUrl;
@@ -54,7 +55,8 @@ import io.apptik.comm.jus.retro.http.Part;
 import io.apptik.comm.jus.retro.http.Path;
 import io.apptik.comm.jus.retro.http.Query;
 
-import static io.apptik.comm.jus.retro.Utils.checkNotNull;
+import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
+
 
 /**
  * Adapts a Java interface to HTTP Calls.
@@ -90,9 +92,9 @@ import static io.apptik.comm.jus.retro.Utils.checkNotNull;
  * {@link Headers @Headers} method annotation. For per-request control over a header
  * annotate a parameter with {@link Header @Header}.
  * <p/>
- * By default, methods return a {@link Call} which represents the HTTP request. The generic
+ * By default, methods return a {@link Request} which represents the HTTP request. The generic
  * parameter of the call is the response body type and will be converted by one of the
- * {@link Converter.Factory} instances. {@link io.apptik.comm.jus.NetworkResponse} can also be used for a raw
+ * {@link Converter.Factory} instances. {@link NetworkResponse} can also be used for a raw
  * representation. {@link Void} can be used if you do not care about the body contents.
  * <p/>
  * For example:

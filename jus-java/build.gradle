@@ -1,0 +1,8 @@
+apply plugin: 'java'
+
+//configurations.compile.exclude module: 'java-log'
+
+dependencies {
+    compile 'com.squareup.okio:okio:1.6.0'
+    compile project(':java-log')
+}

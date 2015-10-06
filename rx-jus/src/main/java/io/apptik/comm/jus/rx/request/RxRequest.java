@@ -15,7 +15,7 @@ public abstract class RxRequest<F,T> extends Request<F,T> {
     public static final String EVENT_DELIVER_ERROR = "deliver error";
     private BehaviorSubject<RequestEvent> requestSubject = BehaviorSubject.create();
 
-    public RxRequest(int method, String url) {
+    public RxRequest(String method, String url) {
         super(method, url, null);
     }
 

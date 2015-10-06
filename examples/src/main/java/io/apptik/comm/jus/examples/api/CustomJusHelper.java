@@ -4,7 +4,7 @@ package io.apptik.comm.jus.examples.api;
 import android.content.Context;
 import android.util.Log;
 
-import io.apptik.comm.jus.Jus;
+import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
@@ -23,7 +23,7 @@ public class CustomJusHelper {
 
 
     public static void init(Context context) {
-        mRequestQueue = Jus.newRequestQueue(context);
+        mRequestQueue = AndroidJus.newRequestQueue(context);
 
         mImageLoader = new ImageLoader(mRequestQueue,
                 // new NoCache()

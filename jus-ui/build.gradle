@@ -17,7 +17,7 @@ android {
 }
 
 dependencies {
-    compile project(':jus-core')
+    compile project(':jus-android')
     compile rootProject.ext.supportAppCompat
 }
 

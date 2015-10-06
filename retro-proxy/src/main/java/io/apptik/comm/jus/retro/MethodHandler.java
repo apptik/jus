@@ -65,7 +65,7 @@ final class MethodHandler<T> {
   }
 
   Object invoke(Object... args) {
-    return requestQueue.add(requestFactory.create(args));
+    return requestQueue.add(requestFactory.create(responseConverter, args));
            // callAdapter.adapt(new OkHttpCall<>(requestQueue, requestFactory, responseConverter, args));
   }
 }

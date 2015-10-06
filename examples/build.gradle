@@ -34,8 +34,8 @@ dependencies {
     compile rootProject.ext.supportCardView
     compile rootProject.ext.supportV4
     compile rootProject.ext.supportAnnotations
-    compile project(':jus-core')
-    compile project(':jus-util')
+    compile project(':jus-android')
+    compile project(':android-util')
     compile project(':jus-ui')
 
     compile "io.reactivex:rxjava:1.0.12"

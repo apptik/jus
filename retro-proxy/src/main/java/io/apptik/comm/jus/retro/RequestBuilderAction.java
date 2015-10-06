@@ -25,7 +25,7 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.RequestBuilder;
 
-import static io.apptik.comm.jus.retro.Utils.checkNotNull;
+import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
 
 abstract class RequestBuilderAction {

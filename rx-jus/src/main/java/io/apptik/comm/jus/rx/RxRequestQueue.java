@@ -16,10 +16,10 @@ public class RxRequestQueue extends RequestQueue{
     }
 
     public RxRequestQueue(Cache cache, Network network, int threadPoolSize) {
-        super(cache, network, threadPoolSize, new RxExecutorDelivery(new Handler(Looper.getMainLooper())));
+        super(cache, network, threadPoolSize, new RxAndroidExecutorDelivery(new Handler(Looper.getMainLooper())));
     }
 
-    public RxRequestQueue(Cache cache, Network network, int threadPoolSize, RxExecutorDelivery delivery) {
+    public RxRequestQueue(Cache cache, Network network, int threadPoolSize, RxAndroidExecutorDelivery delivery) {
         super(cache, network, threadPoolSize, delivery);
     }
 
