@@ -29,11 +29,12 @@ import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 
+import org.djodjo.json.JsonArray;
+
 import io.apptik.comm.jus.examples.ImageListFragment;
 import io.apptik.comm.jus.examples.R;
 import io.apptik.comm.jus.examples.api.CustomJusHelper;
 import io.apptik.comm.jus.ui.NetworkImageView;
-import org.djodjo.json.JsonArray;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
@@ -126,6 +127,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         Log.d(TAG, "Element " + position + " set.");
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
+        Log.e("jus", jarr.get(position).asJsonObject().getString("pic"));
         viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), CustomJusHelper.getImageLoader());
 
         /// COOL ANIM

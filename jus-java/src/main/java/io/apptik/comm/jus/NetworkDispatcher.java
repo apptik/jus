@@ -23,7 +23,7 @@ import java.util.concurrent.BlockingQueue;
 import io.apptik.comm.jus.error.JusError;
 
 /**
- * Provides a thread for performing network dispatch from a queue of requests.
+ * Provides a threadId for performing network dispatch from a queue of requests.
  * <p/>
  * Requests added to the specified queue are processed from the network via a
  * specified {@link Network} interface. Responses are committed to cache, if
@@ -31,6 +31,8 @@ import io.apptik.comm.jus.error.JusError;
  * errors are posted back to the caller via a {@link ResponseDelivery}.
  */
 public class NetworkDispatcher extends Thread {
+    protected static final boolean DEBUG = JusLog.DEBUG;
+
     /**
      * The queue of requests to service.
      */
@@ -53,7 +55,7 @@ public class NetworkDispatcher extends Thread {
     private volatile boolean mQuit = false;
 
     /**
-     * Creates a new network dispatcher thread.  You must call {@link #start()}
+     * Creates a new network dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
      *
      * @param queue    Queue of incoming requests for triage
@@ -83,8 +85,14 @@ public class NetworkDispatcher extends Thread {
        //TODO
     }
 
+    protected void setThreadPriority() {
+        this.setPriority(Thread.NORM_PRIORITY);
+    }
+
     @Override
     public void run() {
+        if (DEBUG) JusLog.v("start new network dispatcher " + this.toString());
+        setThreadPriority();
         while (true) {
             long startTimeMs = System.nanoTime();
             Request<?, ?> request;
@@ -122,7 +130,7 @@ public class NetworkDispatcher extends Thread {
                     continue;
                 }
 
-                // Parse the response here on the worker thread.
+                // Parse the response here on the worker threadId.
                 Response<?> response = request.parseNetworkResponse(networkResponse);
                 request.addMarker(Request.EVENT_NETWORK_PARSE_COMPLETE);
 

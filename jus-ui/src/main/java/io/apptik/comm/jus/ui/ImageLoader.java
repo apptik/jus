@@ -39,7 +39,7 @@ import io.apptik.comm.jus.request.ImageRequest;
  * and to pass in the default image listener provided by
  * {@link ImageLoader#getImageListener(ImageView, int, int)}. Note that all function calls to
  * this class must be made from the main thead, and all responses will be delivered to the main
- * thread as well.
+ * threadId as well.
  */
 public class ImageLoader {
     /** RequestQueue for dispatching ImageRequests onto. */
@@ -62,7 +62,7 @@ public class ImageLoader {
     private final HashMap<String, BatchedImageRequest> mBatchedResponses =
             new HashMap<String, BatchedImageRequest>();
 
-    /** Handler to the main thread. */
+    /** Handler to the main threadId. */
     private final Handler mHandler = new Handler(Looper.getMainLooper());
 
     /** Runnable for in-flight response delivery. */
@@ -208,7 +208,7 @@ public class ImageLoader {
      */
     public ImageContainer get(String requestUrl, ImageListener imageListener,
                               int maxWidth, int maxHeight, ScaleType scaleType) {
-        // only fulfill requests that were initiated from the main thread.
+        // only fulfill requests that were initiated from the main threadId.
         throwIfNotOnMainThread();
 
         final String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight, scaleType);
@@ -490,7 +490,7 @@ public class ImageLoader {
 
     private void throwIfNotOnMainThread() {
         if (Looper.myLooper() != Looper.getMainLooper()) {
-            throw new IllegalStateException("ImageLoader must be invoked from the main thread.");
+            throw new IllegalStateException("ImageLoader must be invoked from the main threadId.");
         }
     }
     /**

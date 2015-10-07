@@ -16,7 +16,7 @@
 
 ---------------  T H R E A D  ---------------
 
-Current thread (0x00007fb5d400d000):  GCTaskThread [stack: 0x000070000021d000,0x000070000031d000] [id=9219]
+Current threadId (0x00007fb5d400d000):  GCTaskThread [stack: 0x000070000021d000,0x000070000031d000] [id=9219]
 
 siginfo:si_signo=SIGSEGV: si_errno=0, si_code=1 (SEGV_MAPERR), si_addr=0x0000000000000018
 
@@ -107,7 +107,7 @@ C  [libsystem_pthread.dylib+0x1385]  thread_start+0xd
 
 ---------------  P R O C E S S  ---------------
 
-Java Threads: ( => current thread )
+Java Threads: ( => current threadId )
   0x00007fb5d71a5800 JavaThread "Stdin handler" [_thread_blocked, id=24103, stack(0x00007000017df000,0x00007000018df000)]
   0x00007fb5d5066000 JavaThread "Daemon worker Thread 7" [_thread_blocked, id=23079, stack(0x00007000016dc000,0x00007000017dc000)]
   0x00007fb5d6189000 JavaThread "Cancel handler" [_thread_blocked, id=25135, stack(0x00007000015d9000,0x00007000016d9000)]
@@ -131,9 +131,9 @@ Other Threads:
 
 VM state:at safepoint (normal execution)
 
-VM Mutex/Monitor currently owned by a thread:  ([mutex/lock_event])
-[0x00007fb5d0c021c0] Threads_lock - owner thread: 0x00007fb5d401b000
-[0x00007fb5d0c026c0] Heap_lock - owner thread: 0x00007fb5d5066000
+VM Mutex/Monitor currently owned by a threadId:  ([mutex/lock_event])
+[0x00007fb5d0c021c0] Threads_lock - owner threadId: 0x00007fb5d401b000
+[0x00007fb5d0c026c0] Heap_lock - owner threadId: 0x00007fb5d5066000
 
 Heap
  PSYoungGen      total 178688K, used 178205K [0x00000007eaa80000, 0x00000007f7680000, 0x0000000800000000)

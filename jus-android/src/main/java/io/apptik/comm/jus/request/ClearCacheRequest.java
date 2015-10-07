@@ -36,7 +36,7 @@ public class ClearCacheRequest extends Request<Void,Object> {
     /**
      * Creates a synthetic request for clearing the cache.
      * @param cache Cache to clear
-     * @param callback Callback to make on the main thread once the cache is clear,
+     * @param callback Callback to make on the main threadId once the cache is clear,
      * or null for none
      */
     public ClearCacheRequest(Cache cache, Runnable callback) {

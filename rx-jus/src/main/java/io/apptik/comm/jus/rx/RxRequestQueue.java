@@ -32,9 +32,9 @@ public class RxRequestQueue extends RequestQueue{
         stop();  // Make sure any currently running dispatchers are stopped.
         // Create the cache dispatcher and start it.
 
-        if(mCacheDispatcher==null) {
-            mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
-            mCacheDispatcher.start();
+        if(cacheDispatcher ==null) {
+            cacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
+            cacheDispatcher.start();
         }
 
         // Create network dispatchers (and corresponding threads) up to the pool size.

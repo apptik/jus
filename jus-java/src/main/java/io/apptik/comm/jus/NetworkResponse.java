@@ -19,6 +19,7 @@
 package io.apptik.comm.jus;
 
 import java.net.HttpURLConnection;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
@@ -71,5 +72,15 @@ public class NetworkResponse {
     /** Network roundtrip time in milliseconds. */
     public final long networkTimeMs;
 
+    @Override
+    public String toString() {
+        return "NetworkResponse{" +
+                "data=" + Arrays.toString(data) +
+                ", statusCode=" + statusCode +
+                ", headers=" + headers +
+                ", notModified=" + notModified +
+                ", networkTimeMs=" + networkTimeMs +
+                '}';
+    }
 }
 

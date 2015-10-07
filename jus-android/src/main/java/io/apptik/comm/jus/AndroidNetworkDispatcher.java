@@ -9,7 +9,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class AndroidNetworkDispatcher extends NetworkDispatcher {
     /**
-     * Creates a new network dispatcher thread.  You must call {@link #start()}
+     * Creates a new network dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
      *
      * @param queue    Queue of incoming requests for triage
@@ -29,9 +29,8 @@ public class AndroidNetworkDispatcher extends NetworkDispatcher {
     }
 
     @Override
-    public void run() {
+    public void setThreadPriority() {
         Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-        super.run();
     }
 
     public static class NetworkDispatcherFactory extends NetworkDispatcher.NetworkDispatcherFactory {

@@ -182,7 +182,7 @@ public class HurlStack implements HttpStack {
             } catch (IOException e) {
                 // This can happen if there was an exception above that left the entity in
                 // an invalid state.
-                JusLog.v("Error occured when calling consumingContent");
+                JusLog.v("Error occurred when calling consumingContent");
             }
             byteArrayPool.returnBuf(buffer);
             bytes.close();

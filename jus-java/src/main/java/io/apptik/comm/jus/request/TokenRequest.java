@@ -1,12 +1,11 @@
 package io.apptik.comm.jus.request;
 
-import android.util.Base64;
-
 import java.util.HashMap;
 import java.util.Map;
 
 import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.toolbox.Base64;
 
 public class TokenRequest extends StringRequest {
 
@@ -29,9 +28,12 @@ public class TokenRequest extends StringRequest {
     @Override
     public Map<String, String> getHeaders() throws AuthFailureError {
         Map<String, String> headers = new HashMap<String, String>();
+
         String auth = "Basic "
                 + Base64.encodeToString((key + ":" + secret).getBytes(),
-                Base64.NO_WRAP);
+                Base64.NO_WRAP)
+
+                ;
         headers.put("Authorization", auth);
         return headers;
     }

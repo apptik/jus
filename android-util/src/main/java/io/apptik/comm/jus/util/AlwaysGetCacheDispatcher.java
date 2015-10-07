@@ -12,13 +12,14 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.ResponseDelivery;
 
-// Unless if not fully unexpired, dispatches all as Soft-expired cache hit, while keeping the original caches. i.e. We can deliver the cached response,
+// Unless if not fully unexpired, dispatches all as Soft-expired cache hit,
+// while keeping the original caches. i.e. We can deliver the cached response,
 // but we need to also send the request to the network for
 // refreshing.
 public class AlwaysGetCacheDispatcher extends CacheDispatcher {
 
     /**
-     * Creates a new cache triage dispatcher thread.  You must call {@link #start()}
+     * Creates a new cache triage dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
      *
      * @param cacheQueue   Queue of incoming requests for triage

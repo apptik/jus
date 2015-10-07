@@ -280,7 +280,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
                 } catch (Exception ex) {
                 }
                 //check if we succeeded
-                if(innerNetworkRequest==null) {
+                if (innerNetworkRequest == null) {
                     throw new IllegalStateException("converterToRequest cannot be null for this Input type");
                 }
             }
@@ -414,13 +414,14 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
     public Request<F, T> addMarker(String tag, String... args) {
         if (markerListener != null) {
             markerListener.onMarker(
-                    new MarkerLog.Marker(tag, Thread.currentThread().getId(),
-                            System.nanoTime()),
-                    args);
+                    new MarkerLog.Marker(tag,
+                            Thread.currentThread().getId(),
+                            Thread.currentThread().getName(),
+                            System.nanoTime()), args);
         }
 
         if (MarkerLog.ENABLED) {
-            mEventLog.add(tag, Thread.currentThread().getId());
+            mEventLog.add(tag, Thread.currentThread().getId(), Thread.currentThread().getName());
         }
         if (logSlowRequests && requestBirthTime == 0) {
             requestBirthTime = System.nanoTime();
@@ -441,8 +442,8 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         addMarker(tag);
         if (MarkerLog.ENABLED) {
             final long threadId = Thread.currentThread().getId();
-            // If we finish marking off of the main thread, we need to
-            // actually do it on the main thread to ensure correct ordering.
+            // If we finish marking off of the main threadId, we need to
+            // actually do it on the main threadId to ensure correct ordering.
             //todo DO we really?
             mEventLog.finish(this.toString());
         }
@@ -676,7 +677,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
     /**
      * Subclasses can implement this to parse the raw network response
      * and return an appropriate response type. This method will be
-     * called from a worker thread.  The response will not be delivered
+     * called from a worker threadId.  The response will not be delivered
      * if you return null.
      *
      * @param response Response from the network

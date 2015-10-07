@@ -31,8 +31,8 @@ import java.util.Locale;
 public class JusLog {
     public static String TAG = "Jus";
 
-    public static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
-
+    //public static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
+    public static boolean DEBUG = true;
     /**
      * Customize the log tag for your application, so that other apps
      * using Jus don't mix their logs with yours.
@@ -77,7 +77,7 @@ public class JusLog {
 
     /**
      * Formats the caller's provided message and prepends useful info like
-     * calling thread ID and method name.
+     * calling threadId ID and method name.
      */
     private static String buildMessage(String format, Object... args) {
         String msg = (args == null) ? format : String.format(Locale.US, format, args);
@@ -102,7 +102,7 @@ public class JusLog {
     }
 
     /**
-     * A simple event log with records containing a name, thread ID, and timestamp.
+     * A simple event log with records containing a name, threadId ID, and timestamp.
      */
     public static class MarkerLog {
         public static final boolean ENABLED = JusLog.DEBUG;
@@ -112,13 +112,25 @@ public class JusLog {
 
         public static class Marker {
             public final String name;
-            public final long thread;
+            public final long threadId;
+            public final String threadName;
             public final long time;
 
-            public Marker(String name, long thread, long time) {
+            public Marker(String name, long threadId, String threadName, long time) {
                 this.name = name;
-                this.thread = thread;
+                this.threadId = threadId;
+                this.threadName = threadName;
                 this.time = time;
+            }
+
+            @Override
+            public String toString() {
+                return "Marker{" +
+                        "name='" + name + '\'' +
+                        ", threadId=" + threadId +
+                        ", threadName='" + threadName + '\'' +
+                        ", time=" + time +
+                        '}';
             }
         }
 
@@ -126,12 +138,12 @@ public class JusLog {
         private volatile boolean mFinished = false;
 
         /** Adds a marker to this log with the specified name. */
-        public synchronized void add(String name, long threadId) {
+        public synchronized void add(String name, long threadId, String threadName) {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
-
-            mMarkers.add(new Marker(name, threadId, System.nanoTime()));
+            Log.d("jus", new Marker(name, threadId, threadName, System.nanoTime()).toString());
+            mMarkers.add(new Marker(name, threadId, threadName, System.nanoTime()));
         }
 
         /**
@@ -151,7 +163,7 @@ public class JusLog {
             d("(%-4d ms) %s", duration, header);
             for (Marker marker : mMarkers) {
                 long thisTime = marker.time;
-                d("(+%-4d) [%2d] %s", (thisTime - prevTime), marker.thread, marker.name);
+                d("(+%-4d) [%2d/%s] %s", (thisTime - prevTime), marker.threadId, marker.threadName, marker.name);
                 prevTime = thisTime;
             }
         }

@@ -41,7 +41,7 @@ public interface Cache {
 
     /**
      * Performs any potentially long-running actions needed to initialize the cache;
-     * will be called from a worker thread.
+     * will be called from a worker threadId.
      */
     public void initialize();
 

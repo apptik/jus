@@ -31,11 +31,11 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * A request dispatch queue with a thread pool of dispatchers.
+ * A request dispatch queue with a threadId pool of dispatchers.
  * <p/>
  * Calling {@link #add(Request)} will enqueue the given Request for dispatch,
- * resolving from either cache or network on a worker thread, and then delivering
- * a parsed response on the main thread.
+ * resolving from either cache or network on a worker threadId, and then delivering
+ * a parsed response on the main threadId.
  */
 public class RequestQueue {
 
@@ -114,7 +114,7 @@ public class RequestQueue {
     /**
      * The cache dispatcher.
      */
-    protected CacheDispatcher mCacheDispatcher;
+    protected CacheDispatcher cacheDispatcher;
 
     /**
      * Network dispatcher factory
@@ -170,10 +170,10 @@ public class RequestQueue {
 
 
     public RequestQueue withCacheDispatcher(CacheDispatcher cacheDispatcher) {
-        if (mCacheDispatcher != null) {
-            mCacheDispatcher.quit();
+        if (this.cacheDispatcher != null) {
+            this.cacheDispatcher.quit();
         }
-        mCacheDispatcher = cacheDispatcher;
+        this.cacheDispatcher = cacheDispatcher;
         return this;
     }
 
@@ -209,10 +209,10 @@ public class RequestQueue {
         stop();  // Make sure any currently running dispatchers are stopped.
         // Create the cache dispatcher and start it.
 
-        if (mCacheDispatcher == null) {
-            mCacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
-            mCacheDispatcher.start();
+        if (cacheDispatcher == null) {
+            cacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
         }
+        cacheDispatcher.start();
 
         // Create network dispatchers (and corresponding threads) up to the pool size.
         setUpNetworkDispatchers();
@@ -222,8 +222,8 @@ public class RequestQueue {
      * Stops the cache and network dispatchers.
      */
     public void stop() {
-        if (mCacheDispatcher != null) {
-            mCacheDispatcher.quit();
+        if (cacheDispatcher != null) {
+            cacheDispatcher.quit();
         }
         for (int i = 0; i < mDispatchers.length; i++) {
             if (mDispatchers[i] != null) {

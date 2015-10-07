@@ -59,7 +59,7 @@ public class ExecutorDelivery implements ResponseDelivery {
 
     /**
      * A Runnable used for delivering network responses to a listener on the
-     * main thread.
+     * main threadId.
      */
     @SuppressWarnings("rawtypes")
     private class ResponseDeliveryRunnable implements Runnable {

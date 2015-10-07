@@ -160,7 +160,7 @@ public class NetworkImageView extends ImageView {
                         // If this was an immediate response that was delivered inside of a layout
                         // pass do not set the image immediately as it will trigger a requestLayout
                         // inside of a layout. Instead, defer setting the image by posting back to
-                        // the main thread.
+                        // the main threadId.
                         if (isImmediate && isInLayoutPass) {
                             post(new Runnable() {
                                 @Override

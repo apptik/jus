@@ -11,7 +11,7 @@ import java.util.concurrent.BlockingQueue;
 
 public class RxNetworkDispatcher extends NetworkDispatcher {
     /**
-     * Creates a new network dispatcher thread.  You must call {@link #start()}
+     * Creates a new network dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
      *
      * @param queue    Queue of incoming requests for triage

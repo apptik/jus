@@ -22,7 +22,7 @@ package io.apptik.comm.jus;
 import java.util.concurrent.BlockingQueue;
 
 /**
- * Provides a thread for performing cache triage on a queue of requests.
+ * Provides a threadId for performing cache triage on a queue of requests.
  *
  * Requests added to the specified cache queue are resolved from cache.
  * Any deliverable response is posted back to the caller via a
@@ -50,7 +50,7 @@ public class CacheDispatcher extends Thread {
     protected volatile boolean mQuit = false;
 
     /**
-     * Creates a new cache triage dispatcher thread.  You must call {@link #start()}
+     * Creates a new cache triage dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
      *
      * @param cacheQueue Queue of incoming requests for triage
@@ -76,11 +76,14 @@ public class CacheDispatcher extends Thread {
         interrupt();
     }
 
+    protected void setThreadPriority() {
+        this.setPriority(Thread.NORM_PRIORITY);
+    }
+
     @Override
     public void run() {
-        if (DEBUG) JusLog.v("start new dispatcher");
-
-
+        if (DEBUG) JusLog.v("start new cache dispatcher");
+        setThreadPriority();
         // Make a blocking call to initialize the cache.
         mCache.initialize();
 

@@ -35,7 +35,7 @@ public class JusEmitter {
 
     Handler handler;
 
-    //emitter need to post onNext for the subject on the same thread
+    //emitter need to post onNext for the subject on the same threadId
     public void emitJusEvent(final JusEvent event) {
         handler.post(new Runnable() {
             @Override
