@@ -160,7 +160,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
     /**
      * Threshold at which we should log the request (even when debug logging is not enabled).
      */
-    private static final long SLOW_REQUEST_THRESHOLD_MS = 3000;
+    private static final long SLOW_REQUEST_THRESHOLD_NS = 3000000000l;
 
     /**
      * The retry policy for this request.
@@ -449,8 +449,8 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         }
         if (logSlowRequests) {
             long requestTime = System.nanoTime() - requestBirthTime;
-            if (requestTime >= SLOW_REQUEST_THRESHOLD_MS) {
-                JusLog.d("%d ms: %s", requestTime, this.toString());
+            if (requestTime >= SLOW_REQUEST_THRESHOLD_NS) {
+                JusLog.d("%d ns: %s", requestTime, this.toString());
             }
         }
     }
