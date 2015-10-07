@@ -160,7 +160,7 @@ public class JusLog {
             }
 
             long prevTime = mMarkers.get(0).time;
-            d("(%-4d ms) %s", duration, header);
+            d("(%-4d ns) %s", duration, header);
             for (Marker marker : mMarkers) {
                 long thisTime = marker.time;
                 d("(+%-4d) [%2d/%s] %s", (thisTime - prevTime), marker.threadId, marker.threadName, marker.name);
