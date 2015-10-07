@@ -8,6 +8,7 @@ import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 
 public class Converters {
+
     static final class NetworkResponseConverter implements Converter<NetworkResponse,NetworkResponse> {
 
         @Override
@@ -15,6 +16,7 @@ public class Converters {
             return value;
         }
     }
+
     static final class NetworkRequestConverter implements Converter<NetworkRequest,NetworkRequest> {
 
         @Override

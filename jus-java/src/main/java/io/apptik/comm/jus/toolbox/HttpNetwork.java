@@ -44,6 +44,7 @@ import io.apptik.comm.jus.error.RequestError;
 import io.apptik.comm.jus.error.ServerError;
 import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.http.DateUtils;
+import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.HttpStack;
 
 /**
@@ -111,12 +112,11 @@ public class HttpNetwork implements Network {
                         // have to use the header fields from the cache entry plus
                         // the new ones from the response.
                         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
-                        entry.responseHeaders.putAll(httpResponse.headers);
+                        entry.responseHeaders.putAll(httpResponse.headers.toMap());
 
                         httpResponse = new NetworkResponse(
                                 httpResponse.statusCode,
-                                entry.data, entry.responseHeaders,
-                                true,
+                                entry.data, Headers.of(entry.responseHeaders),
                                 System.nanoTime() - requestStart
                         );
                     } else {
@@ -124,7 +124,6 @@ public class HttpNetwork implements Network {
                                 httpResponse.statusCode,
                                 null,
                                 httpResponse.headers,
-                                true,
                                 System.nanoTime() - requestStart
                         );
                     }

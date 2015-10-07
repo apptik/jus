@@ -27,7 +27,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -37,6 +36,8 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Request.Method;
 import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.http.HTTP;
+import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
 
@@ -44,8 +45,6 @@ import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
  * An {@link HttpStack} based on {@link HttpURLConnection}.
  */
 public class HurlStack implements HttpStack {
-
-    private static final String HEADER_CONTENT_TYPE = "Content-Type";
 
     /**
      * An interface for transforming URLs before use.
@@ -89,9 +88,9 @@ public class HurlStack implements HttpStack {
         /// response params
         int statusCode;
         byte[] data;
-        Map<String, String> headers = new TreeMap<String, String>(String.CASE_INSENSITIVE_ORDER);
+        Headers.Builder headers = new Headers.Builder();
           ///
-        requestHeaders.putAll(request.getHeaders());
+        requestHeaders.putAll(request.getHeadersMap());
         requestHeaders.putAll(additionalHeaders);
         if (mUrlRewriter != null) {
             String rewritten = mUrlRewriter.rewriteUrl(url);
@@ -126,14 +125,12 @@ public class HurlStack implements HttpStack {
         }
         for (Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
             if (header.getKey() != null) {
-                headers.put(header.getKey(), header.getValue().get(0));
+                headers.add(header.getKey(), header.getValue().get(0));
             }
         }
 
-
-
-
-        return new NetworkResponse(statusCode, data, headers, HttpURLConnection.HTTP_NOT_MODIFIED==statusCode, System.nanoTime() - requestStart);
+        return new NetworkResponse(statusCode, data, headers.build(),
+                System.nanoTime() - requestStart);
     }
 
     /**
@@ -263,7 +260,7 @@ public class HurlStack implements HttpStack {
         if (body != null) {
             connection.setDoOutput(true);
             if(request.getBodyContentType() !=null) {
-                connection.addRequestProperty(HEADER_CONTENT_TYPE, request.getBodyContentType());
+                connection.addRequestProperty(HTTP.CONTENT_TYPE, request.getBodyContentType());
             }
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
             out.write(body);

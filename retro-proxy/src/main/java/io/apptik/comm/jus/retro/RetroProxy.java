@@ -297,20 +297,18 @@ public final class RetroProxy {
         /**
          * Create the {@link RetroProxy} instances.
          */
-        public RetroProxy build(Context context) {
+        public RetroProxy build() {
             if (baseUrl == null) {
                 throw new IllegalStateException("Base URL required.");
             }
-
-            RequestQueue client = this.requestQueue;
-            if (client == null) {
-                client = Jus.newRequestQueue(context);
+            if (this.requestQueue == null) {
+                throw new IllegalStateException("requestQueue cannot be null");
             }
 
             // Make a defensive copy of the converters.
             List<Converter.Factory> converterFactories = new ArrayList<>(this.converters);
 
-            return new RetroProxy(client, baseUrl, converterFactories,
+            return new RetroProxy(this.requestQueue, baseUrl, converterFactories,
                     validateEagerly);
         }
     }

@@ -20,42 +20,15 @@ package io.apptik.comm.jus;
 
 import java.net.HttpURLConnection;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
+
+import io.apptik.comm.jus.http.HTTP;
+import io.apptik.comm.jus.http.Headers;
+import io.apptik.comm.jus.http.MediaType;
 
 /**
  * Data and headers returned from {@link Network#performRequest(Request)}.
  */
 public class NetworkResponse {
-    /**
-     * Creates a new network response.
-     * @param statusCode the HTTP status code
-     * @param data Response body
-     * @param headers Headers returned with this response, or null for none
-     * @param notModified True if the server returned a 304 and the data was already in cache
-     * @param networkTimeMs Round-trip network time to receive network response
-     */
-    public NetworkResponse(int statusCode, byte[] data, Map<String, String> headers,
-            boolean notModified, long networkTimeMs) {
-        this.statusCode = statusCode;
-        this.data = data;
-        this.headers = headers;
-        this.notModified = notModified;
-        this.networkTimeMs = networkTimeMs;
-    }
-
-    public NetworkResponse(int statusCode, byte[] data, Map<String, String> headers,
-            boolean notModified) {
-        this(statusCode, data, headers, notModified, 0);
-    }
-
-    public NetworkResponse(byte[] data) {
-        this(HttpURLConnection.HTTP_OK, data, Collections.<String, String>emptyMap(), false, 0);
-    }
-
-    public NetworkResponse(byte[] data, Map<String, String> headers) {
-        this(HttpURLConnection.HTTP_OK, data, headers, false, 0);
-    }
 
     /** The HTTP status code. */
     public final int statusCode;
@@ -64,23 +37,99 @@ public class NetworkResponse {
     public final byte[] data;
 
     /** Response headers. */
-    public final Map<String, String> headers;
-
-    /** True if the server returned a 304 (Not Modified). */
-    public final boolean notModified;
+    public final Headers headers;
 
     /** Network roundtrip time in milliseconds. */
-    public final long networkTimeMs;
+    public final long networkTimeNs;
+
+    public final MediaType contentType;
+
+
+    /**
+     * Creates a new network response.
+     * @param statusCode the HTTP status code
+     * @param data Response body
+     * @param headers Headers returned with this response, or null for none
+     * @param networkTimeNs Round-trip network time to receive network response
+     */
+    public NetworkResponse(int statusCode, byte[] data, Headers headers, long networkTimeNs) {
+        this.statusCode = statusCode;
+        this.data = data;
+        this.headers = headers;
+        this.networkTimeNs = networkTimeNs;
+        this.contentType = MediaType.parse(this.headers.get(HTTP.CONTENT_TYPE));
+    }
+
+    /** True if the server returned a 304 (Not Modified). */
+    public final boolean isNotModified() {
+        return HttpURLConnection.HTTP_NOT_MODIFIED == statusCode;
+    }
+
+
 
     @Override
     public String toString() {
         return "NetworkResponse{" +
-                "data=" + Arrays.toString(data) +
+                "contentType=" + contentType +
                 ", statusCode=" + statusCode +
+                ", data=" + Arrays.toString(data) +
                 ", headers=" + headers +
-                ", notModified=" + notModified +
-                ", networkTimeMs=" + networkTimeMs +
+                ", networkTimeNs=" + networkTimeNs +
                 '}';
+    }
+
+    public static class Builder {
+
+        /** The HTTP status code. */
+        public int statusCode = HttpURLConnection.HTTP_OK;
+
+        /** Raw data from this response. */
+        public byte[] data;
+
+        /** Response headers. */
+        public Headers.Builder headers;
+
+        /** Network roundtrip time in milliseconds. */
+        public long networkTimeNs = 0;
+
+        public NetworkResponse.Builder setHeader(String name, String value) {
+            this.headers.set(name, value);
+            return this;
+        }
+
+        public NetworkResponse.Builder addHeader(String name, String value) {
+            this.headers.add(name, value);
+            return this;
+        }
+
+        public NetworkResponse.Builder removeHeader(String name) {
+            this.headers.removeAll(name);
+            return this;
+        }
+
+        public NetworkResponse.Builder setHeaders(Headers headers) {
+            this.headers = headers.newBuilder();
+            return this;
+        }
+
+        public NetworkResponse.Builder setBody(byte[] data) {
+            this.data = data;
+            return this;
+        }
+
+        public NetworkResponse.Builder setNetworkTimeNs(long networkTimeNs) {
+            this.networkTimeNs = networkTimeNs;
+            return this;
+        }
+
+        public NetworkResponse.Builder setStatusCode(int statusCode) {
+            this.statusCode = statusCode;
+            return this;
+        }
+
+        public NetworkResponse build() {
+            return new NetworkResponse(statusCode, data, headers.build(), networkTimeNs);
+        }
     }
 }
 

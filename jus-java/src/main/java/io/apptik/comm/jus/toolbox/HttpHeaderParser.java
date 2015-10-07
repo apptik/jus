@@ -40,7 +40,7 @@ public class HttpHeaderParser {
     public static Cache.Entry parseCacheHeaders(NetworkResponse response) {
         long now = System.currentTimeMillis();
 
-        Map<String, String> headers = response.headers;
+        Map<String, String> headers = response.headers.toMap();
 
         long serverDate = 0;
         long lastModified = 0;

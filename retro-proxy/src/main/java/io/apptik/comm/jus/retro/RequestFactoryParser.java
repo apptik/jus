@@ -188,7 +188,7 @@ final class RequestFactoryParser {
             }
             String headerName = header.substring(0, colon);
             String headerValue = header.substring(colon + 1).trim();
-            if ("Content-Type".equalsIgnoreCase(headerName)) {
+            if (io.apptik.comm.jus.http.HTTP.CONTENT_TYPE.equalsIgnoreCase(headerName)) {
                 contentType = MediaType.parse(headerValue);
             } else {
                 builder.add(headerName, headerValue);

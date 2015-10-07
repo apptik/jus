@@ -18,6 +18,7 @@
 
 package io.apptik.comm.jus;
 
+import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
 
@@ -85,7 +86,7 @@ public class NetworkRequest {
 
         public NetworkRequest.Builder setContentType(MediaType value) {
             contentType = value;
-            this.headers.set("Content-Type", contentType.toString());
+            this.headers.set(HTTP.CONTENT_TYPE, contentType.toString());
             return this;
         }
 

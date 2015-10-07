@@ -41,7 +41,7 @@ import io.apptik.comm.jus.toolbox.HttpHeaderParser;
  * If more complex logic is required and request is extended then
  * one should implement:
  * {@link #getBody()} in case of Post or Put
- * {@link #getHeaders()} in case of specific headers
+ * {@link #getHeadersMap()} in case of specific headers
  * {@link #getBodyContentType()} in case of specific content type
  * Note that if {@link #getBodyContentType() != null} it will be added to the headers of the request
  *
@@ -534,7 +534,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @throws AuthFailureError In the event of auth failure
      */
-    public Map<String, String> getHeaders() throws AuthFailureError {
+    public Map<String, String> getHeadersMap() throws AuthFailureError {
         NetworkRequest networkRequest = getInnerNetworkRequest();
         if (networkRequest != null && networkRequest.headers != null) {
             return networkRequest.headers.toMap();

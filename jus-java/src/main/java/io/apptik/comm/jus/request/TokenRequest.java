@@ -26,7 +26,7 @@ public class TokenRequest extends StringRequest {
     }
 
     @Override
-    public Map<String, String> getHeaders() throws AuthFailureError {
+    public Map<String, String> getHeadersMap() throws AuthFailureError {
         Map<String, String> headers = new HashMap<String, String>();
 
         String auth = "Basic "

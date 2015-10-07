@@ -38,7 +38,7 @@ public interface HttpStack {
      *
      * @param request the request to perform
      * @param additionalHeaders additional headers to be sent together with
-     *         {@link Request#getHeaders()}
+     *         {@link Request#getHeadersMap()}
      * @return the HTTP response
      */
     public NetworkResponse performRequest(Request<?,?> request,

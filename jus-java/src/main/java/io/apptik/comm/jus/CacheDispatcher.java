@@ -21,9 +21,11 @@ package io.apptik.comm.jus;
 
 import java.util.concurrent.BlockingQueue;
 
+import io.apptik.comm.jus.http.Headers;
+
 /**
  * Provides a threadId for performing cache triage on a queue of requests.
- *
+ * <p/>
  * Requests added to the specified cache queue are resolved from cache.
  * Any deliverable response is posted back to the caller via a
  * {@link ResponseDelivery}.  Cache misses and responses that require
@@ -34,32 +36,42 @@ public class CacheDispatcher extends Thread {
 
     protected static final boolean DEBUG = JusLog.DEBUG;
 
-    /** The queue of requests coming in for triage. */
-    protected final BlockingQueue<Request<?,?>> mCacheQueue;
+    /**
+     * The queue of requests coming in for triage.
+     */
+    protected final BlockingQueue<Request<?, ?>> mCacheQueue;
 
-    /** The queue of requests going out to the network. */
-    protected final BlockingQueue<Request<?,?>> mNetworkQueue;
+    /**
+     * The queue of requests going out to the network.
+     */
+    protected final BlockingQueue<Request<?, ?>> mNetworkQueue;
 
-    /** The cache to read from. */
+    /**
+     * The cache to read from.
+     */
     protected final Cache mCache;
 
-    /** For posting responses. */
+    /**
+     * For posting responses.
+     */
     protected final ResponseDelivery mDelivery;
 
-    /** Used for telling us to die. */
+    /**
+     * Used for telling us to die.
+     */
     protected volatile boolean mQuit = false;
 
     /**
      * Creates a new cache triage dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
      *
-     * @param cacheQueue Queue of incoming requests for triage
+     * @param cacheQueue   Queue of incoming requests for triage
      * @param networkQueue Queue to post requests that require network to
-     * @param cache Cache interface to use for resolution
-     * @param delivery Delivery interface to use for posting responses
+     * @param cache        Cache interface to use for resolution
+     * @param delivery     Delivery interface to use for posting responses
      */
     public CacheDispatcher(
-            BlockingQueue<Request<?,?>> cacheQueue, BlockingQueue<Request<?,?>> networkQueue,
+            BlockingQueue<Request<?, ?>> cacheQueue, BlockingQueue<Request<?, ?>> networkQueue,
             Cache cache, ResponseDelivery delivery) {
         mCacheQueue = cacheQueue;
         mNetworkQueue = networkQueue;
@@ -91,7 +103,7 @@ public class CacheDispatcher extends Thread {
             try {
                 // Get a request from the cache triage queue, blocking until
                 // at least one is available.
-                final Request<?,?> request = mCacheQueue.take();
+                final Request<?, ?> request = mCacheQueue.take();
                 request.addMarker(Request.EVENT_CACHE_QUEUE_TAKE);
 
                 // If the request has been canceled, don't bother dispatching it.
@@ -120,7 +132,7 @@ public class CacheDispatcher extends Thread {
                 // We have a cache hit; parse its data for delivery back to the request.
                 request.addMarker(Request.EVENT_CACHE_HIT);
                 Response<?> response = request.parseNetworkResponse(
-                        new NetworkResponse(entry.data, entry.responseHeaders));
+                        new NetworkResponse(-1, entry.data, Headers.of(entry.responseHeaders), 0));
                 request.addMarker(Request.EVENT_CACHE_HIT_PARSED);
 
                 if (!entry.refreshNeeded()) {

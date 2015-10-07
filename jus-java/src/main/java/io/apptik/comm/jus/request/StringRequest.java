@@ -67,7 +67,7 @@ public class StringRequest extends Request<Void,String> {
     public Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {
-            parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers));
+            parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers.toMap()));
         } catch (UnsupportedEncodingException e) {
             parsed = new String(response.data);
         }

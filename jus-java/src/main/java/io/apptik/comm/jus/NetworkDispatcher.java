@@ -125,7 +125,7 @@ public class NetworkDispatcher extends Thread {
 
                 // If the server returned 304 AND we delivered a response already,
                 // we're done -- don't deliver a second identical response.
-                if (networkResponse.notModified && request.hasHadResponseDelivered()) {
+                if (networkResponse.isNotModified() && request.hasHadResponseDelivered()) {
                     request.finish(Request.EVENT_NOT_MODIFIED);
                     continue;
                 }
