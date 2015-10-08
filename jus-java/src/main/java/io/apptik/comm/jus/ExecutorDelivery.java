@@ -47,14 +47,34 @@ public class ExecutorDelivery implements ResponseDelivery {
     public void postResponse(Request<?,?> request, Response<?> response, Runnable runnable) {
         request.markDelivered();
         request.addMarker(Request.EVENT_POST_RESPONSE);
-        mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, runnable));
+        if(addMarkersAndContinue(request, response)) {
+            mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, runnable));
+        }
     }
 
     @Override
     public void postError(Request<?,?> request, JusError error) {
         request.addMarker(Request.EVENT_POST_ERROR);
         Response<?> response = Response.error(error);
-        mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, null));
+        if(addMarkersAndContinue(request, response)) {
+            mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, null));
+        }
+    }
+
+    protected boolean addMarkersAndContinue(Request<?,?> request, Response<?> response) {
+        // If this request has canceled, finish it and don't deliver.
+        if (request.isCanceled()) {
+            request.finish(Request.EVENT_CANCELED_AT_DELIVERY);
+            return false;
+        }
+        // If this is an intermediate response, add a marker, otherwise we're done
+        // and the request can be finished.
+        if (response.intermediate) {
+            request.addMarker(Request.EVENT_INTERMEDIATE_RESPONSE);
+        } else {
+            request.finish(Request.EVENT_DONE);
+        }
+        return true;
     }
 
     /**
@@ -77,25 +97,11 @@ public class ExecutorDelivery implements ResponseDelivery {
         @SuppressWarnings("unchecked")
         @Override
         public void run() {
-            // If this request has canceled, finish it and don't deliver.
-            if (mRequest.isCanceled()) {
-                mRequest.finish(Request.EVENT_CANCELED_AT_DELIVERY);
-                return;
-            }
-
             // Deliver a normal response or error, depending.
             if (mResponse.isSuccess()) {
                 mRequest.deliverResponse(mResponse.result);
             } else {
                 mRequest.deliverError(mResponse.error);
-            }
-
-            // If this is an intermediate response, add a marker, otherwise we're done
-            // and the request can be finished.
-            if (mResponse.intermediate) {
-                mRequest.addMarker(Request.EVENT_INTERMEDIATE_RESPONSE);
-            } else {
-                mRequest.finish(Request.EVENT_DONE);
             }
 
             // If we have been provided a post-delivery runnable, run it.
