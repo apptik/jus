@@ -69,7 +69,7 @@ public final class HTTP {
     public static final String ISO_8859_1 = "ISO-8859-1";
 
     /** Default charsets */
-    public static final String DEFAULT_CONTENT_CHARSET = ISO_8859_1;
+    public static final String DEFAULT_CONTENT_CHARSET = UTF_8;
     public static final String DEFAULT_PROTOCOL_CHARSET = US_ASCII;
 
     /** Content type definitions */

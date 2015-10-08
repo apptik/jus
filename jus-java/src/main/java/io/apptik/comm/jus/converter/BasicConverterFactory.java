@@ -12,16 +12,26 @@ public class BasicConverterFactory extends Converter.Factory {
 
     @Override
     public Converter<NetworkResponse, ?> fromResponseBody(Type type, Annotation[] annotations) {
-        if (type instanceof Class && NetworkResponse.class.isAssignableFrom((Class<?>) type)) {
-            return new Converters.NetworkResponseConverter();
+        if (type instanceof Class) {
+            if (NetworkResponse.class.isAssignableFrom((Class<?>) type)) {
+                return new Converters.NetworkResponseConverter();
+            }
+            if(String.class.isAssignableFrom((Class<?>) type)) {
+                return new Converters.StringResponseConverter();
+            }
         }
         return null;
     }
 
     @Override
     public Converter<?, NetworkRequest> toRequestBody(Type type, Annotation[] annotations) {
-        if (type instanceof Class && NetworkResponse.class.isAssignableFrom((Class<?>) type)) {
-            return new Converters.NetworkRequestConverter();
+        if (type instanceof Class) {
+            if (NetworkResponse.class.isAssignableFrom((Class<?>) type)) {
+                return new Converters.NetworkRequestConverter();
+            }
+            if(String.class.isAssignableFrom((Class<?>) type)) {
+                return new Converters.StringRequestConverter();
+            }
         }
         return null;
     }

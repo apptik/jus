@@ -146,12 +146,12 @@ public class NetworkDispatcher extends Thread {
                 request.markDelivered();
                 mDelivery.postResponse(request, response);
             } catch (JusError jusError) {
-                jusError.setNetworkTimeMs(System.nanoTime() - startTimeMs);
+                jusError.setNetworkTimeNs(System.nanoTime() - startTimeMs);
                 parseAndDeliverNetworkError(request, jusError);
             } catch (Exception e) {
                 JusLog.e(e, "Unhandled exception %s", e.toString());
                 JusError jusError = new JusError(e);
-                jusError.setNetworkTimeMs(System.nanoTime() - startTimeMs);
+                jusError.setNetworkTimeNs(System.nanoTime() - startTimeMs);
                 mDelivery.postError(request, jusError);
             }
         }

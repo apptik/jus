@@ -52,7 +52,7 @@ public class JusError extends Exception {
     }
 
     /* package */
-    public void setNetworkTimeMs(long networkTimeMs) {
+    public void setNetworkTimeNs(long networkTimeMs) {
        this.networkTimeMs = networkTimeMs;
     }
 
