@@ -122,7 +122,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
     /**
      * Listener interface for non error responses.
      */
-    private Listener.ResponseListener responseListener;
+    private Listener.ResponseListener<T> responseListener;
 
     /**
      * Listener interface for markers.
@@ -313,7 +313,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         return responseListener;
     }
 
-    public Request<F, T> setResponseListener(Listener.ResponseListener responseListener) {
+    public Request<F, T> setResponseListener(Listener.ResponseListener<T> responseListener) {
         this.responseListener = responseListener;
         return this;
     }

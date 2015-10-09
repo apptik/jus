@@ -3,3 +3,23 @@ apply plugin: 'java'
 dependencies {
     compile project(':jus-java')
 }
+
+javadoc {
+    options.charSet = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+    options.encoding = 'UTF-8'
+}
+
+task getBeer() {
+    dependsOn assemble, compileJava
+    doFirst{
+        println(" ****** Getting beer ****** ")
+    }
+    doLast {
+        javaexec {
+            main = "io.apptik.comm.jus.examples.Main"
+            classpath = sourceSets.main.runtimeClasspath
+            args = ['beer']
+        }
+    }
+}

@@ -218,6 +218,17 @@ public class RequestQueue {
         setUpNetworkDispatchers();
     }
 
+    public void stopWhenDone() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while(getCurrentRequests()>0) {
+                }
+                stop();
+            }
+        });
+    }
+
     /**
      * Stops the cache and network dispatchers.
      */
