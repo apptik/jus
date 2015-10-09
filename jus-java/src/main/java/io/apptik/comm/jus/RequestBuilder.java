@@ -143,7 +143,7 @@ public final class RequestBuilder {
             url = baseUrl.resolve(relativeUrl);
         }
 
-        if (networkRequestBuilder.data == null) {
+        if (!networkRequestBuilder.hasBody()) {
             // Try to pull from one of the builders.
             //TODO
 //      if (formEncodingBuilder != null) {

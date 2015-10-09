@@ -55,14 +55,14 @@ public class NetworkRequest {
         /**
          * Raw data from this response.
          */
-        public byte[] data;
+        private byte[] data;
 
         /**
          * Response headers.
          */
-        public Headers.Builder headers;
+        private Headers.Builder headers = new Headers.Builder();
 
-        public MediaType contentType;
+        private MediaType contentType;
 
         public NetworkRequest.Builder setHeader(String name, String value) {
             this.headers.set(name, value);
@@ -97,6 +97,10 @@ public class NetworkRequest {
         public NetworkRequest.Builder setBody(byte[] data) {
             this.data = data;
             return this;
+        }
+
+        public boolean hasBody() {
+            return (data!=null);
         }
 
         public NetworkRequest build() {

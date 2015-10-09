@@ -81,16 +81,16 @@ public class NetworkResponse {
     public static class Builder {
 
         /** The HTTP status code. */
-        public int statusCode = HttpURLConnection.HTTP_OK;
+        private int statusCode = HttpURLConnection.HTTP_OK;
 
         /** Raw data from this response. */
-        public byte[] data;
+        private byte[] data;
 
         /** Response headers. */
-        public Headers.Builder headers;
+        private Headers.Builder headers = new Headers.Builder();
 
         /** Network roundtrip time in milliseconds. */
-        public long networkTimeNs = 0;
+        private long networkTimeNs = 0;
 
         public NetworkResponse.Builder setHeader(String name, String value) {
             this.headers.set(name, value);
