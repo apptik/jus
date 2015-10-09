@@ -19,7 +19,7 @@
 package io.apptik.comm.jus;
 
 import java.net.HttpURLConnection;
-import java.util.Arrays;
+import java.nio.charset.Charset;
 
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
@@ -72,7 +72,7 @@ public class NetworkResponse {
         return "NetworkResponse{" +
                 "contentType=" + contentType +
                 ", statusCode=" + statusCode +
-                ", data=" + Arrays.toString(data) +
+                ", data=" + new String(data, Charset.forName(HTTP.UTF_8)) +
                 ", headers=" + headers +
                 ", networkTimeNs=" + networkTimeNs +
                 '}';

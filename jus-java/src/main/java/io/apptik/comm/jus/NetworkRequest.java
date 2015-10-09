@@ -18,6 +18,8 @@
 
 package io.apptik.comm.jus;
 
+import java.nio.charset.Charset;
+
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
@@ -50,6 +52,15 @@ public class NetworkRequest {
 
     public final MediaType contentType;
 
+
+    @Override
+    public String toString() {
+        return "NetworkRequest{" +
+                "contentType=" + contentType +
+                ", data=" + new String(data, Charset.forName(HTTP.UTF_8)) +
+                ", headers=" + headers +
+                '}';
+    }
 
     public static class Builder {
         /**
