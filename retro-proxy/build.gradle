@@ -19,6 +19,5 @@ android {
 }
 
 dependencies {
-    compile project(':jus-android')
-    compile project(':rx-jus')
+    compile project(':jus-java')
 }

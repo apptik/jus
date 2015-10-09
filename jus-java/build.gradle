@@ -5,4 +5,17 @@ apply plugin: 'java'
 dependencies {
     compile 'com.squareup.okio:okio:1.6.0'
     compile project(':java-log')
+
+    testCompile 'junit:junit:[4,)'
+    testCompile 'org.assertj:assertj-core:+'
 }
+
+
+test {
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
+    }
+}
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

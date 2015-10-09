@@ -12,21 +12,21 @@ import io.apptik.comm.jus.http.MediaType;
 
 public class Converters {
 
-    static final class NetworkResponseConverter implements Converter<NetworkResponse, NetworkResponse> {
+    public static final class NetworkResponseConverter implements Converter<NetworkResponse, NetworkResponse> {
         @Override
         public NetworkResponse convert(NetworkResponse value) throws IOException {
             return value;
         }
     }
 
-    static final class NetworkRequestConverter implements Converter<NetworkRequest, NetworkRequest> {
+    public static final class NetworkRequestConverter implements Converter<NetworkRequest, NetworkRequest> {
         @Override
         public NetworkRequest convert(NetworkRequest value) throws IOException {
             return value;
         }
     }
 
-    static final class StringResponseConverter implements Converter<NetworkResponse, String> {
+    public static final class StringResponseConverter implements Converter<NetworkResponse, String> {
         @Override
         public String convert(NetworkResponse value) throws IOException {
             String parsed;
@@ -46,9 +46,9 @@ public class Converters {
         }
     }
 
-    static final class StringRequestConverter implements Converter<String, NetworkRequest> {
+    public static final class StringRequestConverter implements Converter<String, NetworkRequest> {
 
-        private static final MediaType MEDIA_TYPE = MediaType.parse("text/html; charset=UTF-8");
+        private static final MediaType MEDIA_TYPE = MediaType.parse("text/plain; charset=UTF-8");
         private final MediaType mediaType;
 
         public StringRequestConverter() {
