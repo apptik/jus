@@ -27,6 +27,8 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 
+import io.apptik.comm.jus.Response;
+
 final class Utils {
 
   /** Returns true if {@code annotations} contains an instance of {@code cls}. */
@@ -52,13 +54,13 @@ final class Utils {
     }
   }
 
-  public static Type getSingleParameterUpperBound(ParameterizedType type) {
+  public static Type getSecondParameterUpperBound(ParameterizedType type) {
     Type[] types = type.getActualTypeArguments();
-    if (types.length != 1) {
+    if (types.length != 2) {
       throw new IllegalArgumentException(
           "Expected one type argument but got: " + Arrays.toString(types));
     }
-    Type paramType = types[0];
+    Type paramType = types[1];
     if (paramType instanceof WildcardType) {
       return ((WildcardType) paramType).getUpperBounds()[0];
     }
@@ -143,21 +145,21 @@ final class Utils {
 
   }
 
-//  static Type getCallResponseType(Type returnType) {
-//    if (!(returnType instanceof ParameterizedType)) {
-//      throw new IllegalArgumentException(
-//          "Call return type must be parameterized as Call<Foo> or Call<? extends Foo>");
-//    }
-//    final Type responseType = getSingleParameterUpperBound((ParameterizedType) returnType);
-//
-//    // Ensure the Call response type is not Response, we automatically deliver the Response object.
-//    if (getRawType(responseType) == Response.class) {
-//      throw new IllegalArgumentException(
-//          "Call<T> cannot use Response as its generic parameter. "
-//              + "Specify the response body type only (e.g., Call<TweetResponse>).");
-//    }
-//    return responseType;
-//  }
+  static Type getRequestResponseType(Type returnType) {
+    if (!(returnType instanceof ParameterizedType)) {
+      throw new IllegalArgumentException(
+          "Request return type must be parameterized as Request<?,Foo> or Request<?,? extends Foo>");
+    }
+    final Type responseType = getSecondParameterUpperBound((ParameterizedType) returnType);
+
+    // Ensure the Call response type is not Response, we automatically deliver the Response object.
+    if (getRawType(responseType) == Response.class) {
+      throw new IllegalArgumentException(
+          "Call<T> cannot use Response as its generic parameter. "
+              + "Specify the response body type only (e.g., Call<TweetResponse>).");
+    }
+    return responseType;
+  }
 
   private Utils() {
     // No instances.

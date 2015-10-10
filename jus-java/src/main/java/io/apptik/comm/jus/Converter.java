@@ -31,7 +31,7 @@ public interface Converter<F, T> {
      * Create a {@link Converter} for converting an HTTP response body to {@code type} or null if it
      * cannot be handled by this factory.
      */
-    public Converter<NetworkResponse, ?> fromResponseBody(Type type, Annotation[] annotations) {
+    public Converter<NetworkResponse, ?> fromResponse(Type type, Annotation[] annotations) {
       return null;
     }
 
@@ -39,7 +39,7 @@ public interface Converter<F, T> {
      * Create a {@link Converter} for converting {@code type} to an HTTP request body or null if it
      * cannot be handled by this factory.
      */
-    public Converter<?, NetworkRequest> toRequestBody(Type type, Annotation[] annotations) {
+    public Converter<?, NetworkRequest> toRequest(Type type, Annotation[] annotations) {
       return null;
     }
   }

@@ -1,7 +1,11 @@
 apply plugin: 'java'
 
+
+sourceCompatibility = 1.8
+
 dependencies {
     compile project(':jus-java')
+    compile project(':retro-proxy')
 }
 
 javadoc {
@@ -10,14 +14,43 @@ javadoc {
     options.encoding = 'UTF-8'
 }
 
-task getBeer() {
+
+task getEasyBeer() {
     dependsOn assemble, compileJava
     doFirst{
         println(" ****** Getting beer ****** ")
     }
     doLast {
         javaexec {
-            main = "io.apptik.comm.jus.examples.Main"
+            main = "io.apptik.comm.jus.examples.EasyJus"
+            classpath = sourceSets.main.runtimeClasspath
+            args = ['beer']
+        }
+    }
+}
+
+task getCostomBeer() {
+    dependsOn assemble, compileJava
+    doFirst{
+        println(" ****** Getting beer ****** ")
+    }
+    doLast {
+        javaexec {
+            main = "io.apptik.comm.jus.examples.CustomJus"
+            classpath = sourceSets.main.runtimeClasspath
+            args = ['beer']
+        }
+    }
+}
+
+task getRetroBeer() {
+    dependsOn assemble, compileJava
+    doFirst{
+        println(" ****** Getting beer ****** ")
+    }
+    doLast {
+        javaexec {
+            main = "io.apptik.comm.jus.examples.RetroJus"
             classpath = sourceSets.main.runtimeClasspath
             args = ['beer']
         }

@@ -27,6 +27,7 @@ final class MethodHandler<T> {
   @SuppressWarnings("unchecked")
   static MethodHandler<?> create(RetroProxy retroProxy, Method method) {
     Type responseType = method.getGenericReturnType();
+    responseType = Utils.getRequestResponseType(responseType);
     if (Utils.hasUnresolvableType(responseType)) {
       throw Utils.methodError(method,
               "Method return type must not include a type variable or wildcard: %s", responseType);

@@ -273,7 +273,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
                 //first try to get from basic converter factory
                 try {
                     converterToRequest = (Converter<F, NetworkRequest>) new BasicConverterFactory()
-                            .toRequestBody(networkRequest.getClass(), null);
+                            .toRequest(networkRequest.getClass(), null);
                     if (converterToRequest != null) {
                         innerNetworkRequest = converterToRequest.convert(networkRequest);
                     }

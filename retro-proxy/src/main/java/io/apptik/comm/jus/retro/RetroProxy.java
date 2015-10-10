@@ -17,8 +17,6 @@
 package io.apptik.comm.jus.retro;
 
 
-import android.content.Context;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -31,7 +29,6 @@ import java.util.List;
 import java.util.Map;
 
 import io.apptik.comm.jus.Converter;
-import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
@@ -193,7 +190,7 @@ public final class RetroProxy {
 
         for (int i = 0, count = converters.size(); i < count; i++) {
             Converter<?, NetworkRequest> converter =
-                    converters.get(i).toRequestBody(type, annotations);
+                    converters.get(i).toRequest(type, annotations);
             if (converter != null) {
                 return converter;
             }
@@ -218,7 +215,7 @@ public final class RetroProxy {
 
         for (int i = 0, count = converters.size(); i < count; i++) {
             Converter<NetworkResponse, ?> converter =
-                    converters.get(i).fromResponseBody(type, annotations);
+                    converters.get(i).fromResponse(type, annotations);
             if (converter != null) {
                 return converter;
             }
@@ -236,7 +233,7 @@ public final class RetroProxy {
     /**
      * Build a new {@link RetroProxy}.
      * <p/>
-     * Calling {@link #baseUrl} is required before calling {@link #build(Context)} ()}. All other methods
+     * Calling {@link #baseUrl} is required before calling {@link #build()} ()}. All other methods
      * are optional.
      */
     public static final class Builder {
@@ -254,7 +251,7 @@ public final class RetroProxy {
         /**
          * The HTTP requestQueue used for requests.
          */
-        public Builder client(RequestQueue requestQueue) {
+        public Builder queue(RequestQueue requestQueue) {
             this.requestQueue = checkNotNull(requestQueue, "requestQueue == null");
             return this;
         }

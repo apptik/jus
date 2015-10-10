@@ -19,13 +19,14 @@
 package io.apptik.comm.jus;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -72,7 +73,9 @@ public class RequestQueue {
      * will be in this set if it is waiting in any queue or currently being processed by
      * any dispatcher.
      */
-    private final Set<Request<?, ?>> mCurrentRequests = new HashSet<Request<?, ?>>();
+    private final Set<Request<?, ?>> mCurrentRequests
+        = Collections.newSetFromMap(new ConcurrentHashMap<Request<?, ?>, Boolean>());
+         //   = new HashSet<Request<?, ?>>();
 
     /**
      * The cache triage queue.
@@ -226,7 +229,7 @@ public class RequestQueue {
                 }
                 stop();
             }
-        });
+        }).start();
     }
 
     /**
