@@ -7,7 +7,8 @@ dependencies {
     compile project(':java-log')
 
     testCompile 'junit:junit:[4,)'
-    testCompile 'org.assertj:assertj-core:+'
+    testCompile 'org.assertj:assertj-core:2.2.0'
+    testCompile 'org.mockito:mockito-core:2.+'
 }
 
 javadoc {
