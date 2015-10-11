@@ -31,8 +31,8 @@ import java.util.Locale;
 public class JusLog {
     public static String TAG = "Jus";
 
-    //public static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
+    //public static boolean DEBUG = true;
     /**
      * Customize the log tag for your application, so that other apps
      * using Jus don't mix their logs with yours.

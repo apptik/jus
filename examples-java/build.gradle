@@ -29,7 +29,7 @@ task getEasyBeer() {
     }
 }
 
-task getCostomBeer() {
+task getCustomBeer() {
     dependsOn assemble, compileJava
     doFirst{
         println(" ****** Getting beer ****** ")

@@ -112,11 +112,13 @@ public class HttpNetwork implements Network {
                         // have to use the header fields from the cache entry plus
                         // the new ones from the response.
                         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
-                        entry.responseHeaders.putAll(httpResponse.headers.toMap());
+                        Headers.Builder hBuilder = new Headers.Builder();
+                        hBuilder.addMMap(entry.responseHeaders.toMultimap())
+                                .addMMap(httpResponse.headers.toMultimap());
 
                         httpResponse = new NetworkResponse(
                                 httpResponse.statusCode,
-                                entry.data, Headers.of(entry.responseHeaders),
+                                entry.data, hBuilder.build(),
                                 System.nanoTime() - requestStart
                         );
                     } else {

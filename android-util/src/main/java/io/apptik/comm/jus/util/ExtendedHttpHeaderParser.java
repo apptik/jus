@@ -3,9 +3,8 @@ package io.apptik.comm.jus.util;
 
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
-
-import java.util.Map;
 
 public class ExtendedHttpHeaderParser {
     private ExtendedHttpHeaderParser() {}
@@ -13,7 +12,7 @@ public class ExtendedHttpHeaderParser {
     public static Cache.Entry parseIgnoreCacheHeaders(NetworkResponse response) {
         long now = System.currentTimeMillis();
 
-        Map<String, String> headers = response.headers;
+        Headers headers = response.headers;
         long serverDate = 0;
         String serverEtag = null;
         String headerValue;

@@ -21,8 +21,6 @@ package io.apptik.comm.jus;
 
 import java.util.concurrent.BlockingQueue;
 
-import io.apptik.comm.jus.http.Headers;
-
 /**
  * Provides a threadId for performing cache triage on a queue of requests.
  * <p/>
@@ -132,7 +130,7 @@ public class CacheDispatcher extends Thread {
                 // We have a cache hit; parse its data for delivery back to the request.
                 request.addMarker(Request.EVENT_CACHE_HIT);
                 Response<?> response = request.parseNetworkResponse(
-                        new NetworkResponse(-1, entry.data, Headers.of(entry.responseHeaders), 0));
+                        new NetworkResponse(-1, entry.data, entry.responseHeaders, 0));
                 request.addMarker(Request.EVENT_CACHE_HIT_PARSED);
 
                 if (!entry.refreshNeeded()) {

@@ -36,6 +36,7 @@ import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.JusLog;
+import io.apptik.comm.jus.http.Headers;
 
 /**
  * Cache implementation that caches files directly onto the hard disk in the specified
@@ -360,7 +361,7 @@ public class DiskBasedCache implements Cache {
         public long softTtl;
 
         /** Headers from the response resulting in this cache entry. */
-        public Map<String, String> responseHeaders;
+        public Headers responseHeaders;
 
         private CacheHeader() { }
 
@@ -401,7 +402,7 @@ public class DiskBasedCache implements Cache {
             entry.lastModified = readLong(is);
             entry.ttl = readLong(is);
             entry.softTtl = readLong(is);
-            entry.responseHeaders = readStringStringMap(is);
+            entry.responseHeaders = Headers.of(readStringStringMap(is));
             return entry;
         }
 
@@ -433,7 +434,7 @@ public class DiskBasedCache implements Cache {
                 writeLong(os, lastModified);
                 writeLong(os, ttl);
                 writeLong(os, softTtl);
-                writeStringStringMap(responseHeaders, os);
+                writeStringStringMap(responseHeaders.toMap(), os);
                 os.flush();
                 return true;
             } catch (IOException e) {

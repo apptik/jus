@@ -144,15 +144,17 @@ public final class Headers {
     return result;
   }
 
+  //http://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
   public Map<String, String> toMap() {
     Map<String, String> result = new LinkedHashMap<String, String>();
     for (int i = 0, size = size(); i < size; i++) {
       String name = name(i);
       String values = result.get(name);
       if (values == null) {
-        values = "";
+        values = value(i);
+      } else {
+        values += ", " + value(i);
       }
-      values += (value(i));
       result.put(name, values);
     }
     return result;
@@ -259,6 +261,43 @@ public final class Headers {
       return addLenient(name, value);
     }
 
+    /** Add a field with the specified values. */
+    public Builder add(String name, List<String> values) {
+      if(values == null) {
+        throw new IllegalArgumentException("Unexpected list of header values");
+      }
+      for(String val:values) {
+        add(name, val);
+      }
+      return this;
+    }
+
+    /** Add a set of headers */
+    public Builder addMap(Map<String, String> map) {
+      if(map == null) {
+        throw new IllegalArgumentException("Unexpected map of headers");
+      }
+      for(Map.Entry<String, String> entry:map.entrySet()) {
+        add(entry.getKey(), entry.getValue());
+      }
+      return this;
+    }
+
+    /** Add a set of headers */
+    public Builder addMMap(Map<String, List<String>> map) {
+      if(map == null) {
+        throw new IllegalArgumentException("Unexpected map of headers");
+      }
+      for(Map.Entry<String, List<String>> entry:map.entrySet()) {
+        //could be status line
+        if(entry.getKey()!=null) {
+          add(entry.getKey(), entry.getValue());
+        }
+      }
+      return this;
+    }
+
+
     /**
      * Add a field with the specified value without any validation. Only
      * appropriate for headers from the remote peer or cache.
@@ -288,6 +327,18 @@ public final class Headers {
       checkNameAndValue(name, value);
       removeAll(name);
       addLenient(name, value);
+      return this;
+    }
+
+    /** Set a field with the specified values. */
+    public Builder set(String name, List<String> values) {
+      if(values == null) {
+        throw new IllegalArgumentException("Unexpected list of header values");
+      }
+      removeAll(name);
+      for(String val:values) {
+        add(name, val);
+      }
       return this;
     }
 

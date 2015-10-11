@@ -24,9 +24,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -81,7 +79,7 @@ public class HurlStack implements HttpStack {
     }
 
     @Override
-    public NetworkResponse performRequest(Request<?,?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
+    public NetworkResponse performRequest(Request<?, ?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
             throws IOException, AuthFailureError {
         String url = request.getUrlString();
         HashMap<String, String> requestHeaders = new HashMap<String, String>();
@@ -89,7 +87,7 @@ public class HurlStack implements HttpStack {
         int statusCode;
         byte[] data;
         Headers.Builder headers = new Headers.Builder();
-          ///
+        ///
         requestHeaders.putAll(request.getHeadersMap());
         requestHeaders.putAll(additionalHeaders);
         if (mUrlRewriter != null) {
@@ -117,17 +115,13 @@ public class HurlStack implements HttpStack {
         }
 
         if (hasResponseBody(request.getMethod(), statusCode)) {
-          data = getContentBytes(connection, byteArrayPool);
+            data = getContentBytes(connection, byteArrayPool);
         } else {
             // Add 0 byte response as a way of honestly representing a
             // no-content request.
             data = new byte[0];
         }
-        for (Entry<String, List<String>> header : connection.getHeaderFields().entrySet()) {
-            if (header.getKey() != null) {
-                headers.add(header.getKey(), header.getValue().get(0));
-            }
-        }
+        headers.addMMap(connection.getHeaderFields());
 
         return new NetworkResponse(statusCode, data, headers.build(),
                 System.nanoTime() - requestStart);
@@ -151,7 +145,7 @@ public class HurlStack implements HttpStack {
     /**
      * Reads the contents of HttpEntity into a byte[].
      */
-    private byte[] getContentBytes(HttpURLConnection connection,  ByteArrayPool byteArrayPool) throws IOException {
+    private byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool byteArrayPool) throws IOException {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(byteArrayPool, connection.getContentLength());
         byte[] buffer = null;
@@ -200,7 +194,7 @@ public class HurlStack implements HttpStack {
      * @return an open connection
      * @throws IOException
      */
-    private HttpURLConnection openConnection(URL url, Request<?,?> request) throws IOException {
+    private HttpURLConnection openConnection(URL url, Request<?, ?> request) throws IOException {
         HttpURLConnection connection = createConnection(url);
 
         int timeoutMs = request.getTimeoutMs();
@@ -218,7 +212,7 @@ public class HurlStack implements HttpStack {
     }
 
     static void setConnectionParametersForRequest(HttpURLConnection connection,
-                                                  Request<?,?> request) throws IOException, AuthFailureError {
+                                                  Request<?, ?> request) throws IOException, AuthFailureError {
         switch (request.getMethod()) {
             case Method.GET:
                 // Not necessary to set the request method because connection defaults to GET but
@@ -254,12 +248,12 @@ public class HurlStack implements HttpStack {
         }
     }
 
-    private static void addBodyIfExists(HttpURLConnection connection, Request<?,?> request)
+    private static void addBodyIfExists(HttpURLConnection connection, Request<?, ?> request)
             throws IOException, AuthFailureError {
         byte[] body = request.getBody();
         if (body != null) {
             connection.setDoOutput(true);
-            if(request.getBodyContentType() !=null) {
+            if (request.getBodyContentType() != null) {
                 connection.addRequestProperty(HTTP.CONTENT_TYPE, request.getBodyContentType());
             }
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());

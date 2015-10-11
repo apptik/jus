@@ -18,8 +18,7 @@
 
 package io.apptik.comm.jus;
 
-import java.util.Collections;
-import java.util.Map;
+import io.apptik.comm.jus.http.Headers;
 
 /**
  * An interface for a cache keyed by a String with a byte array as data.
@@ -86,7 +85,7 @@ public interface Cache {
         public long softTtl;
 
         /** Immutable response headers as received from server; must be non-null. */
-        public Map<String, String> responseHeaders = Collections.emptyMap();
+        public Headers responseHeaders = new Headers.Builder().build();
 
         /** True if the entry is expired. */
         public boolean isExpired() {

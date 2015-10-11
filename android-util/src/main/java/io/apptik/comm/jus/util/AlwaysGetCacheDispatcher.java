@@ -65,7 +65,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                 if (entry.isExpired()) {
                     request.addMarker(Request.EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT);
                     Response<?> response = request.parseNetworkResponse(
-                            new NetworkResponse(entry.data, entry.responseHeaders));
+                            new NetworkResponse(200, entry.data, entry.responseHeaders, 0));
                     request.setCacheEntry(entry);
                     // Mark the response as intermediate.
                     response.intermediate = true;
@@ -87,7 +87,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                 // We have a cache hit; parse its data for delivery back to the request.
                 request.addMarker(Request.EVENT_CACHE_HIT);
                 Response<?> response = request.parseNetworkResponse(
-                        new NetworkResponse(entry.data, entry.responseHeaders));
+                        new NetworkResponse(200, entry.data, entry.responseHeaders, 0));
                 request.addMarker(Request.EVENT_CACHE_HIT_PARSED);
 
                 if (!entry.refreshNeeded()) {

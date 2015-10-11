@@ -18,6 +18,7 @@
 
 package io.apptik.comm.jus.toolbox;
 
+import java.util.List;
 import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
@@ -25,6 +26,7 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.http.DateParseException;
 import io.apptik.comm.jus.http.DateUtils;
 import io.apptik.comm.jus.http.HTTP;
+import io.apptik.comm.jus.http.Headers;
 
 /**
  * Utility methods for parsing HTTP headers.
@@ -40,7 +42,7 @@ public class HttpHeaderParser {
     public static Cache.Entry parseCacheHeaders(NetworkResponse response) {
         long now = System.currentTimeMillis();
 
-        Map<String, String> headers = response.headers.toMap();
+        Headers headers = response.headers;
 
         long serverDate = 0;
         long lastModified = 0;
@@ -54,18 +56,18 @@ public class HttpHeaderParser {
 
         String serverEtag = null;
         String headerValue;
+        List<String> headerValues;
 
         headerValue = headers.get("Date");
         if (headerValue != null) {
             serverDate = parseDateAsEpoch(headerValue);
         }
 
-        headerValue = headers.get("Cache-Control");
+        headerValues = headers.values("Cache-Control");
         if (headerValue != null) {
             hasCacheControl = true;
-            String[] tokens = headerValue.split(",");
-            for (int i = 0; i < tokens.length; i++) {
-                String token = tokens[i].trim();
+            for (int i = 0; i < headerValues.size(); i++) {
+                String token = headerValues.get(i).trim();
                 if (token.equals("no-cache") || token.equals("no-store")) {
                     return null;
                 } else if (token.startsWith("max-age=")) {
