@@ -1,5 +1,6 @@
 package io.apptik.comm.jus;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,6 +33,26 @@ public class ConvertersTest {
                 (Converter<NetworkResponse, JSONObject>) factory.fromResponse(JSONObject.class, null);
 
         JSONObject val2 = converter2.convert(response);
+        assertThat(val2.toString()).isEqualTo(val.toString());
+    }
+
+
+    @Test
+    public void jsonArrayConverterTest() throws Exception {
+        final JSONArray val = new JSONArray().put("key1").put(123);
+
+        JSONConverter.Factory factory = new JSONConverter.Factory();
+        Converter<JSONArray, NetworkRequest> converter1 =
+                (Converter<JSONArray, NetworkRequest>) factory.toRequest(JSONArray.class, null);
+        NetworkRequest request = converter1.convert(val);
+        NetworkResponse response = new NetworkResponse.Builder()
+                .setBody(request.data)
+                .setHeader(HTTP.CONTENT_TYPE, request.contentType.toString())
+                .build();
+        Converter<NetworkResponse, JSONArray> converter2 =
+                (Converter<NetworkResponse, JSONArray>) factory.fromResponse(JSONArray.class, null);
+
+        JSONArray val2 = converter2.convert(response);
         assertThat(val2.toString()).isEqualTo(val.toString());
     }
 

@@ -12,7 +12,8 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:1.4.0-beta6'
+        //classpath 'com.android.tools.build:gradle:1.4.0-beta6'
+        classpath 'com.android.tools.build:gradle:1.3.1'
     }
 }
 
@@ -42,8 +43,8 @@ ext {
 
     supportTestRunner = 'com.android.support.test:runner:0.3'
     supportTestRules = 'com.android.support.test:rules:0.3'
-    supportTestEspresso = 'com.android.support.test.espresso:espresso-core:2.2'
-    supportTestEspressoContrib = 'com.android.support.test.espresso:espresso-contrib:2.2'
+    supportTestEspresso = 'com.android.support.test.espresso:espresso-core:2.2.1'
+    supportTestEspressoContrib = 'com.android.support.test.espresso:espresso-contrib:2.2.1'
 
     junit = 'junit:junit:4.12'
 

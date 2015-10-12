@@ -1,8 +1,9 @@
 apply plugin: 'java'
 
-
-sourceCompatibility = 1.8
-
+compileJava {
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+}
 dependencies {
     compile project(':jus-java')
     compile project(':retro-proxy')
@@ -16,6 +17,7 @@ javadoc {
 
 
 task getEasyBeer() {
+    //println System.getProperty("java.home")
     dependsOn assemble, compileJava
     doFirst{
         println(" ****** Getting beer ****** ")
