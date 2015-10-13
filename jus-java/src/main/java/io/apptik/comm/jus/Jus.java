@@ -22,6 +22,7 @@ import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
 import io.apptik.comm.jus.toolbox.DiskBasedCache;
 import io.apptik.comm.jus.toolbox.HttpNetwork;
+import io.apptik.comm.jus.toolbox.NoCache;
 
 public class Jus {
 
@@ -34,11 +35,15 @@ public class Jus {
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
      *
      * @param cacheLocation A {@link File} to use for creating the cache dir.
-     * @param stack   An {@link HttpStack} to use for the network, or null for default.
+     * @param stack         An {@link HttpStack} to use for the network, or null for default.
      * @return A started {@link RequestQueue} instance.
      */
     public static RequestQueue newRequestQueue(File cacheLocation, HttpStack stack) {
-        File cacheDir = new File(cacheLocation, DEFAULT_CACHE_DIR);
+
+        File cacheDir = null;
+        if (cacheLocation != null) {
+            cacheDir = new File(cacheLocation, DEFAULT_CACHE_DIR);
+        }
 
         String userAgent = "jus/0";
 
@@ -48,7 +53,16 @@ public class Jus {
 
         Network network = new HttpNetwork(stack);
 
-        RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
+        Cache cache = null;
+
+        if(cacheDir!=null) {
+            cache = new DiskBasedCache(cacheDir);
+        } else {
+            cache =  new NoCache();
+        }
+
+
+        RequestQueue queue = new RequestQueue(cache, network);
         queue.start();
 
         return queue;
@@ -62,5 +76,9 @@ public class Jus {
      */
     public static RequestQueue newRequestQueue(File cacheLocation) {
         return newRequestQueue(cacheLocation, null);
+    }
+
+    public static RequestQueue newRequestQueue() {
+        return newRequestQueue(null, null);
     }
 }

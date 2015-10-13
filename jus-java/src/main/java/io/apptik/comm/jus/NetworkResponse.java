@@ -18,6 +18,9 @@
 
 package io.apptik.comm.jus;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.nio.charset.Charset;
 
@@ -44,6 +47,7 @@ public class NetworkResponse {
 
     public final MediaType contentType;
 
+    public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
 
     /**
      * Creates a new network response.
@@ -65,6 +69,17 @@ public class NetworkResponse {
         return HttpURLConnection.HTTP_NOT_MODIFIED == statusCode;
     }
 
+    public Charset getCharset() {
+        return contentType != null ? contentType.charset(CHARSET_UTF_8) : CHARSET_UTF_8;
+    }
+
+    public ByteArrayInputStream getByteStream() {
+        return new ByteArrayInputStream(data);
+    }
+
+    public final InputStreamReader getCharStream() throws IOException {
+        return new InputStreamReader(getByteStream(), getCharset());
+    }
 
 
     @Override

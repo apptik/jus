@@ -6,7 +6,7 @@ compileJava {
 }
 dependencies {
     compile project(':jus-java')
-    compile project(':retro-proxy')
+    compile project(':retro-jus')
 }
 
 javadoc {

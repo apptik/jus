@@ -40,7 +40,7 @@ public final class Utils {
       return false;
   }
 
-  static void closeQuietly(Closeable closeable) {
+  public static void closeQuietly(Closeable closeable) {
     if (closeable == null) return;
     try {
       closeable.close();
