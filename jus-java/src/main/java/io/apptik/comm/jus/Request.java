@@ -26,12 +26,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import io.apptik.comm.jus.JusLog.MarkerLog;
-import io.apptik.comm.jus.converter.BasicConverterFactory;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
+import io.apptik.comm.jus.toolbox.Utils;
 
 /**
  * Base class for all network requests.
@@ -47,7 +47,7 @@ import io.apptik.comm.jus.toolbox.HttpHeaderParser;
  *
  * @param <T> The type of parsed response this request expects.
  */
-public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
+public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     public static final String EVENT_CACHE_HIT_EXPIRED = "cache-hit-expired";
     public static final String EVENT_POST_ERROR = "post-error";
@@ -183,10 +183,8 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
 
     private boolean logSlowRequests = false;
 
-    private F networkRequest;
-    private NetworkRequest innerNetworkRequest;
+    private NetworkRequest networkRequest;
     private final Converter<NetworkResponse, T> converterFromResponse;
-    private Converter<F, NetworkRequest> converterToRequest;
 
 
     /**
@@ -214,8 +212,9 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         }
     }
 
-    public Request<F, T> clone() {
-        return new Request<>(getMethod(), getUrlString(), converterFromResponse);
+    public Request<T> clone() {
+        return new Request<>(getMethod(), getUrlString(), converterFromResponse)
+                .setNetworkRequest(networkRequest);
     }
 
     /**
@@ -239,70 +238,35 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         return url.toString();
     }
 
-    public F getNetworkRequest() {
+    public NetworkRequest getNetworkRequest() {
         return networkRequest;
     }
 
-    public Request<F, T> setNetworkRequest(F networkRequest) {
+
+    public Request<T> setNetworkRequest(NetworkRequest networkRequest) {
         checkIfActive();
         this.networkRequest = networkRequest;
-        //todo display warning if not set
-        if (converterToRequest != null && networkRequest != null && !(networkRequest instanceof Void)) {
-            try {
-                innerNetworkRequest = converterToRequest.convert(networkRequest);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
         return this;
     }
 
-    public NetworkRequest getInnerNetworkRequest() {
-        if (innerNetworkRequest == null && networkRequest != null &&
-                converterToRequest != null && !(networkRequest instanceof Void)) {
-            try {
-                innerNetworkRequest = converterToRequest.convert(networkRequest);
-            } catch (IOException e) {
-                throw new IllegalStateException("cannot convert Network Request", e);
-            }
-        } else if (innerNetworkRequest != null && !(networkRequest instanceof Void)) {
-            if (networkRequest == null) {
-                throw new IllegalStateException("networkRequest cannot be null" +
-                        " for non Void input types");
-            } else if (converterToRequest == null) {
-                //first try to get from basic converter factory
-                try {
-                    converterToRequest = (Converter<F, NetworkRequest>) new BasicConverterFactory()
-                            .toRequest(networkRequest.getClass(), null);
-                    if (converterToRequest != null) {
-                        innerNetworkRequest = converterToRequest.convert(networkRequest);
-                    }
-                } catch (Exception ex) {
-                }
-                //check if we succeeded
-                if (innerNetworkRequest == null) {
-                    throw new IllegalStateException("converterToRequest cannot be null for this Input type");
-                }
-            }
-        }
+    //TODO create add data
 
-        return innerNetworkRequest;
-    }
-
-    public Converter<F, NetworkRequest> getConverterToRequest() {
-        return converterToRequest;
-    }
-
-    public Request<F, T> setConverterToRequest(Converter<F, NetworkRequest> converterToRequest) {
+    /**
+     * Set data to send which will be converted to {@link NetworkRequest}
+     * This will overwrote all previous http body and headers defined
+     *
+     * @param networkRequest
+     * @param converterToRequest
+     * @return
+     */
+    public <R> Request<T> setObjectRequest(R networkRequest, Converter<R, NetworkRequest> converterToRequest) {
         checkIfActive();
-        this.converterToRequest = converterToRequest;
-        //todo display warning if not set
-        if (converterToRequest != null && networkRequest != null && !(networkRequest instanceof Void)) {
-            try {
-                innerNetworkRequest = converterToRequest.convert(networkRequest);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        Utils.checkNotNull(networkRequest, "networkRequest cannot be null");
+        Utils.checkNotNull(converterToRequest, "converterToRequest cannot be null");
+        try {
+            this.networkRequest = converterToRequest.convert(networkRequest);
+        } catch (IOException e) {
+            throw new IllegalStateException("cannot convert Network Request", e);
         }
         return this;
     }
@@ -313,7 +277,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         return responseListener;
     }
 
-    public Request<F, T> setResponseListener(Listener.ResponseListener<T> responseListener) {
+    public Request<T> setResponseListener(Listener.ResponseListener<T> responseListener) {
         this.responseListener = responseListener;
         return this;
     }
@@ -322,7 +286,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         return markerListener;
     }
 
-    public Request<F, T> setMarkerListener(Listener.MarkerListener markerListener) {
+    public Request<T> setMarkerListener(Listener.MarkerListener markerListener) {
         this.markerListener = markerListener;
         return this;
     }
@@ -331,7 +295,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         return errorListener;
     }
 
-    public Request<F, T> setErrorListener(Listener.ErrorListener errorListener) {
+    public Request<T> setErrorListener(Listener.ErrorListener errorListener) {
         this.errorListener = errorListener;
         return this;
     }
@@ -342,7 +306,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         return logSlowRequests;
     }
 
-    public Request<F, T> setLogSlowRequests(boolean logSlowRequests) {
+    public Request<T> setLogSlowRequests(boolean logSlowRequests) {
         this.logSlowRequests = logSlowRequests;
         return this;
     }
@@ -353,7 +317,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<F, T> setTag(Object tag) {
+    public Request<T> setTag(Object tag) {
         checkIfActive();
         this.tag = tag;
         return this;
@@ -394,7 +358,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<F, T> setRetryPolicy(RetryPolicy retryPolicy) {
+    public Request<T> setRetryPolicy(RetryPolicy retryPolicy) {
         checkIfActive();
         this.retryPolicy = retryPolicy;
         return this;
@@ -411,7 +375,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
     /**
      * Adds an event to this request's event log; for debugging.
      */
-    public Request<F, T> addMarker(String tag, String... args) {
+    public Request<T> addMarker(String tag, String... args) {
         if (markerListener != null) {
             markerListener.onMarker(
                     new MarkerLog.Marker(tag,
@@ -435,7 +399,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      * <p/>
      * <p>Also dumps all events from this request's event log; for debugging.</p>
      */
-    public void finish(final String tag) {
+    protected void finish(final String tag) {
         if (requestQueue != null) {
             requestQueue.finish(this);
         }
@@ -461,7 +425,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<F, T> setRequestQueue(RequestQueue requestQueue) {
+    Request<T> setRequestQueue(RequestQueue requestQueue) {
         checkIfActive();
         this.requestQueue = requestQueue;
         return this;
@@ -472,7 +436,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public final Request<F, T> setSequence(int sequence) {
+    public final Request<T> setSequence(int sequence) {
         checkIfActive();
         this.sequence = sequence;
         return this;
@@ -501,9 +465,9 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public <F, T> Request<F, T> setCacheEntry(Cache.Entry entry) {
+    public Request<T> setCacheEntry(Cache.Entry entry) {
         cacheEntry = entry;
-        return (Request<F, T>) this;
+        return this;
     }
 
     /**
@@ -535,7 +499,6 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      * @throws AuthFailureError In the event of auth failure
      */
     public Map<String, String> getHeadersMap() throws AuthFailureError {
-        NetworkRequest networkRequest = getInnerNetworkRequest();
         if (networkRequest != null && networkRequest.headers != null) {
             return networkRequest.headers.toMap();
         }
@@ -576,7 +539,6 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      * Returns the content type of the POST or PUT body.
      */
     public String getBodyContentType() {
-        NetworkRequest networkRequest = getInnerNetworkRequest();
         if (networkRequest != null) {
             return networkRequest.contentType.toString();
         }
@@ -594,7 +556,6 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      * @throws AuthFailureError in the event of auth failure
      */
     public byte[] getBody() throws AuthFailureError {
-        NetworkRequest networkRequest = getInnerNetworkRequest();
         if (networkRequest != null) {
             return networkRequest.data;
         }
@@ -629,7 +590,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public final Request<F, T> setShouldCache(boolean shouldCache) {
+    public final Request<T> setShouldCache(boolean shouldCache) {
         checkIfActive();
         this.shouldCache = shouldCache;
         return this;
@@ -662,7 +623,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      * Mark this request as having a response delivered on it.  This can be used
      * later in the request's lifetime for suppressing identical responses.
      */
-    public void markDelivered() {
+    void markDelivered() {
         responseDelivered = true;
     }
 
@@ -683,7 +644,7 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
      * @param response Response from the network
      * @return The parsed response, or null in the case of an error
      */
-    public Response<T> parseNetworkResponse(NetworkResponse response) {
+    protected Response<T> parseNetworkResponse(NetworkResponse response) {
         T parsed = null;
         try {
             parsed = converterFromResponse.convert(response);
@@ -731,13 +692,17 @@ public class Request<F, T> implements Comparable<Request<F, T>>, Cloneable {
         }
     }
 
+    public RequestFuture<T> getFuture() {
+        return new RequestFuture<T>().setRequest(this);
+    }
+
 
     /**
      * Our comparator sorts from high to low priority, and secondarily by
      * sequence number to provide FIFO ordering.
      */
     @Override
-    public int compareTo(Request<F, T> other) {
+    public int compareTo(Request<T> other) {
         Priority left = this.getPriority();
         Priority right = other.getPriority();
 

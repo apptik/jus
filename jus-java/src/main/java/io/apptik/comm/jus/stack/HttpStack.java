@@ -41,7 +41,7 @@ public interface HttpStack {
      *         {@link Request#getHeadersMap()}
      * @return the HTTP response
      */
-    public NetworkResponse performRequest(Request<?,?> request,
+    public NetworkResponse performRequest(Request<?> request,
                                           Map<String, String> additionalHeaders,
                                           ByteArrayPool byteArrayPool)
         throws IOException, AuthFailureError;

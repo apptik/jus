@@ -16,15 +16,13 @@
  * limitations under the License.
  */
 
-package io.apptik.comm.jus.request;
+package io.apptik.comm.jus;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import io.apptik.comm.jus.Listener;
-import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.error.JusError;
 
 /**
@@ -55,29 +53,32 @@ import io.apptik.comm.jus.error.JusError;
  */
 public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>,
        Listener.ErrorListener {
-    private Request<?, ?> mRequest;
-    private boolean mResultReceived = false;
-    private T mResult;
-    private JusError mException;
+    private Request<T> request;
+    private boolean resultReceived = false;
+    private T result;
+    private JusError exception;
 
     public static <E> RequestFuture<E> newFuture() {
         return new RequestFuture<E>();
     }
 
-    private RequestFuture() {}
+   // public RequestFuture() {}
 
-    public void setRequest(Request<?, ?> request) {
-        mRequest = request;
+    public RequestFuture<T> setRequest(Request<T> request) {
+        this.request = request;
+        this.request.setErrorListener(this);
+        this.request.setResponseListener(this);
+        return this;
     }
 
     @Override
     public synchronized boolean cancel(boolean mayInterruptIfRunning) {
-        if (mRequest == null) {
+        if (request == null) {
             return false;
         }
 
         if (!isDone()) {
-            mRequest.cancel();
+            request.cancel();
             return true;
         } else {
             return false;
@@ -101,12 +102,12 @@ public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>
 
     private synchronized T doGet(Long timeoutMs)
             throws InterruptedException, ExecutionException, TimeoutException {
-        if (mException != null) {
-            throw new ExecutionException(mException);
+        if (exception != null) {
+            throw new ExecutionException(exception);
         }
 
-        if (mResultReceived) {
-            return mResult;
+        if (resultReceived) {
+            return result;
         }
 
         if (timeoutMs == null) {
@@ -115,40 +116,40 @@ public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>
             wait(timeoutMs);
         }
 
-        if (mException != null) {
-            throw new ExecutionException(mException);
+        if (exception != null) {
+            throw new ExecutionException(exception);
         }
 
-        if (!mResultReceived) {
+        if (!resultReceived) {
             throw new TimeoutException();
         }
 
-        return mResult;
+        return result;
     }
 
     @Override
     public boolean isCancelled() {
-        if (mRequest == null) {
+        if (request == null) {
             return false;
         }
-        return mRequest.isCanceled();
+        return request.isCanceled();
     }
 
     @Override
     public synchronized boolean isDone() {
-        return mResultReceived || mException != null || isCancelled();
+        return resultReceived || exception != null || isCancelled();
     }
 
     @Override
     public synchronized void onResponse(T response) {
-        mResultReceived = true;
-        mResult = response;
+        resultReceived = true;
+        result = response;
         notifyAll();
     }
 
     @Override
     public synchronized void onErrorResponse(JusError error) {
-        mException = error;
+        exception = error;
         notifyAll();
     }
 }

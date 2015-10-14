@@ -30,6 +30,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Body;
@@ -83,77 +84,55 @@ public final class GsonConverterFactoryTest {
 
     interface Service {
         @POST("/")
-        Request<AnImplementation, AnImplementation> anImplementation(@Body AnImplementation impl);
+        Request<AnImplementation> anImplementation(@Body AnImplementation impl);
 
         @POST("/")
-        Request<AnInterface, AnInterface> anInterface(@Body AnInterface impl);
+        Request<AnInterface> anInterface(@Body AnInterface impl);
     }
 
     @Rule
     public final MockWebServer server = new MockWebServer();
 
     private Service service;
+    private RequestQueue queue;
 
     @Before
     public void setUp() {
-        final RequestQueue requestQueue = Jus.newRequestQueue();
+        queue = Jus.newRequestQueue();
         Gson gson = new GsonBuilder()
                 .registerTypeAdapter(AnInterface.class, new AnInterfaceAdapter())
                 .create();
         RetroProxy retroJus = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .queue(requestQueue)
+                .queue(queue)
                 .build();
         service = retroJus.create(Service.class);
     }
 
     @Test
-    public void anInterface() throws IOException, InterruptedException {
+    public void anInterface() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(new MockResponse().setBody("{\"name\":\"value\"}"));
-
-        Request<AnInterface, AnInterface> request = service.anInterface(new AnImplementation("value"));
-        request.setResponseListener(
-                new Listener.ResponseListener<AnInterface>() {
-                    @Override
-                    public void onResponse(AnInterface response) {
-                        assertThat(response.getName()).isEqualTo("value");
-
-                        RecordedRequest recordedRequest = null;
-                        try {
-                            recordedRequest = server.takeRequest();
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        assertThat(recordedRequest.getBody().readUtf8()).isEqualTo("{\"name\":\"value\"}");
-                        assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
-                    }
-                }
-        );
+        AnInterface body = service.anInterface(new AnImplementation("value")).getFuture().get();
+        assertThat(body.getName()).isEqualTo("value");
+        RecordedRequest request = server.takeRequest();
+        assertThat(request.getBody().readUtf8()).isEqualTo("{\"name\":\"value\"}");
+        assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
     }
 
+
     @Test
-    public void anImplementation() throws IOException, InterruptedException {
+    public void anImplementation() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(new MockResponse().setBody("{\"theName\":\"value\"}"));
 
-        Request<AnImplementation, AnImplementation> request = service.anImplementation(new AnImplementation("value"));
-        request.setResponseListener(new Listener.ResponseListener<AnImplementation>() {
-            @Override
-            public void onResponse(AnImplementation response) {
-                assertThat(response.theName).isEqualTo("value");
-                RecordedRequest recordedRequest = null;
-                try {
-                    recordedRequest = server.takeRequest();
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-                assertThat(recordedRequest.getBody().readUtf8()).isEqualTo("{\"theName\":\"value\"}");
-                assertThat(recordedRequest.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
-            }
-        });
+        AnImplementation body = service.anImplementation(new AnImplementation("value"))
+                .getFuture().get();
 
+        assertThat(body.theName).isEqualTo("value");
 
+        RecordedRequest request = server.takeRequest();
+        assertThat(request.getBody().readUtf8()).isEqualTo("{\"theName\":\"value\"}");
+        assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
     }
 
     @Test
@@ -163,7 +142,11 @@ public final class GsonConverterFactoryTest {
         service.anImplementation(new AnImplementation(null));
 
         RecordedRequest request = server.takeRequest();
-        assertThat(request.getBody().readUtf8()).isEqualTo(""); // Null value was not serialized.
+        assertThat(request.getBody().readUtf8()).isEqualTo("{}"); // Null value was not serialized.
         assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
+    }
+
+    public void after() {
+        queue.stopWhenDone();
     }
 }

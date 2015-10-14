@@ -54,11 +54,24 @@ final class Utils {
     }
   }
 
+  public static Type getParameterUpperBound(ParameterizedType type) {
+    Type[] types = type.getActualTypeArguments();
+    if (types.length != 1) {
+      throw new IllegalArgumentException(
+              "Expected one type argument but got: " + Arrays.toString(types));
+    }
+    Type paramType = types[0];
+    if (paramType instanceof WildcardType) {
+      return ((WildcardType) paramType).getUpperBounds()[0];
+    }
+    return paramType;
+  }
+
   public static Type getSecondParameterUpperBound(ParameterizedType type) {
     Type[] types = type.getActualTypeArguments();
     if (types.length != 2) {
       throw new IllegalArgumentException(
-          "Expected one type argument but got: " + Arrays.toString(types));
+              "Expected one type argument but got: " + Arrays.toString(types));
     }
     Type paramType = types[1];
     if (paramType instanceof WildcardType) {
@@ -150,7 +163,7 @@ final class Utils {
       throw new IllegalArgumentException(
           "Request return type must be parameterized as Request<?,Foo> or Request<?,? extends Foo>");
     }
-    final Type responseType = getSecondParameterUpperBound((ParameterizedType) returnType);
+    final Type responseType = getParameterUpperBound((ParameterizedType) returnType);
 
     // Ensure the Call response type is not Response, we automatically deliver the Response object.
     if (getRawType(responseType) == Response.class) {

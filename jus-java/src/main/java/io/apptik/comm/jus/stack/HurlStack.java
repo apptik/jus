@@ -79,7 +79,7 @@ public class HurlStack implements HttpStack {
     }
 
     @Override
-    public NetworkResponse performRequest(Request<?, ?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
+    public NetworkResponse performRequest(Request<?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
             throws IOException, AuthFailureError {
         String url = request.getUrlString();
         HashMap<String, String> requestHeaders = new HashMap<String, String>();
@@ -194,7 +194,7 @@ public class HurlStack implements HttpStack {
      * @return an open connection
      * @throws IOException
      */
-    private HttpURLConnection openConnection(URL url, Request<?, ?> request) throws IOException {
+    private HttpURLConnection openConnection(URL url, Request<?> request) throws IOException {
         HttpURLConnection connection = createConnection(url);
 
         int timeoutMs = request.getTimeoutMs();
@@ -212,7 +212,7 @@ public class HurlStack implements HttpStack {
     }
 
     static void setConnectionParametersForRequest(HttpURLConnection connection,
-                                                  Request<?, ?> request) throws IOException, AuthFailureError {
+                                                  Request<?> request) throws IOException, AuthFailureError {
         switch (request.getMethod()) {
             case Method.GET:
                 // Not necessary to set the request method because connection defaults to GET but
@@ -248,7 +248,7 @@ public class HurlStack implements HttpStack {
         }
     }
 
-    private static void addBodyIfExists(HttpURLConnection connection, Request<?, ?> request)
+    private static void addBodyIfExists(HttpURLConnection connection, Request<?> request)
             throws IOException, AuthFailureError {
         byte[] body = request.getBody();
         if (body != null) {

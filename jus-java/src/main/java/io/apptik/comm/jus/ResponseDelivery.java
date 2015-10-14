@@ -20,20 +20,27 @@ package io.apptik.comm.jus;
 
 import io.apptik.comm.jus.error.JusError;
 
+/**
+ * For most of the cases extend {@link BaseDelivery} rather than implementing this
+ */
 public interface ResponseDelivery {
     /**
      * Parses a response from the network or cache and delivers it.
      */
-    public void postResponse(Request<?,?> request, Response<?> response);
+    public void postResponse(Request<?> request, Response<?> response);
 
     /**
-     * Parses a response from the network or cache and delivers it. The provided
-     * Runnable will be executed after delivery.
+     * Parses a response from the network or cache and delivers it.
      */
-    public void postResponse(Request<?,?> request, Response<?> response, Runnable runnable);
+    public void postResponse(Request<?> request, Response<?> response, Runnable runnable);
 
     /**
      * Posts an error for the given request.
      */
-    public void postError(Request<?,?> request, JusError error);
+    public void postError(Request<?> request, JusError error);
+
+    /**
+     * Posts an error for the given request.
+     */
+    public void postError(Request<?> request, JusError error, Runnable runnable);
 }

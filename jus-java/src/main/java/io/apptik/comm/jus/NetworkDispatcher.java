@@ -36,7 +36,7 @@ public class NetworkDispatcher extends Thread {
     /**
      * The queue of requests to service.
      */
-    private final BlockingQueue<Request<?, ?>> mQueue;
+    private final BlockingQueue<Request<?>> mQueue;
     /**
      * The network interface for processing requests.
      */
@@ -63,7 +63,7 @@ public class NetworkDispatcher extends Thread {
      * @param cache    Cache interface to use for writing responses to cache
      * @param delivery Delivery interface to use for posting responses
      */
-    public NetworkDispatcher(BlockingQueue<Request<?, ?>> queue,
+    public NetworkDispatcher(BlockingQueue<Request<?>> queue,
                              Network network, Cache cache,
                              ResponseDelivery delivery) {
         mQueue = queue;
@@ -81,7 +81,7 @@ public class NetworkDispatcher extends Thread {
         interrupt();
     }
 
-    protected void addTrafficStatsTag(Request<?, ?> request) {
+    protected void addTrafficStatsTag(Request<?> request) {
        //TODO
     }
 
@@ -95,7 +95,7 @@ public class NetworkDispatcher extends Thread {
         setThreadPriority();
         while (true) {
             long startTimeMs = System.nanoTime();
-            Request<?, ?> request;
+            Request<?> request;
             try {
                 // Take a request from the queue.
                 request = mQueue.take();
@@ -157,7 +157,7 @@ public class NetworkDispatcher extends Thread {
         }
     }
 
-    private void parseAndDeliverNetworkError(Request<?, ?> request, JusError error) {
+    private void parseAndDeliverNetworkError(Request<?> request, JusError error) {
         error = request.parseNetworkError(error);
         mDelivery.postError(request, error);
     }
@@ -167,7 +167,7 @@ public class NetworkDispatcher extends Thread {
         /**
          * The queue of requests to service.
          */
-        protected final BlockingQueue<Request<?, ?>> mQueue;
+        protected final BlockingQueue<Request<?>> mQueue;
         /**
          * The network interface for processing requests.
          */
@@ -190,7 +190,7 @@ public class NetworkDispatcher extends Thread {
          * @param cache    Cache interface to use for writing responses to cache
          * @param delivery Delivery interface to use for posting responses
          */
-        public NetworkDispatcherFactory(BlockingQueue<Request<?, ?>> queue,
+        public NetworkDispatcherFactory(BlockingQueue<Request<?>> queue,
                                         Network network, Cache cache,
                                         ResponseDelivery delivery) {
             mQueue = queue;

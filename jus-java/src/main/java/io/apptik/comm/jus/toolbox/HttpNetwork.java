@@ -85,7 +85,7 @@ public class HttpNetwork implements Network {
     }
 
     @Override
-    public NetworkResponse performRequest(Request<?,?> request) throws JusError {
+    public NetworkResponse performRequest(Request<?> request) throws JusError {
         long requestStart = System.nanoTime();
         while (true) {
             NetworkResponse httpResponse = null;
@@ -192,7 +192,7 @@ public class HttpNetwork implements Network {
     /**
      * Logs requests that took over SLOW_REQUEST_THRESHOLD_MS to complete.
      */
-    private void logSlowRequests(long requestLifetime, Request<?,?> request,
+    private void logSlowRequests(long requestLifetime, Request<?> request,
                                  byte[] responseContents, int statusCode) {
         if (DEBUG || requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
             JusLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +
@@ -208,7 +208,7 @@ public class HttpNetwork implements Network {
      *
      * @param request The request to use.
      */
-    private static void attemptRetryOnException(String logPrefix, Request<?,?> request,
+    private static void attemptRetryOnException(String logPrefix, Request<?> request,
                                                 JusError exception) throws JusError {
         RetryPolicy retryPolicy = request.getRetryPolicy();
         int oldTimeout = request.getTimeoutMs();

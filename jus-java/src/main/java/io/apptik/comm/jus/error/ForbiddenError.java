@@ -35,7 +35,7 @@ public class ForbiddenError extends JusError {
     }
 
 
-    public ForbiddenError(Throwable cause, Request<?,?> request) {
+    public ForbiddenError(Throwable cause, Request<?> request) {
         super(cause);
     }
 
@@ -43,11 +43,11 @@ public class ForbiddenError extends JusError {
         super(exceptionMessage, reason);
     }
 
-    public ForbiddenError(String exceptionMessage, Request<?,?> request) {
+    public ForbiddenError(String exceptionMessage, Request<?> request) {
         super(exceptionMessage);
     }
 
-    public ForbiddenError(Request<?,?> request) {
+    public ForbiddenError(Request<?> request) {
         super();
     }
 

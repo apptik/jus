@@ -20,12 +20,10 @@ package io.apptik.comm.jus;
 
 import java.util.concurrent.Executor;
 
-import io.apptik.comm.jus.error.JusError;
-
 /**
  * Delivers responses and errors.
  */
-public class ExecutorDelivery implements ResponseDelivery {
+public class ExecutorDelivery extends BaseDelivery {
     /** Used for posting responses. */
     private final Executor mResponsePoster;
 
@@ -39,43 +37,10 @@ public class ExecutorDelivery implements ResponseDelivery {
     }
 
     @Override
-    public void postResponse(Request<?,?> request, Response<?> response) {
-        postResponse(request, response, null);
+    void doDeliver(Request request, Response response, Runnable runnable) {
+        mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, runnable));
     }
 
-    @Override
-    public void postResponse(Request<?,?> request, Response<?> response, Runnable runnable) {
-        request.markDelivered();
-        request.addMarker(Request.EVENT_POST_RESPONSE);
-        if(addMarkersAndContinue(request, response)) {
-            mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, runnable));
-        }
-    }
-
-    @Override
-    public void postError(Request<?,?> request, JusError error) {
-        request.addMarker(Request.EVENT_POST_ERROR);
-        Response<?> response = Response.error(error);
-        if(addMarkersAndContinue(request, response)) {
-            mResponsePoster.execute(new ResponseDeliveryRunnable(request, response, null));
-        }
-    }
-
-    protected boolean addMarkersAndContinue(Request<?,?> request, Response<?> response) {
-        // If this request has canceled, finish it and don't deliver.
-        if (request.isCanceled()) {
-            request.finish(Request.EVENT_CANCELED_AT_DELIVERY);
-            return false;
-        }
-        // If this is an intermediate response, add a marker, otherwise we're done
-        // and the request can be finished.
-        if (response.intermediate) {
-            request.addMarker(Request.EVENT_INTERMEDIATE_RESPONSE);
-        } else {
-            request.finish(Request.EVENT_DONE);
-        }
-        return true;
-    }
 
     /**
      * A Runnable used for delivering network responses to a listener on the
@@ -83,30 +48,29 @@ public class ExecutorDelivery implements ResponseDelivery {
      */
     @SuppressWarnings("rawtypes")
     private class ResponseDeliveryRunnable implements Runnable {
-        private final Request mRequest;
-        private final Response mResponse;
-        private final Runnable mRunnable;
+        private final Request request;
+        private final Response response;
+        private final Runnable runnable;
 
         public ResponseDeliveryRunnable(Request request, Response response, Runnable runnable) {
-            mRequest = request;
-            mResponse = response;
-            mRunnable = runnable;
-            mRequest.response = mResponse;
+            this.request = request;
+            this.response = response;
+            this.runnable = runnable;
         }
 
         @SuppressWarnings("unchecked")
         @Override
         public void run() {
             // Deliver a normal response or error, depending.
-            if (mResponse.isSuccess()) {
-                mRequest.deliverResponse(mResponse.result);
+            if (response.isSuccess()) {
+                request.deliverResponse(response.result);
             } else {
-                mRequest.deliverError(mResponse.error);
+                request.deliverError(response.error);
             }
 
             // If we have been provided a post-delivery runnable, run it.
-            if (mRunnable != null) {
-                mRunnable.run();
+            if (runnable != null) {
+                runnable.run();
             }
        }
     }

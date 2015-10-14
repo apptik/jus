@@ -1,16 +1,6 @@
-package io.apptik.comm.jus.util;
-
-import android.os.Process;
+package io.apptik.comm.jus;
 
 import java.util.concurrent.BlockingQueue;
-
-import io.apptik.comm.jus.Cache;
-import io.apptik.comm.jus.CacheDispatcher;
-import io.apptik.comm.jus.JusLog;
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.ResponseDelivery;
 
 // Unless if not fully unexpired, dispatches all as Soft-expired cache hit,
 // while keeping the original caches. i.e. We can deliver the cached response,
@@ -27,15 +17,16 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
      * @param cache        Cache interface to use for resolution
      * @param delivery     Delivery interface to use for posting responses
      */
-    public AlwaysGetCacheDispatcher(BlockingQueue<Request<?,?>> cacheQueue, BlockingQueue<Request<?,?>> networkQueue, Cache cache, ResponseDelivery delivery) {
+    public AlwaysGetCacheDispatcher(BlockingQueue<Request<?>> cacheQueue,
+                                    BlockingQueue<Request<?>> networkQueue,
+                                    Cache cache, ResponseDelivery delivery) {
         super(cacheQueue, networkQueue, cache, delivery);
     }
 
     @Override
     public void run() {
-        if (DEBUG) JusLog.v("start new dispatcher");
-        android.os.Process.setThreadPriority(Process.THREAD_PRIORITY_BACKGROUND);
-
+        if (DEBUG) JusLog.v("start new always cache dispatcher");
+        setThreadPriority();
         // Make a blocking call to initialize the cache.
         mCache.initialize();
 
@@ -43,7 +34,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
             try {
                 // Get a request from the cache triage queue, blocking until
                 // at least one is available.
-                final Request<?,?> request = mCacheQueue.take();
+                final Request<?> request = mCacheQueue.take();
                 request.addMarker(Request.EVENT_CACHE_QUEUE_TAKE);
 
                 // If the request has been canceled, don't bother dispatching it.
