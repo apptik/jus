@@ -43,7 +43,7 @@ public class AndroidForbiddenError extends ForbiddenError {
         return mResolutionIntent;
     }
 
-    public AndroidForbiddenError(Throwable cause, Request<?, ?> request) {
+    public AndroidForbiddenError(Throwable cause, Request<?> request) {
         super(cause, request);
     }
 
@@ -51,11 +51,11 @@ public class AndroidForbiddenError extends ForbiddenError {
         super(exceptionMessage, reason);
     }
 
-    public AndroidForbiddenError(String exceptionMessage, Request<?, ?> request) {
+    public AndroidForbiddenError(String exceptionMessage, Request<?> request) {
         super(exceptionMessage, request);
     }
 
-    public AndroidForbiddenError(Request<?, ?> request) {
+    public AndroidForbiddenError(Request<?> request) {
         super();
     }
 

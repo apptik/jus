@@ -178,7 +178,7 @@ public final class Log {
      * @param tr  An exception to log
      */
     public static int w(String tag, String msg, Throwable tr) {
-        System.out.println(tag + ": " + msg);
+        System.err.println(tag + ": " + msg);
         return 0;    }
 
     /**
@@ -210,7 +210,7 @@ public final class Log {
      * @param tr An exception to log
      */
     public static int w(String tag, Throwable tr) {
-        System.out.println(tag + ": " + tr.getMessage());
+        System.err.println(tag + ": " + tr.getMessage());
         return 0;    }
 
     /**
@@ -221,7 +221,7 @@ public final class Log {
      * @param msg The message you would like logged.
      */
     public static int e(String tag, String msg) {
-        System.out.println(tag + ": " + msg);
+        System.err.println(tag + ": " + msg);
         return 0;    }
 
     /**
@@ -233,7 +233,7 @@ public final class Log {
      * @param tr  An exception to log
      */
     public static int e(String tag, String msg, Throwable tr) {
-        System.out.println(tag + ": " + msg);
+        System.err.println(tag + ": " + msg);
         return 0;    }
 
     /**
@@ -247,7 +247,7 @@ public final class Log {
      * @param msg The message you would like logged.
      */
     public static int wtf(String tag, String msg) {
-        System.out.println(tag + ": " + msg);
+        System.err.println(tag + ": " + msg);
         return 0;    }
 
     /**
@@ -257,7 +257,7 @@ public final class Log {
      * @hide
      */
     public static int wtfStack(String tag, String msg) {
-        System.out.println(tag + ": " + msg);
+        System.err.println(tag + ": " + msg);
         return 0;    }
 
     /**
@@ -268,7 +268,7 @@ public final class Log {
      * @param tr  An exception to log.
      */
     public static int wtf(String tag, Throwable tr) {
-        System.out.println(tag + ": " + tr.getMessage());
+        System.err.println(tag + ": " + tr.getMessage());
         return 0;    }
 
     /**
@@ -280,7 +280,7 @@ public final class Log {
      * @param tr  An exception to log.  May be null.
      */
     public static int wtf(String tag, String msg, Throwable tr) {
-        System.out.println(tag + ": " + msg);
+        System.err.println(tag + ": " + msg);
         return 0;    }
 
 

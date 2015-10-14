@@ -17,8 +17,8 @@ public class AndroidCacheDispatcher extends CacheDispatcher {
      * @param cache        Cache interface to use for resolution
      * @param delivery     Delivery interface to use for posting responses
      */
-    public AndroidCacheDispatcher(BlockingQueue<Request<?, ?>> cacheQueue,
-                                  BlockingQueue<Request<?, ?>> networkQueue,
+    public AndroidCacheDispatcher(BlockingQueue<Request<?>> cacheQueue,
+                                  BlockingQueue<Request<?>> networkQueue,
                                   Cache cache, ResponseDelivery delivery) {
         super(cacheQueue, networkQueue, cache, delivery);
     }

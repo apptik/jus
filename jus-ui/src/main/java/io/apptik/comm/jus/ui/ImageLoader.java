@@ -390,7 +390,7 @@ public class ImageLoader {
      */
     private class BatchedImageRequest {
         /** The request being tracked */
-        private final Request<?,?> mRequest;
+        private final Request<?> mRequest;
 
         /** The result of the request being tracked by this item */
         private Bitmap mResponseBitmap;
@@ -406,7 +406,7 @@ public class ImageLoader {
          * @param request The request being tracked
          * @param container The ImageContainer of the person who initiated the request.
          */
-        public BatchedImageRequest(Request<?,?> request, ImageContainer container) {
+        public BatchedImageRequest(Request<?> request, ImageContainer container) {
             mRequest = request;
             mContainers.add(container);
         }

@@ -33,7 +33,7 @@ import io.apptik.comm.jus.Listener.ResponseListener;
  *
  * @param <T> JSON type of response expected
  */
-public abstract class JsonRequest<T> extends Request<Void, T> {
+public abstract class JsonRequest<T> extends Request<T> {
     /** Default charset for JSON request. */
     protected static final String PROTOCOL_CHARSET = "utf-8";
 

@@ -17,13 +17,13 @@ public class AndroidNetworkDispatcher extends NetworkDispatcher {
      * @param cache    Cache interface to use for writing responses to cache
      * @param delivery Delivery interface to use for posting responses
      */
-    public AndroidNetworkDispatcher(BlockingQueue<Request<?, ?>> queue, Network network, Cache cache, ResponseDelivery delivery) {
+    public AndroidNetworkDispatcher(BlockingQueue<Request<?>> queue, Network network, Cache cache, ResponseDelivery delivery) {
         super(queue, network, cache, delivery);
     }
 
 
     @Override
-    protected void addTrafficStatsTag(Request<?, ?> request) {
+    protected void addTrafficStatsTag(Request<?> request) {
         // only for API >= 14
         TrafficStats.setThreadStatsTag(request.getTrafficStatsTag());
     }
@@ -44,7 +44,7 @@ public class AndroidNetworkDispatcher extends NetworkDispatcher {
          * @param cache    Cache interface to use for writing responses to cache
          * @param delivery Delivery interface to use for posting responses
          */
-        public NetworkDispatcherFactory(BlockingQueue<Request<?, ?>> queue, Network network, Cache cache, ResponseDelivery delivery) {
+        public NetworkDispatcherFactory(BlockingQueue<Request<?>> queue, Network network, Cache cache, ResponseDelivery delivery) {
             super(queue, network, cache, delivery);
         }
 

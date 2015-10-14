@@ -36,7 +36,7 @@ import io.apptik.comm.jus.toolbox.HttpHeaderParser;
  * A canned request for getting an image at a given URL and calling
  * back with a decoded Bitmap.
  */
-public class ImageRequest extends Request<Void, Bitmap> {
+public class ImageRequest extends Request<Bitmap> {
 
     private static final boolean PREFER_QUALITY_OVER_SPEED = false;
 
@@ -89,7 +89,7 @@ public class ImageRequest extends Request<Void, Bitmap> {
     }
 
     @Override
-    public Request<Void,Bitmap> clone() {
+    public Request<Bitmap> clone() {
         return new ImageRequest(getUrlString(), getResponseListener(), mMaxWidth, mMaxHeight,
                 mScaleType,mDecodeConfig, getErrorListener());
     }

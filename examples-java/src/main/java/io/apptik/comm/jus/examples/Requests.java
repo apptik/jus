@@ -13,10 +13,10 @@ public class Requests {
 
     // http://validate.jsontest.com/?json={'key':'value'}
     // http://echo.jsontest.com/key/value/one/two
-    public static Request<Void, String> getWeatherRequest(String q, Listener.ResponseListener<String> listener,
+    public static Request<String> getWeatherRequest(String q, Listener.ResponseListener<String> listener,
                                                           Listener.ErrorListener errorListener) {
 
-        Request<Void, String> res = null;
+        Request<String> res = null;
 
         if (q == null) {
             q = "London,uk";
@@ -27,9 +27,9 @@ public class Requests {
         return res;
     }
 
-    public static Request<Void, String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
+    public static Request<String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
                                                         Listener.ErrorListener errorListener) {
-        Request<Void, String> res =
+        Request<String> res =
                 new StringRequest("http://validate.jsontest.com/?json={'" + key + "':'" + val + "'}", listener, errorListener);
 
         return res;
