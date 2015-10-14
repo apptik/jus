@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.converter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -32,6 +32,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import io.apptik.comm.jus.Jus;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Body;
 import io.apptik.comm.jus.retro.http.POST;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.converter;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -21,6 +21,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
+
+import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.NetworkRequest;
+import io.apptik.comm.jus.NetworkResponse;
 
 /**
  * A {@linkplain Converter.Factory converter} which uses Gson for JSON.

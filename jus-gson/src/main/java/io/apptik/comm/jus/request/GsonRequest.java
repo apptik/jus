@@ -1,9 +1,12 @@
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.request;
 
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import io.apptik.comm.jus.converter.GsonRequestBodyConverter;
+import io.apptik.comm.jus.converter.GsonResponseBodyConverter;
+import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.http.HttpUrl;
 
 public class GsonRequest<T> extends Request<T> {

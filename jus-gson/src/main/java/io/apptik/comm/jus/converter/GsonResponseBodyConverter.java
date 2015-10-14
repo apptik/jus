@@ -13,19 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.converter;
 
 import com.google.gson.TypeAdapter;
 
 import java.io.IOException;
 import java.io.Reader;
 
+import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 
-final class GsonResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
+public final class GsonResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
     private final TypeAdapter<T> adapter;
 
-    GsonResponseBodyConverter(TypeAdapter<T> adapter) {
+    public GsonResponseBodyConverter(TypeAdapter<T> adapter) {
         this.adapter = adapter;
     }
 

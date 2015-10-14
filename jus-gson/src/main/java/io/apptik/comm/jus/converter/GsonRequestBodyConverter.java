@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.converter;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -24,17 +24,19 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 
+import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 import okio.Buffer;
 
-final class GsonRequestBodyConverter<T> implements Converter<T, NetworkRequest> {
+public final class GsonRequestBodyConverter<T> implements Converter<T, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
     private static final Charset UTF_8 = Charset.forName("UTF-8");
 
     private final Gson gson;
     private final TypeAdapter<T> adapter;
 
-    GsonRequestBodyConverter(Gson gson, TypeAdapter<T> adapter) {
+    public GsonRequestBodyConverter(Gson gson, TypeAdapter<T> adapter) {
         this.gson = gson;
         this.adapter = adapter;
     }
