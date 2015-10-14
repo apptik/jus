@@ -24,10 +24,10 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 
-final class JacksonResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
+public final class JacksonResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
   private final ObjectReader adapter;
 
-  JacksonResponseBodyConverter(ObjectReader adapter) {
+  public JacksonResponseBodyConverter(ObjectReader adapter) {
     this.adapter = adapter;
   }
 

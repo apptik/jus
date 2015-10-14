@@ -23,12 +23,12 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 
-final class JacksonRequestBodyConverter<T> implements Converter<T, NetworkRequest> {
+public final class JacksonRequestBodyConverter<T> implements Converter<T, NetworkRequest> {
   private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
 
   private final ObjectWriter adapter;
 
-  JacksonRequestBodyConverter(ObjectWriter adapter) {
+ public JacksonRequestBodyConverter(ObjectWriter adapter) {
     this.adapter = adapter;
   }
 
