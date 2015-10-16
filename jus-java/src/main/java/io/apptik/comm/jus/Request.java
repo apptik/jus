@@ -238,6 +238,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return url.toString();
     }
 
+    public Response<T> getRawResponse() {
+        return response;
+    }
+
     public NetworkRequest getNetworkRequest() {
         return networkRequest;
     }
@@ -649,7 +653,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         try {
             parsed = converterFromResponse.convert(response);
         } catch (IOException e) {
-            e.printStackTrace();
+           return Response.error(new ParseError(e));
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }

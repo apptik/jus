@@ -27,6 +27,9 @@ import java.nio.charset.Charset;
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
+import okio.BufferedSource;
+import okio.Okio;
+import okio.Source;
 
 /**
  * Data and headers returned from {@link Network#performRequest(Request)}.
@@ -79,6 +82,14 @@ public class NetworkResponse {
 
     public final InputStreamReader getCharStream() throws IOException {
         return new InputStreamReader(getByteStream(), getCharset());
+    }
+
+    public Source getSource() {
+        return Okio.source(getByteStream());
+    }
+
+    public BufferedSource getBufferedSource() {
+        return Okio.buffer(getSource());
     }
 
 
