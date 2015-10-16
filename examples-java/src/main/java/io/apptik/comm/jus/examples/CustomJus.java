@@ -9,7 +9,7 @@ import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.request.StringRequest;
+import io.apptik.comm.jus.examples.request.StringRequest;
 
 public class CustomJus {
     public static void main(String[] args) {
@@ -29,9 +29,9 @@ public class CustomJus {
         queue.stopWhenDone();
     }
 
-    private static Request<Void, String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
+    private static Request<String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
                                                  Listener.ErrorListener errorListener) {
-        Request<Void, String> res;
+        Request<String> res;
 
         final String userString = "c6266a50b6603fe87d681ef34fe11e3e";
         final String baseUrl = "http://beermapping.com/webservice/";

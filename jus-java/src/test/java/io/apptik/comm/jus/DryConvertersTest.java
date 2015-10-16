@@ -7,7 +7,7 @@ import io.apptik.comm.jus.http.HTTP;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ConvertersTest {
+public class DryConvertersTest {
 
     @Test
     public void stringConverterTest() throws Exception {

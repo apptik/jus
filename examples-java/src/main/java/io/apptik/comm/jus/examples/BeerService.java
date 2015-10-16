@@ -26,7 +26,7 @@ public interface BeerService {
 
 
     @GET("locquery/{user}/{q}")
-    Request<Void, String> getBeer(
+    Request<String> getBeer(
             @Path("user") String user,
             @Path("q") String q);
 }

@@ -22,7 +22,7 @@ public class EasyJus {
         }
 
         if (opts.contains("beer")) {
-            queue.add(new Request<Void, String>(
+            queue.add(new Request<String>(
                             Request.Method.GET,
                             HttpUrl.parse(BeerService.fullUrl),
                             new Converters.StringResponseConverter())
