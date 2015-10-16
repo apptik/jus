@@ -19,49 +19,21 @@
 package io.apptik.comm.jus.request;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 
-import java.io.UnsupportedEncodingException;
-
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.Listener.ResponseListener;
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.ParseError;
-import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.toolbox.HttpHeaderParser;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.converter.JSONConverter;
 
 /**
  * A request for retrieving a {@link JSONArray} response body at a given URL.
  */
-public class JsonArrayRequest extends JsonRequest<JSONArray> {
+public class JsonArrayRequest extends Request<JSONArray> {
 
     /**
      * Creates a new request.
      * @param url URL to fetch the JSON from
-     * @param listener Listener to receive the JSON response
-     * @param errorListener Error listener, or null to ignore errors.
      */
-    public JsonArrayRequest(String url, ResponseListener<JSONArray> listener, ErrorListener errorListener) {
-        super(Method.GET, url, null, listener, errorListener);
+    public JsonArrayRequest(String method, String url) {
+        super(method, url, new JSONConverter.JSONArrayResponseConverter());
     }
 
-    @Override
-    public JsonArrayRequest clone() {
-        return new JsonArrayRequest(getUrlString(), getResponseListener(), getErrorListener());
-    }
-
-    @Override
-    public Response<JSONArray> parseNetworkResponse(NetworkResponse response) {
-        try {
-
-            String jsonString = new String(response.data,
-                    HttpHeaderParser.parseCharset(response.headers.toMap(), PROTOCOL_CHARSET));
-            return Response.success(new JSONArray(jsonString),
-                    HttpHeaderParser.parseCacheHeaders(response));
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
-        } catch (JSONException je) {
-            return Response.error(new ParseError(je));
-        }
-    }
 }

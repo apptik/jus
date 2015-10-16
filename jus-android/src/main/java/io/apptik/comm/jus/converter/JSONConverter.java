@@ -12,6 +12,7 @@ import java.lang.reflect.Type;
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.http.MediaType;
 
 public final class JSONConverter {
 
@@ -41,7 +42,7 @@ public final class JSONConverter {
 
     public final static class JSONObjectRequestConverter implements Converter<JSONObject, NetworkRequest> {
         Converters.StringRequestConverter stringRequestConverter =
-                new Converters.StringRequestConverter();
+                new Converters.StringRequestConverter(MediaType.parse("application/json; charset=UTF-8"));
         @Override
         public NetworkRequest convert(JSONObject value) throws IOException {
             return stringRequestConverter.convert(value.toString());
@@ -63,7 +64,7 @@ public final class JSONConverter {
 
     public final static class JSONArrayRequestConverter implements Converter<JSONArray, NetworkRequest> {
         Converters.StringRequestConverter stringRequestConverter =
-                new Converters.StringRequestConverter();
+                new Converters.StringRequestConverter(MediaType.parse("application/json; charset=UTF-8"));
         @Override
         public NetworkRequest convert(JSONArray value) throws IOException {
             return stringRequestConverter.convert(value.toString());

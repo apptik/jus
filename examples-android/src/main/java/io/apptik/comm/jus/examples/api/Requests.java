@@ -5,6 +5,7 @@ import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.request.StringRequest;
 
+
 public class Requests {
 
     private Requests() {
@@ -18,8 +19,7 @@ public class Requests {
         return null;
     }
 
-    public static Request<String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
-                                          Listener.ErrorListener errorListener) {
+    public static Request<String> getBeerRequest(String q) {
         Request<String> res;
 
         final String userString = "c6266a50b6603fe87d681ef34fe11e3e";
@@ -36,8 +36,8 @@ public class Requests {
         //get pics
         final String locimage = "locimage";
 
-        res = new StringRequest(baseUrl + locquery
-                + "/" + userString + "/" + q, listener, errorListener);
+        res = new StringRequest(Request.Method.GET, baseUrl + locquery
+                + "/" + userString + "/" + q);
 
 
         return res;
@@ -53,7 +53,7 @@ public class Requests {
             q = "London,uk";
         }
 
-        res = new StringRequest("http://api.openweathermap.org/data/2.5/weather?q=" + q, listener, errorListener);
+        res = new StringRequest(Request.Method.GET, "http://api.openweathermap.org/data/2.5/weather?q=" + q);
 
         return res;
     }
@@ -61,7 +61,7 @@ public class Requests {
     public static Request<String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
                                            Listener.ErrorListener errorListener) {
         Request<String> res =
-                new StringRequest("http://validate.jsontest.com/?json={'" + key + "':'" + val + "'}", listener, errorListener);
+                new StringRequest(Request.Method.GET, "http://validate.jsontest.com/?json={'" + key + "':'" + val + "'}");
 
         return res;
 

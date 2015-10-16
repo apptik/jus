@@ -16,16 +16,16 @@
  * limitations under the License.
  */
 
-package io.apptik.comm.jus.request;
+package io.apptik.comm.jus.examples.request;
 
 import java.io.UnsupportedEncodingException;
 
 import io.apptik.comm.jus.JusLog;
+import io.apptik.comm.jus.Listener.ErrorListener;
+import io.apptik.comm.jus.Listener.ResponseListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.Listener.ResponseListener;
 
 /**
  * A request for retrieving a T type response body at a given URL that also

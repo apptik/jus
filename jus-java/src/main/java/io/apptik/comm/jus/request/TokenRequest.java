@@ -3,7 +3,6 @@ package io.apptik.comm.jus.request;
 import java.util.HashMap;
 import java.util.Map;
 
-import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.toolbox.Base64;
 
@@ -12,10 +11,15 @@ public class TokenRequest extends StringRequest {
     protected final String key;
     protected final String secret;
 
-    TokenRequest(String method, String url, String key, String secret, Listener.ResponseListener<String> listener, Listener.ErrorListener errorListener) {
-        super(method, url, listener, errorListener);
+    TokenRequest(String method, String url, String key, String secret) {
+        super(method, url);
         this.key = key;
         this.secret = secret;
+    }
+
+    @Override
+    public TokenRequest clone() {
+        return new TokenRequest(getMethod(), getUrlString(), key, secret);
     }
 
     @Override

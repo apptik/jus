@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package io.apptik.comm.jus.request;
+package io.apptik.comm.jus.examples.request;
 
 import android.os.Handler;
 import android.os.Looper;

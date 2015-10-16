@@ -18,14 +18,8 @@
 
 package io.apptik.comm.jus.request;
 
-import java.io.UnsupportedEncodingException;
-
-import io.apptik.comm.jus.Listener;
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.toolbox.HttpHeaderParser;
+import io.apptik.comm.jus.converter.Converters;
 
 /**
  * A canned request for retrieving the response body at a given URL as a String.
@@ -37,40 +31,13 @@ public class StringRequest extends Request<String> {
      *
      * @param method the request {@link Method} to use
      * @param url URL to fetch the string at
-     * @param listener Listener to receive the String response
-     * @param errorListener Error listener, or null to ignore errors
      */
-    public StringRequest(String method, String url, Listener.ResponseListener<String> listener,
-            Listener.ErrorListener errorListener) {
-        super(method, url, null);
-        setResponseListener(listener);
-        setErrorListener(errorListener);
-    }
-
-    /**
-     * Creates a new GET request.
-     *
-     * @param url URL to fetch the string at
-     * @param listener Listener to receive the String response
-     * @param errorListener Error listener, or null to ignore errors
-     */
-    public StringRequest(String url, Listener.ResponseListener<String> listener, ErrorListener errorListener) {
-        this(Method.GET, url, listener, errorListener);
+    public StringRequest(String method, String url) {
+        super(method, url, new Converters.StringResponseConverter());
     }
 
     @Override
     public StringRequest clone() {
-        return new StringRequest(getMethod(), getUrlString(), getResponseListener(), getErrorListener());
-    }
-
-    @Override
-    public Response<String> parseNetworkResponse(NetworkResponse response) {
-        String parsed;
-        try {
-            parsed = new String(response.data, HttpHeaderParser.parseCharset(response.headers.toMap()));
-        } catch (UnsupportedEncodingException e) {
-            parsed = new String(response.data);
-        }
-        return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
+        return new StringRequest(getMethod(), getUrlString());
     }
 }
