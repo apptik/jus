@@ -30,8 +30,8 @@ public class RetroJus {
 
         if(opts.contains("beer")) {
             beerService.getBeer(BeerService.userString, "777")
-                    .setResponseListener((r) -> out.println("RESPONSE: " + r))
-                    .setErrorListener((e) -> out.println("ERROR: " + e.networkResponse));
+                    .addResponseListener((r) -> out.println("RESPONSE: " + r))
+                    .addErrorListener((e) -> out.println("ERROR: " + e.networkResponse));
         }
 
         queue.stopWhenDone();

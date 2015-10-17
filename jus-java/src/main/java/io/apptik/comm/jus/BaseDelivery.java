@@ -18,26 +18,31 @@ public abstract class BaseDelivery implements ResponseDelivery {
     @Override
     public void postResponse(Request request, Response response, Runnable runnable) {
         request.markDelivered();
-        request.addMarker(Request.EVENT_POST_RESPONSE);
+        request.addMarker(Request.EVENT_POST_RESPONSE, response);
         request.response = response;
-        addMarkersAndContinue(request, response);
-        doDeliver(request, response, runnable);
+        addMarkersAndDeliver(request, response, runnable);
     }
 
     @Override
     public void postError(Request request, JusError error, Runnable runnable) {
-        request.addMarker(Request.EVENT_POST_ERROR);
+        request.addMarker(Request.EVENT_POST_ERROR, error);
         Response<?> response = Response.error(error);
         request.response = response;
-        addMarkersAndContinue(request, response);
-        doDeliver(request, response, runnable);
+        addMarkersAndDeliver(request, response, runnable);
     }
 
-    private void addMarkersAndContinue(Request<?> request, Response<?> response) {
+    private void addMarkersAndDeliver(Request<?> request, Response<?> response, Runnable runnable) {
         // If this request has canceled, finish it and don't deliver.
         if (request.isCanceled()) {
             request.finish(Request.EVENT_CANCELED_AT_DELIVERY);
         } else {
+            if(response.error!=null) {
+                request.addMarker(Request.EVENT_DELIVER_RESPONSE, response.result, response.intermediate);
+                doDeliver(request, response, runnable);
+            } else {
+                request.addMarker(Request.EVENT_DELIVER_ERROR, response.error);
+                doDeliver(request, response, runnable);
+            }
             // If this is an intermediate response, add a marker, otherwise we're done
             // and the request can be finished.
             if (response.intermediate) {

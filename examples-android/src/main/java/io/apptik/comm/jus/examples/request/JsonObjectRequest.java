@@ -58,12 +58,6 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
     }
 
     @Override
-    public JsonObjectRequest clone() {
-        return new JsonObjectRequest(getMethod(), getUrlString(), mRequestBody, getResponseListener(),
-                getErrorListener());
-    }
-
-    @Override
     public Response<JSONObject> parseNetworkResponse(NetworkResponse response) {
         try {
             String jsonString = new String(response.data,

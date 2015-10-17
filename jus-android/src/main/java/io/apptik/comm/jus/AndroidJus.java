@@ -60,12 +60,14 @@ public class AndroidJus {
 
         Network network = new HttpNetwork(stack);
 
-        RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network);
+        RequestQueue queue = new RequestQueue(new DiskBasedCache(cacheDir), network,
+                RequestQueue.DEFAULT_NETWORK_THREAD_POOL_SIZE,
+                new AndroidExecutorDelivery(new Handler(Looper.getMainLooper())));
         queue
                 .withCacheDispatcher(
                         new AndroidCacheDispatcher(
                                 queue.mCacheQueue, queue.mNetworkQueue, queue.mCache,
-                                new AndroidExecutorDelivery(new Handler(Looper.getMainLooper()))))
+                                queue.mDelivery))
                 .withNetworkDispatcherFactory(
                         new AndroidNetworkDispatcher.NetworkDispatcherFactory(
                                 queue.mNetworkQueue, queue.mNetwork,

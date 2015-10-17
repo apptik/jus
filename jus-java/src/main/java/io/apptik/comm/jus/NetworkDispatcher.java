@@ -121,7 +121,7 @@ public class NetworkDispatcher extends Thread {
 
                 // Perform the network request.
                 NetworkResponse networkResponse = mNetwork.performRequest(request);
-                request.addMarker(Request.EVENT_NETWORK_HTTP_COMPLETE);
+                request.addMarker(Request.EVENT_NETWORK_HTTP_COMPLETE, networkResponse);
 
                 // If the server returned 304 AND we delivered a response already,
                 // we're done -- don't deliver a second identical response.

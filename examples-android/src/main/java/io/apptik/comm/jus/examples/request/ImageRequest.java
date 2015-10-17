@@ -80,8 +80,8 @@ public class ImageRequest extends Request<Bitmap> {
         super(Method.GET, url, null);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
-        setErrorListener(errorListener);
-        setResponseListener(listener);
+        addErrorListener(errorListener);
+        addResponseListener(listener);
         mDecodeConfig = decodeConfig;
         mMaxWidth = maxWidth;
         mMaxHeight = maxHeight;
@@ -90,8 +90,8 @@ public class ImageRequest extends Request<Bitmap> {
 
     @Override
     public Request<Bitmap> clone() {
-        return new ImageRequest(getUrlString(), getResponseListener(), mMaxWidth, mMaxHeight,
-                mScaleType,mDecodeConfig, getErrorListener());
+        return new ImageRequest(getUrlString(), null, mMaxWidth, mMaxHeight,
+                mScaleType,mDecodeConfig, null);
     }
 
     @Override

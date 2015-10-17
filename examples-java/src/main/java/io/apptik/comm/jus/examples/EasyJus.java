@@ -26,8 +26,8 @@ public class EasyJus {
                             Request.Method.GET,
                             HttpUrl.parse(BeerService.fullUrl),
                             new Converters.StringResponseConverter())
-                            .setResponseListener((r) -> out.println("RESPONSE: " + r))
-                            .setErrorListener((e) -> out.println("ERROR: " + e))
+                            .addResponseListener((r) -> out.println("RESPONSE: " + r))
+                            .addErrorListener((e) -> out.println("ERROR: " + e))
             );
         }
 

@@ -22,7 +22,9 @@ package io.apptik.comm.jus;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import io.apptik.comm.jus.JusLog.MarkerLog;
@@ -69,6 +71,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_CACHE_HIT = "cache-hit";
     public static final String EVENT_CACHE_HIT_PARSED = "cache-hit-parsed";
     public static final String EVENT_CACHE_HIT_REFRESH_NEEDED = "cache-hit-refresh-needed";
+    public static final String EVENT_DELIVER_RESPONSE = "deliver response";
+    public static final String EVENT_DELIVER_ERROR = "deliver error";
+
 
     /**
      * Default encoding for POST or PUT parameters. See {@link #getParamsEncoding()}.
@@ -117,17 +122,17 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * Listener interface for errors.
      */
-    private Listener.ErrorListener errorListener;
+    private List<Listener.ErrorListener> errorListeners = new ArrayList<>();
 
     /**
      * Listener interface for non error responses.
      */
-    private Listener.ResponseListener<T> responseListener;
+    private List<Listener.ResponseListener<T>> responseListeners = new ArrayList<>();
 
     /**
      * Listener interface for markers.
      */
-    private Listener.MarkerListener markerListener;
+    private List<Listener.MarkerListener> markerListeners = new ArrayList<>();
 
     /**
      * Sequence number of this request, used to enforce FIFO ordering.
@@ -277,30 +282,40 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     //--> Listeners
 
-    public Listener.ResponseListener getResponseListener() {
-        return responseListener;
-    }
 
-    public Request<T> setResponseListener(Listener.ResponseListener<T> responseListener) {
-        this.responseListener = responseListener;
+    public Request<T> addResponseListener(Listener.ResponseListener<T> responseListener) {
+        if (responseListeners != null) {
+            this.responseListeners.add(responseListener);
+        }
         return this;
     }
 
-    public Listener.MarkerListener getMarkerListener() {
-        return markerListener;
-    }
-
-    public Request<T> setMarkerListener(Listener.MarkerListener markerListener) {
-        this.markerListener = markerListener;
+    public Request<T> addMarkerListener(Listener.MarkerListener markerListener) {
+        if (markerListener != null) {
+            this.markerListeners.add(markerListener);
+        }
         return this;
     }
 
-    public Listener.ErrorListener getErrorListener() {
-        return errorListener;
+    public Request<T> addErrorListener(Listener.ErrorListener errorListener) {
+        if (errorListener != null) {
+            this.errorListeners.add(errorListener);
+        }
+        return this;
     }
 
-    public Request<T> setErrorListener(Listener.ErrorListener errorListener) {
-        this.errorListener = errorListener;
+    public Request<T> removeResponseListener(Listener.ResponseListener<T> responseListener) {
+        this.responseListeners.remove(responseListener);
+        return this;
+    }
+
+    public Request<T> removeMarkerListener(Listener.MarkerListener markerListener) {
+        this.markerListeners.remove(markerListener);
+        return this;
+    }
+
+    public Request<T> removeErrorListener(Listener.ErrorListener errorListener) {
+        this.errorListeners.remove(errorListener);
         return this;
     }
 
@@ -379,8 +394,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * Adds an event to this request's event log; for debugging.
      */
-    public Request<T> addMarker(String tag, String... args) {
-        if (markerListener != null) {
+    public Request<T> addMarker(String tag, Object... args) {
+        for (Listener.MarkerListener markerListener : markerListeners) {
             markerListener.onMarker(
                     new MarkerLog.Marker(tag,
                             Thread.currentThread().getId(),
@@ -421,6 +436,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 JusLog.d("%d ns: %s", requestTime, this.toString());
             }
         }
+        errorListeners.clear();
+        responseListeners.clear();
+        markerListeners.clear();
     }
 
     /**
@@ -653,7 +671,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         try {
             parsed = converterFromResponse.convert(response);
         } catch (IOException e) {
-           return Response.error(new ParseError(e));
+            return Response.error(new ParseError(e));
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }
@@ -679,7 +697,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *                 {@link #parseNetworkResponse(NetworkResponse)}
      */
     protected void deliverResponse(T response) {
-        if (responseListener != null) {
+        for (Listener.ResponseListener responseListener : responseListeners) {
             responseListener.onResponse(response);
         }
     }
@@ -691,7 +709,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @param error Error details
      */
     public void deliverError(JusError error) {
-        if (errorListener != null) {
+        for (Listener.ErrorListener errorListener : errorListeners) {
             errorListener.onErrorResponse(error);
         }
     }

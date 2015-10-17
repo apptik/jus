@@ -45,10 +45,6 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
         super(Method.GET, url, null, listener, errorListener);
     }
 
-    @Override
-    public JsonArrayRequest clone() {
-        return new JsonArrayRequest(getUrlString(), getResponseListener(), getErrorListener());
-    }
 
     @Override
     public Response<JSONArray> parseNetworkResponse(NetworkResponse response) {

@@ -66,8 +66,8 @@ public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>
 
     public RequestFuture<T> setRequest(Request<T> request) {
         this.request = request;
-        this.request.setErrorListener(this);
-        this.request.setResponseListener(this);
+        this.request.addErrorListener(this);
+        this.request.addResponseListener(this);
         return this;
     }
 

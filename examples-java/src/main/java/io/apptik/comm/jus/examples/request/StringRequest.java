@@ -43,8 +43,8 @@ public class StringRequest extends Request<String> {
     public StringRequest(String method, String url, Listener.ResponseListener<String> listener,
             ErrorListener errorListener) {
         super(method, url, null);
-        setResponseListener(listener);
-        setErrorListener(errorListener);
+        addResponseListener(listener);
+        addErrorListener(errorListener);
     }
 
     /**

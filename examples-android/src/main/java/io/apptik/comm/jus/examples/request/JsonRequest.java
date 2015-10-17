@@ -46,8 +46,8 @@ public abstract class JsonRequest<T> extends Request<T> {
     public JsonRequest(String method, String url, String requestBody, ResponseListener<T> listener,
             ErrorListener errorListener) {
         super(method, url, null);
-        setResponseListener(listener);
-        setErrorListener(errorListener);
+        addResponseListener(listener);
+        addErrorListener(errorListener);
         mRequestBody = requestBody;
     }
 

@@ -5,6 +5,8 @@ import android.os.Handler;
 
 import io.apptik.comm.jus.error.JusError;
 
+import io.apptik.comm.jus.rx.event.JusEvent;
+import io.apptik.comm.jus.rx.event.ResultEvent;
 import rx.subjects.BehaviorSubject;
 
 public class JusEmitter {
@@ -26,12 +28,12 @@ public class JusEmitter {
         return jusSubject;
     }
 
-    public BehaviorSubject<RequestEvent> getRequestSubject() {
+    public BehaviorSubject<ResultEvent> getRequestSubject() {
         return requestSubject;
     }
 
     BehaviorSubject<JusEvent> jusSubject = BehaviorSubject.create();
-    BehaviorSubject<RequestEvent> requestSubject = BehaviorSubject.create();
+    BehaviorSubject<ResultEvent> requestSubject = BehaviorSubject.create();
 
     Handler handler;
 
@@ -45,7 +47,7 @@ public class JusEmitter {
         });
     }
 
-    public void emitRequestEvent(final RequestEvent event) {
+    public void emitRequestEvent(final ResultEvent event) {
         handler.post(new Runnable() {
             @Override
             public void run() {
@@ -53,7 +55,7 @@ public class JusEmitter {
             }
         });
     }
-    public void emitRequestError(final RequestEvent event) {
+    public void emitRequestError(final ResultEvent event) {
         handler.post(new Runnable() {
             @Override
             public void run() {

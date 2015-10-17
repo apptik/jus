@@ -25,6 +25,7 @@ import java.io.File;
 
 import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.RequestQueue;
+import io.apptik.comm.jus.rx.event.JusEvent;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
 import io.apptik.comm.jus.toolbox.HttpNetwork;
