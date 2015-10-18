@@ -15,4 +15,12 @@ public final class ResultEvent<T> extends JusEvent<T> {
         super(request);
         this.response = response;
     }
+
+    @Override
+    public String toString() {
+        return "ResultEvent{" +
+                "request=" + request +
+                ", response=" + response +
+                "} " ;
+    }
 }

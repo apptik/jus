@@ -28,6 +28,11 @@ public class RxRequestQueue extends RequestQueue{
         super(cache, network, threadPoolSize, delivery);
     }
 
+
+    public BehaviorSubject<JusEvent> getAllEventSubject() {
+        return allEventSubject;
+    }
+
     @Override
     public <T> Request<T> add(Request<T> request) {
        Observable<JusEvent> jusEventObservable = RxRequest.allEventsObservable(request);

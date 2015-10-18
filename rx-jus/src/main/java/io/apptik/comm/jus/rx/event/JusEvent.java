@@ -10,4 +10,11 @@ public abstract class JusEvent<T> {
     public JusEvent(Request request) {
         this.request = request;
     }
+
+    @Override
+    public String toString() {
+        return "JusEvent{" +
+                "request=" + request +
+                '}';
+    }
 }

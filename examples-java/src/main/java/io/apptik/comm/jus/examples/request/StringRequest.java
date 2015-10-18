@@ -59,11 +59,6 @@ public class StringRequest extends Request<String> {
     }
 
     @Override
-    public StringRequest clone() {
-        return new StringRequest(getMethod(), getUrlString(), getResponseListener(), getErrorListener());
-    }
-
-    @Override
     public Response<String> parseNetworkResponse(NetworkResponse response) {
         String parsed;
         try {

@@ -16,4 +16,12 @@ public final class ErrorEvent extends JusEvent {
         super(request);
         this.error = error;
     }
+
+    @Override
+    public String toString() {
+        return "ErrorEvent{" +
+                "request=" + request +
+                ", error=" + error +
+                "} ";
+    }
 }

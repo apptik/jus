@@ -81,11 +81,11 @@ public class RxJus {
      * @param cacheLocation A {@link File} to use for creating the cache dir.
      * @return A started {@link RequestQueue} instance.
      */
-    public static RequestQueue newRequestQueue(File cacheLocation) {
+    public static RxRequestQueue newRequestQueue(File cacheLocation) {
         return newRequestQueue(cacheLocation, null);
     }
 
-    public static RequestQueue newRequestQueue() {
+    public static RxRequestQueue newRequestQueue() {
         return newRequestQueue(null, null);
     }
 

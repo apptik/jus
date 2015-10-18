@@ -6,6 +6,7 @@ compileJava {
 }
 dependencies {
     compile project(':jus-java')
+    compile project(':rx-jus')
     compile project(':retro-jus')
 }
 
@@ -20,7 +21,7 @@ task getEasyBeer() {
     //println System.getProperty("java.home")
     dependsOn assemble, compileJava
     doFirst{
-        println(" ****** Getting beer ****** ")
+        println(" ****** Getting easy beer ****** ")
     }
     doLast {
         javaexec {
@@ -31,10 +32,40 @@ task getEasyBeer() {
     }
 }
 
+task getRxBeer() {
+    //println System.getProperty("java.home")
+    dependsOn assemble, compileJava
+    doFirst{
+        println(" ****** Getting reactive beer ****** ")
+    }
+    doLast {
+        javaexec {
+            main = "io.apptik.comm.jus.examples.RxSimpleJus"
+            classpath = sourceSets.main.runtimeClasspath
+            args = ['beer']
+        }
+    }
+}
+
+task getFullRxBeer() {
+    //println System.getProperty("java.home")
+    dependsOn assemble, compileJava
+    doFirst{
+        println(" ****** Getting full reactive beer ****** ")
+    }
+    doLast {
+        javaexec {
+            main = "io.apptik.comm.jus.examples.RxFullJus"
+            classpath = sourceSets.main.runtimeClasspath
+            args = ['beer']
+        }
+    }
+}
+
 task getCustomBeer() {
     dependsOn assemble, compileJava
     doFirst{
-        println(" ****** Getting beer ****** ")
+        println(" ****** Getting custom beer ****** ")
     }
     doLast {
         javaexec {
@@ -48,7 +79,7 @@ task getCustomBeer() {
 task getRetroBeer() {
     dependsOn assemble, compileJava
     doFirst{
-        println(" ****** Getting beer ****** ")
+        println(" ****** Getting retro beer ****** ")
     }
     doLast {
         javaexec {

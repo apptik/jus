@@ -1,6 +1,8 @@
 package io.apptik.comm.jus.rx.event;
 
 
+import java.util.Arrays;
+
 import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Request;
 
@@ -18,5 +20,14 @@ public final class MarkerEvent extends JusEvent {
     public MarkerEvent(Request request, JusLog.MarkerLog.Marker marker, Object... args) {
         super(request);this.marker = marker;
         this.args = args;
+    }
+
+    @Override
+    public String toString() {
+        return "MarkerEvent{" +
+                "request=" + request +
+                ", args=" + Arrays.toString(args) +
+                ", marker=" + marker +
+                "} ";
     }
 }
