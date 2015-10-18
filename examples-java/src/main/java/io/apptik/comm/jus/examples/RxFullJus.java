@@ -13,8 +13,6 @@ import io.apptik.comm.jus.rx.RxRequestQueue;
 import io.apptik.comm.jus.rx.event.JusEvent;
 import rx.Observer;
 
-import static java.lang.System.out;
-
 public class RxFullJus {
     public static void main(String[] args) {
         RxRequestQueue queue = RxJus.newRequestQueue(new File("."));
@@ -28,12 +26,11 @@ public class RxFullJus {
                             Request.Method.GET,
                             HttpUrl.parse(BeerService.fullUrl),
                             new Converters.StringResponseConverter())
-                            .addResponseListener((r) -> out.println("RESPONSE: " + r))
-                            .addErrorListener((e) -> out.println("ERROR: " + e))
             );
         }
 
         queue.getAllEventSubject().subscribe(new Observer<JusEvent>() {
+
             @Override
             public void onCompleted() {
                 System.out.println("RX: Completed");
