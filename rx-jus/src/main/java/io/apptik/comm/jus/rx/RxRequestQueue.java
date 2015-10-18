@@ -1,49 +1,37 @@
 package io.apptik.comm.jus.rx;
 
 
-import android.os.Handler;
-import android.os.Looper;
-
 import io.apptik.comm.jus.Cache;
-import io.apptik.comm.jus.CacheDispatcher;
 import io.apptik.comm.jus.Network;
-import io.apptik.comm.jus.NetworkDispatcher;
+import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
+import io.apptik.comm.jus.ResponseDelivery;
+import io.apptik.comm.jus.rx.event.JusEvent;
+import io.apptik.comm.jus.rx.request.RxRequest;
+import rx.Observable;
+import rx.subjects.BehaviorSubject;
 
 public class RxRequestQueue extends RequestQueue{
+
+
+    private BehaviorSubject<JusEvent> allEventSubject = BehaviorSubject.create();
+
     public RxRequestQueue(Cache cache, Network network) {
-        this(cache, network, DEFAULT_NETWORK_THREAD_POOL_SIZE);
+        super(cache, network);
     }
 
     public RxRequestQueue(Cache cache, Network network, int threadPoolSize) {
-        super(cache, network, threadPoolSize, new RxAndroidExecutorDelivery(new Handler(Looper.getMainLooper())));
+        super(cache, network, threadPoolSize);
     }
 
-    public RxRequestQueue(Cache cache, Network network, int threadPoolSize, RxAndroidExecutorDelivery delivery) {
+    public RxRequestQueue(Cache cache, Network network, int threadPoolSize, ResponseDelivery delivery) {
         super(cache, network, threadPoolSize, delivery);
     }
 
-
-    /**
-     * Starts the dispatchers in this queue.
-     */
     @Override
-    public void start() {
-        stop();  // Make sure any currently running dispatchers are stopped.
-        // Create the cache dispatcher and start it.
-
-        if(cacheDispatcher ==null) {
-            cacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
-            cacheDispatcher.start();
-        }
-
-        // Create network dispatchers (and corresponding threads) up to the pool size.
-        for (int i = 0; i < mDispatchers.length; i++) {
-            NetworkDispatcher networkDispatcher = new RxNetworkDispatcher(mNetworkQueue, mNetwork,
-                    mCache, mDelivery);
-            mDispatchers[i] = networkDispatcher;
-            networkDispatcher.start();
-        }
+    public <T> Request<T> add(Request<T> request) {
+       Observable<JusEvent> jusEventObservable = RxRequest.allEventsObservable(request);
+        jusEventObservable.subscribe(allEventSubject);
+        return super.add(request);
     }
-
 }

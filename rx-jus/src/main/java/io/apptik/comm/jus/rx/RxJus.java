@@ -17,20 +17,16 @@
 
 package io.apptik.comm.jus.rx;
 
-import android.content.Context;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager.NameNotFoundException;
-
 import java.io.File;
 
+import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.rx.event.JusEvent;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
-import io.apptik.comm.jus.toolbox.HttpNetwork;
 import io.apptik.comm.jus.toolbox.DiskBasedCache;
-import rx.subjects.BehaviorSubject;
+import io.apptik.comm.jus.toolbox.HttpNetwork;
+import io.apptik.comm.jus.toolbox.NoCache;
 
 /**
  * reactive jus.
@@ -41,27 +37,23 @@ public class RxJus {
     /**
      * Default on-disk cache directory.
      */
-    private static final String DEFAULT_CACHE_DIR = "rxjus";
+    private static final String DEFAULT_CACHE_DIR = "rx-jus";
 
     /**
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
      *
-     * @param context A {@link Context} to use for creating the cache dir.
-     * @param stack   An {@link HttpStack} to use for the network, or null for default.
+     * @param cacheLocation A {@link File} to use for creating the cache dir.
+     * @param stack         An {@link HttpStack} to use for the network, or null for default.
      * @return A started {@link RequestQueue} instance.
      */
-    public static RequestQueue newRequestQueue(Context context, HttpStack stack) {
-        File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
+    public static RxRequestQueue newRequestQueue(File cacheLocation, HttpStack stack) {
 
-        String userAgent = "rxjus/0";
-        try {
-            String packageName = context.getPackageName();
-            PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
-            userAgent = packageName + "/" + info.versionCode;
-        } catch (NameNotFoundException e) {
-            //should not happen
-            throw new RuntimeException(e);
+        File cacheDir = null;
+        if (cacheLocation != null) {
+            cacheDir = new File(cacheLocation, DEFAULT_CACHE_DIR);
         }
+
+        String userAgent = "rx-jus/0";
 
         if (stack == null) {
             stack = new HurlStack();
@@ -69,7 +61,15 @@ public class RxJus {
 
         Network network = new HttpNetwork(stack);
 
-        RxRequestQueue queue = new RxRequestQueue(new DiskBasedCache(cacheDir), network);
+        Cache cache = null;
+
+        if(cacheDir!=null) {
+            cache = new DiskBasedCache(cacheDir);
+        } else {
+            cache =  new NoCache();
+        }
+
+        RxRequestQueue queue = new RxRequestQueue(cache, network);
         queue.start();
 
         return queue;
@@ -78,14 +78,15 @@ public class RxJus {
     /**
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
      *
-     * @param context A {@link Context} to use for creating the cache dir.
+     * @param cacheLocation A {@link File} to use for creating the cache dir.
      * @return A started {@link RequestQueue} instance.
      */
-    public static RequestQueue newRequestQueue(Context context) {
-        return newRequestQueue(context, null);
+    public static RequestQueue newRequestQueue(File cacheLocation) {
+        return newRequestQueue(cacheLocation, null);
     }
 
-    public BehaviorSubject<JusEvent> getJusSubject() {
-        return JusEmitter.get().getJusSubject();
+    public static RequestQueue newRequestQueue() {
+        return newRequestQueue(null, null);
     }
+
 }
