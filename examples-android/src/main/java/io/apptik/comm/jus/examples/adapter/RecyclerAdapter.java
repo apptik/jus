@@ -68,7 +68,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
-    public static class ViewHolder extends RecyclerView.ViewHolder  implements View.OnClickListener  {
+    public static class ViewHolder extends RecyclerView.ViewHolder {
        // private final TextView textView;
 
        public final NetworkImageView niv ;
@@ -80,15 +80,12 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 @Override
                 public void onClick(View v) {
                     Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
+                    CustomJusHelper.addDummyRequest("the key : " + getItemId(),
+                            "the value : " + getAdapterPosition() + " / " + getOldPosition());
                 }
             });
             niv = (NetworkImageView) v.findViewById(R.id.img1);
           //  textView = (TextView) v.findViewById(R.id.textView);
-        }
-
-        @Override
-        public void onClick(View v) {
-            CustomJusHelper.addDummyRequest("the key : " + getItemId(), "the value : " + getAdapterPosition() + " / " +  getOldPosition());
         }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)

@@ -738,8 +738,28 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     @Override
     public String toString() {
         String trafficStatsTag = "0x" + Integer.toHexString(getTrafficStatsTag());
-        return (canceled ? "[X] " : "[ ] ") + getUrlString() + " " + trafficStatsTag + " "
-                + getPriority() + " " + sequence;
+        String mark = "[..]";
+        if(canceled) {
+            mark = "[X]";
+        } else if(responseDelivered) {
+            mark = "[O]";
+        }
+        return "Request "+mark+" {" +
+                "networkRequest=" + networkRequest +
+                ", method='" + method + '\'' +
+                ", url=" + url +
+                ", trafficStatsTag=" + trafficStatsTag +
+                ", priority=" + getPriority() +
+                ", requestBirthTime=" + requestBirthTime +
+                ", requestBirthTime=" + requestBirthTime +
+                ", sequence=" + sequence +
+                ", shouldCache=" + shouldCache +
+                ", tag=" + tag +
+                ", response=" + response +
+                ", responseDelivered=" + responseDelivered +
+                ", logSlowRequests=" + logSlowRequests +
+                ", canceled=" + canceled +
+                '}';
     }
 
     /**

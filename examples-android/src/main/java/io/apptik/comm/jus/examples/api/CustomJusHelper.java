@@ -2,6 +2,7 @@ package io.apptik.comm.jus.examples.api;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.util.Log;
 
 import io.apptik.comm.jus.AndroidJus;
@@ -11,8 +12,13 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.rx.RxRequestQueue;
+import io.apptik.comm.jus.rx.event.ErrorEvent;
+import io.apptik.comm.jus.rx.event.JusEvent;
+import io.apptik.comm.jus.rx.event.ResultEvent;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.DefaultBitmapLruCache;
+import rx.functions.Action1;
+import rx.functions.Func1;
 
 public class CustomJusHelper {
     private static RequestQueue queue;
@@ -35,6 +41,49 @@ public class CustomJusHelper {
         );
 
         rxQueue = AndroidRxJus.newRequestQueue(context);
+        rxQueue.getAllEventSubject().filter(
+                new Func1<JusEvent, Boolean>() {
+                    @Override
+                    public Boolean call(JusEvent jusEvent) {
+                        return (jusEvent instanceof ResultEvent);
+                    }
+                }
+        ).map(new Func1<JusEvent, ResultEvent>() {
+            @Override
+            public ResultEvent call(JusEvent jusEvent) {
+                return (ResultEvent) jusEvent;
+            }
+        }).subscribe(new Action1<ResultEvent>() {
+            @Override
+            public void call(ResultEvent resultEvent) {
+                Log.d("Jus-Test", "jus received response for: " + resultEvent.request);
+                if(! (resultEvent.response instanceof Bitmap)) {
+                    Log.d("Jus-Test", "jus response : " + resultEvent.response);
+                }
+            }
+        });
+
+        rxQueue.getAllEventSubject().filter(
+                new Func1<JusEvent, Boolean>() {
+                    @Override
+                    public Boolean call(JusEvent jusEvent) {
+                        return (jusEvent instanceof ErrorEvent);
+                    }
+                }
+        ).map(new Func1<JusEvent, ErrorEvent>() {
+            @Override
+            public ErrorEvent call(JusEvent errorEvent) {
+                return (ErrorEvent) errorEvent;
+            }
+        }).subscribe(new Action1<ErrorEvent>() {
+            @Override
+            public void call(ErrorEvent errorEvent) {
+                Log.e("Jus-Test", "jus received ERROR for: " + errorEvent.request);
+                if(errorEvent.error !=null) {
+                    Log.e("Jus-Test", "jus ERROR : " + errorEvent.error);
+                }
+            }
+        });
 
         rxImageLoader = new ImageLoader(rxQueue,
                 // new NoCache()

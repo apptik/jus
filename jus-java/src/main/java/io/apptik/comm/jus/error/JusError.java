@@ -59,4 +59,12 @@ public class JusError extends Exception {
     public long getNetworkTimeMs() {
        return networkTimeMs;
     }
+
+    @Override
+    public String toString() {
+        return "JusError{" +
+                "networkResponse=" + networkResponse +
+                ", networkTimeMs=" + networkTimeMs +
+                "} " + super.toString();
+    }
 }

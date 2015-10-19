@@ -56,7 +56,9 @@ public class JusLog {
     }
 
     public static void d(String format, Object... args) {
-        Log.d(TAG, buildMessage(format, args));
+        if (DEBUG) {
+            Log.d(TAG, buildMessage(format, args));
+        }
     }
 
     public static void e(String format, Object... args) {
@@ -142,7 +144,7 @@ public class JusLog {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
-            Log.d("jus", new Marker(name, threadId, threadName, System.nanoTime()).toString());
+            d(new Marker(name, threadId, threadName, System.nanoTime()).toString());
             mMarkers.add(new Marker(name, threadId, threadName, System.nanoTime()));
         }
 
