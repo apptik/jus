@@ -5,16 +5,20 @@ import android.content.Context;
 import android.util.Log;
 
 import io.apptik.comm.jus.AndroidJus;
+import io.apptik.comm.jus.AndroidRxJus;
 import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.rx.RxRequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.DefaultBitmapLruCache;
 
 public class CustomJusHelper {
-    private static RequestQueue mRequestQueue;
-    private static ImageLoader mImageLoader;
+    private static RequestQueue queue;
+    private static ImageLoader imageLoader;
+    private static RxRequestQueue rxQueue;
+    private static ImageLoader rxImageLoader;
 
 
     private CustomJusHelper() {
@@ -23,9 +27,16 @@ public class CustomJusHelper {
 
 
     public static void init(Context context) {
-        mRequestQueue = AndroidJus.newRequestQueue(context);
+        queue = AndroidJus.newRequestQueue(context);
 
-        mImageLoader = new ImageLoader(mRequestQueue,
+        imageLoader = new ImageLoader(queue,
+                // new NoCache()
+                new DefaultBitmapLruCache()
+        );
+
+        rxQueue = AndroidRxJus.newRequestQueue(context);
+
+        rxImageLoader = new ImageLoader(rxQueue,
                 // new NoCache()
                 new DefaultBitmapLruCache()
         );
@@ -33,10 +44,18 @@ public class CustomJusHelper {
 
 
     public static RequestQueue getRequestQueue() {
-        if (mRequestQueue != null) {
-            return mRequestQueue;
+        if (queue != null) {
+            return queue;
         } else {
             throw new IllegalStateException("RequestQueue not initialized");
+        }
+    }
+
+    public static RequestQueue getRxRequestQueue() {
+        if (rxQueue != null) {
+            return rxQueue;
+        } else {
+            throw new IllegalStateException("RxRequestQueue not initialized");
         }
     }
 
@@ -49,15 +68,27 @@ public class CustomJusHelper {
      * @return
      */
     public static ImageLoader getImageLoader() {
-        if (mImageLoader != null) {
-            return mImageLoader;
+        if (imageLoader != null) {
+            return imageLoader;
+        } else {
+            throw new IllegalStateException("ImageLoader not initialized");
+        }
+    }
+
+    public static ImageLoader getRxImageLoader() {
+        if (rxImageLoader != null) {
+            return rxImageLoader;
         } else {
             throw new IllegalStateException("ImageLoader not initialized");
         }
     }
 
     public static void addRequest(Request request) {
-        mRequestQueue.add(request);
+        queue.add(request);
+    }
+
+    public static void addRxRequest(Request request) {
+        rxQueue.add(request);
     }
 
     public static void addDummyRequest(String key, String val) {

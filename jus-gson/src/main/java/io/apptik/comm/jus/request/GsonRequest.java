@@ -4,6 +4,7 @@ package io.apptik.comm.jus.request;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.converter.GsonRequestBodyConverter;
 import io.apptik.comm.jus.converter.GsonResponseBodyConverter;
 import io.apptik.comm.jus.Request;
@@ -36,7 +37,11 @@ public class GsonRequest<T> extends Request<T> {
     }
 
     public <R> Request<T> setObjectRequest(R objectRequest, Gson gson, TypeAdapter<R> adapter) {
-        return super.setObjectRequest(objectRequest, new GsonRequestBodyConverter<>(gson, adapter));
+        super.setObjectRequest(objectRequest, new GsonRequestBodyConverter<>(gson, adapter));
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json; charset=UTF-8")
+                .build());
+        return this;
     }
 
     public <R> Request<T> setObjectRequest(R objectRequest, Gson gson) {

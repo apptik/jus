@@ -20,6 +20,7 @@ package io.apptik.comm.jus.request;
 
 import org.json.JSONArray;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JSONConverter;
 
@@ -34,6 +35,14 @@ public class JsonArrayRequest extends Request<JSONArray> {
      */
     public JsonArrayRequest(String method, String url) {
         super(method, url, new JSONConverter.JSONArrayResponseConverter());
+    }
+
+    public JsonArrayRequest setObjectRequest(JSONArray objectRequest) {
+        super.setObjectRequest(objectRequest, new JSONConverter.JSONArrayRequestConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json; charset=UTF-8")
+                .build());
+        return this;
     }
 
 }

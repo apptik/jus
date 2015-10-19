@@ -14,7 +14,7 @@ import io.apptik.comm.jus.examples.adapter.RecyclerAdapter;
 import io.apptik.comm.jus.examples.mock.MockData;
 
 
-public class ImageListFragment extends Fragment {
+public class RxImageListFragment extends Fragment {
 
     private static final String TAG = "ImageListFragment";
     private static final String KEY_LAYOUT_MANAGER = "layoutManager";
@@ -35,15 +35,15 @@ public class ImageListFragment extends Fragment {
     protected RecyclerAdapter mAdapter;
     protected RecyclerView.LayoutManager mLayoutManager;
 
-    public static ImageListFragment newInstance() {
-        ImageListFragment fragment = new ImageListFragment();
+    public static RxImageListFragment newInstance() {
+        RxImageListFragment fragment = new RxImageListFragment();
         Bundle args = new Bundle();
 
         fragment.setArguments(args);
         return fragment;
     }
 
-    public ImageListFragment() {
+    public RxImageListFragment() {
         // Required empty public constructor
     }
 
@@ -64,7 +64,7 @@ public class ImageListFragment extends Fragment {
         RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(
                 MockData.getMockJsonArray(500, 500)
                 //MockData.getAssetsMock(getActivity())
-                , getActivity(), listScrollListener, false
+                , getActivity(), listScrollListener, true
         );
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
         recyclerView.setOnScrollListener(listScrollListener);
@@ -73,5 +73,6 @@ public class ImageListFragment extends Fragment {
 
        return v;
     }
+
 
 }

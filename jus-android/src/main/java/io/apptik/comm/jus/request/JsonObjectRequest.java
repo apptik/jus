@@ -20,6 +20,7 @@ package io.apptik.comm.jus.request;
 
 import org.json.JSONObject;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JSONConverter;
 
@@ -38,7 +39,11 @@ public class JsonObjectRequest extends Request<JSONObject> {
         super(method, url, new JSONConverter.JSONObjectResponseConverter());
     }
 
-    public Request<JSONObject> setObjectRequest(JSONObject objectRequest) {
-        return super.setObjectRequest(objectRequest, new JSONConverter.JSONObjectRequestConverter());
+    public JsonObjectRequest setObjectRequest(JSONObject objectRequest) {
+        super.setObjectRequest(objectRequest, new JSONConverter.JSONObjectRequestConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json; charset=UTF-8")
+                .build());
+        return this;
     }
 }

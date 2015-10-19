@@ -24,7 +24,7 @@ import android.content.Intent;
  * Error indicating that there was an authentication failure when performing a Request.
  */
 @SuppressWarnings("serial")
-public class AndroidAuthenticatorError extends AuthenticatorError  {
+public class AndroidAuthenticatorError extends AuthenticatorError {
     /** An intent that can be used to resolve this exception. (Brings up the password dialog.) */
     private Intent mResolutionIntent;
 

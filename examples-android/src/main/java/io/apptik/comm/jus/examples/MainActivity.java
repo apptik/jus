@@ -55,6 +55,8 @@ public class MainActivity extends AppCompatActivity
        Fragment frag;
         switch (position) {
             case 0: frag = ImageListFragment.newInstance(); break;
+            case 1: frag = RxImageListFragment.newInstance(); break;
+
             default: frag = BlankFragment.newInstance(); break;
         }
 

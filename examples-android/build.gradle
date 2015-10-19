@@ -35,8 +35,7 @@ dependencies {
     compile rootProject.ext.supportV4
     compile rootProject.ext.supportAnnotations
     compile project(':jus-android')
-    compile project(':jus-android-util')
-    compile project(':jus-ui')
+    compile project(':jus-android-rx')
 
     compile "io.reactivex:rxjava:1.0.12"
 }

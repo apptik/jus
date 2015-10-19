@@ -22,6 +22,8 @@ import android.os.Handler;
 
 import java.util.concurrent.Executor;
 
+import io.apptik.comm.jus.ExecutorDelivery;
+
 /**
  * Delivers responses and errors.
  */

@@ -1,1 +1,1 @@
-include ':jus-android', ':examples-android', ':rx-jus', ':jus-android-util', ':jus-ui', ':retro-jus', ':jus-java', ':java-log', ':android-log', ':examples-java', ':jus-gson', ':jus-jjson', ':jus-wire', ':jus-simplexml', ':jus-protobuf', ':jus-moshi', ':jus-jackson'
+include ':jus-android', ':examples-android', ':rx-jus', ':retro-jus', ':jus-java', ':java-log', ':android-log', ':examples-java', ':jus-gson', ':jus-jjson', ':jus-wire', ':jus-simplexml', ':jus-protobuf', ':jus-moshi', ':jus-jackson', ':jus-android-rx'

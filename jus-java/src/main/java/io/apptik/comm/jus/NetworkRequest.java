@@ -75,6 +75,16 @@ public class NetworkRequest {
 
         private MediaType contentType;
 
+        public static Builder from(final NetworkRequest networkRequest) {
+            if(networkRequest==null) {
+                return new Builder();
+            }
+            return new Builder()
+                    .setBody(networkRequest.data)
+                    .setContentType(networkRequest.contentType)
+                    .setHeaders(networkRequest.headers);
+        }
+
         public NetworkRequest.Builder setHeader(String name, String value) {
             this.headers.set(name, value);
             return this;

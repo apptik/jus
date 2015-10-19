@@ -3,6 +3,7 @@ package io.apptik.comm.jus.request;
 
 import org.djodjo.json.JsonElement;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JJsonRequestBodyConverter;
 import io.apptik.comm.jus.converter.JJsonResponseBodyConverter;
@@ -19,8 +20,12 @@ public class JsonElementRequest extends Request<JsonElement> {
     }
 
 
-    public Request<JsonElement> setObjectRequest(JsonElement objectRequest) {
-        return super.setObjectRequest(objectRequest, new JJsonRequestBodyConverter());
+    public JsonElementRequest setObjectRequest(JsonElement objectRequest) {
+        super.setObjectRequest(objectRequest, new JJsonRequestBodyConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json; charset=UTF-8")
+                .build());
+        return this;
     }
 
 }

@@ -36,8 +36,7 @@ public class StringRequest extends Request<String> {
         super(method, url, new Converters.StringResponseConverter());
     }
 
-    @Override
-    public StringRequest clone() {
-        return new StringRequest(getMethod(), getUrlString());
+    public Request<String> setObjectRequest(String objectRequest) {
+        return super.setObjectRequest(objectRequest, new Converters.StringRequestConverter());
     }
 }

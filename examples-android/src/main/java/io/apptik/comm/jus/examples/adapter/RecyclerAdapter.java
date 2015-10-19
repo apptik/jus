@@ -31,9 +31,10 @@ import android.view.animation.Interpolator;
 
 import org.djodjo.json.JsonArray;
 
-import io.apptik.comm.jus.examples.ImageListFragment;
+import io.apptik.comm.jus.examples.ListScrollListener;
 import io.apptik.comm.jus.examples.R;
 import io.apptik.comm.jus.examples.api.CustomJusHelper;
+import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.ui.NetworkImageView;
 
 /**
@@ -46,7 +47,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     protected static final long ANIM_DEFAULT_SPEED = 1000L;
 
     protected Interpolator interpolator;
-    protected ImageListFragment.ListScrollListener scrollListener;
+    protected ListScrollListener scrollListener;
     protected SparseBooleanArray positionsMapper;
     protected int lastPosition;
     protected int height;
@@ -61,6 +62,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private static final int ITEM_MUSEUM = 2;
 
     private JsonArray jarr;
+    private final ImageLoader imageLoader;
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
     /**
@@ -95,8 +97,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
      * Initialize the dataset of the Adapter.
      *
      */
-    public RecyclerAdapter(JsonArray jsonArray, Activity activity, ImageListFragment.ListScrollListener scrollListener) {
+    public RecyclerAdapter(JsonArray jsonArray, Activity activity,
+                           ListScrollListener scrollListener,
+                           boolean reactive) {
         jarr = jsonArray;
+        if(!reactive) {
+            this.imageLoader = CustomJusHelper.getImageLoader();
+        } else {
+            this.imageLoader = CustomJusHelper.getRxImageLoader();
+        }
+
         this.scrollListener = scrollListener;
         animDuration = ANIM_DEFAULT_SPEED;
         lastPosition = -1;
@@ -128,7 +138,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
         Log.e("jus", jarr.get(position).asJsonObject().getString("pic"));
-        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), CustomJusHelper.getImageLoader());
+        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), imageLoader);
 
         /// COOL ANIM
         View v = (View) viewHolder.niv.getParent().getParent();

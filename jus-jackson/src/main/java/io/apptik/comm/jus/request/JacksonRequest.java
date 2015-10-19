@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JacksonRequestBodyConverter;
 import io.apptik.comm.jus.converter.JacksonResponseBodyConverter;
@@ -54,7 +55,11 @@ public class JacksonRequest<T> extends Request<T> {
 
 
     public <R> Request<T> setObjectRequest(R objectRequest, ObjectWriter adapter) {
-        return super.setObjectRequest(objectRequest, new JacksonRequestBodyConverter<R>(adapter));
+        super.setObjectRequest(objectRequest, new JacksonRequestBodyConverter<R>(adapter));
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json; charset=UTF-8")
+                .build());
+        return this;
     }
 
     public <R> Request<T> setObjectRequest(R objectRequest, ObjectMapper objectMapper) {

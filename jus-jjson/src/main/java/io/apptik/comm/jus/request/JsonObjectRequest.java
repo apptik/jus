@@ -4,6 +4,7 @@ package io.apptik.comm.jus.request;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JJsonObjectResponseBodyConverter;
 import io.apptik.comm.jus.converter.JJsonRequestBodyConverter;
@@ -19,8 +20,12 @@ public class JsonObjectRequest extends Request<JsonObject> {
         super(method, url, new JJsonObjectResponseBodyConverter());
     }
 
-    public Request<JsonObject> setObjectRequest(JsonElement objectRequest) {
-        return super.setObjectRequest(objectRequest, new JJsonRequestBodyConverter());
+    public JsonObjectRequest setObjectRequest(JsonElement objectRequest) {
+        super.setObjectRequest(objectRequest, new JJsonRequestBodyConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json; charset=UTF-8")
+                .build());
+        return this;
     }
 
 }
