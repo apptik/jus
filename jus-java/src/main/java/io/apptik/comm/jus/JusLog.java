@@ -25,13 +25,13 @@ import java.util.Locale;
 /**
  * Logging helper class.
  * <p/>
- * to see Jus logs call:<br/>
+ * For Android Platform to see Jus logs call:<br/>
  * {@code <android-sdk>/platform-tools/adb shell setprop log.tag.Jus VERBOSE}
  */
 public class JusLog {
     public static String TAG = "Jus";
-
-    public static boolean DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
+    public static Log log = new DefaultLog();
+    public static boolean DEBUG = log.isLoggable(TAG, Log.VERBOSE);
     //public static boolean DEBUG = true;
     /**
      * Customize the log tag for your application, so that other apps
@@ -46,35 +46,35 @@ public class JusLog {
         TAG = tag;
 
         // Reinitialize the DEBUG "constant"
-        DEBUG = Log.isLoggable(TAG, Log.VERBOSE);
+        DEBUG = log.isLoggable(TAG, Log.VERBOSE);
     }
 
     public static void v(String format, Object... args) {
         if (DEBUG) {
-            Log.v(TAG, buildMessage(format, args));
+            log.v(TAG, buildMessage(format, args));
         }
     }
 
     public static void d(String format, Object... args) {
         if (DEBUG) {
-            Log.d(TAG, buildMessage(format, args));
+            log.d(TAG, buildMessage(format, args));
         }
     }
 
     public static void e(String format, Object... args) {
-        Log.e(TAG, buildMessage(format, args));
+        log.e(TAG, buildMessage(format, args));
     }
 
     public static void e(Throwable tr, String format, Object... args) {
-        Log.e(TAG, buildMessage(format, args), tr);
+        log.e(TAG, buildMessage(format, args), tr);
     }
 
-    public static void wtf(String format, Object... args) {
-        Log.wtf(TAG, buildMessage(format, args));
+    public static void w(String format, Object... args) {
+        log.w(TAG, buildMessage(format, args));
     }
 
-    public static void wtf(Throwable tr, String format, Object... args) {
-        Log.wtf(TAG, buildMessage(format, args), tr);
+    public static void w(Throwable tr, String format, Object... args) {
+        log.w(TAG, buildMessage(format, args), tr);
     }
 
     /**
