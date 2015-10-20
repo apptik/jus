@@ -23,7 +23,7 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 
-final class WireRequestBodyConverter<T extends Message> implements Converter<T, NetworkRequest> {
+public final class WireRequestBodyConverter<T extends Message> implements Converter<T, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/x-protobuf");
 
     @Override

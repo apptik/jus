@@ -25,11 +25,11 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 import okio.BufferedSource;
 
-final class WireResponseBodyConverter<T extends Message> implements Converter<NetworkResponse, T> {
+public final class WireResponseBodyConverter<T extends Message> implements Converter<NetworkResponse, T> {
   private final Wire wire;
   private final Class<T> cls;
 
-  WireResponseBodyConverter(Wire wire, Class<T> cls) {
+  public WireResponseBodyConverter(Wire wire, Class<T> cls) {
     this.wire = wire;
     this.cls = cls;
   }
