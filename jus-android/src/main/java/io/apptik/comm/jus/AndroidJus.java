@@ -64,10 +64,12 @@ public class AndroidJus {
                 RequestQueue.DEFAULT_NETWORK_THREAD_POOL_SIZE,
                 new AndroidExecutorDelivery(new Handler(Looper.getMainLooper())));
         queue
-                .withCacheDispatcher(
-                        new AndroidCacheDispatcher(
-                                queue.mCacheQueue, queue.mNetworkQueue, queue.mCache,
-                                queue.mDelivery))
+            /**
+ * Created by sic on 06/10/15.
+ */    .withCacheDispatcher(
+                new AndroidCacheDispatcher(
+                        queue.mCacheQueue, queue.mNetworkQueue, queue.mCache,
+                        queue.mDelivery))
                 .withNetworkDispatcherFactory(
                         new AndroidNetworkDispatcher.NetworkDispatcherFactory(
                                 queue.mNetworkQueue, queue.mNetwork,

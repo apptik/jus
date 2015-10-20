@@ -1,6 +1,5 @@
 package io.apptik.comm.jus.request;
 
-
 import com.squareup.wire.Message;
 import com.squareup.wire.Wire;
 
