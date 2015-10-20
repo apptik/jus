@@ -67,9 +67,9 @@ public class AndroidJus {
             /**
  * Created by sic on 06/10/15.
  */    .withCacheDispatcher(
-                        new AndroidCacheDispatcher(
-                                queue.mCacheQueue, queue.mNetworkQueue, queue.mCache,
-                                queue.mDelivery))
+                new AndroidCacheDispatcher(
+                        queue.mCacheQueue, queue.mNetworkQueue, queue.mCache,
+                        queue.mDelivery))
                 .withNetworkDispatcherFactory(
                         new AndroidNetworkDispatcher.NetworkDispatcherFactory(
                                 queue.mNetworkQueue, queue.mNetwork,
