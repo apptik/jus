@@ -5,9 +5,8 @@ dependencies {
     compile 'io.reactivex:rxjava:1.0.14'
 }
 
-
-//apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
-
 task mappings << {
     println conf2ScopeMappings.mappings
 }
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

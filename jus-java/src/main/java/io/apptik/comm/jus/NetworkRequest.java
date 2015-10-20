@@ -57,7 +57,7 @@ public class NetworkRequest {
     public String toString() {
         return "NetworkRequest{" +
                 "contentType=" + contentType +
-                ", data=" + new String(data, Charset.forName(HTTP.UTF_8)) +
+                ", data=" + ((data==null)?"null":new String(data, Charset.forName(HTTP.UTF_8))) +
                 ", headers=" + headers +
                 '}';
     }

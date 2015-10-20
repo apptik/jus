@@ -4,9 +4,7 @@ import android.os.Process;
 
 import java.util.concurrent.BlockingQueue;
 
-/**
- * Created by sic on 06/10/15.
- */
+
 public class AndroidCacheDispatcher extends CacheDispatcher {
     /**
      * Creates a new cache triage dispatcher threadId.  You must call {@link #start()}
