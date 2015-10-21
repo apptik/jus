@@ -254,16 +254,16 @@ package io.apptik.comm.jus.http;
  * component has been encoded already.
  */
 public final class HttpUrl {
-    private static final char[] HEX_DIGITS =
+    public static final char[] HEX_DIGITS =
             { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F' };
-    static final String USERNAME_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#";
-    static final String PASSWORD_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#";
-    static final String PATH_SEGMENT_ENCODE_SET = " \"<>^`{}|/\\?#";
-    static final String QUERY_ENCODE_SET = " \"'<>#";
-    static final String QUERY_COMPONENT_ENCODE_SET = " \"'<>#&=";
-    static final String CONVERT_TO_URI_ENCODE_SET = "^`{}|\\";
-    static final String FORM_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#&!$(),~";
-    static final String FRAGMENT_ENCODE_SET = "";
+    public static final String USERNAME_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#";
+    public static final String PASSWORD_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#";
+    public static final String PATH_SEGMENT_ENCODE_SET = " \"<>^`{}|/\\?#";
+    public static final String QUERY_ENCODE_SET = " \"'<>#";
+    public static final String QUERY_COMPONENT_ENCODE_SET = " \"'<>#&=";
+    public static final String CONVERT_TO_URI_ENCODE_SET = "^`{}|\\";
+    public static final String FORM_ENCODE_SET = " \"':;<=>@[]^`{}|/\\?#&!$(),~";
+    public static final String FRAGMENT_ENCODE_SET = "";
 
     /** Either "http" or "https". */
     private final String scheme;
@@ -1536,8 +1536,8 @@ public final class HttpUrl {
         return input.substring(pos, limit);
     }
 
-    static void canonicalize(Buffer out, String input, int pos, int limit,
-                             String encodeSet, boolean alreadyEncoded, boolean query) {
+    public static void canonicalize(Buffer out, String input, int pos, int limit,
+                                    String encodeSet, boolean alreadyEncoded, boolean query) {
         Buffer utf8Buffer = null; // Lazily allocated.
         int codePoint;
         for (int i = pos; i < limit; i += Character.charCount(codePoint)) {

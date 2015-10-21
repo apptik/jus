@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2012 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +33,7 @@ public final class RequestBuilder {
     private final boolean hasBody;
     //TODO
 //  private MultipartBuilder multipartBuilder;
-//  private FormEncodingBuilder formEncodingBuilder;
+  private FormEncodingBuilder formEncodingBuilder;
     private NetworkRequest.Builder networkRequestBuilder;
 
     public RequestBuilder(String method, HttpUrl baseUrl, String relativeUrl,
@@ -54,10 +55,11 @@ public final class RequestBuilder {
         }
 
 //TODO
-//    if (isFormEncoded) {
+    if (isFormEncoded) {
 //      // Will be set to 'body' in 'build'.
-//      formEncodingBuilder = new FormEncodingBuilder();
-//    } else if (isMultipart) {
+      formEncodingBuilder = new FormEncodingBuilder();
+    }
+// else if (isMultipart) {
 //      // Will be set to 'body' in 'build'.
 //      multipartBuilder = new MultipartBuilder();
 //      multipartBuilder.type(MultipartBuilder.FORM);
@@ -146,11 +148,12 @@ public final class RequestBuilder {
         if (!networkRequestBuilder.hasBody()) {
             // Try to pull from one of the builders.
             //TODO
-//      if (formEncodingBuilder != null) {
-//        body = formEncodingBuilder.build();
+      if (formEncodingBuilder != null) {
+          NetworkRequest nr = formEncodingBuilder.build();
+          networkRequestBuilder.setBody(nr.data).setContentType(nr.contentType);
 //      } else if (multipartBuilder != null) {
 //        body = multipartBuilder.build();
-//      } else
+      } else
             if (hasBody) {
                 // Body is absent, make an empty body.
                 networkRequestBuilder.setBody(new byte[0]);

@@ -76,9 +76,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
 
     /**
-     * Default encoding for POST or PUT parameters. See {@link #getParamsEncoding()}.
+     * Default encoding for POST or PUT parameters.
      */
-    private static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
+    public static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
 
 
     /**
@@ -541,23 +541,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     /**
-     * Returns which encoding should be used when converting POST or PUT parameters returned by
-     * {@link #getParams()} into a raw POST or PUT body.
-     * <p/>
-     * <p>This controls both encodings:
-     * <ol>
-     * <li>The string encoding used when converting parameter names and values into bytes prior
-     * to URL encoding them.</li>
-     * <li>The string encoding used when converting the URL encoded parameters into a raw
-     * byte array.</li>
-     * </ol>
-     */
-    protected String getParamsEncoding() {
-        //TODO
-        return DEFAULT_PARAMS_ENCODING;
-    }
-
-    /**
      * Returns the content type of the POST or PUT body.
      */
     public String getBodyContentType() {
@@ -587,24 +570,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 //            return encodeParameters(params, getParamsEncoding());
 //        }
         return null;
-    }
-
-    /**
-     * Converts <code>params</code> into an application/x-www-form-urlencoded encoded string.
-     */
-    private byte[] encodeParameters(Map<String, String> params, String paramsEncoding) {
-        StringBuilder encodedParams = new StringBuilder();
-        try {
-            for (Map.Entry<String, String> entry : params.entrySet()) {
-                encodedParams.append(URLEncoder.encode(entry.getKey(), paramsEncoding));
-                encodedParams.append('=');
-                encodedParams.append(URLEncoder.encode(entry.getValue(), paramsEncoding));
-                encodedParams.append('&');
-            }
-            return encodedParams.toString().getBytes(paramsEncoding);
-        } catch (UnsupportedEncodingException uee) {
-            throw new RuntimeException("Encoding not supported: " + paramsEncoding, uee);
-        }
     }
 
     /**
