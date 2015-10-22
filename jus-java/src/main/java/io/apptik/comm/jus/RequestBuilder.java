@@ -31,9 +31,8 @@ public final class RequestBuilder {
     private HttpUrl.Builder urlBuilder;
     Converter<NetworkResponse, ?> responseConverter;
     private final boolean hasBody;
-    //TODO
-//  private MultipartBuilder multipartBuilder;
-  private FormEncodingBuilder formEncodingBuilder;
+    private MultipartBuilder multipartBuilder;
+    private FormEncodingBuilder formEncodingBuilder;
     private NetworkRequest.Builder networkRequestBuilder;
 
     public RequestBuilder(String method, HttpUrl baseUrl, String relativeUrl,
@@ -54,16 +53,15 @@ public final class RequestBuilder {
             networkRequestBuilder.setContentType(contentType);
         }
 
-//TODO
-    if (isFormEncoded) {
-//      // Will be set to 'body' in 'build'.
-      formEncodingBuilder = new FormEncodingBuilder();
-    }
-// else if (isMultipart) {
-//      // Will be set to 'body' in 'build'.
-//      multipartBuilder = new MultipartBuilder();
-//      multipartBuilder.type(MultipartBuilder.FORM);
-//    }
+
+        if (isFormEncoded) {
+            // Will be set to 'body' in 'build'.
+            formEncodingBuilder = new FormEncodingBuilder();
+        } else if (isMultipart) {
+            // Will be set to 'body' in 'build'.
+            multipartBuilder = new MultipartBuilder();
+            multipartBuilder.type(MultipartBuilder.FORM);
+        }
     }
 
     public RequestBuilder setRelativeUrl(String relativeUrl) {
@@ -117,18 +115,18 @@ public final class RequestBuilder {
         }
         return this;
     }
-//TODO
-//  void addFormField(String name, String value, boolean encoded) {
-//    if (encoded) {
-//      formEncodingBuilder.addEncoded(name, value);
-//    } else {
-//      formEncodingBuilder.add(name, value);
-//    }
-//  }
-//
-//  void addPart(Headers headers, RequestBody body) {
-//    multipartBuilder.addPart(headers, body);
-//  }
+
+    void addFormField(String name, String value, boolean encoded) {
+        if (encoded) {
+            formEncodingBuilder.addEncoded(name, value);
+        } else {
+            formEncodingBuilder.add(name, value);
+        }
+    }
+
+    void addPart(Headers headers, NetworkRequest body) {
+        multipartBuilder.addPart(headers, body);
+    }
 
     public RequestBuilder setBody(byte[] body) {
         networkRequestBuilder.setBody(body);
@@ -147,25 +145,22 @@ public final class RequestBuilder {
 
         if (!networkRequestBuilder.hasBody()) {
             // Try to pull from one of the builders.
-            //TODO
-      if (formEncodingBuilder != null) {
-          NetworkRequest nr = formEncodingBuilder.build();
-          networkRequestBuilder.setBody(nr.data).setContentType(nr.contentType);
-//      } else if (multipartBuilder != null) {
-//        body = multipartBuilder.build();
-      } else
-            if (hasBody) {
+            if (formEncodingBuilder != null) {
+                NetworkRequest nr = formEncodingBuilder.build();
+                networkRequestBuilder.setBody(nr.data).setContentType(nr.contentType);
+            } else if (multipartBuilder != null) {
+                NetworkRequest nr = multipartBuilder.build();
+                networkRequestBuilder.setBody(nr.data).setContentType(nr.contentType);
+            } else if (hasBody) {
                 // Body is absent, make an empty body.
                 networkRequestBuilder.setBody(new byte[0]);
             }
         }
 
+
         return new Request(method, url, responseConverter).setNetworkRequest(networkRequestBuilder.build());
 
-//    return requestBuilder
-//        .url(url)
-//        .method(method, body)
-//        .build();
+
     }
 
 }

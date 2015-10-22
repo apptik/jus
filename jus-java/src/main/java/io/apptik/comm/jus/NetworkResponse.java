@@ -34,7 +34,7 @@ import okio.Source;
 /**
  * Data and headers returned from {@link Network#performRequest(Request)}.
  */
-public class NetworkResponse {
+public final class NetworkResponse {
 
     /** The HTTP status code. */
     public final int statusCode;

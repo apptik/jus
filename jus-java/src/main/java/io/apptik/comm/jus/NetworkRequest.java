@@ -25,9 +25,9 @@ import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
 
 /**
- * Data and headers returned from {@link Network#performRequest(Request)}.
+ * Data and headers which forms a {@link Request}.
  */
-public class NetworkRequest {
+public final class NetworkRequest {
     /**
      * Creates a new network response.
      *
