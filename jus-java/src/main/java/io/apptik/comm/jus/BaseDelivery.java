@@ -52,7 +52,7 @@ public abstract class BaseDelivery implements ResponseDelivery {
         if (request.isCanceled()) {
             request.finish(Request.EVENT_CANCELED_AT_DELIVERY);
         } else {
-            if(response.error!=null) {
+            if(response.error==null) {
                 request.addMarker(Request.EVENT_DELIVER_RESPONSE, response.result, response.intermediate);
                 doDeliver(request, response, runnable);
             } else {
