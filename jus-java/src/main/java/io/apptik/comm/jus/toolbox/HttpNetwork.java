@@ -61,25 +61,20 @@ public class HttpNetwork implements Network {
 
     protected final ByteArrayPool mPool;
 
-    protected final Authenticator authenticator;
-
-    protected String authToken = null;
-
     /**
      * @param httpStack HTTP stack to be used
      */
     public HttpNetwork(HttpStack httpStack) {
         // If a pool isn't passed in, then build a small default pool that will give us a lot of
         // benefit and not use too much memory.
-        this(httpStack, new ByteArrayPool(DEFAULT_POOL_SIZE), null);
+        this(httpStack, new ByteArrayPool(DEFAULT_POOL_SIZE));
     }
 
     /**
      * @param httpStack HTTP stack to be used
      * @param pool      a buffer pool that improves GC performance in copy operations
      */
-    public HttpNetwork(HttpStack httpStack, ByteArrayPool pool, Authenticator authenticator) {
-        this.authenticator = authenticator;
+    public HttpNetwork(HttpStack httpStack, ByteArrayPool pool) {
         mHttpStack = httpStack;
         mPool = pool;
     }
@@ -93,7 +88,7 @@ public class HttpNetwork implements Network {
                 // Gather headers.
                 Map<String, String> headers = new HashMap<String, String>();
                 addCacheHeaders(headers, request.getCacheEntry());
-                addAuthHeaders(headers);
+                addAuthHeaders(request.getAuthenticator(), headers);
 
                 httpResponse = mHttpStack.performRequest(request, headers, mPool);
 
@@ -148,14 +143,17 @@ public class HttpNetwork implements Network {
                 if (networkResponse != null) {
                     if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         // thrown when available Authenticator is available
-                        if (authenticator != null) {
+                        if (request.getAuthenticator() != null) {
+                            request.getAuthenticator().clearToken();
                             try {
-                                //TODO call refresh token may be
-                                authToken = authenticator.getAuthToken();
+                                //typical implementation would try to refresh the token
+                                //after being set to invalid
+                                request.getAuthenticator().getToken();
                             } catch (AuthenticatorError authenticatorError) {
                                 //finally we didn't succeed
                                 throw new AuthFailureError();
                             }
+                            //retry the request
                             attemptRetryOnException("auth", request,
                                     new AuthFailureError(networkResponse));
                         } else {
@@ -223,12 +221,9 @@ public class HttpNetwork implements Network {
         request.addMarker(String.format("%s-retry [timeout=%s]", logPrefix, oldTimeout));
     }
 
-    private void addAuthHeaders(Map<String, String> headers) throws AuthenticatorError {
+    private void addAuthHeaders(Authenticator authenticator, Map<String, String> headers) throws AuthenticatorError {
         if (authenticator == null) return;
-        if (authToken == null) {
-            authToken = authenticator.getAuthToken();
-        }
-        headers.put("Authorization", "Bearer " + authToken);
+        headers.put("Authorization", "Bearer " + authenticator.getToken());
     }
 
     private void addCacheHeaders(Map<String, String> headers, Cache.Entry entry) {

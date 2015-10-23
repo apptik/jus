@@ -37,6 +37,7 @@ public class AndroidAuthenticator implements Authenticator {
     private final Account mAccount;
     private final String mAuthTokenType;
     private final boolean mNotifyAuthFailure;
+    private volatile String authToken;
 
 
 
@@ -81,7 +82,7 @@ public class AndroidAuthenticator implements Authenticator {
     // TODO: Figure out what to do about notifyAuthFailure
     @SuppressWarnings("deprecation")
     @Override
-    public String getAuthToken() throws AndroidAuthenticatorError {
+    public String getToken() throws AndroidAuthenticatorError {
         AccountManagerFuture<Bundle> future = mAccountManager.getAuthToken(mAccount,
                 mAuthTokenType, mNotifyAuthFailure, null, null);
         Bundle result;
@@ -90,7 +91,6 @@ public class AndroidAuthenticator implements Authenticator {
         } catch (Exception e) {
             throw new AndroidAuthenticatorError("Error while retrieving auth token", e);
         }
-        String authToken = null;
         if (future.isDone() && !future.isCancelled()) {
             if (result.containsKey(AccountManager.KEY_INTENT)) {
                 Intent intent = result.getParcelable(AccountManager.KEY_INTENT);
@@ -106,7 +106,12 @@ public class AndroidAuthenticator implements Authenticator {
     }
 
     @Override
-    public void invalidateAuthToken(String authToken) {
+    public void clearToken() {
+        invalidateToken();
+    }
+
+    @Override
+    public void invalidateToken() {
         mAccountManager.invalidateAuthToken(mAccount.type, authToken);
     }
 }

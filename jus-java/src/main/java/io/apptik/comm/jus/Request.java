@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 
 import io.apptik.comm.jus.JusLog.MarkerLog;
+import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
@@ -191,6 +192,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private NetworkRequest networkRequest;
     private final Converter<NetworkResponse, T> converterFromResponse;
 
+    private Authenticator authenticator;
 
     /**
      * Creates a new request with the given method (one of the values from {@link Method}),
@@ -346,6 +348,17 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     public Object getTag() {
         return tag;
+    }
+
+
+    public Authenticator getAuthenticator() {
+        return authenticator;
+    }
+
+    public Request<T> setAuthenticator(Authenticator authenticator) {
+        checkIfActive();
+        this.authenticator = authenticator;
+        return this;
     }
 
     /**

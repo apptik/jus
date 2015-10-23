@@ -24,16 +24,25 @@ import io.apptik.comm.jus.error.AuthenticatorError;
  * An interface for interacting with auth tokens.
  */
 public interface Authenticator {
+
     /**
      * Synchronously retrieves an auth token.
+     * It should handle refreshing the token if needed.
+     * Implementations must have into consideration that this can be a
+     * called from different threads at the same time.
      *
      * @throws AuthenticatorError If authentication did not succeed
      */
-    public String getAuthToken() throws AuthenticatorError;
+    String getToken() throws AuthenticatorError;
 
+    /**
+     * Clears cached user token. In typical implementation calling this before {@link #getToken()}
+     * will make sure the token is not expired.
+     */
+    void clearToken();
 
     /**
      * Invalidates the provided auth token.
      */
-    public void invalidateAuthToken(String authToken);
+     void invalidateToken();
 }
