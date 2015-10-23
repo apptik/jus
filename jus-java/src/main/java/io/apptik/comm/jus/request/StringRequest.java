@@ -37,6 +37,6 @@ public class StringRequest extends Request<String> {
     }
 
     public Request<String> setObjectRequest(String objectRequest) {
-        return super.setObjectRequest(objectRequest, new Converters.StringRequestConverter());
+        return super.setRequestData(objectRequest, new Converters.StringRequestConverter());
     }
 }

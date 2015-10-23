@@ -39,8 +39,8 @@ public class JsonObjectRequest extends Request<JSONObject> {
         super(method, url, new JSONConverter.JSONObjectResponseConverter());
     }
 
-    public JsonObjectRequest setObjectRequest(JSONObject objectRequest) {
-        super.setObjectRequest(objectRequest, new JSONConverter.JSONObjectRequestConverter());
+    public JsonObjectRequest setRequestData(JSONObject requestData) {
+        super.setRequestData(requestData, new JSONConverter.JSONObjectRequestConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

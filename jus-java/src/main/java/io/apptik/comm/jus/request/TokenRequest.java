@@ -16,7 +16,6 @@
 
 package io.apptik.comm.jus.request;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import io.apptik.comm.jus.error.AuthFailureError;
@@ -40,19 +39,17 @@ public class TokenRequest extends StringRequest {
 
     @Override
     protected Map<String, String> getParams() throws AuthFailureError {
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = super.getParams();
         params.put("grant_type", "client_credentials");
         return params;
     }
 
     @Override
     public Map<String, String> getHeadersMap() throws AuthFailureError {
-        Map<String, String> headers = new HashMap<String, String>();
-
+        Map<String, String> headers = super.getHeadersMap();
         String auth = "Basic "
                 + Base64.encodeToString((key + ":" + secret).getBytes(),
                 Base64.NO_WRAP)
-
                 ;
         headers.put("Authorization", auth);
         return headers;

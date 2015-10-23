@@ -37,8 +37,8 @@ public class JsonArrayRequest extends Request<JSONArray> {
         super(method, url, new JSONConverter.JSONArrayResponseConverter());
     }
 
-    public JsonArrayRequest setObjectRequest(JSONArray objectRequest) {
-        super.setObjectRequest(objectRequest, new JSONConverter.JSONArrayRequestConverter());
+    public JsonArrayRequest setRequestData(JSONArray requestData) {
+        super.setRequestData(requestData, new JSONConverter.JSONArrayRequestConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

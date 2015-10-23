@@ -70,20 +70,20 @@ public class JacksonRequest<T> extends Request<T> {
     }
 
 
-    public <R> Request<T> setObjectRequest(R objectRequest, ObjectWriter adapter) {
-        super.setObjectRequest(objectRequest, new JacksonRequestBodyConverter<R>(adapter));
+    public <R> Request<T> setRequestData(R requestData, ObjectWriter adapter) {
+        super.setRequestData(requestData, new JacksonRequestBodyConverter<R>(adapter));
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());
         return this;
     }
 
-    public <R> Request<T> setObjectRequest(R objectRequest, ObjectMapper objectMapper) {
-        return setObjectRequest(objectRequest, objectMapper.writerFor(objectRequest.getClass()));
+    public <R> Request<T> setRequestData(R requestData, ObjectMapper objectMapper) {
+        return setRequestData(requestData, objectMapper.writerFor(requestData.getClass()));
     }
 
-    public <R> Request<T> setObjectRequest(R objectRequest) {
-        return setObjectRequest(objectRequest, new ObjectMapper());
+    public <R> Request<T> setRequestData(R requestData) {
+        return setRequestData(requestData, new ObjectMapper());
     }
 
 }

@@ -36,8 +36,8 @@ public class JsonElementRequest extends Request<JsonElement> {
     }
 
 
-    public JsonElementRequest setObjectRequest(JsonElement objectRequest) {
-        super.setObjectRequest(objectRequest, new JJsonRequestBodyConverter());
+    public JsonElementRequest setRequestData(JsonElement requestData) {
+        super.setRequestData(requestData, new JJsonRequestBodyConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

@@ -36,7 +36,7 @@ public class WireRequest<T extends Message> extends Request<T> {
     }
 
     public WireRequest<T> setObjectRequest(T objectRequest) {
-        super.setObjectRequest(objectRequest, new WireRequestBodyConverter<T>());
+        super.setRequestData(objectRequest, new WireRequestBodyConverter<T>());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/x-protobuf")
                 .build());

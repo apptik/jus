@@ -52,20 +52,20 @@ public class GsonRequest<T> extends Request<T> {
         this(method, url, tClass, new Gson());
     }
 
-    public <R> Request<T> setObjectRequest(R objectRequest, Gson gson, TypeAdapter<R> adapter) {
-        super.setObjectRequest(objectRequest, new GsonRequestBodyConverter<>(gson, adapter));
+    public <R> Request<T> setRequestData(R requestData, Gson gson, TypeAdapter<R> adapter) {
+        super.setRequestData(requestData, new GsonRequestBodyConverter<>(gson, adapter));
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());
         return this;
     }
 
-    public <R> Request<T> setObjectRequest(R objectRequest, Gson gson) {
-        return setObjectRequest(objectRequest, gson, gson.getAdapter((Class<R>) objectRequest.getClass()));
+    public <R> Request<T> setRequestData(R requestData, Gson gson) {
+        return setRequestData(requestData, gson, gson.getAdapter((Class<R>) requestData.getClass()));
     }
 
-    public <R> Request<T> setObjectRequest(R objectRequest) {
-        return setObjectRequest(objectRequest, new Gson());
+    public <R> Request<T> setRequestData(R requestData) {
+        return setRequestData(requestData, new Gson());
     }
 
 }

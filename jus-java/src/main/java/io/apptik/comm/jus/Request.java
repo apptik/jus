@@ -257,23 +257,20 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         this.networkRequest = networkRequest;
         return this;
     }
-
-    //TODO create add data
-
     /**
      * Set data to send which will be converted to {@link NetworkRequest}
      * This will overwrote all previous http body and headers defined
      *
-     * @param objectRequest
+     * @param requestData
      * @param converterToRequest
      * @return
      */
-    public <R> Request<T> setObjectRequest(R objectRequest, Converter<R, NetworkRequest> converterToRequest) {
+    public <R> Request<T> setRequestData(R requestData, Converter<R, NetworkRequest> converterToRequest) {
         checkIfActive();
-        Utils.checkNotNull(objectRequest, "networkRequest cannot be null");
+        Utils.checkNotNull(requestData, "networkRequest cannot be null");
         Utils.checkNotNull(converterToRequest, "converterToRequest cannot be null");
         try {
-            this.networkRequest = converterToRequest.convert(objectRequest);
+            this.networkRequest = converterToRequest.convert(requestData);
         } catch (IOException e) {
             throw new IllegalStateException("cannot convert Network Request", e);
         }
