@@ -17,7 +17,7 @@
 package io.apptik.comm.jus.converter;
 
 import com.squareup.wire.Message;
-import com.squareup.wire.Wire;
+import com.squareup.wire.ProtoAdapter;
 
 import java.io.IOException;
 
@@ -26,21 +26,23 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 import okio.BufferedSource;
 
-public final class WireResponseBodyConverter<T extends Message> implements Converter<NetworkResponse, T> {
-  private final Wire wire;
-  private final Class<T> cls;
+public final class WireResponseBodyConverter<T extends Message>
+        implements Converter<NetworkResponse, T> {
 
-  public WireResponseBodyConverter(Wire wire, Class<T> cls) {
-    this.wire = wire;
-    this.cls = cls;
-  }
+    private final ProtoAdapter<T> adapter;
 
-  @Override public T convert(NetworkResponse value) throws IOException {
-    BufferedSource source = value.getBufferedSource();
-    try {
-      return wire.parseFrom(source, cls);
-    } finally {
-      Utils.closeQuietly(source);
+    public WireResponseBodyConverter(ProtoAdapter<T> adapter) {
+        this.adapter = adapter;
     }
-  }
+
+    @Override
+    public T convert(NetworkResponse value) throws IOException {
+        BufferedSource source = value.getBufferedSource();
+        try {
+            return adapter.decode(source);
+        } finally {
+            Utils.closeQuietly(source);
+        }
+    }
+
 }

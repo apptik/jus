@@ -17,7 +17,7 @@
 package io.apptik.comm.jus.request;
 
 import com.squareup.wire.Message;
-import com.squareup.wire.Wire;
+import com.squareup.wire.ProtoAdapter;
 
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
@@ -27,20 +27,25 @@ import io.apptik.comm.jus.http.HttpUrl;
 
 public class WireRequest<T extends Message> extends Request<T> {
 
-    public WireRequest(String method, HttpUrl url, Wire wire, Class<T> cls) {
-        super(method, url, new WireResponseBodyConverter<T>(wire, cls));
+    public WireRequest(String method, HttpUrl url, ProtoAdapter<T> adapter) {
+        super(method, url, new WireResponseBodyConverter<T>(adapter));
     }
 
     public WireRequest(String method, HttpUrl url, Class<T> cls) {
-        this(method, url, new Wire(), cls);
+        this(method, url, ProtoAdapter.get(cls));
     }
 
-    public WireRequest<T> setObjectRequest(T objectRequest) {
-        super.setRequestData(objectRequest, new WireRequestBodyConverter<T>());
+    public <R extends Message> WireRequest<T> setRequestData(R requestData, ProtoAdapter<R> adapter) {
+        super.setRequestData(requestData, new WireRequestBodyConverter<R>(adapter));
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/x-protobuf")
                 .build());
         return this;
+    }
+
+    public <R extends Message> WireRequest<T> setRequestData(R requestData) {
+        return setRequestData(requestData,
+                (ProtoAdapter<R>) ProtoAdapter.get(requestData.getClass()));
     }
 
 }

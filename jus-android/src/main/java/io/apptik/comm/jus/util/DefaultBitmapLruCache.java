@@ -45,12 +45,10 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
         return value.getRowBytes() * value.getHeight()  / 1024;
     }
 
-
     @Override
     public Bitmap getBitmap(String url) {
         return get(url);
     }
-
 
     @Override
     public void putBitmap(String url, Bitmap bitmap) {

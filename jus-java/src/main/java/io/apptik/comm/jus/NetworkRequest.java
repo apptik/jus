@@ -62,6 +62,13 @@ public final class NetworkRequest {
                 '}';
     }
 
+    public static NetworkRequest create(MediaType mediaType, byte[] bytes) {
+        return new NetworkRequest.Builder()
+                .setContentType(mediaType)
+                .setBody(bytes)
+                .build();
+    }
+
     public static class Builder {
         /**
          * Raw data from this response.

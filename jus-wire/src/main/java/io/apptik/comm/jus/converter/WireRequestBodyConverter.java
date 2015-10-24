@@ -17,19 +17,29 @@
 package io.apptik.comm.jus.converter;
 
 import com.squareup.wire.Message;
+import com.squareup.wire.ProtoAdapter;
 
 import java.io.IOException;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
+import okio.Buffer;
 
-public final class WireRequestBodyConverter<T extends Message> implements Converter<T, NetworkRequest> {
+public final class WireRequestBodyConverter<T extends Message>
+        implements Converter<T, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/x-protobuf");
 
-    @Override
-    public NetworkRequest convert(T value) throws IOException {
-        byte[] bytes = value.toByteArray();
-        return new NetworkRequest.Builder().setContentType(MEDIA_TYPE).setBody(bytes).build();
+    private final ProtoAdapter<T> adapter;
+
+    public WireRequestBodyConverter(ProtoAdapter<T> adapter) {
+        this.adapter = adapter;
     }
+
+    @Override public NetworkRequest convert(T value) throws IOException {
+        Buffer buffer = new Buffer();
+        adapter.encode(buffer, value);
+        return NetworkRequest.create(MEDIA_TYPE, buffer.readByteArray());
+    }
+
 }
