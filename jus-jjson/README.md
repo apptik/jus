@@ -1,6 +1,6 @@
 #JJson support for jus
 
-Custom Converters and Request which supports Jackson for serialization to and from JSON.
+Custom Converters and Request which supports JJson for serialization to and from JSON.
 
 ##Download
 

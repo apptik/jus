@@ -1,6 +1,6 @@
 #Moshi support for jus
 
-Custom Converters and Request with supports Jackson for serialization to and from JSON.
+Custom Converters and Request with supports Moshi for serialization to and from JSON.
 
 ##Download
 
