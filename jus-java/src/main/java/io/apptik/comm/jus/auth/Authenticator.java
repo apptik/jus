@@ -18,7 +18,9 @@
 
 package io.apptik.comm.jus.auth;
 
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.error.AuthenticatorError;
+import io.apptik.comm.jus.http.HttpUrl;
 
 /**
  * An interface for interacting with auth tokens.
@@ -27,7 +29,7 @@ public interface Authenticator {
 
     /**
      * Synchronously retrieves an auth token.
-     * It should handle refreshing the token if needed.
+     * It should handle refreshing the token if needed (evaluating its lifetime for example).
      * Implementations must have into consideration that this can be a
      * called from different threads at the same time.
      *
@@ -37,7 +39,7 @@ public interface Authenticator {
 
     /**
      * Clears cached user token. In typical implementation calling this before {@link #getToken()}
-     * will make sure the token is not expired.
+     * will make sure the token returned is not expired.
      */
     void clearToken();
 
@@ -45,4 +47,19 @@ public interface Authenticator {
      * Invalidates the provided auth token.
      */
      void invalidateToken();
+
+    /**
+     * Authenticator Factory class that provides authenticators for specific requests
+     */
+    abstract class Factory {
+        /**
+         * Overwrite this method to return authenticator for specific request
+         * @param url The url of the request
+         * @param networkRequest Request data
+         * @return Authenticator providing token for this request
+         */
+       public Authenticator forRequest(HttpUrl url, NetworkRequest networkRequest) {
+           return null;
+       }
+    }
 }

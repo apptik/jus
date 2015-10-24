@@ -31,6 +31,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.apptik.comm.jus.auth.Authenticator;
+
 /**
  * A request dispatch queue with a threadId pool of dispatchers.
  * <p/>
@@ -124,9 +126,10 @@ public class RequestQueue {
      */
     protected NetworkDispatcher.NetworkDispatcherFactory networkDispatcherFactory;
 
-    private List<RequestFinishedListener> mFinishedListeners =
-            new ArrayList<RequestFinishedListener>();
+    private List<RequestFinishedListener> finishedListeners =
+            new ArrayList<>();
 
+    private final List<Authenticator.Factory> authenticatorFactories = new ArrayList<>();
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -306,11 +309,19 @@ public class RequestQueue {
      * @return The passed-in request
      */
     public <T> Request<T> add(Request<T> request) {
+        for(Authenticator.Factory factory : authenticatorFactories) {
+            Authenticator authenticator =
+                    factory.forRequest(request.getUrl(), request.getNetworkRequest());
+            if(authenticator!=null) {
+                request.setAuthenticator(authenticator);
+                break;
+            }
+        }
         // Process requests in the order they are added.
         request.setSequence(getSequenceNumber());
         // Tag the request as belonging to this queue and add it to the set of current requests.
-        request.setRequestQueue(this);
         synchronized (mCurrentRequests) {
+            request.setRequestQueue(this);
             mCurrentRequests.add(request);
         }
         request.addMarker(Request.EVENT_ADD_TO_QUEUE);
@@ -357,8 +368,8 @@ public class RequestQueue {
         synchronized (mCurrentRequests) {
             mCurrentRequests.remove(request);
         }
-        synchronized (mFinishedListeners) {
-            for (RequestFinishedListener<T> listener : mFinishedListeners) {
+        synchronized (finishedListeners) {
+            for (RequestFinishedListener<T> listener : finishedListeners) {
                 listener.onRequestFinished(request);
             }
         }
@@ -380,8 +391,8 @@ public class RequestQueue {
     }
 
     public <T> void addRequestFinishedListener(RequestFinishedListener<T> listener) {
-        synchronized (mFinishedListeners) {
-            mFinishedListeners.add(listener);
+        synchronized (finishedListeners) {
+            finishedListeners.add(listener);
         }
     }
 
@@ -389,10 +400,29 @@ public class RequestQueue {
      * Remove a RequestFinishedListener. Has no effect if listener was not previously added.
      */
     public <T> void removeRequestFinishedListener(RequestFinishedListener<T> listener) {
-        synchronized (mFinishedListeners) {
-            mFinishedListeners.remove(listener);
+        synchronized (finishedListeners) {
+            finishedListeners.remove(listener);
         }
     }
+
+    public RequestQueue addAuthenticatorFactory(Authenticator.Factory factory) {
+        synchronized (authenticatorFactories) {
+            authenticatorFactories.add(factory);
+        }
+
+        return this;
+    }
+
+
+    public RequestQueue removeAuthenticatorFactory(Authenticator.Factory factory) {
+        synchronized (authenticatorFactories) {
+            authenticatorFactories.remove(factory);
+        }
+
+        return this;
+    }
+
+
 
     public int getCurrentRequests() {
         return mCurrentRequests.size();
