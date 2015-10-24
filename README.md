@@ -68,4 +68,4 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [jus-simplexml]: https://github.com/apptik/jus/tree/master/jus-simplexml
  [jus-wire]: https://github.com/apptik/jus/tree/master/jus-wire
  [retro-jus]: https://github.com/apptik/jus/tree/master/retro-jus
- [rx-jus]: https://github.com/apptik/jus/tree/master/r-jus
+ [rx-jus]: https://github.com/apptik/jus/tree/master/rx-jus
