@@ -1,33 +1,47 @@
 #jus
 
-Communication library for Android. 
-Intially forked from Volley with lot's of extras and bug fixes.
+Flexible and Easy HTTP/REST(not 100% yet) Communication library for Java and Android
+Based on Volley, inspired by many
 
 
 ##Download
 
-Sonatype Repo: <https://oss.sonatype.org/content/repositories/releases/org/djodjo/comm/jus/0.3.3/jus-0.3.3.aar>
+Find [the latest JARs][mvn] or grab via Maven:
+```xml
+<dependency>
+  <groupId>io.apptik.comm</groupId>
+  <artifactId>jus-XXX</artifactId>
+  <version>0.6.0beta</version>
+</dependency>
+```
+or Gradle:
+```groovy
+compile 'io.apptik.comm:jus-XXX:0.6.0beta'
+```
 
-Maven:
+Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
 
-    <dependency>
-        <groupId>org.djodjo.comm</groupId>
-        <artifactId>jus</artifactId>
-        <version>0.3.3</version>
-    </dependency>
-
-Gradle:
-
-    compile 'org.djodjo.comm:jus:0.3.3'
+Jus requires at minimum Java 7 or Android SDK 15.
 
 
-
-## Features
-##Usage
+## Modules
+* [jus for Java][jus-java] - main jus library for java
+* [Reactive jus][rx-jus] - RxJava support for jus
+* Jus for Android
+    * [Android jus][jus-android] - jus optimized for Android
+    * [Reactive Android jus][jus-android-rx] - RxJava support for jus for Android
+* Data Serializers Support for jus
+    * [Gson][jus-gson] - support for Gson
+    * [Jackson][jus-jackson] - support for Jackson
+    * [JJson][jus-jjson] - support for JJson
+    * [Moshi][jus-moshi] - support for Moshi
+    * [Protobuf][jus-protobuf] - support for Google Protobuf
+    * [SimpleXML][jus-simplexml] - support for Simple
+    * [Wire][jus-wire] - support for wire
 
 ## Licence
 
-    Copyright (C) 2014 Kalin Maldzhanski
+    Copyright (C) 2015 AppTik Project
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -41,18 +55,17 @@ Gradle:
     See the License for the specific language governing permissions and
     limitations under the License.
 
-
-## Contributions
-
-Anyone is welcome to contribute via GitHub pull requests.
-
-This is a rough outline of what a contributor's workflow looks like:
-
-*    Create a topic branch from where you want to base your work (usually master).
-*    Make commits of logical units.
-*    Make sure your commit messages are in the proper format:  <type> (<scope>) : <summary>, where type can be [fix, feat(ure), test, docs]
-*    Push your changes to a topic branch in your fork of the repository.
-*    Make sure the tests pass, and add any new tests as appropriate.
-*    Submit a pull request to the original repository.
-
-Thanks for your contributions!
+ [mvn]: http://search.maven.org/#search|ga|1|io.apptik.comm.jus
+ [snap]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
+[jus-android] : https://github.com/apptik/jus/tree/master/jus-android
+[jus-android-rx] : https://github.com/apptik/jus/tree/master/jus-android-rx
+[jus-gson] : https://github.com/apptik/jus/tree/master/jus-gson
+[jus-jackson] : https://github.com/apptik/jus/tree/master/jus-jackson
+[jus-java] : https://github.com/apptik/jus/tree/master/jus-java
+[jus-jjson] : https://github.com/apptik/jus/tree/master/jus-jjson
+[jus-moshi] : https://github.com/apptik/jus/tree/master/jus-moshi
+[jus-protobuf] : https://github.com/apptik/jus/tree/master/jus-protobuf
+[jus-simplexml] : https://github.com/apptik/jus/tree/master/jus-simplexml
+[jus-wire] : https://github.com/apptik/jus/tree/master/jus-wire
+[retro-jus] : https://github.com/apptik/jus/tree/master/retro-jus
+[rx-jus] : https://github.com/apptik/jus/tree/master/r-jus
