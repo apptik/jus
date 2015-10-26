@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
+import okio.Buffer;
 
 /**
  * Data and headers which forms a {@link Request}.
@@ -57,9 +58,15 @@ public final class NetworkRequest {
     public String toString() {
         return "NetworkRequest{" +
                 "contentType=" + contentType +
-                ", data=" + ((data==null)?"null":new String(data, Charset.forName(HTTP.UTF_8))) +
+                ", data=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP.UTF_8))) +
                 ", headers=" + headers +
                 '}';
+    }
+
+    public static NetworkRequest create(MediaType mediaType, String data) {
+        return create(mediaType, new Buffer()
+                .writeString(data, mediaType.charset(Charset.forName(HTTP.UTF_8)))
+                .readByteArray());
     }
 
     public static NetworkRequest create(MediaType mediaType, byte[] bytes) {
@@ -83,7 +90,7 @@ public final class NetworkRequest {
         private MediaType contentType;
 
         public static Builder from(final NetworkRequest networkRequest) {
-            if(networkRequest==null) {
+            if (networkRequest == null) {
                 return new Builder();
             }
             return new Builder()
@@ -112,6 +119,11 @@ public final class NetworkRequest {
             return this;
         }
 
+        public NetworkRequest.Builder addHeaders(Headers headers) {
+            this.headers.addMMap(headers.toMultimap());
+            return this;
+        }
+
         public NetworkRequest.Builder setContentType(MediaType value) {
             contentType = value;
             this.headers.set(HTTP.CONTENT_TYPE, contentType.toString());
@@ -128,7 +140,7 @@ public final class NetworkRequest {
         }
 
         public boolean hasBody() {
-            return (data!=null);
+            return (data != null);
         }
 
         public NetworkRequest build() {

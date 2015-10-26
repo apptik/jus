@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.UUID;
 
 import io.apptik.comm.jus.http.HTTP;
-import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
 import okio.Buffer;
 import okio.BufferedSink;
@@ -82,8 +81,7 @@ public final class MultipartBuilder {
     private MediaType type = MIXED;
 
     // Parallel lists of nullable headers and non-null bodies.
-    private final List<Headers> partHeaders = new ArrayList<>();
-    private final List<NetworkRequest> partBodies = new ArrayList<>();
+    private final List<NetworkRequest> parts = new ArrayList<>();
 
     /** Creates a new multipart builder that uses a random boundary token. */
     public MultipartBuilder() {
@@ -116,24 +114,11 @@ public final class MultipartBuilder {
     }
 
     /** Add a part to the body. */
-    public MultipartBuilder addPart(NetworkRequest body) {
-        return addPart(null, body);
-    }
-
-    /** Add a part to the body. */
-    public MultipartBuilder addPart(Headers headers, NetworkRequest body) {
-        if (body == null) {
-            throw new NullPointerException("body == null");
+    public MultipartBuilder addPart(NetworkRequest part) {
+        if (part == null) {
+            throw new NullPointerException("part == null");
         }
-        if (headers != null && headers.get("Content-Type") != null) {
-            throw new IllegalArgumentException("Unexpected header: Content-Type");
-        }
-        if (headers != null && headers.get("Content-Length") != null) {
-            throw new IllegalArgumentException("Unexpected header: Content-Length");
-        }
-
-        partHeaders.add(headers);
-        partBodies.add(body);
+        parts.add(part);
         return this;
     }
 
@@ -192,15 +177,18 @@ public final class MultipartBuilder {
             appendQuotedString(disposition, filename);
         }
 
-        return addPart(Headers.of("Content-Disposition", disposition.toString()), value);
+        return addPart(new NetworkRequest.Builder()
+                .setBody(value.data)
+                .setHeaders(value.headers)
+                .addHeader("Content-Disposition", disposition.toString()).build());
     }
 
     /** Assemble the specified parts into a request body. */
     public NetworkRequest build() {
-        if (partHeaders.isEmpty()) {
+        if (parts.isEmpty()) {
             throw new IllegalStateException("Multipart body must have at least one part.");
         }
-        MultipartRequestBody mrb = new MultipartRequestBody(type, boundary, partHeaders, partBodies);
+        MultipartRequest mrb = new MultipartRequest(type, boundary, parts);
         Buffer bb = new Buffer();
         try {
             mrb.writeOrCountBytes(bb, false);
@@ -213,22 +201,19 @@ public final class MultipartBuilder {
                 .build();
     }
 
-    private static final class MultipartRequestBody {
+    private static final class MultipartRequest {
         private final ByteString boundary;
         private final MediaType contentType;
-        private final List<Headers> partHeaders;
-        private final List<NetworkRequest> partBodies;
+        private final List<NetworkRequest> parts;
         private long contentLength = -1L;
 
-        public MultipartRequestBody(MediaType type, ByteString boundary, List<Headers> partHeaders,
-                                    List<NetworkRequest> partBodies) {
+        public MultipartRequest(MediaType type, ByteString boundary, List<NetworkRequest> parts) {
             //super(null,null,null);
             if (type == null) throw new NullPointerException("type == null");
 
             this.boundary = boundary;
             this.contentType = MediaType.parse(type + "; boundary=" + boundary.utf8());
-            this.partHeaders = Collections.unmodifiableList(partHeaders);
-            this.partBodies = Collections.unmodifiableList(partBodies);
+            this.parts = Collections.unmodifiableList(parts);
         }
 
         public MediaType contentType() {
@@ -249,28 +234,20 @@ public final class MultipartBuilder {
                 sink = byteCountBuffer = new Buffer();
             }
 
-            for (int p = 0, partCount = partHeaders.size(); p < partCount; p++) {
-                Headers headers = partHeaders.get(p);
-                NetworkRequest networkRequest = partBodies.get(p);
+            for (int p = 0, partCount = parts.size(); p < partCount; p++) {
+                NetworkRequest networkRequest = parts.get(p);
 
                 sink.write(DASHDASH);
                 sink.write(boundary);
                 sink.write(CRLF);
 
-                if (headers != null) {
-                    for (int h = 0, headerCount = headers.size(); h < headerCount; h++) {
-                        sink.writeUtf8(headers.name(h))
+                if (networkRequest.headers != null) {
+                    for (int h = 0, headerCount = networkRequest.headers.size(); h < headerCount; h++) {
+                        sink.writeUtf8(networkRequest.headers.name(h))
                                 .write(COLONSPACE)
-                                .writeUtf8(headers.value(h))
+                                .writeUtf8(networkRequest.headers.value(h))
                                 .write(CRLF);
                     }
-                }
-
-                MediaType contentType = networkRequest.contentType;
-                if (contentType != null) {
-                    sink.writeUtf8("Content-Type: ")
-                            .writeUtf8(contentType.toString())
-                            .write(CRLF);
                 }
 
 
@@ -290,7 +267,7 @@ public final class MultipartBuilder {
                 if (countBytes) {
                     byteCount += contentLength;
                 } else {
-                    sink.write(partBodies.get(p).data);
+                    sink.write(parts.get(p).data);
                 }
 
                 sink.write(CRLF);

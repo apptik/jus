@@ -71,7 +71,7 @@ public final class WireConverterFactoryTest {
         RetroProxy retroProxy = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(WireConverterFactory.create())
-                .queue(queue)
+                .requestQueue(queue)
                 .build();
         service = retroProxy.create(Service.class);
     }
@@ -109,7 +109,7 @@ public final class WireConverterFactoryTest {
             assertThat(e).hasMessage("Unable to create converter for interface java.lang.CharSequence\n"
                     + "    for method Service.wrongClass");
             assertThat(e.getCause()).hasMessage(
-                    "Could not locate ResponseBody converter for interface java.lang.CharSequence. Tried:\n"
+                    "Could not locate Response converter for interface java.lang.CharSequence. Tried:\n"
                             + " * io.apptik.comm.jus.converter.BasicConverterFactory\n"
                             + " * io.apptik.comm.jus.converter.WireConverterFactory");
         }
@@ -127,7 +127,7 @@ public final class WireConverterFactoryTest {
             assertThat(e).hasMessage("Unable to create converter for java.util.List<java.lang.CharSequence>\n"
                     + "    for method Service.wrongType");
             assertThat(e.getCause()).hasMessage(
-                    "Could not locate ResponseBody converter for java.util.List<java.lang.CharSequence>. Tried:\n"
+                    "Could not locate Response converter for java.util.List<java.lang.CharSequence>. Tried:\n"
                             + " * io.apptik.comm.jus.converter.BasicConverterFactory\n"
                             + " * io.apptik.comm.jus.converter.WireConverterFactory");
         }

@@ -57,7 +57,7 @@ public final class ProtoConverterFactory extends Converter.Factory {
             throw new IllegalArgumentException(
                     "Found a protobuf message but " + c.getName() + " had no PARSER field.");
         }
-        return new ProtoResponseBodyConverter<>(parser);
+        return new ProtoResponseConverter<>(parser);
     }
 
     @Override
@@ -68,6 +68,6 @@ public final class ProtoConverterFactory extends Converter.Factory {
         if (!MessageLite.class.isAssignableFrom((Class<?>) type)) {
             return null;
         }
-        return new ProtoRequestBodyConverter<>();
+        return new ProtoRequestConverter<>();
     }
 }

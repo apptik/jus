@@ -21,14 +21,14 @@ import com.squareup.wire.ProtoAdapter;
 
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.converter.WireRequestBodyConverter;
-import io.apptik.comm.jus.converter.WireResponseBodyConverter;
+import io.apptik.comm.jus.converter.WireRequestConverter;
+import io.apptik.comm.jus.converter.WireResponseConverter;
 import io.apptik.comm.jus.http.HttpUrl;
 
 public class WireRequest<T extends Message> extends Request<T> {
 
     public WireRequest(String method, HttpUrl url, ProtoAdapter<T> adapter) {
-        super(method, url, new WireResponseBodyConverter<T>(adapter));
+        super(method, url, new WireResponseConverter<T>(adapter));
     }
 
     public WireRequest(String method, HttpUrl url, Class<T> cls) {
@@ -36,7 +36,7 @@ public class WireRequest<T extends Message> extends Request<T> {
     }
 
     public <R extends Message> WireRequest<T> setRequestData(R requestData, ProtoAdapter<R> adapter) {
-        super.setRequestData(requestData, new WireRequestBodyConverter<R>(adapter));
+        super.setRequestData(requestData, new WireRequestConverter<R>(adapter));
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/x-protobuf")
                 .build());

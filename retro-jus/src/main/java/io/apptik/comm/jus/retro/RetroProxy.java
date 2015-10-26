@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.Converter.Factory;
+import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
@@ -73,8 +75,8 @@ import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
  * {@link Query @Query}.
  * <p/>
  * The body of a request is denoted by the {@link Body @Body} annotation. The object
- * will be converted to request representation by one of the {@link Converter.Factory} instances.
- * A {@link io.apptik.comm.jus.NetworkRequest} can also be used for a raw representation.
+ * will be converted to request representation by one of the {@link Factory} instances.
+ * A {@link NetworkRequest} can also be used for a raw representation.
  * <p/>
  * Alternative request body formats are supported by method annotations and corresponding parameter
  * annotations:
@@ -91,7 +93,7 @@ import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
  * <p/>
  * By default, methods return a {@link Request} which represents the HTTP request. The generic
  * parameter of the call is the response body type and will be converted by one of the
- * {@link Converter.Factory} instances. {@link NetworkResponse} can also be used for a raw
+ * {@link Factory} instances. {@link NetworkResponse} can also be used for a raw
  * representation. {@link Void} can be used if you do not care about the body contents.
  * <p/>
  * For example:
@@ -107,21 +109,24 @@ import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
  *
  * @author Bob Lee (bob@squareup.com)
  * @author Jake Wharton (jw@squareup.com)
+ * @author Kalin Maldzhanski (k@apptik.io)
  */
 public final class RetroProxy {
     private final Map<Method, MethodHandler<?>> methodHandlerCache = new LinkedHashMap<>();
 
     private final RequestQueue requestQueue;
     private final HttpUrl baseUrl;
-    private final List<Converter.Factory> converters;
+    private final List<Factory> converters;
     private final boolean validateEagerly;
+    private final boolean execManually;
 
-    private RetroProxy(RequestQueue requestQueue, HttpUrl baseUrl, List<Converter.Factory> converters,
-                       boolean validateEagerly) {
+    private RetroProxy(RequestQueue requestQueue, HttpUrl baseUrl, List<Factory> converters,
+                       boolean validateEagerly, boolean execManually) {
         this.requestQueue = requestQueue;
         this.baseUrl = baseUrl;
         this.converters = converters;
         this.validateEagerly = validateEagerly;
+        this.execManually = execManually;
     }
 
     /**
@@ -169,6 +174,10 @@ public final class RetroProxy {
         return requestQueue;
     }
 
+    public boolean execManually() {
+        return execManually;
+    }
+
     public HttpUrl baseUrl() {
         return baseUrl;
     }
@@ -176,7 +185,7 @@ public final class RetroProxy {
     /**
      * TODO
      */
-    public List<Converter.Factory> converterFactories() {
+    public List<Factory> converterFactories() {
         return Collections.unmodifiableList(converters);
     }
 
@@ -196,10 +205,10 @@ public final class RetroProxy {
             }
         }
 
-        StringBuilder builder = new StringBuilder("Could not locate RequestBody converter for ")
+        StringBuilder builder = new StringBuilder("Could not locate Request converter for ")
                 .append(type)
                 .append(". Tried:");
-        for (Converter.Factory converterFactory : converters) {
+        for (Factory converterFactory : converters) {
             builder.append("\n * ").append(converterFactory.getClass().getName());
         }
         throw new IllegalArgumentException(builder.toString());
@@ -221,10 +230,10 @@ public final class RetroProxy {
             }
         }
 
-        StringBuilder builder = new StringBuilder("Could not locate ResponseBody converter for ")
+        StringBuilder builder = new StringBuilder("Could not locate Response converter for ")
                 .append(type)
                 .append(". Tried:");
-        for (Converter.Factory converterFactory : converters) {
+        for (Factory converterFactory : converters) {
             builder.append("\n * ").append(converterFactory.getClass().getName());
         }
         throw new IllegalArgumentException(builder.toString());
@@ -239,8 +248,9 @@ public final class RetroProxy {
     public static final class Builder {
         private RequestQueue requestQueue;
         private HttpUrl baseUrl;
-        private List<Converter.Factory> converters = new ArrayList<>();
-        private boolean validateEagerly;
+        private List<Factory> converters = new ArrayList<>();
+        private boolean validateEagerly = false;
+        private boolean execManually = false;
 
         public Builder() {
             // Add the built-in converter factory first. This prevents overriding its behavior but also
@@ -251,7 +261,7 @@ public final class RetroProxy {
         /**
          * The HTTP requestQueue used for requests.
          */
-        public Builder queue(RequestQueue requestQueue) {
+        public Builder requestQueue(RequestQueue requestQueue) {
             this.requestQueue = checkNotNull(requestQueue, "requestQueue == null");
             return this;
         }
@@ -277,7 +287,7 @@ public final class RetroProxy {
         /**
          * Add converter factory for serialization and deserialization of objects.
          */
-        public Builder addConverterFactory(Converter.Factory converterFactory) {
+        public Builder addConverterFactory(Factory converterFactory) {
             converters.add(checkNotNull(converterFactory, "converterFactory == null"));
             return this;
         }
@@ -291,6 +301,11 @@ public final class RetroProxy {
             return this;
         }
 
+        public Builder execManually() {
+            execManually = true;
+            return this;
+        }
+
         /**
          * Create the {@link RetroProxy} instances.
          */
@@ -299,14 +314,16 @@ public final class RetroProxy {
                 throw new IllegalStateException("Base URL required.");
             }
             if (this.requestQueue == null) {
-                throw new IllegalStateException("requestQueue cannot be null");
+                //set default requestQueue
+                this.requestQueue = Jus.newRequestQueue();
+                //throw new IllegalStateException("requestQueue cannot be null");
             }
 
             // Make a defensive copy of the converters.
-            List<Converter.Factory> converterFactories = new ArrayList<>(this.converters);
+            List<Factory> converterFactories = new ArrayList<>(this.converters);
 
             return new RetroProxy(this.requestQueue, baseUrl, converterFactories,
-                    validateEagerly);
+                    validateEagerly, execManually);
         }
     }
 }

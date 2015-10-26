@@ -28,6 +28,7 @@ import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
 import okio.BufferedSource;
+import okio.ByteString;
 import okio.Okio;
 import okio.Source;
 
@@ -92,6 +93,13 @@ public final class NetworkResponse {
         return Okio.buffer(getSource());
     }
 
+    public ByteString getByteString() throws IOException {
+       return getBufferedSource().readByteString();
+    }
+
+    public String getBodyAsString() {
+       return new String(data, getCharset());
+    }
 
     @Override
     public String toString() {

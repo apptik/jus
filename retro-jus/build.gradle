@@ -23,7 +23,24 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
+
+    testCompile 'junit:junit:[4,)'
+    testCompile 'org.assertj:assertj-core:2.2.0'
+    testCompile 'org.mockito:mockito-core:2.0.31-beta'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.5.0'
 }
 
+javadoc {
+    options.charSet = 'UTF-8'
+    options.docEncoding = 'UTF-8'
+    options.encoding = 'UTF-8'
+}
+
+test {
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
+    }
+}
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

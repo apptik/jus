@@ -56,7 +56,7 @@ public final class WireConverterFactory extends Converter.Factory {
         }
         //noinspection unchecked
         ProtoAdapter<? extends Message> adapter = ProtoAdapter.get((Class<? extends Message>) c);
-        return new WireResponseBodyConverter<>(adapter);
+        return new WireResponseConverter<>(adapter);
     }
 
     @Override
@@ -69,6 +69,6 @@ public final class WireConverterFactory extends Converter.Factory {
             return null;
         }
         ProtoAdapter<? extends Message> adapter = ProtoAdapter.get((Class<? extends Message>) c);
-        return new WireRequestBodyConverter<>(adapter);
+        return new WireRequestConverter<>(adapter);
     }
 }

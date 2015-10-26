@@ -106,7 +106,7 @@ public final class MoshiConverterFactoryTest {
         RetroProxy retroProxy = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .queue(queue)
+                .requestQueue(queue)
                 .build();
         service = retroProxy.create(Service.class);
     }

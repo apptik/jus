@@ -109,7 +109,7 @@ public final class GsonConverterFactoryTest {
         RetroProxy retroJus = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(GsonConverterFactory.create(gson))
-                .queue(queue)
+                .requestQueue(queue)
                 .build();
         service = retroJus.create(Service.class);
     }

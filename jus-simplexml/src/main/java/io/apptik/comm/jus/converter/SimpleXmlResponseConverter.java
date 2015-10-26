@@ -16,28 +16,43 @@
  */
 package io.apptik.comm.jus.converter;
 
-import com.fasterxml.jackson.databind.ObjectReader;
+
+import org.simpleframework.xml.Serializer;
 
 import java.io.IOException;
-import java.io.Reader;
+import java.io.InputStream;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.toolbox.Utils;
 
-public final class JacksonResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
-  private final ObjectReader adapter;
+public final class SimpleXmlResponseConverter<T> implements Converter<NetworkResponse, T> {
+  private final Class<T> cls;
+  private final Serializer serializer;
+  private final boolean strict;
 
-  public JacksonResponseBodyConverter(ObjectReader adapter) {
-    this.adapter = adapter;
+  public SimpleXmlResponseConverter(Class<T> cls, Serializer serializer, boolean strict) {
+    this.cls = cls;
+    this.serializer = serializer;
+    this.strict = strict;
   }
 
   @Override public T convert(NetworkResponse value) throws IOException {
-    Reader reader = value.getCharStream();
+    InputStream is = value.getByteStream();
     try {
-      return adapter.readValue(reader);
+      T read = serializer.read(cls, is, strict);
+      if (read == null) {
+        throw new IllegalStateException("Could not deserialize body as " + cls);
+      }
+      return read;
+    } catch (RuntimeException | IOException e) {
+      throw e;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     } finally {
-      Utils.closeQuietly(reader);
+      try {
+        is.close();
+      } catch (IOException ignored) {
+      }
     }
   }
 }

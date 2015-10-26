@@ -21,15 +21,15 @@ import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
 import io.apptik.comm.jus.NetworkRequest;
-import io.apptik.comm.jus.converter.GsonRequestBodyConverter;
-import io.apptik.comm.jus.converter.GsonResponseBodyConverter;
+import io.apptik.comm.jus.converter.GsonRequestConverter;
+import io.apptik.comm.jus.converter.GsonResponseConverter;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.http.HttpUrl;
 
 public class GsonRequest<T> extends Request<T> {
 
     public GsonRequest(String method, HttpUrl url, TypeAdapter<T> typeAdapter) {
-        super(method, url, new GsonResponseBodyConverter<>(typeAdapter));
+        super(method, url, new GsonResponseConverter<>(typeAdapter));
     }
 
     public GsonRequest(String method, HttpUrl url, Class<T> tClass, Gson gson) {
@@ -41,7 +41,7 @@ public class GsonRequest<T> extends Request<T> {
     }
 
     public GsonRequest(String method, String url, TypeAdapter<T> typeAdapter) {
-        super(method, url, new GsonResponseBodyConverter<>(typeAdapter));
+        super(method, url, new GsonResponseConverter<>(typeAdapter));
     }
 
     public GsonRequest(String method, String url, Class<T> tClass, Gson gson) {
@@ -53,7 +53,7 @@ public class GsonRequest<T> extends Request<T> {
     }
 
     public <R> Request<T> setRequestData(R requestData, Gson gson, TypeAdapter<R> adapter) {
-        super.setRequestData(requestData, new GsonRequestBodyConverter<>(gson, adapter));
+        super.setRequestData(requestData, new GsonRequestConverter<>(gson, adapter));
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

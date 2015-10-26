@@ -27,9 +27,9 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 
-public final class JJsonObjectResponseBodyConverter implements Converter<NetworkResponse, JsonObject> {
+public final class JJsonObjectResponseConverter implements Converter<NetworkResponse, JsonObject> {
 
-  public JJsonObjectResponseBodyConverter() {
+  public JJsonObjectResponseConverter() {
   }
 
   @Override public JsonObject convert(NetworkResponse value) throws IOException {

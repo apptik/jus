@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 AppTik Project
- * Copyright (C) 2015 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,35 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package io.apptik.comm.jus.converter;
 
-import com.squareup.wire.Message;
-import com.squareup.wire.ProtoAdapter;
+import org.djodjo.json.JsonArray;
+import org.djodjo.json.JsonElement;
 
 import java.io.IOException;
+import java.io.Reader;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
-import okio.BufferedSource;
 
-public final class WireResponseBodyConverter<T extends Message>
-        implements Converter<NetworkResponse, T> {
+public final class JJsonArrayResponseConverter implements Converter<NetworkResponse, JsonArray> {
 
-    private final ProtoAdapter<T> adapter;
+  public JJsonArrayResponseConverter() {
+  }
 
-    public WireResponseBodyConverter(ProtoAdapter<T> adapter) {
-        this.adapter = adapter;
+  @Override public JsonArray convert(NetworkResponse value) throws IOException {
+    Reader reader = value.getCharStream();
+    try {
+      return JsonElement.readFrom(reader).asJsonArray();
+    } finally {
+      Utils.closeQuietly(reader);
     }
-
-    @Override
-    public T convert(NetworkResponse value) throws IOException {
-        BufferedSource source = value.getBufferedSource();
-        try {
-            return adapter.decode(source);
-        } finally {
-            Utils.closeQuietly(source);
-        }
-    }
-
+  }
 }

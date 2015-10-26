@@ -146,6 +146,11 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private RequestQueue requestQueue;
 
     /**
+     * The request queue this request is prepared to be associated with.
+     * If this is set the requests is still not queuing but {@link #enqueue()} can be called.
+     */
+    private RequestQueue futureRequestQueue;
+    /**
      * Whether or not responses to this request should be cached.
      */
     private boolean shouldCache = true;
@@ -463,12 +468,26 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return this;
     }
 
+    public Request<T> prepRequestQueue(RequestQueue requestQueue) {
+        checkIfActive();
+        this.futureRequestQueue = requestQueue;
+        return this;
+    }
+
+    public synchronized Request<T> enqueue() {
+        checkIfActive();
+        Utils.checkNotNull(this.futureRequestQueue, "No future RequestQueue set. " +
+                "Please call prepRequestQueue before calling this.");
+        this.futureRequestQueue.add(this);
+        return this;
+    }
+
     /**
      * Sets the sequence number of this request.  Used by {@link RequestQueue}.
      *
      * @return This Request object to allow for chaining.
      */
-    public final Request<T> setSequence(int sequence) {
+    final Request<T> setSequence(int sequence) {
         checkIfActive();
         this.sequence = sequence;
         return this;

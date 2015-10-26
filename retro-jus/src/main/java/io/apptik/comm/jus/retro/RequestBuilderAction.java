@@ -187,43 +187,45 @@ abstract class RequestBuilderAction {
         @Override
         void perform(RequestBuilder builder, Object value) {
             if (value == null) return; // Skip null values.
-//TODO
-//            Map<?, ?> map = (Map<?, ?>) value;
-//            for (Map.Entry<?, ?> entry : map.entrySet()) {
-//                Object entryKey = entry.getKey();
-//                if (entryKey == null) {
-//                    throw new IllegalArgumentException("Field map contained null key.");
-//                }
-//                Object entryValue = entry.getValue();
-//                if (entryValue != null) { // Skip null values.
-//                    builder.addFormField(entryKey.toString(), entryValue.toString(), encoded);
-//                }
-//            }
+            Map<?, ?> map = (Map<?, ?>) value;
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                Object entryKey = entry.getKey();
+                if (entryKey == null) {
+                    throw new IllegalArgumentException("Field map contained null key.");
+                }
+                Object entryValue = entry.getValue();
+                if (entryValue != null) { // Skip null values.
+                    builder.addFormField(entryKey.toString(), entryValue.toString(), encoded);
+                }
+            }
         }
     }
 
     static final class Part<T> extends RequestBuilderAction {
-        private final Map<String, String> headers;
         private final Converter<T, NetworkRequest> converter;
+        private final io.apptik.comm.jus.http.Headers headers;
 
-        Part(Map<String, String> headers, Converter<T, NetworkRequest> converter) {
-            this.headers = headers;
+        Part(io.apptik.comm.jus.http.Headers headers, Converter<T, NetworkRequest> converter) {
             this.converter = converter;
+            this.headers = headers;
         }
 
         @Override
         void perform(RequestBuilder builder, Object value) {
             if (value == null) return; // Skip null values.
 
-            //TODO
-//            NetworkRequest body;
-//            try {
-//                //noinspection unchecked
-//                body = converter.convert((T) value);
-//            } catch (IOException e) {
-//                throw new RuntimeException("Unable to convert " + value + " to RequestBody");
-//            }
-//            builder.addPart(headers, body);
+
+            NetworkRequest body;
+            try {
+                //noinspection unchecked
+                body = converter.convert((T) value);
+            } catch (IOException e) {
+                throw new RuntimeException("Unable to convert " + value + " to Request");
+            }
+            body = new NetworkRequest.Builder().setBody(body.data)
+                    .setHeaders(body.headers).addHeaders(this.headers)
+                    .build();
+            builder.addPart(body);
         }
     }
 
@@ -242,34 +244,37 @@ abstract class RequestBuilderAction {
         void perform(RequestBuilder builder, Object value) {
             if (value == null) return; // Skip null values.
 
-            //TODO
-//            Map<?, ?> map = (Map<?, ?>) value;
-//            for (Map.Entry<?, ?> entry : map.entrySet()) {
-//                Object entryKey = entry.getKey();
-//                if (entryKey == null) {
-//                    throw new IllegalArgumentException("Part map contained null key.");
-//                }
-//                Object entryValue = entry.getValue();
-//                if (entryValue == null) {
-//                    continue; // Skip null values.
-//                }
-//
-//                Map<String, String> headers = new HashMap<>();
-//                headers.put("Content-Disposition", "form-data; name=\"" + entryKey + "\"");
-//                headers.put("Content-Transfer-Encoding", transferEncoding);
-//
-//                Class<?> entryClass = entryValue.getClass();
-//                //noinspection unchecked
-//                Converter<Object, NetworkRequest> converter =
-//                        (Converter<Object, NetworkRequest>) retroProxy.requestConverter(entryClass, annotations);
-//                NetworkRequest body;
-//                try {
-//                    body = converter.convert(entryValue);
-//                } catch (IOException e) {
-//                    throw new RuntimeException("Unable to convert " + entryValue + " to RequestBody");
-//                }
-//                builder.addPart(headers, body);
-//            }
+
+            Map<?, ?> map = (Map<?, ?>) value;
+            for (Map.Entry<?, ?> entry : map.entrySet()) {
+                Object entryKey = entry.getKey();
+                if (entryKey == null) {
+                    throw new IllegalArgumentException("Part map contained null key.");
+                }
+                Object entryValue = entry.getValue();
+                if (entryValue == null) {
+                    continue; // Skip null values.
+                }
+
+                io.apptik.comm.jus.http.Headers headers = new io.apptik.comm.jus.http.Headers.Builder()
+                        .add("Content-Disposition", "form-data; name=\"" + entryKey + "\"")
+                        .add("Content-Transfer-Encoding", transferEncoding).build();
+
+                Class<?> entryClass = entryValue.getClass();
+                //noinspection unchecked
+                Converter<Object, NetworkRequest> converter =
+                        (Converter<Object, NetworkRequest>) retroProxy.requestConverter(entryClass, annotations);
+                NetworkRequest body;
+                try {
+                    body = converter.convert(entryValue);
+                } catch (IOException e) {
+                    throw new RuntimeException("Unable to convert " + entryValue + " to Request");
+                }
+                body = new NetworkRequest.Builder().setBody(body.data)
+                        .setHeaders(body.headers).addHeaders(headers)
+                        .build();
+                builder.addPart(body);
+            }
         }
     }
 
@@ -290,11 +295,11 @@ abstract class RequestBuilderAction {
                 //noinspection unchecked
                 networkRequest = converter.convert((T) value);
             } catch (IOException e) {
-                throw new RuntimeException("Unable to convert " + value + " to RequestBody");
+                throw new RuntimeException("Unable to convert " + value + " to Request");
             }
             builder.setBody(networkRequest.data);
-            if(networkRequest.headers!=null) {
-                for(Map.Entry<String,String> header:networkRequest.headers.toMap().entrySet()) {
+            if (networkRequest.headers != null) {
+                for (Map.Entry<String, String> header : networkRequest.headers.toMap().entrySet()) {
                     builder.addHeader(header.getKey(), header.getValue());
                 }
 

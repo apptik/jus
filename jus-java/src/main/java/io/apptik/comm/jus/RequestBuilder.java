@@ -116,7 +116,7 @@ public final class RequestBuilder {
         return this;
     }
 
-    void addFormField(String name, String value, boolean encoded) {
+    public void addFormField(String name, String value, boolean encoded) {
         if (encoded) {
             formEncodingBuilder.addEncoded(name, value);
         } else {
@@ -124,8 +124,8 @@ public final class RequestBuilder {
         }
     }
 
-    void addPart(Headers headers, NetworkRequest body) {
-        multipartBuilder.addPart(headers, body);
+   public void addPart(NetworkRequest networkRequest) {
+        multipartBuilder.addPart(networkRequest);
     }
 
     public RequestBuilder setBody(byte[] body) {

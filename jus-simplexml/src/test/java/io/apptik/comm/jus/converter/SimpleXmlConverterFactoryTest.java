@@ -70,7 +70,7 @@ public class SimpleXmlConverterFactoryTest {
         RetroProxy retroProxy = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(SimpleXmlConverterFactory.create(persister))
-                .queue(queue)
+                .requestQueue(queue)
                 .build();
         service = retroProxy.create(Service.class);
     }

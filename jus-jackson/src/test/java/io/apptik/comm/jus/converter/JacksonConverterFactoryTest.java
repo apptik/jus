@@ -141,7 +141,7 @@ public class JacksonConverterFactoryTest {
         RetroProxy retroProxy = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(JacksonConverterFactory.create(mapper))
-                .queue(queue)
+                .requestQueue(queue)
                 .build();
         service = retroProxy.create(Service.class);
     }

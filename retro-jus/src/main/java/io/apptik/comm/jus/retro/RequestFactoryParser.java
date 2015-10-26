@@ -20,7 +20,6 @@ package io.apptik.comm.jus.retro;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
@@ -293,9 +292,10 @@ final class RequestFactoryParser {
                             throw parameterError(i, "@Part parameters can only be used with multipart encoding.");
                         }
                         Part part = (Part) methodParameterAnnotation;
-                        Map<String, String> headers = new HashMap<>();
-                        headers.put("Content-Disposition", "form-data; name=\"" + part.value() + "\"");
-                        headers.put("Content-Transfer-Encoding", part.encoding());
+                        io.apptik.comm.jus.http.Headers headers = new io.apptik.comm.jus.http.Headers.Builder()
+                                .add("Content-Disposition", "form-data; name=\"" + part.value() + "\"")
+                                .add("Content-Transfer-Encoding", part.encoding()).build();
+
                         Converter<?, NetworkRequest> converter;
                         try {
                             converter =

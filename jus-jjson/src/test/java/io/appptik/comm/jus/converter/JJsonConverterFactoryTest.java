@@ -63,7 +63,7 @@ public class JJsonConverterFactoryTest {
         RetroProxy retroProxy = new RetroProxy.Builder()
                 .baseUrl(server.url("/").toString())
                 .addConverterFactory(JJsonConverterFactory.create())
-                .queue(queue)
+                .requestQueue(queue)
                 .build();
         service = retroProxy.create(Service.class);
     }

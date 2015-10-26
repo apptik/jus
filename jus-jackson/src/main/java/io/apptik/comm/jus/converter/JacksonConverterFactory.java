@@ -58,12 +58,12 @@ public final class JacksonConverterFactory extends Converter.Factory {
   public Converter<NetworkResponse, ?> fromResponse(Type type, Annotation[] annotations) {
     JavaType javaType = mapper.getTypeFactory().constructType(type);
     ObjectReader reader = mapper.reader(javaType);
-    return new JacksonResponseBodyConverter<>(reader);
+    return new JacksonResponseConverter<>(reader);
   }
 
   @Override public Converter<?, NetworkRequest> toRequest(Type type, Annotation[] annotations) {
     JavaType javaType = mapper.getTypeFactory().constructType(type);
     ObjectWriter writer = mapper.writerWithType(javaType);
-    return new JacksonRequestBodyConverter<>(writer);
+    return new JacksonRequestConverter<>(writer);
   }
 }

@@ -16,40 +16,29 @@
  */
 package io.apptik.comm.jus.converter;
 
-import com.google.gson.Gson;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonWriter;
+import com.squareup.moshi.JsonAdapter;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
-import java.nio.charset.Charset;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 import okio.Buffer;
 
-public final class GsonRequestBodyConverter<T> implements Converter<T, NetworkRequest> {
+public final class MoshiRequestConverter<T> implements Converter<T, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");
-    private static final Charset UTF_8 = Charset.forName("UTF-8");
 
-    private final Gson gson;
-    private final TypeAdapter<T> adapter;
+    private final JsonAdapter<T> adapter;
 
-    public GsonRequestBodyConverter(Gson gson, TypeAdapter<T> adapter) {
-        this.gson = gson;
+    public MoshiRequestConverter(JsonAdapter<T> adapter) {
         this.adapter = adapter;
     }
 
     @Override
     public NetworkRequest convert(T value) throws IOException {
         Buffer buffer = new Buffer();
-        Writer writer = new OutputStreamWriter(buffer.outputStream(), UTF_8);
-        JsonWriter jsonWriter = gson.newJsonWriter(writer);
         try {
-            adapter.write(jsonWriter, value);
-            jsonWriter.flush();
+            adapter.toJson(buffer, value);
         } catch (IOException e) {
             throw new AssertionError(e); // Writing to Buffer does no I/O.
         }

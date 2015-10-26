@@ -16,7 +16,7 @@
  */
 package io.apptik.comm.jus.converter;
 
-import com.google.gson.TypeAdapter;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,20 +25,19 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 
-public final class GsonResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
-    private final TypeAdapter<T> adapter;
+public final class JacksonResponseConverter<T> implements Converter<NetworkResponse, T> {
+  private final ObjectReader adapter;
 
-    public GsonResponseBodyConverter(TypeAdapter<T> adapter) {
-        this.adapter = adapter;
-    }
+  public JacksonResponseConverter(ObjectReader adapter) {
+    this.adapter = adapter;
+  }
 
-    @Override
-    public T convert(NetworkResponse value) throws IOException {
-        Reader reader = value.getCharStream();
-        try {
-            return adapter.fromJson(reader);
-        } finally {
-            Utils.closeQuietly(reader);
-        }
+  @Override public T convert(NetworkResponse value) throws IOException {
+    Reader reader = value.getCharStream();
+    try {
+      return adapter.readValue(reader);
+    } finally {
+      Utils.closeQuietly(reader);
     }
+  }
 }

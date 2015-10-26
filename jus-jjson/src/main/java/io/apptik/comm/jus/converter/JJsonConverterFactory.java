@@ -47,12 +47,12 @@ public final class JJsonConverterFactory extends Converter.Factory {
     public Converter<NetworkResponse, ?> fromResponse(Type type, Annotation[] annotations) {
         if (JsonElement.class.isAssignableFrom((Class<?>) type)) {
             if (type.equals(JsonObject.class)) {
-                return new JJsonObjectResponseBodyConverter();
+                return new JJsonObjectResponseConverter();
             } else if (type.equals(JsonArray.class)) {
-                return new JJsonArrayResponseBodyConverter();
+                return new JJsonArrayResponseConverter();
             }
 
-            return new JJsonResponseBodyConverter();
+            return new JJsonResponseConverter();
         }
 
         return null;
@@ -61,7 +61,7 @@ public final class JJsonConverterFactory extends Converter.Factory {
     @Override
     public Converter<?, NetworkRequest> toRequest(Type type, Annotation[] annotations) {
         if (JsonElement.class.isAssignableFrom((Class<?>) type)) {
-            return new JJsonRequestBodyConverter();
+            return new JJsonRequestConverter();
         }
 
         return null;

@@ -80,7 +80,7 @@ public final class SimpleXmlConverterFactory extends Converter.Factory {
             return null;
         }
         Class<?> cls = (Class<?>) type;
-        return new SimpleXmlResponseBodyConverter<>(cls, serializer, strict);
+        return new SimpleXmlResponseConverter<>(cls, serializer, strict);
     }
 
     @Override
@@ -88,6 +88,6 @@ public final class SimpleXmlConverterFactory extends Converter.Factory {
         if (!(type instanceof Class)) {
             return null;
         }
-        return new SimpleXmlRequestBodyConverter<>(serializer);
+        return new SimpleXmlRequestConverter<>(serializer);
     }
 }

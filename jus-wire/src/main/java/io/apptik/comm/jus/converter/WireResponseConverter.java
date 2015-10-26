@@ -16,20 +16,33 @@
  */
 package io.apptik.comm.jus.converter;
 
-import com.google.protobuf.MessageLite;
+import com.squareup.wire.Message;
+import com.squareup.wire.ProtoAdapter;
 
 import java.io.IOException;
 
 import io.apptik.comm.jus.Converter;
-import io.apptik.comm.jus.NetworkRequest;
-import io.apptik.comm.jus.http.MediaType;
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.toolbox.Utils;
+import okio.BufferedSource;
 
-public final class ProtoRequestBodyConverter<T extends MessageLite> implements Converter<T, NetworkRequest> {
-    private static final MediaType MEDIA_TYPE = MediaType.parse("application/x-protobuf");
+public final class WireResponseConverter<T extends Message>
+        implements Converter<NetworkResponse, T> {
+
+    private final ProtoAdapter<T> adapter;
+
+    public WireResponseConverter(ProtoAdapter<T> adapter) {
+        this.adapter = adapter;
+    }
 
     @Override
-    public NetworkRequest convert(T value) throws IOException {
-        byte[] bytes = value.toByteArray();
-        return new NetworkRequest.Builder().setContentType(MEDIA_TYPE).setBody(bytes).build();
+    public T convert(NetworkResponse value) throws IOException {
+        BufferedSource source = value.getBufferedSource();
+        try {
+            return adapter.decode(source);
+        } finally {
+            Utils.closeQuietly(source);
+        }
     }
+
 }

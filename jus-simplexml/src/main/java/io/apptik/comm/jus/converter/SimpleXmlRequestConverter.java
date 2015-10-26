@@ -26,13 +26,13 @@ import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 import okio.Buffer;
 
-public final class SimpleXmlRequestBodyConverter<T> implements Converter<T, NetworkRequest> {
+public final class SimpleXmlRequestConverter<T> implements Converter<T, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/xml; charset=UTF-8");
     private static final String CHARSET = "UTF-8";
 
     private final Serializer serializer;
 
-    public SimpleXmlRequestBodyConverter(Serializer serializer) {
+    public SimpleXmlRequestConverter(Serializer serializer) {
         this.serializer = serializer;
     }
 

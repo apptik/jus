@@ -27,6 +27,7 @@ import java.lang.reflect.TypeVariable;
 import java.lang.reflect.WildcardType;
 import java.util.Arrays;
 
+import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 
 final class Utils {
@@ -138,6 +139,14 @@ final class Utils {
       String className = type == null ? "null" : type.getClass().getName();
       throw new IllegalArgumentException("Expected a Class, ParameterizedType, or "
           + "GenericArrayType, but <" + type + "> is of type " + className);
+    }
+  }
+
+  static boolean checkIfRequestRawType(Type type) {
+    if(type instanceof ParameterizedType) {
+      return ((ParameterizedType)type).getRawType() == Request.class;
+    } else {
+      return false;
     }
   }
 

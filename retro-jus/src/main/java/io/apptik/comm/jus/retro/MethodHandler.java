@@ -22,52 +22,61 @@ import java.lang.reflect.Type;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 
 final class MethodHandler<T> {
-  @SuppressWarnings("unchecked")
-  static MethodHandler<?> create(RetroProxy retroProxy, Method method) {
-    Type responseType = method.getGenericReturnType();
-    responseType = Utils.getRequestResponseType(responseType);
-    if (Utils.hasUnresolvableType(responseType)) {
-      throw Utils.methodError(method,
-              "Method return type must not include a type variable or wildcard: %s", responseType);
+    @SuppressWarnings("unchecked")
+    static MethodHandler<?> create(RetroProxy retroProxy, Method method) {
+        Type responseType = method.getGenericReturnType();
+        if (Utils.hasUnresolvableType(responseType)) {
+            throw Utils.methodError(method,
+                    "Method return type must not include a type variable or wildcard: %s", responseType);
+        }
+
+        if (!Utils.checkIfRequestRawType(responseType)) {
+            throw Utils.methodError(method, "Service methods can only return Request<> type");
+        }
+        responseType = Utils.getRequestResponseType(responseType);
+
+        //Annotation[] annotations = method.getAnnotations();
+        Converter<NetworkResponse, Object> responseConverter =
+                (Converter<NetworkResponse, Object>) createResponseConverter(method, retroProxy, responseType);
+        RequestFactory requestFactory = RequestFactoryParser.parse(method, retroProxy);
+        return new MethodHandler<>(retroProxy.requestQueue(), requestFactory, responseConverter
+                , retroProxy.execManually());
     }
-    if (responseType == void.class) {
-      throw Utils.methodError(method, "Service methods cannot return void.");
+
+
+    private static Converter<NetworkResponse, ?> createResponseConverter(Method method,
+                                                                         RetroProxy retroProxy, Type responseType) {
+        Annotation[] annotations = method.getAnnotations();
+        try {
+            return retroProxy.responseConverter(responseType, annotations);
+        } catch (RuntimeException e) { // Wide exception range because factories are user code.
+            throw Utils.methodError(e, method, "Unable to create converter for %s", responseType);
+        }
     }
-    Annotation[] annotations = method.getAnnotations();
-    Converter<NetworkResponse, Object> responseConverter =
-        (Converter<NetworkResponse, Object>) createResponseConverter(method, retroProxy, responseType);
-    RequestFactory requestFactory = RequestFactoryParser.parse(method, retroProxy);
-    return new MethodHandler<>(retroProxy.requestQueue(), requestFactory, responseConverter);
-  }
 
+    private final RequestQueue requestQueue;
+    private final RequestFactory requestFactory;
+    private final Converter<NetworkResponse, T> responseConverter;
+    private final boolean execManually;
 
-
-  private static Converter<NetworkResponse, ?> createResponseConverter(Method method,
-      RetroProxy retroProxy, Type responseType) {
-    Annotation[] annotations = method.getAnnotations();
-    try {
-      return retroProxy.responseConverter(responseType, annotations);
-    } catch (RuntimeException e) { // Wide exception range because factories are user code.
-      throw Utils.methodError(e, method, "Unable to create converter for %s", responseType);
+    private MethodHandler(RequestQueue requestQueue, RequestFactory requestFactory,
+                          Converter<NetworkResponse, T> responseConverter, boolean execManually) {
+        this.requestQueue = requestQueue;
+        this.requestFactory = requestFactory;
+        this.responseConverter = responseConverter;
+        this.execManually = execManually;
     }
-  }
 
-  private final RequestQueue requestQueue;
-  private final RequestFactory requestFactory;
-  private final Converter<NetworkResponse, T> responseConverter;
-
-  private MethodHandler(RequestQueue requestQueue, RequestFactory requestFactory,
-      Converter<NetworkResponse, T> responseConverter) {
-    this.requestQueue = requestQueue;
-    this.requestFactory = requestFactory;
-    this.responseConverter = responseConverter;
-  }
-
-  Object invoke(Object... args) {
-    return requestQueue.add(requestFactory.create(responseConverter, args));
-           // callAdapter.adapt(new OkHttpCall<>(requestQueue, requestFactory, responseConverter, args));
-  }
+    Object invoke(Object... args) {
+        Request request = requestFactory.create(responseConverter, args);
+        if (execManually) {
+            return request.prepRequestQueue(requestQueue);
+        } else {
+            return requestQueue.add(request);
+        }
+    }
 }

@@ -16,29 +16,34 @@
  */
 package io.apptik.comm.jus.converter;
 
-import com.squareup.moshi.JsonAdapter;
+import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.MessageLite;
+import com.google.protobuf.Parser;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
-import okio.BufferedSource;
 
-public final class MoshiResponseBodyConverter<T> implements Converter<NetworkResponse, T> {
-    private final JsonAdapter<T> adapter;
+public final class ProtoResponseConverter<T extends MessageLite>
+        implements Converter<NetworkResponse, T> {
+    private final Parser<T> parser;
 
-    public MoshiResponseBodyConverter(JsonAdapter<T> adapter) {
-        this.adapter = adapter;
+    public ProtoResponseConverter(Parser<T> parser) {
+        this.parser = parser;
     }
 
     @Override
     public T convert(NetworkResponse value) throws IOException {
-        BufferedSource source = value.getBufferedSource();
+        InputStream is = value.getByteStream();
         try {
-            return adapter.fromJson(source);
+            return parser.parseFrom(is);
+        } catch (InvalidProtocolBufferException e) {
+            throw new RuntimeException(e); // Despite extending IOException, this is data mismatch.
         } finally {
-            Utils.closeQuietly(source);
+            Utils.closeQuietly(is);
         }
     }
 }

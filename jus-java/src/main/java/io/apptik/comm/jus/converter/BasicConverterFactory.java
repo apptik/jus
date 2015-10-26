@@ -52,7 +52,7 @@ public class BasicConverterFactory extends Converter.Factory {
     @Override
     public Converter<?, NetworkRequest> toRequest(Type type, Annotation[] annotations) {
         if (type instanceof Class) {
-            if (NetworkResponse.class.isAssignableFrom((Class<?>) type)) {
+            if (NetworkRequest.class.isAssignableFrom((Class<?>) type)) {
                 return new Converters.NetworkRequestConverter();
             }
             if (String.class.isAssignableFrom((Class<?>) type)) {

@@ -26,13 +26,13 @@ import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 import okio.Buffer;
 
-public final class WireRequestBodyConverter<T extends Message>
+public final class WireRequestConverter<T extends Message>
         implements Converter<T, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/x-protobuf");
 
     private final ProtoAdapter<T> adapter;
 
-    public WireRequestBodyConverter(ProtoAdapter<T> adapter) {
+    public WireRequestConverter(ProtoAdapter<T> adapter) {
         this.adapter = adapter;
     }
 

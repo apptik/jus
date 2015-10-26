@@ -23,14 +23,14 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.converter.JacksonRequestBodyConverter;
-import io.apptik.comm.jus.converter.JacksonResponseBodyConverter;
+import io.apptik.comm.jus.converter.JacksonRequestConverter;
+import io.apptik.comm.jus.converter.JacksonResponseConverter;
 import io.apptik.comm.jus.http.HttpUrl;
 
 public class JacksonRequest<T> extends Request<T> {
 
     public JacksonRequest(String method, HttpUrl url, ObjectReader adapter) {
-        super(method, url, new JacksonResponseBodyConverter<T>(adapter));
+        super(method, url, new JacksonResponseConverter<T>(adapter));
     }
 
     public JacksonRequest(String method, HttpUrl url, ObjectMapper objectMapper) {
@@ -50,7 +50,7 @@ public class JacksonRequest<T> extends Request<T> {
     }
 
     public JacksonRequest(String method, String url, ObjectReader adapter) {
-        super(method, url, new JacksonResponseBodyConverter<T>(adapter));
+        super(method, url, new JacksonResponseConverter<T>(adapter));
     }
 
     public JacksonRequest(String method, String url, ObjectMapper objectMapper) {
@@ -71,7 +71,7 @@ public class JacksonRequest<T> extends Request<T> {
 
 
     public <R> Request<T> setRequestData(R requestData, ObjectWriter adapter) {
-        super.setRequestData(requestData, new JacksonRequestBodyConverter<R>(adapter));
+        super.setRequestData(requestData, new JacksonRequestConverter<R>(adapter));
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());
