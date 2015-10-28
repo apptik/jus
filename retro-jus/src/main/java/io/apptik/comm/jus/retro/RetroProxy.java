@@ -296,16 +296,33 @@ public final class RetroProxy {
          * When calling {@link #create} on the resulting {@link RetroProxy} instance, eagerly validate
          * the configuration of all methods in the supplied interface.
          */
+        public Builder validateEagerly(boolean validateEagerly) {
+            this.validateEagerly = validateEagerly;
+            return this;
+        }
+        /**
+         * When calling {@link #create} on the resulting {@link RetroProxy} instance, eagerly validate
+         * the configuration of all methods in the supplied interface.
+         */
         public Builder validateEagerly() {
-            validateEagerly = true;
+            validateEagerly(true);
             return this;
         }
 
+
+        public Builder execManually(boolean execManually) {
+            this.execManually = execManually;
+            return this;
+        }
+
+        /**
+         * When set Service methods will not automatically add the Request to the queu,
+         * but just prepare the it. User can call {@link Request#enqueue()} to add the request.
+         */
         public Builder execManually() {
-            execManually = true;
+            execManually(true);
             return this;
         }
-
         /**
          * Create the {@link RetroProxy} instances.
          */
