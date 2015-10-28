@@ -21,6 +21,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import java.io.IOException;
+
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JacksonRequestConverter;
@@ -71,7 +73,11 @@ public class JacksonRequest<T> extends Request<T> {
 
 
     public <R> Request<T> setRequestData(R requestData, ObjectWriter adapter) {
-        super.setRequestData(requestData, new JacksonRequestConverter<R>(adapter));
+        try {
+            super.setRequestData(requestData, new JacksonRequestConverter<R>(adapter));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
+        }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

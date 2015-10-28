@@ -20,6 +20,8 @@ package io.apptik.comm.jus.request;
 import org.djodjo.json.JsonElement;
 import org.djodjo.json.JsonObject;
 
+import java.io.IOException;
+
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
@@ -37,7 +39,11 @@ public class JsonObjectRequest extends Request<JsonObject> {
     }
 
     public JsonObjectRequest setRequestData(JsonElement requestData) {
-        super.setRequestData(requestData, new JJsonRequestConverter());
+        try {
+            super.setRequestData(requestData, new JJsonRequestConverter());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
+        }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

@@ -19,6 +19,8 @@ package io.apptik.comm.jus.request;
 import com.squareup.wire.Message;
 import com.squareup.wire.ProtoAdapter;
 
+import java.io.IOException;
+
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.WireRequestConverter;
@@ -36,7 +38,11 @@ public class WireRequest<T extends Message> extends Request<T> {
     }
 
     public <R extends Message> WireRequest<T> setRequestData(R requestData, ProtoAdapter<R> adapter) {
-        super.setRequestData(requestData, new WireRequestConverter<R>(adapter));
+        try {
+            super.setRequestData(requestData, new WireRequestConverter<R>(adapter));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
+        }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/x-protobuf")
                 .build());

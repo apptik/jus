@@ -18,6 +18,8 @@
 
 package io.apptik.comm.jus.request;
 
+import java.io.IOException;
+
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.Converters;
 
@@ -36,7 +38,11 @@ public class StringRequest extends Request<String> {
         super(method, url, new Converters.StringResponseConverter());
     }
 
-    public Request<String> setObjectRequest(String objectRequest) {
-        return super.setRequestData(objectRequest, new Converters.StringRequestConverter());
+    public Request<String> setObjectRequest(String objectRequest)  {
+        try {
+            return super.setRequestData(objectRequest, new Converters.StringRequestConverter());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to convert " + objectRequest + " to NetworkRequest", e);
+        }
     }
 }

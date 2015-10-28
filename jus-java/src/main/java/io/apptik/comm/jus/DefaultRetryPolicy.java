@@ -94,7 +94,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
     @Override
     public void retry(JusError error) throws JusError {
         mCurrentRetryCount++;
-        mCurrentTimeoutMs += (mCurrentTimeoutMs * mBackoffMultiplier);
+        mCurrentTimeoutMs = (int) (mCurrentTimeoutMs * mBackoffMultiplier);
         if (!hasAttemptRemaining()) {
             throw error;
         }

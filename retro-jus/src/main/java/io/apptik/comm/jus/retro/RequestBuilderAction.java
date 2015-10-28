@@ -295,13 +295,13 @@ abstract class RequestBuilderAction {
                 //noinspection unchecked
                 networkRequest = converter.convert((T) value);
             } catch (IOException e) {
-                throw new RuntimeException("Unable to convert " + value + " to Request");
+                throw new RuntimeException("Unable to convert " + value + " to NetworkRequest", e);
             }
             builder.setBody(networkRequest.data);
             if (networkRequest.headers != null) {
                 for (Map.Entry<String, String> header : networkRequest.headers.toMap().entrySet()) {
                     if(builder.hasContentTypeSet() && HTTP.CONTENT_TYPE.equals(header.getKey())) {
-                        //do not overwrite contenttype set in headers
+                        //do not overwrite content-type set in headers
                         //warning here may be ?
                     } else {
                         builder.addHeader(header.getKey(), header.getValue());

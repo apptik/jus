@@ -18,6 +18,7 @@
 
 package io.apptik.comm.jus;
 
+import java.net.HttpURLConnection;
 import java.util.concurrent.BlockingQueue;
 
 import io.apptik.comm.jus.error.JusError;
@@ -73,6 +74,21 @@ public class NetworkDispatcher extends Thread {
     }
 
     /**
+     * Checks if a response message contains a body.
+     *
+     * @param requestMethod request method
+     * @param responseCode  response status code
+     * @return whether the response has a body
+     * @see <a href="https://tools.ietf.org/html/rfc7230#section-3.3">RFC 7230 section 3.3</a>
+     */
+    public static boolean hasResponseBody(String requestMethod, int responseCode) {
+        return requestMethod != Request.Method.HEAD
+                && !(100 <= responseCode && responseCode < HttpURLConnection.HTTP_OK)
+                && responseCode != HttpURLConnection.HTTP_NO_CONTENT
+                && responseCode != HttpURLConnection.HTTP_NOT_MODIFIED;
+    }
+
+    /**
      * Forces this dispatcher to quit immediately.  If any requests are still in
      * the queue, they are not guaranteed to be processed.
      */
@@ -113,7 +129,7 @@ public class NetworkDispatcher extends Thread {
                 // If the request was cancelled already, do not perform the
                 // network request.
                 if (request.isCanceled()) {
-                    request.finish(Request.EVENT_NETWORK_DISCARD_CANCELLED);
+                    request.finish(Request.EVENT_NETWORK_DISCARD_CANCELED);
                     continue;
                 }
 
@@ -130,13 +146,24 @@ public class NetworkDispatcher extends Thread {
                     continue;
                 }
 
-                // Parse the response here on the worker threadId.
-                Response<?> response = request.parseNetworkResponse(networkResponse);
-                request.addMarker(Request.EVENT_NETWORK_PARSE_COMPLETE);
-
+                Response<?> response;
+                //try parse and wrap withing parse exception in case someone overwrites
+                //Request, which handles this
+                try {
+                    // Parse the response here on the worker threadId.
+                    response = request.parseNetworkResponse(networkResponse);
+                    request.addMarker(Request.EVENT_NETWORK_PARSE_COMPLETE);
+                } catch (Exception ex) {
+                    if(JusError.class.isAssignableFrom(ex.getClass())) {
+                        throw ex;
+                    } else {
+                        throw new ParseError(ex);
+                    }
+                }
                 // Write to cache if applicable.
                 // response.cacheEntry must not be null
                 // TODO: Only update cache metadata instead of entire record for 304s.
+
                 if (request.shouldCache() && response.cacheEntry != null) {
                     mCache.put(request.getCacheKey(), response.cacheEntry);
                     request.addMarker(Request.EVENT_NETWORK_CACHE_WRITTEN);

@@ -58,7 +58,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_CANCELED_AT_DELIVERY = "canceled-at-delivery";
     public static final String EVENT_DONE = "done";
     public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
-    public static final String EVENT_NETWORK_DISCARD_CANCELLED = "network-discard-cancelled";
+    public static final String EVENT_NETWORK_DISCARD_CANCELED = "network-discard-canceled";
     public static final String EVENT_NETWORK_HTTP_COMPLETE = "network-http-complete";
     public static final String EVENT_NOT_MODIFIED = "not-modified";
     public static final String EVENT_NETWORK_PARSE_COMPLETE = "network-parse-complete";
@@ -224,8 +224,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     public Request<T> clone() {
-        return new Request<>(getMethod(), getUrlString(), converterFromResponse)
+        Request<T> cloned = new Request<>(getMethod(), getUrlString(), converterFromResponse)
                 .setNetworkRequest(networkRequest);
+        cloned.futureRequestQueue = requestQueue;
+        return cloned;
     }
 
     /**
@@ -265,20 +267,28 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
     /**
      * Set data to send which will be converted to {@link NetworkRequest}
-     * This will overwrote all previous http body and headers defined
+     * This will overwrite all previous http body and headers defined
      *
      * @param requestData
      * @param converterToRequest
      * @return
      */
-    public <R> Request<T> setRequestData(R requestData, Converter<R, NetworkRequest> converterToRequest) {
+    public <R> Request<T> setRequestData(R requestData, Converter<R, NetworkRequest> converterToRequest)
+    throws IOException {
         checkIfActive();
         Utils.checkNotNull(requestData, "networkRequest cannot be null");
         Utils.checkNotNull(converterToRequest, "converterToRequest cannot be null");
         try {
             this.networkRequest = converterToRequest.convert(requestData);
         } catch (IOException e) {
-            throw new IllegalStateException("cannot convert Network Request", e);
+            throw e;
+        } catch (Exception e) {
+            //check if someone didnt wrap IOException
+            if(e.getCause() instanceof IOException) {
+                throw (IOException)e.getCause();
+            } else { //else wrap it in IOEx
+                throw new IOException(e);
+            }
         }
         return this;
     }
@@ -475,6 +485,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     public synchronized Request<T> enqueue() {
         checkIfActive();
+        if(isCanceled()) {
+            throw new IllegalStateException("Canceled");
+        }
         Utils.checkNotNull(this.futureRequestQueue, "No future RequestQueue set. " +
                 "Please call prepRequestQueue before calling this.");
         this.futureRequestQueue.add(this);
@@ -654,7 +667,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         T parsed = null;
         try {
             parsed = converterFromResponse.convert(response);
-        } catch (IOException e) {
+        } catch (Exception e) {
             return Response.error(new ParseError(e));
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));

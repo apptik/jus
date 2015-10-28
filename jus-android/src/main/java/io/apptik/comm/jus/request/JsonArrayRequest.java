@@ -20,6 +20,8 @@ package io.apptik.comm.jus.request;
 
 import org.json.JSONArray;
 
+import java.io.IOException;
+
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JSONConverter;
@@ -38,7 +40,11 @@ public class JsonArrayRequest extends Request<JSONArray> {
     }
 
     public JsonArrayRequest setRequestData(JSONArray requestData) {
-        super.setRequestData(requestData, new JSONConverter.JSONArrayRequestConverter());
+        try {
+            super.setRequestData(requestData, new JSONConverter.JSONArrayRequestConverter());
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
+        }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

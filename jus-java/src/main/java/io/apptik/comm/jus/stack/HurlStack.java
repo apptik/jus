@@ -30,6 +30,7 @@ import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
 import io.apptik.comm.jus.JusLog;
+import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Request.Method;
@@ -113,33 +114,19 @@ public class HurlStack implements HttpStack {
             // Signal to the caller that something was wrong with the connection.
             throw new IOException("Could not retrieve response code from HttpUrlConnection.");
         }
+        headers.addMMap(connection.getHeaderFields());
 
-        if (hasResponseBody(request.getMethod(), statusCode)) {
+        if (NetworkDispatcher.hasResponseBody(request.getMethod(), statusCode)) {
             data = getContentBytes(connection, byteArrayPool);
         } else {
             // Add 0 byte response as a way of honestly representing a
             // no-content request.
             data = new byte[0];
         }
-        headers.addMMap(connection.getHeaderFields());
+
 
         return new NetworkResponse(statusCode, data, headers.build(),
                 System.nanoTime() - requestStart);
-    }
-
-    /**
-     * Checks if a response message contains a body.
-     *
-     * @param requestMethod request method
-     * @param responseCode  response status code
-     * @return whether the response has a body
-     * @see <a href="https://tools.ietf.org/html/rfc7230#section-3.3">RFC 7230 section 3.3</a>
-     */
-    private static boolean hasResponseBody(String requestMethod, int responseCode) {
-        return requestMethod != Request.Method.HEAD
-                && !(100 <= responseCode && responseCode < HttpURLConnection.HTTP_OK)
-                && responseCode != HttpURLConnection.HTTP_NO_CONTENT
-                && responseCode != HttpURLConnection.HTTP_NOT_MODIFIED;
     }
 
     /**

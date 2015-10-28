@@ -18,6 +18,8 @@
 
 package io.apptik.comm.jus.error;
 
+import java.net.SocketTimeoutException;
+
 /**
  * Indicates that the connection or the socket timed out.
  */
@@ -26,5 +28,13 @@ public class TimeoutError extends JusError {
 
     public TimeoutError() {
         super();
+    }
+
+    public TimeoutError(String msg) {
+        super(msg);
+    }
+
+    public TimeoutError(String msg, SocketTimeoutException e) {
+        super(msg, e);
     }
 }

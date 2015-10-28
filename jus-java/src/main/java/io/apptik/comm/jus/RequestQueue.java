@@ -321,6 +321,9 @@ public class RequestQueue {
         request.setSequence(getSequenceNumber());
         // Tag the request as belonging to this queue and add it to the set of current requests.
         synchronized (mCurrentRequests) {
+            if(request.isCanceled()) {
+                request.finish(Request.EVENT_CACHE_DISCARD_CANCELED);
+            }
             request.setRequestQueue(this);
             mCurrentRequests.add(request);
         }

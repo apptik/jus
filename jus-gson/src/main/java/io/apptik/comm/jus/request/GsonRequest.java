@@ -20,6 +20,8 @@ package io.apptik.comm.jus.request;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 
+import java.io.IOException;
+
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.converter.GsonRequestConverter;
 import io.apptik.comm.jus.converter.GsonResponseConverter;
@@ -53,7 +55,11 @@ public class GsonRequest<T> extends Request<T> {
     }
 
     public <R> Request<T> setRequestData(R requestData, Gson gson, TypeAdapter<R> adapter) {
-        super.setRequestData(requestData, new GsonRequestConverter<>(gson, adapter));
+        try {
+            super.setRequestData(requestData, new GsonRequestConverter<>(gson, adapter));
+        } catch (IOException e) {
+            throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
+        }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json; charset=UTF-8")
                 .build());

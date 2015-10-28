@@ -35,6 +35,10 @@ public class JusError extends Exception {
     public JusError( NetworkResponse response) {
         networkResponse = response;
     }
+    public JusError( NetworkResponse response, Throwable reason) {
+        super(reason);
+        networkResponse = response;
+    }
 
     public JusError(String exceptionMessage) {
        super(exceptionMessage);
@@ -49,6 +53,11 @@ public class JusError extends Exception {
     public JusError(Throwable cause) {
         super(cause);
         networkResponse = null;
+    }
+
+    public JusError(String exceptionMessage, NetworkResponse response) {
+        super(exceptionMessage);
+        networkResponse = response;
     }
 
     /* package */

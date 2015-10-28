@@ -45,4 +45,8 @@ public class NetworkError extends JusError {
     public NetworkError(NetworkResponse response) {
         super(response);
     }
+
+    public NetworkError(String exceptionMessage, NetworkResponse response) {
+        super(exceptionMessage, response);
+    }
 }

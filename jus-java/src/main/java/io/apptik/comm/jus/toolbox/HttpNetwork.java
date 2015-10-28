@@ -44,6 +44,7 @@ import io.apptik.comm.jus.error.RequestError;
 import io.apptik.comm.jus.error.ServerError;
 import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.http.DateUtils;
+import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.HttpStack;
 
@@ -91,7 +92,17 @@ public class HttpNetwork implements Network {
                 addAuthHeaders(request.getAuthenticator(), headers);
 
                 httpResponse = mHttpStack.performRequest(request, headers, mPool);
-
+                //check completeness of body
+                if (httpResponse != null && httpResponse.headers != null) {
+                    String contentLen = httpResponse.headers.get(HTTP.CONTENT_LEN);
+                    if(contentLen!=null) {
+                        int cLen = Integer.parseInt(contentLen);
+                        if(cLen>httpResponse.data.length) {
+                            throw new NetworkError("Response Body not completely received",
+                                    httpResponse);
+                        }
+                    }
+                }
                 // if the request is slow, log it.
                 long requestLifetime = System.nanoTime() - requestStart;
                 logSlowRequests(requestLifetime, request, httpResponse.data, httpResponse.statusCode);
@@ -101,7 +112,7 @@ public class HttpNetwork implements Network {
 
                     Entry entry = request.getCacheEntry();
 
-                    if(entry !=null) {
+                    if (entry != null) {
 
                         // A HTTP 304 response does not have all header fields. We
                         // have to use the header fields from the cache entry plus
@@ -129,7 +140,7 @@ public class HttpNetwork implements Network {
                 }
                 return httpResponse;
             } catch (SocketTimeoutException e) {
-                attemptRetryOnException("socket", request, new TimeoutError());
+                attemptRetryOnException("socket", request, new TimeoutError("socket Timeout", e));
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Bad URL " + request.getUrlString(), e);
             } catch (IOException e) {
@@ -163,9 +174,9 @@ public class HttpNetwork implements Network {
                     } else if (networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         throw new ForbiddenError(networkResponse);
                     } else if (networkResponse.statusCode == HttpURLConnection.HTTP_CLIENT_TIMEOUT) {
-                        attemptRetryOnException("http-client", request, new TimeoutError());
+                        attemptRetryOnException("http-client", request, new TimeoutError("HTTP_CLIENT_TIMEOUT"));
                     } else if (networkResponse.statusCode == HttpURLConnection.HTTP_GATEWAY_TIMEOUT) {
-                        attemptRetryOnException("gateway-client", request, new TimeoutError());
+                        attemptRetryOnException("gateway-client", request, new TimeoutError("HTTP_GATEWAY_TIMEOUT"));
                     } else if (networkResponse.statusCode > 399 && networkResponse.statusCode < 500) {
                         //some request query error that does not make sense to retry, assuming the service we use is deterministic
                         throw new RequestError(networkResponse);
@@ -175,7 +186,7 @@ public class HttpNetwork implements Network {
                                 request, new ServerError(request, networkResponse));
                     } else {
                         //unclassified error
-                        throw new JusError(networkResponse);
+                        throw new JusError(networkResponse, e);
                     }
                 } else {
                     throw new NetworkError(networkResponse);

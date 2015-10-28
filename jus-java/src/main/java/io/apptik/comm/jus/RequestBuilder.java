@@ -190,10 +190,16 @@ public final class RequestBuilder {
             // Try to pull from one of the builders.
             if (formEncodingBuilder != null) {
                 NetworkRequest nr = formEncodingBuilder.build();
-                networkRequestBuilder.setBody(nr.data).setContentType(nr.contentType);
+                networkRequestBuilder
+                        .setBody(nr.data)
+                        .setContentType(nr.contentType)
+                        .addHeaders(nr.headers);
             } else if (multipartBuilder != null) {
                 NetworkRequest nr = multipartBuilder.build();
-                networkRequestBuilder.setBody(nr.data).setContentType(nr.contentType);
+                networkRequestBuilder
+                        .setBody(nr.data)
+                        .setContentType(nr.contentType)
+                        .addHeaders(nr.headers);
             } else if (hasBody) {
                 // Body is absent, make an empty body.
                 networkRequestBuilder.setBody(new byte[0]);
