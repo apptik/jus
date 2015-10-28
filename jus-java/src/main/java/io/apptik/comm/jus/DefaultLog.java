@@ -61,7 +61,7 @@ package io.apptik.comm.jus;
  * That means that if your log message is filtered out, you might be doing
  * significant work and incurring significant overhead.
  */
-public final class DefaultLog implements Log {
+public class DefaultLog implements Log {
 
     /**
      * Exception class used to capture a stack trace in {@link #wtf}.

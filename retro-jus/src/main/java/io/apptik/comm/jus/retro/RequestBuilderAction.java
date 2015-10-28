@@ -25,6 +25,7 @@ import java.util.Map;
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.RequestBuilder;
+import io.apptik.comm.jus.http.HTTP;
 
 import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
@@ -157,23 +158,22 @@ abstract class RequestBuilderAction {
         @Override
         void perform(RequestBuilder builder, Object value) {
             if (value == null) return; // Skip null values.
-            //TODO
-//            if (value instanceof Iterable) {
-//                for (Object iterableValue : (Iterable<?>) value) {
-//                    if (iterableValue != null) { // Skip null values.
-//                        builder.addFormField(name, iterableValue.toString(), encoded);
-//                    }
-//                }
-//            } else if (value.getClass().isArray()) {
-//                for (int x = 0, arrayLength = Array.getLength(value); x < arrayLength; x++) {
-//                    Object arrayValue = Array.get(value, x);
-//                    if (arrayValue != null) { // Skip null values.
-//                        builder.addFormField(name, arrayValue.toString(), encoded);
-//                    }
-//                }
-//            } else {
-//                builder.addFormField(name, value.toString(), encoded);
-//            }
+            if (value instanceof Iterable) {
+                for (Object iterableValue : (Iterable<?>) value) {
+                    if (iterableValue != null) { // Skip null values.
+                        builder.addFormField(name, iterableValue.toString(), encoded);
+                    }
+                }
+            } else if (value.getClass().isArray()) {
+                for (int x = 0, arrayLength = Array.getLength(value); x < arrayLength; x++) {
+                    Object arrayValue = Array.get(value, x);
+                    if (arrayValue != null) { // Skip null values.
+                        builder.addFormField(name, arrayValue.toString(), encoded);
+                    }
+                }
+            } else {
+                builder.addFormField(name, value.toString(), encoded);
+            }
         }
     }
 
@@ -300,9 +300,13 @@ abstract class RequestBuilderAction {
             builder.setBody(networkRequest.data);
             if (networkRequest.headers != null) {
                 for (Map.Entry<String, String> header : networkRequest.headers.toMap().entrySet()) {
-                    builder.addHeader(header.getKey(), header.getValue());
+                    if(builder.hasContentTypeSet() && HTTP.CONTENT_TYPE.equals(header.getKey())) {
+                        //do not overwrite contenttype set in headers
+                        //warning here may be ?
+                    } else {
+                        builder.addHeader(header.getKey(), header.getValue());
+                    }
                 }
-
             }
         }
     }

@@ -42,6 +42,8 @@ package io.apptik.comm.jus.http;
  *
  */
 
+import java.nio.charset.Charset;
+
 /**
  * Constants and static helpers related to the HTTP protocol.
  *
@@ -99,6 +101,9 @@ public final class HTTP {
     public static boolean isWhitespace(char ch) {
         return ch == SP || ch == HT || ch == CR || ch == LF;
     }
+
+    public static final Charset CHARSET_UTF_8 = Charset.forName(HTTP.UTF_8);
+
 
     private HTTP() {
     }

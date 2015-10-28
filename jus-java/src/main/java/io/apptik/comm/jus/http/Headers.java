@@ -258,6 +258,9 @@ public final class Headers {
     /** Add a field with the specified value. */
     public Builder add(String name, String value) {
       checkNameAndValue(name, value);
+      if(HTTP.CONTENT_TYPE.equals(name)) {
+        removeAll(name);
+      }
       return addLenient(name, value);
     }
 

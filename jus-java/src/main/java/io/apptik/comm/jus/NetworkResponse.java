@@ -51,8 +51,6 @@ public final class NetworkResponse {
 
     public final MediaType contentType;
 
-    public static final Charset CHARSET_UTF_8 = Charset.forName("UTF-8");
-
     /**
      * Creates a new network response.
      * @param statusCode the HTTP status code
@@ -74,7 +72,7 @@ public final class NetworkResponse {
     }
 
     public Charset getCharset() {
-        return contentType != null ? contentType.charset(CHARSET_UTF_8) : CHARSET_UTF_8;
+        return contentType != null ? contentType.charset(HTTP.CHARSET_UTF_8) : HTTP.CHARSET_UTF_8;
     }
 
     public ByteArrayInputStream getByteStream() {

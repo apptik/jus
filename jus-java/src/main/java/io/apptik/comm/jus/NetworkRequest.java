@@ -18,12 +18,19 @@
 
 package io.apptik.comm.jus;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
 import okio.Buffer;
+import okio.BufferedSource;
+import okio.ByteString;
+import okio.Okio;
+import okio.Source;
 
 /**
  * Data and headers which forms a {@link Request}.
@@ -52,6 +59,35 @@ public final class NetworkRequest {
     public final Headers headers;
 
     public final MediaType contentType;
+
+
+    public Charset getCharset() {
+        return contentType != null ? contentType.charset(HTTP.CHARSET_UTF_8) : HTTP.CHARSET_UTF_8;
+    }
+
+    public ByteArrayInputStream getByteStream() {
+        return new ByteArrayInputStream(data);
+    }
+
+    public final InputStreamReader getCharStream() throws IOException {
+        return new InputStreamReader(getByteStream(), getCharset());
+    }
+
+    public Source getSource() {
+        return Okio.source(getByteStream());
+    }
+
+    public BufferedSource getBufferedSource() {
+        return Okio.buffer(getSource());
+    }
+
+    public ByteString getByteString() throws IOException {
+        return getBufferedSource().readByteString();
+    }
+
+    public String getBodyAsString() {
+        return new String(data, getCharset());
+    }
 
 
     @Override
@@ -126,7 +162,11 @@ public final class NetworkRequest {
 
         public NetworkRequest.Builder setContentType(MediaType value) {
             contentType = value;
-            this.headers.set(HTTP.CONTENT_TYPE, contentType.toString());
+            if (value != null) {
+                this.headers.set(HTTP.CONTENT_TYPE, contentType.toString());
+            } else {
+                this.headers.removeAll(HTTP.CONTENT_TYPE);
+            }
             return this;
         }
 
@@ -143,7 +183,12 @@ public final class NetworkRequest {
             return (data != null);
         }
 
+        public boolean hasContentType() {
+            return (this.headers.get(HTTP.CONTENT_TYPE) != null);
+        }
+
         public NetworkRequest build() {
+            contentType = MediaType.parse(this.headers.get(HTTP.CONTENT_TYPE));
             return new NetworkRequest(data, headers.build(), contentType);
         }
     }

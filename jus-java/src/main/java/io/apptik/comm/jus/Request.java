@@ -20,8 +20,6 @@ package io.apptik.comm.jus;
 
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -32,6 +30,7 @@ import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
+import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 import io.apptik.comm.jus.toolbox.Utils;
@@ -543,19 +542,21 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     /**
-     * Returns a list of extra HTTP headers to go along with this request. Can
-     * throw {@link AuthFailureError} as authentication may be required to
-     * provide these values.
-     *
-     * @throws AuthFailureError In the event of auth failure
+     * Returns a list of extra HTTP headers to go along with this request
      */
-    public Map<String, String> getHeadersMap() throws AuthFailureError {
+    public Map<String, String> getHeadersMap()  {
         if (networkRequest != null && networkRequest.headers != null) {
             return networkRequest.headers.toMap();
         }
         return Collections.emptyMap();
     }
 
+    public Headers getHeaders() {
+        if (networkRequest != null && networkRequest.headers != null) {
+            return networkRequest.headers;
+        }
+        return null;
+    }
     /**
      * Returns a Map of parameters to be used for a POST or PUT request.  Can throw
      * {@link AuthFailureError} as authentication may be required to provide these values.
@@ -582,22 +583,11 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     /**
      * Returns the raw POST or PUT body to be sent.
-     * <p/>
-     * <p>By default, the body consists of the request parameters in
-     * application/x-www-form-urlencoded format. When overriding this method, consider overriding
-     * {@link #getBodyContentType()} as well to match the new body format.
-     *
-     * @throws AuthFailureError in the event of auth failure
      */
-    public byte[] getBody() throws AuthFailureError {
+    public byte[] getBody() {
         if (networkRequest != null) {
             return networkRequest.data;
         }
-        //TODO
-//        Map<String, String> params = getParams();
-//        if (params != null && params.size() > 0) {
-//            return encodeParameters(params, getParamsEncoding());
-//        }
         return null;
     }
 

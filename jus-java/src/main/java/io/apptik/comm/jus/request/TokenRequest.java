@@ -45,7 +45,7 @@ public class TokenRequest extends StringRequest {
     }
 
     @Override
-    public Map<String, String> getHeadersMap() throws AuthFailureError {
+    public Map<String, String> getHeadersMap() {
         Map<String, String> headers = super.getHeadersMap();
         String auth = "Basic "
                 + Base64.encodeToString((key + ":" + secret).getBytes(),

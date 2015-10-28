@@ -53,7 +53,7 @@ import io.apptik.comm.jus.stack.HttpStack;
 public class HttpNetwork implements Network {
     protected static final boolean DEBUG = JusLog.DEBUG;
 
-    private static int SLOW_REQUEST_THRESHOLD_MS = 3000;
+    private static long SLOW_REQUEST_THRESHOLD_MS = 3000000000l;
 
     private static int DEFAULT_POOL_SIZE = 4096;
 
