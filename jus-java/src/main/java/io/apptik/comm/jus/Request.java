@@ -198,6 +198,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     private Authenticator authenticator;
 
+    private Priority priority=Priority.NORMAL;
+
     /**
      * Creates a new request with the given method (one of the values from {@link Method}),
      * URL, and error listener.  Note that the normal response listener is not provided here as
@@ -364,6 +366,21 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return tag;
     }
 
+    /**
+     * Set {@link Priority} of this request; {@link Priority#NORMAL} by default.
+     * @param priority {@link Priority} of this request
+     */
+    public Request<T> setPriority(Priority priority) {
+        this.priority = priority;
+        return this;
+    }
+
+    /**
+     * Returns the {@link Priority} of this request; {@link Priority#NORMAL} by default.
+     */
+    public Priority getPriority() {
+        return priority;
+    }
 
     public Authenticator getAuthenticator() {
         return authenticator;
@@ -622,12 +639,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return shouldCache;
     }
 
-    /**
-     * Returns the {@link Priority} of this request; {@link Priority#NORMAL} by default.
-     */
-    public Priority getPriority() {
-        return Priority.NORMAL;
-    }
 
     /**
      * Returns the socket timeout in milliseconds per retry attempt. (This value can be changed
@@ -748,8 +759,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 ", trafficStatsTag=" + trafficStatsTag +
                 ", priority=" + getPriority() +
                 ", requestBirthTime=" + requestBirthTime +
-                ", requestBirthTime=" + requestBirthTime +
                 ", sequence=" + sequence +
+                ", priority=" + priority +
                 ", shouldCache=" + shouldCache +
                 ", tag=" + tag +
                 ", response=" + response +

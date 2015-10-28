@@ -38,16 +38,24 @@ public final class RequestBuilder {
     private MultipartBuilder multipartBuilder;
     private FormEncodingBuilder formEncodingBuilder;
     private NetworkRequest.Builder networkRequestBuilder;
+    private final Request.Priority priority;
+    private final String tag;
+    private final boolean shouldCache;
 
     public RequestBuilder(String method, HttpUrl baseUrl, String relativeUrl,
                           Converter<NetworkResponse, ?> responseConverter, Headers headers,
-                          MediaType contentType, boolean hasBody, boolean isFormEncoded, boolean isMultipart) {
+                          MediaType contentType, boolean hasBody, boolean isFormEncoded,
+                          boolean isMultipart, Request.Priority priority,
+                          String tag, boolean shouldCache) {
         this.method = method;
         this.baseUrl = baseUrl;
         this.relativeUrl = relativeUrl;
         this.hasBody = hasBody;
         this.networkRequestBuilder = new NetworkRequest.Builder();
         this.responseConverter = responseConverter;
+        this.priority = priority;
+        this.tag = tag;
+        this.shouldCache = shouldCache;
 
         if (headers != null) {
             networkRequestBuilder.setHeaders(headers);
@@ -207,7 +215,16 @@ public final class RequestBuilder {
         }
 
 
-        return new Request(method, url, responseConverter).setNetworkRequest(networkRequestBuilder.build());
+        Request request = new Request(method, url, responseConverter)
+                .setNetworkRequest(networkRequestBuilder.build())
+                .setPriority(priority)
+                .setShouldCache(shouldCache)
+                ;
+        if(tag!=null) {
+            request.setTag(tag);
+        }
+
+        return request;
 
 
     }

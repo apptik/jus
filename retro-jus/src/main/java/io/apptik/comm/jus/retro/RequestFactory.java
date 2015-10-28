@@ -35,10 +35,14 @@ final class RequestFactory {
   private final boolean isFormEncoded;
   private final boolean isMultipart;
   private final RequestBuilderAction[] requestBuilderActions;
+  private final Request.Priority priority;
+  private final String tag;
+  private final boolean shouldCache;
 
   RequestFactory(String method, HttpUrl baseUrl, String relativeUrl, Headers headers,
       MediaType contentType, boolean hasBody, boolean isFormEncoded, boolean isMultipart,
-      RequestBuilderAction[] requestBuilderActions) {
+      RequestBuilderAction[] requestBuilderActions, Request.Priority priority,
+                 String tag, boolean shouldCache) {
     this.method = method;
     this.baseUrl = baseUrl;
     this.relativeUrl = relativeUrl;
@@ -48,12 +52,15 @@ final class RequestFactory {
     this.isFormEncoded = isFormEncoded;
     this.isMultipart = isMultipart;
     this.requestBuilderActions = requestBuilderActions;
+    this.priority = priority;
+    this.tag = tag;
+    this.shouldCache = shouldCache;
   }
 
   Request create(Converter<NetworkResponse, ?> responseConverter, Object... args) {
     RequestBuilder requestBuilder =
         new RequestBuilder(method, baseUrl, relativeUrl, responseConverter, headers, contentType, hasBody,
-            isFormEncoded, isMultipart);
+            isFormEncoded, isMultipart, priority, tag, shouldCache);
 
     if (args != null) {
       RequestBuilderAction[] actions = requestBuilderActions;

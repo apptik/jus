@@ -33,8 +33,11 @@ import io.apptik.comm.jus.retro.http.PUT;
 import io.apptik.comm.jus.retro.http.Part;
 import io.apptik.comm.jus.retro.http.PartMap;
 import io.apptik.comm.jus.retro.http.Path;
+import io.apptik.comm.jus.retro.http.Priority;
 import io.apptik.comm.jus.retro.http.Query;
 import io.apptik.comm.jus.retro.http.QueryMap;
+import io.apptik.comm.jus.retro.http.ShouldCache;
+import io.apptik.comm.jus.retro.http.Tag;
 import io.apptik.comm.jus.retro.http.Url;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -1232,6 +1235,113 @@ public final class RequestBuilderTest {
         assertThat(request.getHeaders().size()).isEqualTo(0);
         assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
         assertBody(request.getNetworkRequest(), "");
+    }
+
+    @Test
+    public void requestTag() {
+        class Example {
+            @Tag("cool tag")
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.getTag()).isEqualTo("cool tag");
+    }
+
+    @Test
+    public void requestDoNotCache() {
+        class Example {
+            @ShouldCache(false)
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.shouldCache()).isEqualTo(false);
+    }
+
+
+    @Test
+    public void requestDefaultShouldCache() {
+        class Example {
+            @ShouldCache
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.shouldCache()).isEqualTo(true);
+    }
+    @Test
+    public void requestDefaultShouldCache2() {
+        class Example {
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.shouldCache()).isEqualTo(true);
+    }
+
+    @Test
+    public void requestPriority() {
+        class Example {
+            @Priority(Request.Priority.HIGH)
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.getPriority()).isEqualTo(Request.Priority.HIGH);
+    }
+
+    @Test
+    public void requestDefaultPriority() {
+        class Example {
+            @Priority
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.getPriority()).isEqualTo(Request.Priority.NORMAL);
     }
 
     @Test

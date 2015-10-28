@@ -28,6 +28,7 @@ import java.util.regex.Pattern;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
+import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.http.MediaType;
 import io.apptik.comm.jus.retro.http.Body;
@@ -47,8 +48,11 @@ import io.apptik.comm.jus.retro.http.PUT;
 import io.apptik.comm.jus.retro.http.Part;
 import io.apptik.comm.jus.retro.http.PartMap;
 import io.apptik.comm.jus.retro.http.Path;
+import io.apptik.comm.jus.retro.http.Priority;
 import io.apptik.comm.jus.retro.http.Query;
 import io.apptik.comm.jus.retro.http.QueryMap;
+import io.apptik.comm.jus.retro.http.ShouldCache;
+import io.apptik.comm.jus.retro.http.Tag;
 import io.apptik.comm.jus.retro.http.Url;
 
 import static io.apptik.comm.jus.retro.Utils.methodError;
@@ -79,13 +83,17 @@ final class RequestFactoryParser {
 
     private Set<String> relativeUrlParamNames;
 
+    private Request.Priority priority = Request.Priority.NORMAL;
+    private String tag;
+    private boolean shouldCache = true;
+
     private RequestFactoryParser(Method method) {
         this.method = method;
     }
 
     private RequestFactory toRequestFactory(HttpUrl baseUrl) {
         return new RequestFactory(httpMethod, baseUrl, relativeUrl, headers, contentType, hasBody,
-                isFormEncoded, isMultipart, requestBuilderActions);
+                isFormEncoded, isMultipart, requestBuilderActions, priority, tag, shouldCache);
     }
 
     private RuntimeException parameterError(Throwable cause, int index, String message,
@@ -130,6 +138,12 @@ final class RequestFactoryParser {
                     throw methodError(method, "Only one encoding annotation is allowed.");
                 }
                 isFormEncoded = true;
+            } else if (annotation instanceof Priority) {
+                priority = ((Priority) annotation).value();
+            }else if (annotation instanceof Tag) {
+                tag = ((Tag) annotation).value();
+            }else if (annotation instanceof ShouldCache) {
+                shouldCache = ((ShouldCache) annotation).value();
             }
         }
 
