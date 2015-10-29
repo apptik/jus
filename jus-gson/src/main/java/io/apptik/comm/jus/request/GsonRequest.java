@@ -54,7 +54,7 @@ public class GsonRequest<T> extends Request<T> {
         this(method, url, tClass, new Gson());
     }
 
-    public <R> Request<T> setRequestData(R requestData, Gson gson, TypeAdapter<R> adapter) {
+    public <R> GsonRequest<T> setRequestData(R requestData, Gson gson, TypeAdapter<R> adapter) {
         try {
             super.setRequestData(requestData, new GsonRequestConverter<>(gson, adapter));
         } catch (IOException e) {
@@ -66,11 +66,11 @@ public class GsonRequest<T> extends Request<T> {
         return this;
     }
 
-    public <R> Request<T> setRequestData(R requestData, Gson gson) {
+    public <R> GsonRequest<T> setRequestData(R requestData, Gson gson) {
         return setRequestData(requestData, gson, gson.getAdapter((Class<R>) requestData.getClass()));
     }
 
-    public <R> Request<T> setRequestData(R requestData) {
+    public <R> GsonRequest<T> setRequestData(R requestData) {
         return setRequestData(requestData, new Gson());
     }
 
