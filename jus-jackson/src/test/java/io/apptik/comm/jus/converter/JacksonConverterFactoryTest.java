@@ -17,16 +17,9 @@
 package io.apptik.comm.jus.converter;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
@@ -43,78 +36,30 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Body;
+import io.apptik.comm.jus.retro.http.GET;
 import io.apptik.comm.jus.retro.http.POST;
 
+import static io.apptik.comm.jus.converter.Common.AnImplementation;
+import static io.apptik.comm.jus.converter.Common.AnInterface;
+import static io.apptik.comm.jus.converter.Common.AnInterfaceDeserializer;
+import static io.apptik.comm.jus.converter.Common.AnInterfaceSerializer;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JacksonConverterFactoryTest {
-    interface AnInterface {
-        String getName();
-    }
 
-    static class AnImplementation implements AnInterface {
-        private String theName;
-
-        AnImplementation() {
-        }
-
-        AnImplementation(String name) {
-            theName = name;
-        }
-
-        @Override
-        public String getName() {
-            return theName;
-        }
-    }
-
-    static class AnInterfaceSerializer extends StdSerializer<AnInterface> {
-        AnInterfaceSerializer() {
-            super(AnInterface.class);
-        }
-
-        @Override
-        public void serialize(AnInterface anInterface, JsonGenerator jsonGenerator,
-                              SerializerProvider serializerProvider) throws IOException {
-            jsonGenerator.writeStartObject();
-            jsonGenerator.writeFieldName("name");
-            jsonGenerator.writeString(anInterface.getName());
-            jsonGenerator.writeEndObject();
-        }
-    }
-
-    static class AnInterfaceDeserializer extends StdDeserializer<AnInterface> {
-        AnInterfaceDeserializer() {
-            super(AnInterface.class);
-        }
-
-        @Override
-        public AnInterface deserialize(JsonParser jp, DeserializationContext ctxt)
-                throws IOException {
-            if (jp.getCurrentToken() != JsonToken.START_OBJECT) {
-                throw new AssertionError("Expected start object.");
-            }
-
-            String name = null;
-
-            while (jp.nextToken() != JsonToken.END_OBJECT) {
-                switch (jp.getCurrentName()) {
-                    case "name":
-                        name = jp.getValueAsString();
-                        break;
-                }
-            }
-
-            return new AnImplementation(name);
-        }
-    }
 
     interface Service {
         @POST("/")
         Request<AnImplementation> anImplementation(@Body AnImplementation impl);
 
+        @GET("/")
+        Request<AnImplementation> anImplementation();
+
         @POST("/")
         Request<AnInterface> anInterface(@Body AnInterface impl);
+
+        @GET("/")
+        Request<AnInterface> anInterface();
     }
 
     @Rule
@@ -147,7 +92,18 @@ public class JacksonConverterFactoryTest {
     }
 
     @Test
-    public void anInterface() throws IOException, InterruptedException, ExecutionException {
+    public void anInterfaceGet() throws IOException, InterruptedException, ExecutionException {
+        server.enqueue(new MockResponse().setBody("{\"name\":\"value\"}"));
+
+        AnInterface body = service.anInterface().getFuture().get();
+        assertThat(body.getName()).isEqualTo("value");
+
+        RecordedRequest request = server.takeRequest();
+        assertThat(request.getBody().size()).isEqualTo(0);
+    }
+
+    @Test
+    public void anInterfacePost() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(new MockResponse().setBody("{\"name\":\"value\"}"));
 
         AnInterface body = service.anInterface(new AnImplementation("value")).getFuture().get();
@@ -159,7 +115,7 @@ public class JacksonConverterFactoryTest {
     }
 
     @Test
-    public void anImplementation() throws IOException, InterruptedException, ExecutionException {
+    public void anImplementationPost() throws IOException, InterruptedException, ExecutionException {
         server.enqueue(new MockResponse().setBody("{\"theName\":\"value\"}"));
 
         AnImplementation body = service.anImplementation(new AnImplementation("value"))
@@ -170,6 +126,20 @@ public class JacksonConverterFactoryTest {
         // TODO figure out how to get Jackson to stop using AnInterface's serializer here.
         assertThat(request.getBody().readUtf8()).isEqualTo("{\"name\":\"value\"}");
         assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
+    }
+
+    @Test
+    public void anImplementationGet() throws IOException, InterruptedException, ExecutionException {
+        server.enqueue(new MockResponse().setBody("{\"theName\":\"value\"}"));
+
+        AnImplementation body = service.anImplementation()
+                .getFuture().get();
+        assertThat(body.theName).isEqualTo("value");
+
+        RecordedRequest request = server.takeRequest();
+        // TODO figure out how to get Jackson to stop using AnInterface's serializer here.
+        assertThat(request.getBody().size()).isEqualTo(0);
+
     }
 
     public void after() {
