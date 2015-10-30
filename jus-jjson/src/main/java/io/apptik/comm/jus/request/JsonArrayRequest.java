@@ -16,10 +16,6 @@
 
 package io.apptik.comm.jus.request;
 
-
-import org.djodjo.json.JsonArray;
-import org.djodjo.json.JsonElement;
-
 import java.io.IOException;
 
 import io.apptik.comm.jus.NetworkRequest;

@@ -17,10 +17,6 @@
 
 package io.apptik.comm.jus.converter;
 
-import org.djodjo.json.JsonArray;
-import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonObject;
-
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 

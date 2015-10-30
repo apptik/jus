@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2015 AppTik Project
  *
@@ -17,7 +16,6 @@
 
 package io.apptik.comm.jus.converter;
 
-import org.djodjo.json.JsonElement;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;

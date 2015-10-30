@@ -17,9 +17,6 @@
 
 package io.apptik.comm.jus.converter;
 
-import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonObject;
-
 import java.io.IOException;
 import java.io.Reader;
 

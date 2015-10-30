@@ -16,8 +16,6 @@
 
 package io.apptik.comm.jus.converter;
 
-import org.djodjo.json.JsonArray;
-import org.djodjo.json.JsonElement;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -25,6 +23,8 @@ import java.io.Reader;
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
+
+;
 
 public final class JJsonArrayResponseConverter implements Converter<NetworkResponse, JsonArray> {
 
