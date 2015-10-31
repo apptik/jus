@@ -19,6 +19,7 @@ package io.apptik.comm.jus.request;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
+import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 
@@ -32,6 +33,9 @@ public class GsonRequest<T> extends Request<T> {
 
     public GsonRequest(String method, HttpUrl url, TypeAdapter<T> typeAdapter) {
         super(method, url, new GsonResponseConverter<>(typeAdapter));
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json")
+                .build());
     }
 
     public GsonRequest(String method, HttpUrl url, Class<T> tClass, Gson gson) {
@@ -44,6 +48,9 @@ public class GsonRequest<T> extends Request<T> {
 
     public GsonRequest(String method, String url, TypeAdapter<T> typeAdapter) {
         super(method, url, new GsonResponseConverter<>(typeAdapter));
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json")
+                .build());
     }
 
     public GsonRequest(String method, String url, Class<T> tClass, Gson gson) {
@@ -54,20 +61,26 @@ public class GsonRequest<T> extends Request<T> {
         this(method, url, tClass, new Gson());
     }
 
-    public <R> GsonRequest<T> setRequestData(R requestData, Gson gson, TypeAdapter<R> adapter) {
+    public <R> GsonRequest<T> setRequestData(R requestData, Gson gson, TypeAdapter adapter) {
         try {
             super.setRequestData(requestData, new GsonRequestConverter<>(gson, adapter));
         } catch (IOException e) {
             throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
         }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
-                .setHeader("Accept", "application/json; charset=UTF-8")
+                .setHeader("Accept", "application/json")
                 .build());
         return this;
     }
 
     public <R> GsonRequest<T> setRequestData(R requestData, Gson gson) {
-        return setRequestData(requestData, gson, gson.getAdapter((Class<R>) requestData.getClass()));
+        TypeAdapter<?> adapter;
+        if(requestData==null) {
+            adapter = gson.getAdapter(Object.class);
+        } else {
+             adapter = gson.getAdapter(TypeToken.get(requestData.getClass()));
+        }
+        return setRequestData(requestData, gson, adapter);
     }
 
     public <R> GsonRequest<T> setRequestData(R requestData) {

@@ -24,15 +24,22 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JJsonRequestConverter;
 import io.apptik.comm.jus.converter.JJsonResponseConverter;
 import io.apptik.comm.jus.http.HttpUrl;
+import io.apptik.json.JsonElement;
 
 public class JsonElementRequest extends Request<JsonElement> {
 
     public JsonElementRequest(String method, HttpUrl url) {
         super(method, url, new JJsonResponseConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json")
+                .build());
     }
 
     public JsonElementRequest(String method, String url) {
         super(method, url, new JJsonResponseConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json")
+                .build());
     }
 
 
@@ -43,7 +50,7 @@ public class JsonElementRequest extends Request<JsonElement> {
             throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
         }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
-                .setHeader("Accept", "application/json; charset=UTF-8")
+                .setHeader("Accept", "application/json")
                 .build());
         return this;
     }

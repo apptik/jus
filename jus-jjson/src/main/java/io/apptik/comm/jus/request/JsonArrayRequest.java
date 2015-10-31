@@ -23,15 +23,23 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.converter.JJsonArrayResponseConverter;
 import io.apptik.comm.jus.converter.JJsonRequestConverter;
 import io.apptik.comm.jus.http.HttpUrl;
+import io.apptik.json.JsonArray;
+import io.apptik.json.JsonElement;
 
 public class JsonArrayRequest extends Request<JsonArray> {
 
     public JsonArrayRequest(String method, HttpUrl url) {
         super(method, url, new JJsonArrayResponseConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json")
+                .build());
     }
 
     public JsonArrayRequest(String method, String url) {
         super(method, url, new JJsonArrayResponseConverter());
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/json")
+                .build());
     }
     
     public JsonArrayRequest setRequestData(JsonElement requestData) {
@@ -41,7 +49,7 @@ public class JsonArrayRequest extends Request<JsonArray> {
             throw new RuntimeException("Unable to convert " + requestData + " to NetworkRequest", e);
         }
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
-                .setHeader("Accept", "application/json; charset=UTF-8")
+                .setHeader("Accept", "application/json")
                 .build());
         return this;
     }

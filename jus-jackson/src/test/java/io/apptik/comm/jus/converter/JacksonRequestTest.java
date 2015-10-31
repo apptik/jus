@@ -9,6 +9,7 @@ import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -51,6 +52,7 @@ public class JacksonRequestTest  {
                 .withFieldVisibility(JsonAutoDetect.Visibility.ANY));
 
     }
+    @After
     public void after() {
         queue.stopWhenDone();
     }
@@ -66,7 +68,7 @@ public class JacksonRequestTest  {
         assertThat(body.getName()).isEqualTo("value");
 
         RecordedRequest sRequest = server.takeRequest();
-       // assertThat(sRequest.getBody().readUtf8()).isEqualTo("{\"name\":\"value\"}");
+        assertThat(sRequest.getBody().size()).isEqualTo(0);
         assertThat(sRequest.getHeader("Accept")).isEqualTo("application/json");
     }
     @Test
@@ -97,7 +99,7 @@ public class JacksonRequestTest  {
 
         RecordedRequest sRequest = server.takeRequest();
         // TODO figure out how to get Jackson to stop using AnInterface's serializer here.
-        //assertThat(sRequest.getBody().readUtf8()).isEqualTo("{\"name\":\"value\"}");
+        assertThat(sRequest.getBody().size()).isEqualTo(0);
         assertThat(sRequest.getHeader("Accept")).isEqualTo("application/json");
     }
 

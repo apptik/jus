@@ -23,6 +23,8 @@ import java.io.Reader;
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
+import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 
 public final class JJsonObjectResponseConverter implements Converter<NetworkResponse, JsonObject> {
 

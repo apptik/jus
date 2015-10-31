@@ -232,6 +232,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return cloned;
     }
 
+    public Converter<NetworkResponse, T> getConverterFromResponse() {
+        return converterFromResponse;
+    }
+
     /**
      * Return the method for this request.  Can be one of the values in {@link Method}.
      */
@@ -245,6 +249,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public HttpUrl getUrl() {
         return url;
     }
+
+
 
     /**
      * Returns the URL String of this request.

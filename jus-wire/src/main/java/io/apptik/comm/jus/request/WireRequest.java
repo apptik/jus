@@ -30,12 +30,45 @@ import io.apptik.comm.jus.http.HttpUrl;
 public class WireRequest<T extends Message> extends Request<T> {
 
     public WireRequest(String method, HttpUrl url, ProtoAdapter<T> adapter) {
-        super(method, url, new WireResponseConverter<T>(adapter));
+        super(method, url, getWireResponseConverter(adapter));
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/x-protobuf")
+                .build());
     }
 
     public WireRequest(String method, HttpUrl url, Class<T> cls) {
-        this(method, url, ProtoAdapter.get(cls));
+        this(method, url, getAdapter(cls));
     }
+
+      public WireRequest(String method, String url, ProtoAdapter<T> adapter) {
+        super(method, url, getWireResponseConverter(adapter));
+        setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                .setHeader("Accept", "application/x-protobuf")
+                .build());
+    }
+
+    public WireRequest(String method, String url, Class<T> cls) {
+        this(method, url, getAdapter(cls));
+    }
+
+    static private WireResponseConverter getWireResponseConverter(ProtoAdapter adapter) {
+        if(adapter==null)
+            throw new IllegalArgumentException("adapter==null");
+        return new WireResponseConverter(adapter);
+    }
+
+    static private ProtoAdapter getAdapter(Class cls) {
+        if (!(cls instanceof Class<?>)) {
+            throw new IllegalArgumentException("Unable to create converter for " + cls);
+        }
+        Class<?> c = (Class<?>) cls;
+        if (!Message.class.isAssignableFrom(c)) {
+            throw new IllegalArgumentException("Unable to create converter for " + cls);
+        }
+        return ProtoAdapter.get(cls);
+    }
+
+
 
     public <R extends Message> WireRequest<T> setRequestData(R requestData, ProtoAdapter<R> adapter) {
         try {

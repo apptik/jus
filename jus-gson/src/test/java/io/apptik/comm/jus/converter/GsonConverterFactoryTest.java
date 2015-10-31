@@ -18,14 +18,11 @@ package io.apptik.comm.jus.converter;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.TypeAdapter;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
-import com.google.gson.stream.JsonWriter;
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
 import com.squareup.okhttp.mockwebserver.RecordedRequest;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,6 +30,7 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
+import io.apptik.comm.jus.Common;
 import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
@@ -40,58 +38,17 @@ import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Body;
 import io.apptik.comm.jus.retro.http.POST;
 
+import static io.apptik.comm.jus.Common.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class GsonConverterFactoryTest {
-    interface AnInterface {
-        String getName();
-    }
-
-    static class AnImplementation implements AnInterface {
-        private final String theName;
-
-        AnImplementation(String name) {
-            theName = name;
-        }
-
-        @Override
-        public String getName() {
-            return theName;
-        }
-    }
-
-    static class AnInterfaceAdapter extends TypeAdapter<AnInterface> {
-        @Override
-        public void write(JsonWriter jsonWriter, AnInterface anInterface) throws IOException {
-            jsonWriter.beginObject();
-            jsonWriter.name("name").value(anInterface.getName());
-            jsonWriter.endObject();
-        }
-
-        @Override
-        public AnInterface read(JsonReader jsonReader) throws IOException {
-            jsonReader.beginObject();
-
-            String name = null;
-            while (jsonReader.peek() != JsonToken.END_OBJECT) {
-                switch (jsonReader.nextName()) {
-                    case "name":
-                        name = jsonReader.nextString();
-                        break;
-                }
-            }
-
-            jsonReader.endObject();
-            return new AnImplementation(name);
-        }
-    }
 
     interface Service {
         @POST("/")
-        Request<AnImplementation> anImplementation(@Body AnImplementation impl);
+        Request<Common.AnImplementation> anImplementation(@Body AnImplementation impl);
 
         @POST("/")
-        Request<AnInterface> anInterface(@Body AnInterface impl);
+        Request<Common.AnInterface> anInterface(@Body AnInterface impl);
     }
 
     @Rule
@@ -150,6 +107,7 @@ public final class GsonConverterFactoryTest {
         assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
     }
 
+    @After
     public void after() {
         queue.stopWhenDone();
     }

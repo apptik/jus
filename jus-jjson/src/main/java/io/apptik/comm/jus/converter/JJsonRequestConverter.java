@@ -26,6 +26,7 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.http.MediaType;
 import io.apptik.comm.jus.toolbox.Utils;
+import io.apptik.json.JsonElement;
 
 public final class JJsonRequestConverter implements Converter<JsonElement, NetworkRequest> {
     private static final MediaType MEDIA_TYPE = MediaType.parse("application/json; charset=UTF-8");

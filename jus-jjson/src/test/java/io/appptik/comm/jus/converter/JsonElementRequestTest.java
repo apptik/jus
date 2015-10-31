@@ -1,19 +1,5 @@
-/*
- * Copyright (C) 2013 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.appptik.comm.jus.converter;
+
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
 import com.squareup.okhttp.mockwebserver.MockWebServer;
@@ -30,25 +16,26 @@ import java.util.concurrent.ExecutionException;
 import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.converter.JJsonConverterFactory;
-import io.apptik.comm.jus.retro.RetroProxy;
-import io.apptik.comm.jus.retro.http.Body;
-import io.apptik.comm.jus.retro.http.POST;
+import io.apptik.comm.jus.converter.JJsonRequestConverter;
+import io.apptik.comm.jus.request.JsonArrayRequest;
+import io.apptik.comm.jus.request.JsonObjectRequest;
 import io.apptik.json.JsonArray;
 import io.apptik.json.JsonObject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class JJsonConverterFactoryTest {
+public class JsonElementRequestTest {
+    class Service {
 
+        Request<JsonObject> aJsonObject(JsonObject jsonObject) throws IOException {
+            return queue.add(new JsonObjectRequest("POST",server.url("/").toString())
+            .setRequestData(jsonObject, new JJsonRequestConverter()));
+        }
 
-
-    interface Service {
-        @POST("/")
-        Request<JsonObject> aJsonObject(@Body JsonObject jsonObject);
-
-        @POST("/")
-        Request<JsonArray> aJsonArray(@Body JsonArray jsonArray);
+        Request<JsonArray> aJsonArray(JsonArray jsonArray) throws IOException {
+            return queue.add(new JsonArrayRequest("POST", server.url("/").toString())
+                    .setRequestData(jsonArray, new JJsonRequestConverter()));
+        }
     }
 
     @Rule
@@ -61,12 +48,7 @@ public class JJsonConverterFactoryTest {
     public void setUp() {
         queue = Jus.newRequestQueue();
 
-        RetroProxy retroProxy = new RetroProxy.Builder()
-                .baseUrl(server.url("/").toString())
-                .addConverterFactory(JJsonConverterFactory.create())
-                .requestQueue(queue)
-                .build();
-        service = retroProxy.create(Service.class);
+        service = new Service();
     }
 
     @Test
@@ -79,6 +61,7 @@ public class JJsonConverterFactoryTest {
         RecordedRequest request = server.takeRequest();
         assertThat(request.getBody().readUtf8()).isEqualTo("{\"name\":\"value\"}");
         assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
+        assertThat(request.getHeader("Accept")).isEqualTo("application/json");
     }
 
     @Test
@@ -94,6 +77,7 @@ public class JJsonConverterFactoryTest {
 
         assertThat(request.getBody().readUtf8()).isEqualTo("[\"name\",\"value\"]");
         assertThat(request.getHeader("Content-Type")).isEqualTo("application/json; charset=UTF-8");
+        assertThat(request.getHeader("Accept")).isEqualTo("application/json");
     }
 
     @After

@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2015 AppTik Project
- * Copyright (C) 2013 Square, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package io.apptik.comm.jus.converter;
 
 import com.squareup.okhttp.mockwebserver.MockResponse;
@@ -33,7 +17,7 @@ import java.util.concurrent.ExecutionException;
 import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.retro.RetroProxy;
+import io.apptik.comm.jus.request.WireRequest;
 import io.apptik.comm.jus.retro.http.Body;
 import io.apptik.comm.jus.retro.http.GET;
 import io.apptik.comm.jus.retro.http.POST;
@@ -43,37 +27,46 @@ import okio.ByteString;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.fail;
 
-public final class WireConverterFactoryTest {
-    interface Service {
-        @GET("/")
-        Request<Phone> get();
+public class WireRequestTest {
+    class Service {
+
+        Request<Phone> get() {
+            return queue.add(new WireRequest<>("GET", server.url("/").toString(), Phone.class));
+        }
 
         @POST("/")
-        Request<Phone> post(@Body Phone impl);
+        Request<Phone> post(@Body Phone impl) {
+            return queue.add(new WireRequest<>("POST", server.url("/").toString(), Phone.class)
+                    .setRequestData(impl, Phone.ADAPTER));
+        }
 
         @GET("/")
-        Request<CharSequence> wrongClass();
+        Request<CharSequence> wrongClass() {
+            return queue.add(new WireRequest("GET", server.url("/").toString(), CharSequence.class));
+        }
 
         @GET("/")
-        Request<List<CharSequence>> wrongType();
+        Request<List<CharSequence>> wrongType() {
+            return queue.add(new WireRequest("GET", server.url("/").toString(), List.class));
+        }
     }
 
     @Rule
     public final MockWebServer server = new MockWebServer();
 
-    private Service service;
     private RequestQueue queue;
-
+    private Service service;
 
     @Before
     public void setUp() {
         queue = Jus.newRequestQueue();
-        RetroProxy retroProxy = new RetroProxy.Builder()
-                .baseUrl(server.url("/").toString())
-                .addConverterFactory(WireConverterFactory.create())
-                .requestQueue(queue)
-                .build();
-        service = retroProxy.create(Service.class);
+        service = new Service();
+
+    }
+
+    @After
+    public void after() {
+        queue.stopWhenDone();
     }
 
     @Test
@@ -87,7 +80,9 @@ public final class WireConverterFactoryTest {
         RecordedRequest request = server.takeRequest();
         assertThat(request.getBody().readByteString()).isEqualTo(encoded);
         assertThat(request.getHeader("Content-Type")).isEqualTo("application/x-protobuf");
+        assertThat(request.getHeader("Accept")).isEqualTo("application/x-protobuf");
     }
+
     @Test
     public void deserialize() throws IOException, InterruptedException, ExecutionException {
         ByteString encoded = ByteString.decodeBase64("Cg4oNTE5KSA4NjctNTMwOQ==");
@@ -98,8 +93,8 @@ public final class WireConverterFactoryTest {
 
         RecordedRequest request = server.takeRequest();
         assertThat(request.getBody().size()).isEqualTo(0);
+        assertThat(request.getHeader("Accept")).isEqualTo("application/x-protobuf");
     }
-
 
     @Test
     public void deserializeEmpty() throws IOException, ExecutionException, InterruptedException {
@@ -118,12 +113,7 @@ public final class WireConverterFactoryTest {
             service.wrongClass().getFuture().get();
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e).hasMessage("Unable to create converter for interface java.lang.CharSequence\n"
-                    + "    for method Service.wrongClass");
-            assertThat(e.getCause()).hasMessage(
-                    "Could not locate Response converter for interface java.lang.CharSequence. Tried:\n"
-                            + " * io.apptik.comm.jus.converter.BasicConverterFactory\n"
-                            + " * io.apptik.comm.jus.converter.WireConverterFactory");
+            assertThat(e).hasMessage("Unable to create converter for interface java.lang.CharSequence");
         }
     }
 
@@ -136,12 +126,7 @@ public final class WireConverterFactoryTest {
             service.wrongType();
             fail();
         } catch (IllegalArgumentException e) {
-            assertThat(e).hasMessage("Unable to create converter for java.util.List<java.lang.CharSequence>\n"
-                    + "    for method Service.wrongType");
-            assertThat(e.getCause()).hasMessage(
-                    "Could not locate Response converter for java.util.List<java.lang.CharSequence>. Tried:\n"
-                            + " * io.apptik.comm.jus.converter.BasicConverterFactory\n"
-                            + " * io.apptik.comm.jus.converter.WireConverterFactory");
+            assertThat(e).hasMessage("Unable to create converter for interface java.util.List");
         }
     }
 
@@ -166,8 +151,4 @@ public final class WireConverterFactoryTest {
         }
     }
 
-    @After
-    public void after() {
-        queue.stopWhenDone();
-    }
 }

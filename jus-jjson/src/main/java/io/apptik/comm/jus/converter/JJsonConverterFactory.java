@@ -23,6 +23,9 @@ import java.lang.reflect.Type;
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.json.JsonArray;
+import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 
 /**
  * A {@linkplain Converter.Factory converter} which uses JustJson.
