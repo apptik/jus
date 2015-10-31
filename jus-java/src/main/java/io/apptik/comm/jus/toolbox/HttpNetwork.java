@@ -97,7 +97,8 @@ public class HttpNetwork implements Network {
                     String contentLen = httpResponse.headers.get(HTTP.CONTENT_LEN);
                     if(contentLen!=null) {
                         int cLen = Integer.parseInt(contentLen);
-                        if(cLen>httpResponse.data.length) {
+                        if(cLen>httpResponse.data.length
+                                && request.getMethod()!=Request.Method.HEAD) {
                             throw new NetworkError("Response Body not completely received",
                                     httpResponse);
                         }

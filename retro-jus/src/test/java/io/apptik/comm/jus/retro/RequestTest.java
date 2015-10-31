@@ -42,8 +42,10 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
+import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.retro.http.Body;
 import io.apptik.comm.jus.retro.http.GET;
+import io.apptik.comm.jus.retro.http.HEAD;
 import io.apptik.comm.jus.retro.http.POST;
 import io.apptik.comm.jus.retro.http.Streaming;
 
@@ -65,6 +67,9 @@ public final class RequestTest {
     interface Service {
         @GET("/")
         Request<String> getString();
+
+        @HEAD("/")
+        Request<NetworkResponse> getHead();
 
         @GET("/")
         Request<Number> getNumber();
@@ -98,6 +103,24 @@ public final class RequestTest {
         assertThat(response.isSuccess()).isTrue();
         assertThat(response.result).isEqualTo("Hi");
         assertThat(response.error).isNull();
+    }
+
+    @Test
+    public void httpHead200Sync() throws IOException, ExecutionException, InterruptedException {
+        retroProxy = new RetroProxy.Builder()
+                .baseUrl(server.url("/").toString())
+                .build();
+        Service example = retroProxy.create(Service.class);
+
+        server.enqueue(new MockResponse().setBody("Hello"));
+
+        Request<NetworkResponse> request = example.getHead();
+        NetworkResponse networkResponse = request.getFuture().get();
+        Response<NetworkResponse> response = request.getRawResponse();
+        assertThat(response.isSuccess()).isTrue();
+        assertThat(response.error).isNull();
+        assertThat(networkResponse.data.length).isEqualTo(0);
+        assertThat(networkResponse.headers.get(HTTP.CONTENT_LEN)).isEqualTo("5");
     }
 
     @Test
