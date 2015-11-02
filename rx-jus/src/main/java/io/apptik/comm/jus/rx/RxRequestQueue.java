@@ -50,8 +50,8 @@ public class RxRequestQueue extends RequestQueue{
     }
 
     @Override
-    public <T> Request<T> add(Request<T> request) {
-       Observable<JusEvent> jusEventObservable = RxRequest.allEventsObservable(request);
+    public <R extends Request<T>, T> R add(R request) {
+        Observable<JusEvent> jusEventObservable = RxRequest.allEventsObservable(request);
         jusEventObservable.subscribe(allEventSubject);
         return super.add(request);
     }

@@ -1,7 +1,10 @@
 #jus
 
 Flexible and Easy HTTP/REST(not 100% yet) Communication library for Java and Android
-Based on Volley, inspired by many
+Based on Volley, inspired by many.
+
+* it is like Volley but much easier
+* it is like Retrofit but infinitely more flexible
 
 
 ##Download
