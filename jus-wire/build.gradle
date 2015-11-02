@@ -23,7 +23,6 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile project(':retro-jus')
     compile 'com.squareup.wire:wire-runtime:2.0.0'
 
     testCompile 'junit:junit:[4,)'

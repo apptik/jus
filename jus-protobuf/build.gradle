@@ -23,7 +23,6 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile project(':retro-jus')
     compile 'com.google.protobuf:protobuf-java:3.0.0-beta-1'
 
     testCompile 'junit:junit:[4,)'

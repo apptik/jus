@@ -24,7 +24,6 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile project(':retro-jus')
     compile 'com.google.code.gson:gson:2.4'
 
     testCompile 'junit:junit:[4,)'

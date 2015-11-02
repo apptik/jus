@@ -23,7 +23,6 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile project(':retro-jus')
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
 
     testCompile 'junit:junit:[4,)'

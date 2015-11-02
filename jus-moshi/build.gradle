@@ -24,7 +24,6 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile project(':retro-jus')
     compile 'com.squareup.moshi:moshi:1.0.0'
 
     testCompile 'junit:junit:[4,)'

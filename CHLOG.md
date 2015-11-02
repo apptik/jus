@@ -1,7 +1,21 @@
 Change Log
 ==========
 
-NEXT Version 0.6.0 *(FUTURE-Oct-2015)*
+NEXT Version 0.6.2 *(FUTURE-Nov-2015)*
+----------------------------------
+
+Version 0.6.1 *(2-Nov-2015)*
+----------------------------------
+* Change: make all MediaType parameters accessible (not only charset)
+* Change: HttpUrl Handle null fragments & encode more (curly brackets) 
+* New: Add Converter.Factory list to the queue
+* Fix: head response MUST not try to parse body (we still try to parse but dont throw Ex)
+* Change: add implied 'Accept' header to custom requests
+* New: add setPriority to the request and Annotation to RetroProxy
+* New: add shouldCache annotation in RetroProxy 
+* New: add tag annotation to retroproxy
+
+Version 0.6.0 *(29-Oct-2015)*
 ----------------------------------
 * Fix: fix logs
 * New: add authenticator for each `Request` not global for the `Network`
