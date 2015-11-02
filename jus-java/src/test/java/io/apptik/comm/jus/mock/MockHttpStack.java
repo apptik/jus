@@ -18,18 +18,19 @@
 
 package io.apptik.comm.jus.mock;
 
-import io.apptik.comm.jus.error.AuthFailureError;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.stack.HttpStack;
-
-import org.apache.http.HttpResponse;
-
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.apptik.comm.jus.NetworkResponse;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.stack.HttpStack;
+import io.apptik.comm.jus.toolbox.ByteArrayPool;
+
 public class MockHttpStack implements HttpStack {
 
-    private HttpResponse mResponseToReturn;
+    private NetworkResponse mResponseToReturn;
 
     private String mLastUrl;
 
@@ -49,26 +50,24 @@ public class MockHttpStack implements HttpStack {
         return mLastPostBody;
     }
 
-    public void setResponseToReturn(HttpResponse response) {
+    public void setResponseToReturn(NetworkResponse response) {
         mResponseToReturn = response;
     }
 
     @Override
-    public HttpResponse performRequest(Request<?,?> request, Map<String, String> additionalHeaders)
-            throws AuthFailureError {
-        mLastUrl = request.getUrl();
+    public NetworkResponse performRequest(Request<?> request, Map<String,
+            String> additionalHeaders, ByteArrayPool byteArrayPool)
+            throws IOException, AuthFailureError {
+        mLastUrl = request.getUrl().toString();
         mLastHeaders = new HashMap<String, String>();
         if (request.getHeaders() != null) {
-            mLastHeaders.putAll(request.getHeaders());
+            mLastHeaders.putAll(request.getHeaders().toMap());
         }
         if (additionalHeaders != null) {
             mLastHeaders.putAll(additionalHeaders);
         }
-        try {
             mLastPostBody = request.getBody();
-        } catch (AuthFailureError e) {
-            mLastPostBody = null;
-        }
+
         return mResponseToReturn;
     }
 }

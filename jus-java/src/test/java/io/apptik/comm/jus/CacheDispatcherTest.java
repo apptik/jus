@@ -18,21 +18,21 @@
 
 package io.apptik.comm.jus;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import io.apptik.comm.jus.mock.MockCache;
 import io.apptik.comm.jus.mock.MockRequest;
 import io.apptik.comm.jus.mock.MockResponseDelivery;
 import io.apptik.comm.jus.mock.WaitableQueue;
 import io.apptik.comm.jus.utils.CacheTestUtils;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
-
-@RunWith(RobolectricTestRunner.class)
 @SuppressWarnings("rawtypes")
 public class CacheDispatcherTest {
     private CacheDispatcher mDispatcher;

@@ -18,17 +18,14 @@
 
 package io.apptik.comm.jus;
 
-import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.Request.Priority;
-import io.apptik.comm.jus.Response;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 
-import static org.junit.Assert.*;
+import io.apptik.comm.jus.Request.Priority;
 
-@RunWith(RobolectricTestRunner.class)
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 public class RequestTest {
     
     @Test public void compareTo() {
@@ -73,8 +70,6 @@ public class RequestTest {
     }
 
     @Test public void urlParsing() {
-        UrlParseRequest nullUrl = new UrlParseRequest(null);
-        assertEquals(0, nullUrl.getTrafficStatsTag());
         UrlParseRequest emptyUrl = new UrlParseRequest("");
         assertEquals(0, emptyUrl.getTrafficStatsTag());
         UrlParseRequest noHost = new UrlParseRequest("http:///");

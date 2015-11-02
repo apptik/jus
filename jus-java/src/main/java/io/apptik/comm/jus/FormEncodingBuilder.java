@@ -87,6 +87,12 @@ public final class FormEncodingBuilder {
         return this;
     }
 
+    public NetworkRequest.Builder builder() {
+        return new NetworkRequest.Builder()
+                .setContentType(CONTENT_TYPE)
+                .setBody(content.readByteArray());
+    }
+
     public NetworkRequest build() {
         return new NetworkRequest.Builder()
                 .setContentType(CONTENT_TYPE)

@@ -18,22 +18,23 @@
 
 package io.apptik.comm.jus;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.util.Arrays;
+
 import io.apptik.comm.jus.mock.MockCache;
 import io.apptik.comm.jus.mock.MockNetwork;
 import io.apptik.comm.jus.mock.MockRequest;
 import io.apptik.comm.jus.mock.MockResponseDelivery;
 import io.apptik.comm.jus.mock.WaitableQueue;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
 
-import java.util.Arrays;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
-
-@RunWith(RobolectricTestRunner.class)
 public class NetworkDispatcherTest {
     private NetworkDispatcher mDispatcher;
     private MockResponseDelivery mDelivery;

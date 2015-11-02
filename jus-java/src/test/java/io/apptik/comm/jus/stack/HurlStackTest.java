@@ -16,17 +16,16 @@
 
 package io.apptik.comm.jus.stack;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import io.apptik.comm.jus.Request.Method;
 import io.apptik.comm.jus.mock.MockHttpURLConnection;
 import io.apptik.comm.jus.mock.TestRequest;
 
-import io.apptik.comm.jus.stack.HurlStack;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 public class HurlStackTest {
 

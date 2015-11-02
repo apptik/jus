@@ -18,32 +18,22 @@
 
 package io.apptik.comm.jus.mock;
 
-import java.io.IOException;
-
-import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.utils.CacheTestUtils;
 
 public class MockyRequest extends Request<byte[]> {
+
+    public byte[] deliveredResponse;
+
     public MockyRequest() {
         this("http://foo.com", null);
     }
 
     public MockyRequest(String url, ErrorListener listener) {
-        super(Method.GET, url, new Converter<NetworkResponse, byte[]>() {
-            @Override
-            public byte[] convert(NetworkResponse value) throws IOException {
-                if (value.data != null) {
-                    return value.data;
-                } else {
-                    return new byte[0];
-                }
-            }
-        });
+        super(Method.GET, url, null);
         if(listener!=null) {
             addErrorListener(listener);
         }
@@ -67,6 +57,8 @@ public class MockyRequest extends Request<byte[]> {
     @Override
     protected void deliverResponse(byte[] response) {
         deliverResponse_called = true;
+        deliveredResponse = response;
+        super.deliverResponse(response);
     }
 
     public boolean deliverError_called = false;
@@ -100,7 +92,7 @@ public class MockyRequest extends Request<byte[]> {
     @Override
     protected Response<byte[]> parseNetworkResponse(NetworkResponse response) {
         parseResponse_called = true;
-        return Response.success(response.data, CacheTestUtils.makeRandomCacheEntry(response.data));
+        return super.parseNetworkResponse(response);
     }
 
 }

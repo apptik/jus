@@ -18,20 +18,17 @@
 
 package io.apptik.comm.jus;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import io.apptik.comm.jus.error.ServerError;
 import io.apptik.comm.jus.mock.MockRequest;
 import io.apptik.comm.jus.utils.CacheTestUtils;
 import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
-
-@RunWith(RobolectricTestRunner.class)
 public class ResponseDeliveryTest {
 
     private ExecutorDelivery mDelivery;

@@ -18,12 +18,12 @@
 
 package io.apptik.comm.jus.toolbox;
 
+import org.junit.Test;
+
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 
 public class PoolingByteArrayOutputStreamTest {
     @Test public void pooledOneBuffer() throws IOException {

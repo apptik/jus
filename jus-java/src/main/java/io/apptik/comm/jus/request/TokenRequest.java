@@ -16,9 +16,8 @@
 
 package io.apptik.comm.jus.request;
 
-import java.util.Map;
-
-import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.FormEncodingBuilder;
+import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.toolbox.Base64;
 
 public class TokenRequest extends StringRequest {
@@ -30,28 +29,21 @@ public class TokenRequest extends StringRequest {
         super(method, url);
         this.key = key;
         this.secret = secret;
+        this.setNetworkRequest(
+                new FormEncodingBuilder().add("grant_type", "client_credentials").build());
+
+        if(key!=null && secret!=null) {
+            this.setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
+                    .setHeader("Authorization", "Basic "
+                            + Base64.encodeToString((key + ":" + secret).getBytes(),
+                            Base64.NO_WRAP))
+                    .build());
+        }
     }
 
     @Override
     public TokenRequest clone() {
-        return new TokenRequest(getMethod(), getUrlString(), key, secret);
-    }
-
-    @Override
-    protected Map<String, String> getParams() throws AuthFailureError {
-        Map<String, String> params = super.getParams();
-        params.put("grant_type", "client_credentials");
-        return params;
-    }
-
-    @Override
-    public Map<String, String> getHeadersMap() {
-        Map<String, String> headers = super.getHeadersMap();
-        String auth = "Basic "
-                + Base64.encodeToString((key + ":" + secret).getBytes(),
-                Base64.NO_WRAP)
-                ;
-        headers.put("Authorization", auth);
-        return headers;
+        return (TokenRequest) new TokenRequest(getMethod(), getUrlString(), key, secret)
+                .setNetworkRequest(this.getNetworkRequest());
     }
 }

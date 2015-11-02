@@ -23,6 +23,7 @@ import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.error.ServerError;
+import io.apptik.comm.jus.http.Headers;
 
 public class MockNetwork implements Network {
     public final static int ALWAYS_THROW_EXCEPTIONS = -1;
@@ -42,10 +43,10 @@ public class MockNetwork implements Network {
         mDataToReturn = data;
     }
 
-    public Request<?,?> requestHandled = null;
+    public Request<?> requestHandled = null;
 
     @Override
-    public NetworkResponse performRequest(Request<?,?> request) throws JusError {
+    public NetworkResponse performRequest(Request<?> request) throws JusError {
         if (mNumExceptionsToThrow > 0 || mNumExceptionsToThrow == ALWAYS_THROW_EXCEPTIONS) {
             if (mNumExceptionsToThrow != ALWAYS_THROW_EXCEPTIONS) {
                 mNumExceptionsToThrow--;
@@ -54,7 +55,7 @@ public class MockNetwork implements Network {
         }
 
         requestHandled = request;
-        return new NetworkResponse(mDataToReturn);
+        return new NetworkResponse(200, mDataToReturn, new Headers.Builder().build(), 0);
     }
 
 }

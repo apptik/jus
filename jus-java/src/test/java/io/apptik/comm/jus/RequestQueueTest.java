@@ -18,46 +18,41 @@
 
 package io.apptik.comm.jus;
 
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import io.apptik.comm.jus.Request.Priority;
-import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.mock.MockNetwork;
 import io.apptik.comm.jus.mock.MockRequest;
+import io.apptik.comm.jus.mock.MockyRequest;
 import io.apptik.comm.jus.toolbox.NoCache;
 import io.apptik.comm.jus.utils.CacheTestUtils;
 import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
 
-import android.os.SystemClock;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.robolectric.RobolectricTestRunner;
-import org.robolectric.annotation.Config;
-import org.robolectric.annotation.Implements;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.Assert.*;
-
-// TODO: Resurrect these tests when we have something like a finish() observer.
-// They are really gross as-is and depend on a bunch of sleeping and whatnot.
-@Ignore
-@RunWith(RobolectricTestRunner.class)
 public class RequestQueueTest {
     private ResponseDelivery mDelivery;
 
-    @Before public void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         mDelivery = new ImmediateResponseDelivery();
     }
 
     /**
      * Make a list of requests with random priorities.
+     *
      * @param count Number of requests to make
      */
     private List<MockRequest> makeRequests(int count) {
@@ -75,23 +70,51 @@ public class RequestQueueTest {
         return requests;
     }
 
-    @Test public void add_requestProcessedInCorrectOrder() throws Exception {
+    @Test
+    public void useConverterFactories() throws Exception {
+        MockNetwork network = new MockNetwork();
+        byte[] dataToReturn = new byte[]{1, 2, 3, 4};
+        network.setDataToReturn(dataToReturn);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 4, mDelivery);
+        queue.addConverterFactory(new Converter.Factory() {
+            @Override
+            public Converter<NetworkResponse, ?> fromResponse(Type type, Annotation[] annotations) {
+                return new Converter<NetworkResponse, byte[]>() {
+                    @Override
+                    public byte[] convert(NetworkResponse value) throws IOException {
+                        return value.data;
+                    }
+                };
+            }
+        });
+        queue.start();
+
+        MockyRequest request = queue.add(new MockyRequest());
+        request.getFuture().get();
+
+        assertEquals(dataToReturn, request.getRawResponse().result);
+
+        queue.stopWhenDone();
+    }
+
+    @Test
+    public void add_requestProcessedInCorrectOrder() throws Exception {
         int requestsToMake = 100;
 
         OrderCheckingNetwork network = new OrderCheckingNetwork();
         RequestQueue queue = new RequestQueue(new NoCache(), network, 1, mDelivery);
 
-        for (Request<?,?> request : makeRequests(requestsToMake)) {
+        for (Request<?> request : makeRequests(requestsToMake)) {
             queue.add(request);
         }
 
-        network.setExpectedRequests(requestsToMake);
         queue.start();
-        network.waitUntilExpectedDone(2000); // 2 seconds
-        queue.stop();
+
+        queue.stopWhenDone();
     }
 
-    @Test public void add_dedupeByCacheKey() throws Exception {
+    @Test
+    public void add_dedupeByCacheKey() throws Exception {
         OrderCheckingNetwork network = new OrderCheckingNetwork();
         final AtomicInteger parsed = new AtomicInteger();
         final AtomicInteger delivered = new AtomicInteger();
@@ -106,16 +129,16 @@ public class RequestQueueTest {
                 return super.parseNetworkResponse(response);
             }
         };
-        network.setExpectedRequests(2);
         RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
         queue.add(req1);
         queue.add(req2);
         queue.start();
-        network.waitUntilExpectedDone(2000);
-        queue.stop();
+
+        queue.stopWhenDone();
     }
 
-    @Test public void cancelAll_onlyCorrectTag() throws Exception {
+    @Test
+    public void cancelAll_onlyCorrectTag() throws Exception {
         MockNetwork network = new MockNetwork();
         RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
         Object tagA = new Object();
@@ -139,28 +162,16 @@ public class RequestQueueTest {
         assertFalse(req2.cancel_called); // B not cancelled
         assertTrue(req3.cancel_called); // A cancelled
         assertFalse(req4.cancel_called); // A added after cancel not cancelled
+
+        queue.stopWhenDone();
     }
 
     private class OrderCheckingNetwork implements Network {
         private Priority mLastPriority = Priority.IMMEDIATE;
         private int mLastSequence = -1;
-        private Semaphore mSemaphore;
-
-        public void setExpectedRequests(int expectedRequests) {
-            // Leave one permit available so the waiter can find it.
-            expectedRequests--;
-            mSemaphore = new Semaphore(-expectedRequests);
-        }
-
-        public void waitUntilExpectedDone(long timeout)
-                throws InterruptedException, TimeoutError {
-            if (mSemaphore.tryAcquire(timeout, TimeUnit.MILLISECONDS) == false) {
-                throw new TimeoutError();
-            }
-        }
 
         @Override
-        public NetworkResponse performRequest(Request<?,?> request) {
+        public NetworkResponse performRequest(Request<?> request) {
             Priority thisPriority = request.getPriority();
             int thisSequence = request.getSequence();
 
@@ -176,8 +187,7 @@ public class RequestQueueTest {
             mLastSequence = thisSequence;
             mLastPriority = thisPriority;
 
-            mSemaphore.release();
-            return new NetworkResponse(new byte[16]);
+            return new NetworkResponse(200, new byte[16], null, 0);
         }
     }
 
@@ -196,7 +206,11 @@ public class RequestQueueTest {
         @Override
         protected Response<Object> parseNetworkResponse(NetworkResponse response) {
             mParsedCount.incrementAndGet();
-            SystemClock.sleep(mDelayMillis);
+            try {
+                Thread.sleep(mDelayMillis);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
             return Response.success(new Object(), CacheTestUtils.makeRandomCacheEntry(null));
         }
 

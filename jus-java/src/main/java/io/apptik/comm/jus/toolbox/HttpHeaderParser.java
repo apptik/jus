@@ -63,25 +63,30 @@ public class HttpHeaderParser {
             serverDate = parseDateAsEpoch(headerValue);
         }
 
+        //TODO check multiple cache and make stale if more than 1 value for given directive
         headerValues = headers.values("Cache-Control");
-        if (headerValue != null) {
+        if (headerValues != null && headerValues.size()>0) {
             hasCacheControl = true;
             for (int i = 0; i < headerValues.size(); i++) {
-                String token = headerValues.get(i).trim();
-                if (token.equals("no-cache") || token.equals("no-store")) {
-                    return null;
-                } else if (token.startsWith("max-age=")) {
-                    try {
-                        maxAge = Long.parseLong(token.substring(8));
-                    } catch (Exception e) {
+                String[] tokens = headerValues.get(i).trim().split(",");
+                for (int j = 0; j < tokens.length; j++) {
+                    String token = tokens[j].trim();
+                    if (token.equals("no-cache") || token.equals("no-store")) {
+                        return null;
+                    } else if (token.startsWith("max-age=")) {
+                        try {
+                            maxAge = Long.parseLong(token.substring(8));
+                        } catch (Exception e) {
+                        }
+                    } else if (token.startsWith("stale-while-revalidate=")) {
+                        try {
+                            staleWhileRevalidate = Long.parseLong(token.substring(23));
+                        } catch (Exception e) {
+                        }
+                    } else if (token.equals("must-revalidate") || token.equals("proxy-revalidate")) {
+
+                        mustRevalidate = true;
                     }
-                } else if (token.startsWith("stale-while-revalidate=")) {
-                    try {
-                        staleWhileRevalidate = Long.parseLong(token.substring(23));
-                    } catch (Exception e) {
-                    }
-                } else if (token.equals("must-revalidate") || token.equals("proxy-revalidate")) {
-                    mustRevalidate = true;
                 }
             }
         }

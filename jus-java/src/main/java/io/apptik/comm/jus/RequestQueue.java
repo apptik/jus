@@ -18,6 +18,8 @@
 
 package io.apptik.comm.jus;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,6 +34,9 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.apptik.comm.jus.auth.Authenticator;
+import io.apptik.comm.jus.converter.BasicConverterFactory;
+
+import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
 /**
  * A request dispatch queue with a threadId pool of dispatchers.
@@ -130,6 +135,7 @@ public class RequestQueue {
             new ArrayList<>();
 
     private final List<Authenticator.Factory> authenticatorFactories = new ArrayList<>();
+    final List<Converter.Factory> converterFactories = new ArrayList<>();
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -145,6 +151,7 @@ public class RequestQueue {
         mNetwork = network;
         mDispatchers = new NetworkDispatcher[threadPoolSize];
         mDelivery = delivery;
+        converterFactories.add(new BasicConverterFactory());
     }
 
     /**
@@ -308,7 +315,7 @@ public class RequestQueue {
      * @param request The request to service
      * @return The passed-in request
      */
-    public <T> Request<T> add(Request<T> request) {
+    public <R extends Request<T>, T> R add(R request) {
         for(Authenticator.Factory factory : authenticatorFactories) {
             Authenticator authenticator =
                     factory.forRequest(request.getUrl(), request.getNetworkRequest());
@@ -423,6 +430,48 @@ public class RequestQueue {
         }
 
         return this;
+    }
+
+    public RequestQueue addConverterFactory(Converter.Factory factory) {
+        synchronized (converterFactories) {
+            converterFactories.add(factory);
+        }
+
+        return this;
+    }
+
+
+    public RequestQueue removeConverterFactory(Converter.Factory factory) {
+        synchronized (converterFactories) {
+            converterFactories.remove(factory);
+        }
+
+        return this;
+    }
+
+    /**
+     * Returns a {@link Converter} for {@link io.apptik.comm.jus.NetworkResponse} to {@code type} from the available
+     * {@linkplain #converterFactories factories}.
+     */
+    public Converter<NetworkResponse, ?> getResponseConverter(Type type, Annotation[] annotations) {
+        checkNotNull(type, "type == null");
+        checkNotNull(annotations, "annotations == null");
+
+        for (int i = 0, count = converterFactories.size(); i < count; i++) {
+            Converter<NetworkResponse, ?> converter =
+                    converterFactories.get(i).fromResponse(type, annotations);
+            if (converter != null) {
+                return converter;
+            }
+        }
+
+        StringBuilder builder = new StringBuilder("Could not locate Response converter for ")
+                .append(type)
+                .append(". Tried:");
+        for (Converter.Factory converterFactory : converterFactories) {
+            builder.append("\n * ").append(converterFactory.getClass().getName());
+        }
+        throw new IllegalArgumentException(builder.toString());
     }
 
 

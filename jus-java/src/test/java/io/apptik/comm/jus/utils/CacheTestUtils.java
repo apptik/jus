@@ -2,9 +2,9 @@
 
 package io.apptik.comm.jus.utils;
 
-import io.apptik.comm.jus.Cache;
-
 import java.util.Random;
+
+import io.apptik.comm.jus.Cache;
 
 public class CacheTestUtils {
 

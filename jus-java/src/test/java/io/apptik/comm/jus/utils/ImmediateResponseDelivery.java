@@ -2,9 +2,9 @@
 
 package io.apptik.comm.jus.utils;
 
-import io.apptik.comm.jus.ExecutorDelivery;
-
 import java.util.concurrent.Executor;
+
+import io.apptik.comm.jus.ExecutorDelivery;
 
 /**
  * A ResponseDelivery for testing that immediately delivers responses

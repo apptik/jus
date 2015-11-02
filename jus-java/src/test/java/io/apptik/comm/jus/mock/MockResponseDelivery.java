@@ -34,20 +34,26 @@ public class MockResponseDelivery implements ResponseDelivery {
 
     public Response<?> responsePosted = null;
     @Override
-    public void postResponse(Request<?,?> request, Response<?> response) {
+    public void postResponse(Request<?> request, Response<?> response) {
         postResponse_called = true;
         responsePosted = response;
     }
 
     @Override
-    public void postResponse(Request<?,?> request, Response<?> response, Runnable runnable) {
+    public void postResponse(Request<?> request, Response<?> response, Runnable runnable) {
         postResponse_called = true;
         responsePosted = response;
         runnable.run();
     }
 
     @Override
-    public void postError(Request<?,?> request, JusError error) {
+    public void postError(Request<?> request, JusError error) {
         postError_called = true;
+    }
+
+    @Override
+    public void postError(Request<?> request, JusError error, Runnable runnable) {
+        postError_called = true;
+        runnable.run();
     }
 }

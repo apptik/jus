@@ -170,15 +170,15 @@ final class Utils {
   static Type getRequestResponseType(Type returnType) {
     if (!(returnType instanceof ParameterizedType)) {
       throw new IllegalArgumentException(
-          "Request return type must be parameterized as Request<?,Foo> or Request<?,? extends Foo>");
+          "Request return type must be parameterized as Request<Foo> or Request<? extends Foo>");
     }
     final Type responseType = getParameterUpperBound((ParameterizedType) returnType);
 
     // Ensure the Call response type is not Response, we automatically deliver the Response object.
     if (getRawType(responseType) == Response.class) {
       throw new IllegalArgumentException(
-          "Call<T> cannot use Response as its generic parameter. "
-              + "Specify the response body type only (e.g., Call<TweetResponse>).");
+          "Request<T> cannot use Response as its generic parameter. "
+              + "Specify the response body type only (e.g., Request<TweetResponse>).");
     }
     return responseType;
   }

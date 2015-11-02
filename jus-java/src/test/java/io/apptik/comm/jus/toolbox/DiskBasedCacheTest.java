@@ -16,8 +16,6 @@
 
 package io.apptik.comm.jus.toolbox;
 
-import io.apptik.comm.jus.Cache;
-import io.apptik.comm.jus.toolbox.DiskBasedCache.CacheHeader;
 import org.junit.Test;
 
 import java.io.ByteArrayInputStream;
@@ -25,7 +23,11 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import io.apptik.comm.jus.Cache;
+import io.apptik.comm.jus.http.Headers;
+import io.apptik.comm.jus.toolbox.DiskBasedCache.CacheHeader;
+
+import static org.junit.Assert.assertEquals;
 
 public class DiskBasedCacheTest {
 
@@ -37,8 +39,7 @@ public class DiskBasedCacheTest {
         e.ttl = 9876543L;
         e.softTtl = 8765432L;
         e.etag = "etag";
-        e.responseHeaders = new HashMap<String, String>();
-        e.responseHeaders.put("fruit", "banana");
+        e.responseHeaders = new Headers.Builder().add("fruit", "banana").build();
 
         CacheHeader first = new CacheHeader("my-magical-key", e);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -51,7 +52,7 @@ public class DiskBasedCacheTest {
         assertEquals(first.ttl, second.ttl);
         assertEquals(first.softTtl, second.softTtl);
         assertEquals(first.etag, second.etag);
-        assertEquals(first.responseHeaders, second.responseHeaders);
+        assertEquals(first.responseHeaders.toString(), second.responseHeaders.toString());
     }
 
     @Test public void serializeInt() throws Exception {

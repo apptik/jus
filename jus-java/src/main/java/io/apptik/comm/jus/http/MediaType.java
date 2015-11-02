@@ -1,4 +1,5 @@
 /*
+ * Copyright (C) 2015 AppTik Project
  * Copyright (C) 2013 Square, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +18,10 @@
 package io.apptik.comm.jus.http;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -36,12 +40,15 @@ public final class MediaType {
     private final String type;
     private final String subtype;
     private final String charset;
+    private final Map<String, String> params;
 
-    private MediaType(String mediaType, String type, String subtype, String charset) {
+    private MediaType(String mediaType, String type, String subtype, String charset, Map<String,
+            String> params) {
         this.mediaType = mediaType;
         this.type = type;
         this.subtype = subtype;
         this.charset = charset;
+        this.params =  params;
     }
 
     /**
@@ -50,6 +57,8 @@ public final class MediaType {
      */
     public static MediaType parse(String string) {
         if(string==null) return null;
+
+        Map<String, String> params =  new HashMap<>();
         Matcher typeSubtype = TYPE_SUBTYPE.matcher(string);
         if (!typeSubtype.lookingAt()) return null;
         String type = typeSubtype.group(1).toLowerCase(Locale.US);
@@ -62,17 +71,20 @@ public final class MediaType {
             if (!parameter.lookingAt()) return null; // This is not a well-formed media type.
 
             String name = parameter.group(1);
-            if (name == null || !name.equalsIgnoreCase("charset")) continue;
-            String charsetParameter = parameter.group(2) != null
+            if (name == null) continue;
+            String param = parameter.group(2) != null
                     ? parameter.group(2)  // Value is a token.
                     : parameter.group(3); // Value is a quoted string.
-            if (charset != null && !charsetParameter.equalsIgnoreCase(charset)) {
-                throw new IllegalArgumentException("Multiple different charsets: " + string);
+            if(name.equalsIgnoreCase("charset")) {
+                if (charset != null && !param.equalsIgnoreCase(charset)) {
+                    throw new IllegalArgumentException("Multiple different charsets: " + string);
+                }
+                charset = param;
+            } else {
+                params.put(name, param);
             }
-            charset = charsetParameter;
         }
-
-        return new MediaType(string, type, subtype, charset);
+        return new MediaType(string, type, subtype, charset, Collections.unmodifiableMap(params));
     }
 
     /**
@@ -89,6 +101,14 @@ public final class MediaType {
      */
     public String subtype() {
         return subtype;
+    }
+
+    public Map<String, String> params() {
+        return params;
+    }
+
+    public String param(String name) {
+        return params.get(name);
     }
 
     /**

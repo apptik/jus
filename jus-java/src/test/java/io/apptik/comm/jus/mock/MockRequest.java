@@ -18,34 +18,36 @@
 
 package io.apptik.comm.jus.mock;
 
-import io.apptik.comm.jus.error.JusError;
+import java.io.IOException;
+
+import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
-import io.apptik.comm.jus.Response.ErrorListener;
+import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.utils.CacheTestUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MockRequest extends Request<byte[]> {
     public MockRequest() {
-        super(Method.GET, "http://foo.com", null);
+        this("http://foo.com", null);
     }
 
     public MockRequest(String url, ErrorListener listener) {
-        super(Method.GET, url, listener);
-    }
+        super(Method.GET, url, new Converter<NetworkResponse, byte[]>() {
+            @Override
+            public byte[] convert(NetworkResponse value) throws IOException {
+                if (value.data != null) {
+                    return value.data;
+                } else {
+                    return new byte[0];
+                }
+            }
+        });
+        if(listener!=null) {
+            addErrorListener(listener);
+        }
 
-    private Map<String, String> mPostParams = new HashMap<String, String>();
-
-    public void setPostParams(Map<String, String> postParams) {
-        mPostParams = postParams;
-    }
-
-    @Override
-    public Map<String, String> getPostParams() {
-        return mPostParams;
     }
 
     private String mCacheKey = super.getCacheKey();
@@ -85,8 +87,9 @@ public class MockRequest extends Request<byte[]> {
 
     private Priority mPriority = super.getPriority();
 
-    public void setPriority(Priority priority) {
+    public Request<byte[]> setPriority(Priority priority) {
         mPriority = priority;
+        return this;
     }
 
     @Override
