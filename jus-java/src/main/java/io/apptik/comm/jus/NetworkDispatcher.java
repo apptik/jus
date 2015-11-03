@@ -164,7 +164,8 @@ public class NetworkDispatcher extends Thread {
                 // response.cacheEntry must not be null
                 // TODO: Only update cache metadata instead of entire record for 304s.
 
-                if (request.shouldCache() && response.cacheEntry != null) {
+                if (request.shouldCache() && response != null && response.cacheEntry != null &&
+                        mCache !=null) {
                     mCache.put(request.getCacheKey(), response.cacheEntry);
                     request.addMarker(Request.EVENT_NETWORK_CACHE_WRITTEN);
                 }

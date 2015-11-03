@@ -59,6 +59,12 @@ public final class NetworkResponse {
      * @param networkTimeNs Round-trip network time to receive network response
      */
     public NetworkResponse(int statusCode, byte[] data, Headers headers, long networkTimeNs) {
+        if(data == null) {
+            data = new byte[0];
+        }
+        if(headers == null) {
+            headers = new Headers.Builder().build();
+        }
         this.statusCode = statusCode;
         this.data = data;
         this.headers = headers;

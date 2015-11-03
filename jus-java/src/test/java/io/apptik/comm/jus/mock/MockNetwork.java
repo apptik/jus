@@ -18,10 +18,12 @@
 
 package io.apptik.comm.jus.mock;
 
-import io.apptik.comm.jus.error.JusError;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.ServerError;
 import io.apptik.comm.jus.http.Headers;
 
@@ -30,10 +32,12 @@ public class MockNetwork implements Network {
 
     private int mNumExceptionsToThrow = 0;
     private byte[] mDataToReturn = null;
+    private AtomicInteger requestCnt = new AtomicInteger();
+    private int slowness = 0;
 
     /**
      * @param numExceptionsToThrow number of times to throw an exception or
-     * {@link #ALWAYS_THROW_EXCEPTIONS}
+     *                             {@link #ALWAYS_THROW_EXCEPTIONS}
      */
     public void setNumExceptionsToThrow(int numExceptionsToThrow) {
         mNumExceptionsToThrow = numExceptionsToThrow;
@@ -43,10 +47,25 @@ public class MockNetwork implements Network {
         mDataToReturn = data;
     }
 
+    public MockNetwork setSlowness(int slowness) {
+        this.slowness = slowness;
+        return this;
+    }
+
     public Request<?> requestHandled = null;
 
+    public int getRequestCnt() {
+        return requestCnt.get();
+    }
+
     @Override
-    public NetworkResponse performRequest(Request<?> request) throws JusError {
+    public NetworkResponse performRequest(final Request<?> request) throws JusError {
+        try {
+            Thread.sleep(slowness);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (mNumExceptionsToThrow > 0 || mNumExceptionsToThrow == ALWAYS_THROW_EXCEPTIONS) {
             if (mNumExceptionsToThrow != ALWAYS_THROW_EXCEPTIONS) {
                 mNumExceptionsToThrow--;
@@ -55,6 +74,7 @@ public class MockNetwork implements Network {
         }
 
         requestHandled = request;
+        requestCnt.incrementAndGet();
         return new NetworkResponse(200, mDataToReturn, new Headers.Builder().build(), 0);
     }
 

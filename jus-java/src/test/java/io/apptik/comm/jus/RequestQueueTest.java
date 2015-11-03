@@ -163,7 +163,6 @@ public class RequestQueueTest {
         assertTrue(req3.cancel_called); // A cancelled
         assertFalse(req4.cancel_called); // A added after cancel not cancelled
 
-        queue.stopWhenDone();
     }
 
     private class OrderCheckingNetwork implements Network {

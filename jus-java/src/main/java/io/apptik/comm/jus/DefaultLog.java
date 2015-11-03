@@ -164,7 +164,7 @@ public class DefaultLog implements Log {
      */
     @Override
     public boolean isLoggable(String tag, int level) {
-        return true;
+        return false;
     }
 
     /*

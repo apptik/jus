@@ -22,7 +22,6 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +72,7 @@ public class RequestQueue {
      * </ul>
      */
     private final Map<String, Queue<Request<?>>> mWaitingRequests =
-            new HashMap<String, Queue<Request<?>>>();
+            new ConcurrentHashMap<String, Queue<Request<?>>>();
 
     /**
      * The set of all requests currently being processed by this RequestQueue. A Request
@@ -81,8 +80,8 @@ public class RequestQueue {
      * any dispatcher.
      */
     private final Set<Request<?>> mCurrentRequests
-        = Collections.newSetFromMap(new ConcurrentHashMap<Request<?>, Boolean>());
-         //   = new HashSet<Request<?, ?>>();
+            = Collections.newSetFromMap(new ConcurrentHashMap<Request<?>, Boolean>());
+    //   = new HashSet<Request<?>>();
 
     /**
      * The cache triage queue.
@@ -190,7 +189,8 @@ public class RequestQueue {
         return this;
     }
 
-    public RequestQueue withNetworkDispatcherFactory(NetworkDispatcher.NetworkDispatcherFactory networkDispatcherFactory) {
+    public RequestQueue withNetworkDispatcherFactory(NetworkDispatcher.NetworkDispatcherFactory
+                                                             networkDispatcherFactory) {
         for (int i = 0; i < mDispatchers.length; i++) {
             if (mDispatchers[i] != null) {
                 mDispatchers[i].quit();
@@ -205,7 +205,8 @@ public class RequestQueue {
      */
     private void setUpNetworkDispatchers() {
         if (networkDispatcherFactory == null) {
-            networkDispatcherFactory = new NetworkDispatcher.NetworkDispatcherFactory(mNetworkQueue, mNetwork,
+            networkDispatcherFactory = new NetworkDispatcher.NetworkDispatcherFactory
+                    (mNetworkQueue, mNetwork,
                     mCache, mDelivery);
         }
 
@@ -235,11 +236,33 @@ public class RequestQueue {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while(getCurrentRequests()>0) {
+                while (getCurrentRequests() > 0 ) {
+                    System.out.println("Waiting to finish. Requests left: " +
+                            getCurrentRequests() + " / " + getWaitingRequests());
+                    try {
+                        Thread.sleep(33);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
-                stop();
+                System.out.println("READY to finish. Requests left: " +
+                        getCurrentRequests() + " / " + getWaitingRequests());
+                synchronized (mCurrentRequests) {
+                    mCurrentRequests.notify();
+                }
+               // stop();
             }
         }).start();
+
+        synchronized (mCurrentRequests) {
+            try {
+                mCurrentRequests.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+
+        stop();
     }
 
     /**
@@ -316,21 +339,22 @@ public class RequestQueue {
      * @return The passed-in request
      */
     public <R extends Request<T>, T> R add(R request) {
-        for(Authenticator.Factory factory : authenticatorFactories) {
+        for (Authenticator.Factory factory : authenticatorFactories) {
             Authenticator authenticator =
                     factory.forRequest(request.getUrl(), request.getNetworkRequest());
-            if(authenticator!=null) {
+            if (authenticator != null) {
                 request.setAuthenticator(authenticator);
                 break;
             }
         }
-        // Process requests in the order they are added.
-        request.setSequence(getSequenceNumber());
-        // Tag the request as belonging to this queue and add it to the set of current requests.
         synchronized (mCurrentRequests) {
-            if(request.isCanceled()) {
+            //check if not already cancelled
+            if (request.isCanceled()) {
                 request.finish(Request.EVENT_CACHE_DISCARD_CANCELED);
             }
+            // Process requests in the order they are added.
+            request.setSequence(getSequenceNumber());
+            // Tag the request as belonging to this queue and add it to the set of current requests.
             request.setRequestQueue(this);
             mCurrentRequests.add(request);
         }
@@ -357,9 +381,9 @@ public class RequestQueue {
                     JusLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
                 }
             } else {
-                // Insert 'null' queue for this cacheKey, indicating there is now a request in
+                // Insert 'empty list' queue for this cacheKey, indicating there is now a request in
                 // flight.
-                mWaitingRequests.put(cacheKey, null);
+                mWaitingRequests.put(cacheKey, new LinkedList<Request<?>>());
                 mCacheQueue.add(request);
             }
             return request;
@@ -450,7 +474,8 @@ public class RequestQueue {
     }
 
     /**
-     * Returns a {@link Converter} for {@link io.apptik.comm.jus.NetworkResponse} to {@code type} from the available
+     * Returns a {@link Converter} for {@link io.apptik.comm.jus.NetworkResponse} to {@code type}
+     * from the available
      * {@linkplain #converterFactories factories}.
      */
     public Converter<NetworkResponse, ?> getResponseConverter(Type type, Annotation[] annotations) {
@@ -475,12 +500,15 @@ public class RequestQueue {
     }
 
 
-
     public int getCurrentRequests() {
-        return mCurrentRequests.size();
+        synchronized (mCurrentRequests) {
+            return mCurrentRequests.size();
+        }
     }
 
     public int getWaitingRequests() {
-        return mWaitingRequests.size();
+        synchronized (mWaitingRequests) {
+            return mWaitingRequests.size();
+        }
     }
 }

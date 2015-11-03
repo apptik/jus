@@ -67,6 +67,7 @@ public class MockRequest extends Request<byte[]> {
     @Override
     protected void deliverResponse(byte[] response) {
         deliverResponse_called = true;
+        super.deliverResponse(response);
     }
 
     public boolean deliverError_called = false;

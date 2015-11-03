@@ -112,6 +112,7 @@ public class CacheDispatcher extends Thread {
 
                 // Attempt to retrieve this item from cache.
                 Cache.Entry entry = mCache.get(request.getCacheKey());
+
                 if (entry == null) {
                     request.addMarker(Request.EVENT_CACHE_MISS);
                     // Cache miss; send off to the network dispatcher.
