@@ -172,7 +172,7 @@ public final class RequestBuilderTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e).hasMessage(
-                    "Multiple Retrofit annotations found, only one allowed. (parameter #1)\n    for method Example.method");
+                    "Multiple RetroProxy annotations found, only one allowed. (parameter #1)\n    for method Example.method");
         }
     }
 
@@ -180,7 +180,7 @@ public final class RequestBuilderTest {
     }
 
     @Test
-    public void multipleParameterAnnotationsOnlyOneRetrofitAllowed() throws Exception {
+    public void multipleParameterAnnotationsOnlyOneRetroProxyAllowed() throws Exception {
         class Example {
             @GET("/")
                 //
@@ -444,7 +444,7 @@ public final class RequestBuilderTest {
             fail();
         } catch (IllegalArgumentException e) {
             assertThat(e).hasMessage(
-                    "No Retrofit annotation found. (parameter #1)\n    for method Example.method");
+                    "No RetroProxy annotation found. (parameter #1)\n    for method Example.method");
         }
     }
 
@@ -1291,11 +1291,42 @@ public final class RequestBuilderTest {
     }
 
     @Test
-    public void requestDoNotCache() {
+    public void requestDoNotCacheInParamPrimitive() {
+        class Example {
+            @POST("/foo/bar/")
+            Request<NetworkResponse> method(@ShouldCache boolean shouldCache) {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class, false);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.shouldCache()).isEqualTo(false);
+    }
+
+    @Test
+    public void requestDoNotCacheInParamWrapper() {
+        class Example {
+            @POST("/foo/bar/")
+            Request<NetworkResponse> method(@ShouldCache Boolean shouldCache) {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class, Boolean.FALSE);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.shouldCache()).isEqualTo(false);
+    }
+
+    @Test
+    public void requestDoNotCacheInMethod() {
         class Example {
             @ShouldCache(false)
             @POST("/foo/bar/")
-                //
             Request<NetworkResponse> method() {
                 return null;
             }
@@ -1314,7 +1345,6 @@ public final class RequestBuilderTest {
         class Example {
             @ShouldCache
             @POST("/foo/bar/")
-                //
             Request<NetworkResponse> method() {
                 return null;
             }
@@ -1330,7 +1360,6 @@ public final class RequestBuilderTest {
     public void requestDefaultShouldCache2() {
         class Example {
             @POST("/foo/bar/")
-                //
             Request<NetworkResponse> method() {
                 return null;
             }

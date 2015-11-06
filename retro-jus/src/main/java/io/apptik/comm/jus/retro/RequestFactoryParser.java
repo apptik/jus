@@ -379,12 +379,16 @@ final class RequestFactoryParser {
                     } else if (methodParameterAnnotation instanceof Tag) {
                         action = new RequestBuilderAction.Tag();
                     } else if (methodParameterAnnotation instanceof ShouldCache) {
-
+                        if (methodParameterType != boolean.class &&
+                                methodParameterType != Boolean.class) {
+                            throw parameterError(i, "@ShouldCache must be boolean type.");
+                        }
+                        action = new RequestBuilderAction.ShouldCache();
                     }
 
                     if (action != null) {
                         if (requestBuilderActions[i] != null) {
-                            throw parameterError(i, "Multiple Retrofit annotations found, only " +
+                            throw parameterError(i, "Multiple RetroProxy annotations found, only " +
                                     "one allowed.");
                         }
                         requestBuilderActions[i] = action;
@@ -393,7 +397,7 @@ final class RequestFactoryParser {
             }
 
             if (requestBuilderActions[i] == null) {
-                throw parameterError(i, "No Retrofit annotation found.");
+                throw parameterError(i, "No RetroProxy annotation found.");
             }
         }
 

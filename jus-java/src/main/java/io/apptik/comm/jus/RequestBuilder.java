@@ -194,6 +194,11 @@ public final class RequestBuilder {
         return this;
     }
 
+    public RequestBuilder setShouldCache(Object shouldCache) {
+        this.shouldCache = (boolean) shouldCache;
+        return this;
+    }
+
     public Request build() {
         HttpUrl url;
         HttpUrl.Builder urlBuilder = this.urlBuilder;

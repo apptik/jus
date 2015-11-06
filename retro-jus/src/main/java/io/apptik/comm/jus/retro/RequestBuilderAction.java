@@ -56,6 +56,14 @@ abstract class RequestBuilderAction {
         }
     }
 
+    static final class ShouldCache extends RequestBuilderAction {
+        @Override
+        void perform(RequestBuilder builder, Object value) {
+            if (value == null) return; // Skip null values.
+            builder.setShouldCache(value);
+        }
+    }
+
     static final class Header extends RequestBuilderAction {
         private final String name;
 
