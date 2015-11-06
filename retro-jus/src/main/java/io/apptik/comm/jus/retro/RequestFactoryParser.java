@@ -140,20 +140,22 @@ final class RequestFactoryParser {
                 isFormEncoded = true;
             } else if (annotation instanceof Priority) {
                 priority = ((Priority) annotation).value();
-            }else if (annotation instanceof Tag) {
+            } else if (annotation instanceof Tag) {
                 tag = ((Tag) annotation).value();
-            }else if (annotation instanceof ShouldCache) {
+            } else if (annotation instanceof ShouldCache) {
                 shouldCache = ((ShouldCache) annotation).value();
             }
         }
 
         if (httpMethod == null) {
-            throw methodError(method, "HTTP method annotation is required (e.g., @GET, @POST, etc.).");
+            throw methodError(method, "HTTP method annotation is required (e.g., @GET, @POST, etc" +
+                    ".).");
         }
         if (!hasBody) {
             if (isMultipart) {
                 throw methodError(method,
-                        "Multipart can only be specified on HTTP methods with request body (e.g., @POST).");
+                        "Multipart can only be specified on HTTP methods with request body (e.g.," +
+                                " @POST).");
             }
             if (isFormEncoded) {
                 throw methodError(method,
@@ -192,12 +194,14 @@ final class RequestFactoryParser {
     }
 
     private io.apptik.comm.jus.http.Headers parseHeaders(String[] headers) {
-        io.apptik.comm.jus.http.Headers.Builder builder = new io.apptik.comm.jus.http.Headers.Builder();
+        io.apptik.comm.jus.http.Headers.Builder builder = new io.apptik.comm.jus.http.Headers
+                .Builder();
         for (String header : headers) {
             int colon = header.indexOf(':');
             if (colon == -1 || colon == 0 || colon == header.length() - 1) {
                 throw methodError(method,
-                        "@Headers value must be in the form \"Name: Value\". Found: \"%s\"", header);
+                        "@Headers value must be in the form \"Name: Value\". Found: \"%s\"",
+                        header);
             }
             String headerName = header.substring(0, colon);
             String headerValue = header.substring(colon + 1).trim();
@@ -237,7 +241,8 @@ final class RequestFactoryParser {
                             throw parameterError(i, "@Path parameters may not be used with @Url.");
                         }
                         if (gotQuery) {
-                            throw parameterError(i, "A @Url parameter must not come after a @Query");
+                            throw parameterError(i, "A @Url parameter must not come after a " +
+                                    "@Query");
                         }
                         if (methodParameterType != String.class) {
                             throw parameterError(i, "@Url must be String type.");
@@ -250,13 +255,15 @@ final class RequestFactoryParser {
 
                     } else if (methodParameterAnnotation instanceof Path) {
                         if (gotQuery) {
-                            throw parameterError(i, "A @Path parameter must not come after a @Query.");
+                            throw parameterError(i, "A @Path parameter must not come after a " +
+                                    "@Query.");
                         }
                         if (gotUrl) {
                             throw parameterError(i, "@Path parameters may not be used with @Url.");
                         }
                         if (relativeUrl == null) {
-                            throw parameterError(i, "@Path can only be used with relative url on @%s",
+                            throw parameterError(i, "@Path can only be used with relative url on " +
+                                            "@%s",
                                     httpMethod);
                         }
                         gotPath = true;
@@ -284,7 +291,8 @@ final class RequestFactoryParser {
 
                     } else if (methodParameterAnnotation instanceof Field) {
                         if (!isFormEncoded) {
-                            throw parameterError(i, "@Field parameters can only be used with form encoding.");
+                            throw parameterError(i, "@Field parameters can only be used with form" +
+                                    " encoding.");
                         }
                         Field field = (Field) methodParameterAnnotation;
                         action = new RequestBuilderAction.Field(field.value(), field.encoded());
@@ -292,7 +300,8 @@ final class RequestFactoryParser {
 
                     } else if (methodParameterAnnotation instanceof FieldMap) {
                         if (!isFormEncoded) {
-                            throw parameterError(i, "@FieldMap parameters can only be used with form encoding.");
+                            throw parameterError(i, "@FieldMap parameters can only be used with " +
+                                    "form encoding.");
                         }
                         if (!Map.class.isAssignableFrom(Utils.getRawType(methodParameterType))) {
                             throw parameterError(i, "@FieldMap parameter type must be Map.");
@@ -303,18 +312,23 @@ final class RequestFactoryParser {
 
                     } else if (methodParameterAnnotation instanceof Part) {
                         if (!isMultipart) {
-                            throw parameterError(i, "@Part parameters can only be used with multipart encoding.");
+                            throw parameterError(i, "@Part parameters can only be used with " +
+                                    "multipart encoding.");
                         }
                         Part part = (Part) methodParameterAnnotation;
-                        io.apptik.comm.jus.http.Headers headers = new io.apptik.comm.jus.http.Headers.Builder()
-                                .add("Content-Disposition", "form-data; name=\"" + part.value() + "\"")
+                        io.apptik.comm.jus.http.Headers headers = new io.apptik.comm.jus.http
+                                .Headers.Builder()
+                                .add("Content-Disposition", "form-data; name=\"" + part.value() +
+                                        "\"")
                                 .add("Content-Transfer-Encoding", part.encoding()).build();
 
                         Converter<?, NetworkRequest> converter;
                         try {
                             converter =
-                                    retroProxy.requestConverter(methodParameterType, methodParameterAnnotations);
-                        } catch (RuntimeException e) { // Wide exception range because factories are user code.
+                                    retroProxy.requestConverter(methodParameterType,
+                                            methodParameterAnnotations);
+                        } catch (RuntimeException e) { // Wide exception range because factories
+                        // are user code.
                             throw parameterError(e, i, "Unable to create @Part converter for %s",
                                     methodParameterType);
                         }
@@ -324,7 +338,8 @@ final class RequestFactoryParser {
                     } else if (methodParameterAnnotation instanceof PartMap) {
                         if (!isMultipart) {
                             throw parameterError(i,
-                                    "@PartMap parameters can only be used with multipart encoding.");
+                                    "@PartMap parameters can only be used with multipart encoding" +
+                                            ".");
                         }
                         if (!Map.class.isAssignableFrom(Utils.getRawType(methodParameterType))) {
                             throw parameterError(i, "@PartMap parameter type must be Map.");
@@ -337,7 +352,8 @@ final class RequestFactoryParser {
                     } else if (methodParameterAnnotation instanceof Body) {
                         if (isFormEncoded || isMultipart) {
                             throw parameterError(i,
-                                    "@Body parameters cannot be used with form or multi-part encoding.");
+                                    "@Body parameters cannot be used with form or multi-part " +
+                                            "encoding.");
                         }
                         if (gotBody) {
                             throw parameterError(i, "Multiple @Body method annotations found.");
@@ -346,18 +362,27 @@ final class RequestFactoryParser {
                         Converter<?, NetworkRequest> converter;
                         try {
                             converter =
-                                    retroProxy.requestConverter(methodParameterType, methodParameterAnnotations);
-                        } catch (RuntimeException e) { // Wide exception range because factories are user code.
+                                    retroProxy.requestConverter(methodParameterType,
+                                            methodParameterAnnotations);
+                        } catch (RuntimeException e) { // Wide exception range because factories
+                        // are user code.
                             throw parameterError(e, i, "Unable to create @Body converter for %s",
                                     methodParameterType);
                         }
                         action = new RequestBuilderAction.Body<>(converter);
                         gotBody = true;
+                    } else if (methodParameterAnnotation instanceof Priority) {
+
+                    } else if (methodParameterAnnotation instanceof Tag) {
+                        action = new RequestBuilderAction.Tag();
+                    } else if (methodParameterAnnotation instanceof ShouldCache) {
+
                     }
 
                     if (action != null) {
                         if (requestBuilderActions[i] != null) {
-                            throw parameterError(i, "Multiple Retrofit annotations found, only one allowed.");
+                            throw parameterError(i, "Multiple Retrofit annotations found, only " +
+                                    "one allowed.");
                         }
                         requestBuilderActions[i] = action;
                     }

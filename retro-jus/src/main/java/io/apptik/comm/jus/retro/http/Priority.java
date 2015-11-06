@@ -22,13 +22,14 @@ import java.lang.annotation.Target;
 import io.apptik.comm.jus.Request;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Set a {@link io.apptik.comm.jus.Request.Priority} on a request.
  */
 @Documented
-@Target(METHOD)
+@Target({METHOD, PARAMETER})
 @Retention(RUNTIME)
 public @interface Priority {
     io.apptik.comm.jus.Request.Priority value() default Request.Priority.NORMAL;

@@ -1238,7 +1238,7 @@ public final class RequestBuilderTest {
     }
 
     @Test
-    public void requestTag() {
+    public void requestTagInMethod() {
         class Example {
             @Tag("cool tag")
             @POST("/foo/bar/")
@@ -1248,6 +1248,23 @@ public final class RequestBuilderTest {
             }
         }
         Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.getTag()).isEqualTo("cool tag");
+    }
+
+    @Test
+    public void requestTagInParam() {
+        class Example {
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method(@Tag String tag) {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class, "cool tag");
         assertThat(request.getMethod()).isEqualTo("POST");
         assertThat(request.getHeaders().size()).isEqualTo(0);
         assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");

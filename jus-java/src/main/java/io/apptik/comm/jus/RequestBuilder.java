@@ -38,9 +38,9 @@ public final class RequestBuilder {
     private MultipartBuilder multipartBuilder;
     private FormEncodingBuilder formEncodingBuilder;
     private NetworkRequest.Builder networkRequestBuilder;
-    private final Request.Priority priority;
-    private final String tag;
-    private final boolean shouldCache;
+    private Request.Priority priority;
+    private Object tag;
+    private boolean shouldCache;
 
     public RequestBuilder(String method, HttpUrl baseUrl, String relativeUrl,
                           Converter<NetworkResponse, ?> responseConverter, Headers headers,
@@ -184,6 +184,11 @@ public final class RequestBuilder {
         return this;
     }
 
+    public RequestBuilder setTag(Object tag) {
+        this.tag = tag;
+        return this;
+    }
+
     public Request build() {
         HttpUrl url;
         HttpUrl.Builder urlBuilder = this.urlBuilder;
@@ -228,5 +233,4 @@ public final class RequestBuilder {
 
 
     }
-
 }

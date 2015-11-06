@@ -24,7 +24,7 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile 'io.apptik.json:json-core:1.0.2'
+    compile 'io.apptik.json:json-core:1.0.3'
 
     testCompile 'junit:junit:[4,)'
     testCompile 'org.assertj:assertj-core:2.2.0'

@@ -23,13 +23,14 @@ import java.lang.annotation.Target;
 import io.apptik.comm.jus.Request;
 
 import static java.lang.annotation.ElementType.METHOD;
+import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
  * Set a {@link Request.Priority} on a request.
  */
 @Documented
-@Target(METHOD)
+@Target({METHOD, PARAMETER})
 @Retention(RUNTIME)
 public @interface ShouldCache {
     boolean value() default true;

@@ -40,6 +40,13 @@ abstract class RequestBuilderAction {
         }
     }
 
+    static final class Tag extends RequestBuilderAction {
+        @Override
+        void perform(RequestBuilder builder, Object value) {
+            builder.setTag(value);
+        }
+    }
+
     static final class Header extends RequestBuilderAction {
         private final String name;
 
