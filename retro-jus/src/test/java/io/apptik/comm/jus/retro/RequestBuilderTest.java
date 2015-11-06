@@ -1273,6 +1273,24 @@ public final class RequestBuilderTest {
     }
 
     @Test
+    public void requestDoCache() {
+        class Example {
+            @ShouldCache(true)
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method() {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.shouldCache()).isEqualTo(true);
+    }
+
+    @Test
     public void requestDoNotCache() {
         class Example {
             @ShouldCache(false)
@@ -1326,11 +1344,43 @@ public final class RequestBuilderTest {
     }
 
     @Test
-    public void requestPriority() {
+    public void requestPriorityInParam() {
+        class Example {
+            @POST("/foo/bar/")
+            Request<NetworkResponse> method(@Priority Request.Priority priority) {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class, Request.Priority.HIGH);
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.getPriority()).isEqualTo(Request.Priority.HIGH);
+    }
+
+    @Test
+    public void requestPriorityInParamBadType() {
+        class Example {
+            @POST("/foo/bar/")
+            Request<NetworkResponse> method(@Priority String priority) {
+                return null;
+            }
+        }
+        try {
+            Request request = buildRequest(Example.class, "wrong!");
+            fail();
+        } catch (IllegalArgumentException ex) {
+            assertThat(ex.getMessage().equals("@Priority must be Request.Priority type. " +
+                    "(parameter #1)"));
+        }
+    }
+
+    @Test
+    public void requestPriorityInMethod() {
         class Example {
             @Priority(Request.Priority.HIGH)
             @POST("/foo/bar/")
-                //
             Request<NetworkResponse> method() {
                 return null;
             }
@@ -1348,7 +1398,6 @@ public final class RequestBuilderTest {
         class Example {
             @Priority
             @POST("/foo/bar/")
-                //
             Request<NetworkResponse> method() {
                 return null;
             }
@@ -1365,7 +1414,6 @@ public final class RequestBuilderTest {
     public void customMethodEmptyBody() {
         class Example {
             @HTTP(method = "CUSTOM", path = "/foo/bar/", hasBody = true)
-                //
             Request<NetworkResponse> method() {
                 return null;
             }

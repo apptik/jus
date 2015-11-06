@@ -189,6 +189,11 @@ public final class RequestBuilder {
         return this;
     }
 
+    public RequestBuilder setPriority(Object priority) {
+        this.priority = (Request.Priority) priority;
+        return this;
+    }
+
     public Request build() {
         HttpUrl url;
         HttpUrl.Builder urlBuilder = this.urlBuilder;

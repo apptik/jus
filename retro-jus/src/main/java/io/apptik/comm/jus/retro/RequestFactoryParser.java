@@ -328,7 +328,7 @@ final class RequestFactoryParser {
                                     retroProxy.requestConverter(methodParameterType,
                                             methodParameterAnnotations);
                         } catch (RuntimeException e) { // Wide exception range because factories
-                        // are user code.
+                            // are user code.
                             throw parameterError(e, i, "Unable to create @Part converter for %s",
                                     methodParameterType);
                         }
@@ -365,14 +365,17 @@ final class RequestFactoryParser {
                                     retroProxy.requestConverter(methodParameterType,
                                             methodParameterAnnotations);
                         } catch (RuntimeException e) { // Wide exception range because factories
-                        // are user code.
+                            // are user code.
                             throw parameterError(e, i, "Unable to create @Body converter for %s",
                                     methodParameterType);
                         }
                         action = new RequestBuilderAction.Body<>(converter);
                         gotBody = true;
                     } else if (methodParameterAnnotation instanceof Priority) {
-
+                        if (methodParameterType != Request.Priority.class) {
+                            throw parameterError(i, "@Priority must be Request.Priority type.");
+                        }
+                        action = new RequestBuilderAction.Priority();
                     } else if (methodParameterAnnotation instanceof Tag) {
                         action = new RequestBuilderAction.Tag();
                     } else if (methodParameterAnnotation instanceof ShouldCache) {

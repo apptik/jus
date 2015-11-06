@@ -43,7 +43,16 @@ abstract class RequestBuilderAction {
     static final class Tag extends RequestBuilderAction {
         @Override
         void perform(RequestBuilder builder, Object value) {
+            if (value == null) return; // Skip null values.
             builder.setTag(value);
+        }
+    }
+
+    static final class Priority extends RequestBuilderAction {
+        @Override
+        void perform(RequestBuilder builder, Object value) {
+            if (value == null) return; // Skip null values.
+            builder.setPriority(value);
         }
     }
 
