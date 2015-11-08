@@ -1257,8 +1257,6 @@ public final class RequestBuilderTest {
 
     @Test
     public void requestTagInParam() {
-<<<<<<< HEAD
-=======
         class Example {
             @POST("/foo/bar/")
                 //
@@ -1276,7 +1274,7 @@ public final class RequestBuilderTest {
 
     @Test
     public void requestDoNotCache() {
->>>>>>> 102c788... closes 15
+
         class Example {
             @POST("/foo/bar/")
                 //
