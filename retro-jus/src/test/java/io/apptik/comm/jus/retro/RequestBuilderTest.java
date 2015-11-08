@@ -1257,6 +1257,26 @@ public final class RequestBuilderTest {
 
     @Test
     public void requestTagInParam() {
+<<<<<<< HEAD
+=======
+        class Example {
+            @POST("/foo/bar/")
+                //
+            Request<NetworkResponse> method(@Tag String tag) {
+                return null;
+            }
+        }
+        Request request = buildRequest(Example.class, "cool tag");
+        assertThat(request.getMethod()).isEqualTo("POST");
+        assertThat(request.getHeaders().size()).isEqualTo(0);
+        assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
+        assertBody(request.getNetworkRequest(), "");
+        assertThat(request.getTag()).isEqualTo("cool tag");
+    }
+
+    @Test
+    public void requestDoNotCache() {
+>>>>>>> 102c788... closes 15
         class Example {
             @POST("/foo/bar/")
                 //
