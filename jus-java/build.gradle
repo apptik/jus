@@ -19,9 +19,9 @@ apply plugin: 'java'
 compileJava {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
+    options.encoding = "UTF-8"
 }
 
-//configurations.compile.exclude module: 'java-log'
 
 dependencies {
     compile 'com.squareup.okio:okio:1.6.0'

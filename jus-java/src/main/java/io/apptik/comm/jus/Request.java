@@ -21,7 +21,6 @@ package io.apptik.comm.jus;
 
 import java.io.IOException;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,13 +29,14 @@ import java.util.Map;
 
 import io.apptik.comm.jus.JusLog.MarkerLog;
 import io.apptik.comm.jus.auth.Authenticator;
-import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 import io.apptik.comm.jus.toolbox.Utils;
+
+import static io.apptik.comm.jus.toolbox.Utils.tryIdentifyResultType;
 
 /**
  * Base class for all network requests.
@@ -83,7 +83,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Default encoding for POST or PUT parameters.
      */
     public static final String DEFAULT_PARAMS_ENCODING = "UTF-8";
-
 
     /**
      * Supported request methods.
@@ -198,11 +197,14 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private boolean logSlowRequests = false;
 
     private NetworkRequest networkRequest;
-    private final Converter<NetworkResponse, T> converterFromResponse;
+    private Converter<NetworkResponse, T> converterFromResponse;
 
     private Authenticator authenticator;
 
     private Priority priority = Priority.NORMAL;
+
+    //used only until added to the queue to identify Response Converter
+    private Type responseType = null;
 
 
     public Request(String method, String url) {
@@ -210,8 +212,18 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     public Request(String method, HttpUrl url) {
-        this(method, url, null);
+        this(method, url, (Converter)null);
     }
+
+    public Request(String method, String url, Class<T> responseType) {
+        this(method, HttpUrl.parse(url), responseType);
+    }
+
+    public Request(String method, HttpUrl url, Class<T> responseType) {
+        this(method, url);
+        this.responseType = responseType;
+    }
+
     /**
      * Creates a new request with the given method (one of the values from {@link Method}),
      * URL, and error listener.  Note that the normal response listener is not provided here as
@@ -317,7 +329,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     //--> Listeners
 
 
-    public <R extends Request<T>> R addResponseListener(Listener.ResponseListener<T> responseListener) {
+    public <R extends Request<T>> R addResponseListener(Listener.ResponseListener<T>
+                                                                responseListener) {
         if (responseListeners != null) {
             this.responseListeners.add(responseListener);
         }
@@ -510,6 +523,25 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     <R extends Request<T>> R setRequestQueue(RequestQueue requestQueue) {
         checkIfActive();
+        if(converterFromResponse == null) {
+            Type t;
+            if(responseType!=null) {
+                t = responseType;
+            } else {
+                t = tryIdentifyResultType(this);
+            }
+            if (t==null) {
+                throw new IllegalArgumentException("Cannot resolve Response type in order to " +
+                        "identify Response Converter for Request : " + this);
+            }
+
+            this.converterFromResponse =
+                    (Converter<NetworkResponse, T>) requestQueue
+                            .getResponseConverter(t, new Annotation[0]);
+
+
+
+        }
         this.requestQueue = requestQueue;
         return (R) this;
     }
@@ -520,7 +552,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return (R) this;
     }
 
-    public synchronized Request<T> enqueue() {
+    public synchronized <R extends Request<T>> R enqueue() {
         checkIfActive();
         if (isCanceled()) {
             throw new IllegalStateException("Canceled");
@@ -528,7 +560,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         Utils.checkNotNull(this.futureRequestQueue, "No future RequestQueue set. " +
                 "Please call prepRequestQueue before calling this.");
         this.futureRequestQueue.add(this);
-        return this;
+        return (R) this;
     }
 
     /**
@@ -536,10 +568,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    protected final Request<T> setSequence(int sequence) {
+    protected final <R extends Request<T>> R setSequence(int sequence) {
         checkIfActive();
         this.sequence = sequence;
-        return this;
+        return (R) this;
     }
 
     /**
@@ -565,9 +597,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public Request<T> setCacheEntry(Cache.Entry entry) {
+    public <R extends Request<T>> R setCacheEntry(Cache.Entry entry) {
         cacheEntry = entry;
-        return this;
+        return (R) this;
     }
 
     /**
@@ -634,10 +666,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *
      * @return This Request object to allow for chaining.
      */
-    public final Request<T> setShouldCache(boolean shouldCache) {
+    public final <R extends Request<T>> R setShouldCache(boolean shouldCache) {
         checkIfActive();
         this.shouldCache = shouldCache;
-        return this;
+        return (R) this;
     }
 
     /**
@@ -684,32 +716,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     protected Response<T> parseNetworkResponse(NetworkResponse response) {
         T parsed = null;
-        if (converterFromResponse != null) {
-            try {
-                parsed = converterFromResponse.convert(response);
-            } catch (Exception e) {
-                return Response.error(new ParseError(e));
-            }
-        } else {
-            //try if the queue doesn't have some factories set
-            //TODO clean this
-            Type t = null;
-            try {
-                java.lang.reflect.Method method = this.getClass().getDeclaredMethod
-                        ("parseNetworkResponse", NetworkResponse.class);
-                method.setAccessible(true);
-                Type responseType = method.getGenericReturnType();
-                t = ((ParameterizedType) responseType).getActualTypeArguments()[0];
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
-            }
-
-            try {
-                parsed = (T) requestQueue.getResponseConverter(t, new Annotation[0]).convert
-                        (response);
-            } catch (Exception e) {
-                return Response.error(new ParseError(e));
-            }
+        try {
+            parsed = converterFromResponse.convert(response);
+        } catch (Exception e) {
+            return Response.error(new ParseError(e));
         }
         return Response.success(parsed, HttpHeaderParser.parseCacheHeaders(response));
     }

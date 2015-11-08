@@ -237,7 +237,7 @@ public class RequestQueue {
             @Override
             public void run() {
                 while (getCurrentRequests() > 0 ) {
-                    System.out.println("Waiting to finish. Requests left: " +
+                    JusLog.d("Waiting to finish. Requests left: " +
                             getCurrentRequests() + " / " + getWaitingRequests());
                     try {
                         Thread.sleep(33);
@@ -245,7 +245,7 @@ public class RequestQueue {
                         e.printStackTrace();
                     }
                 }
-                System.out.println("READY to finish. Requests left: " +
+                JusLog.d("READY to finish. Requests left: " +
                         getCurrentRequests() + " / " + getWaitingRequests());
                 synchronized (mCurrentRequests) {
                     mCurrentRequests.notify();

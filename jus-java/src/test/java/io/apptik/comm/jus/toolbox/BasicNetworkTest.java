@@ -37,7 +37,7 @@ public class BasicNetworkTest {
 
         mockHttpStack.setResponseToReturn(fakeResponse);
         HttpNetwork httpNetwork = new HttpNetwork(mockHttpStack);
-        Request<String> request = new Request<String>(Request.Method.GET, "http://foo", null) {
+        Request<String> request = new Request<String>(Request.Method.GET, "http://foo") {
             @Override
             protected void deliverResponse(String response) {
             }

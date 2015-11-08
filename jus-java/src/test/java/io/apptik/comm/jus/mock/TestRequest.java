@@ -29,12 +29,12 @@ public class TestRequest {
     private static class Base extends Request<byte[]> {
         @SuppressWarnings("deprecation")
         public Base(String url, Listener.ErrorListener listener) {
-            super(Method.GET, url, null);
+            super(Method.GET, url);
             this.addErrorListener(listener);
         }
 
         public Base(String method, String url, Listener.ErrorListener listener) {
-            super(method, url, null);
+            super(method, url);
             this.addErrorListener(listener);
         }
 

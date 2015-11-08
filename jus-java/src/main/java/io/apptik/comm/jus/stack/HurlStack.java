@@ -20,7 +20,6 @@ package io.apptik.comm.jus.stack;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
@@ -29,7 +28,6 @@ import java.util.Map;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
@@ -38,12 +36,11 @@ import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
-import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
 
 /**
  * An {@link HttpStack} based on {@link HttpURLConnection}.
  */
-public class HurlStack implements HttpStack {
+public class HurlStack extends AbstractHttpStack {
 
     /**
      * An interface for transforming URLs before use.
@@ -80,7 +77,8 @@ public class HurlStack implements HttpStack {
     }
 
     @Override
-    public NetworkResponse performRequest(Request<?> request, Map<String, String> additionalHeaders, ByteArrayPool byteArrayPool)
+    public NetworkResponse performRequest(Request<?> request, Map<String, String>
+            additionalHeaders, ByteArrayPool byteArrayPool)
             throws IOException, AuthFailureError {
         String url = request.getUrlString();
         HashMap<String, String> requestHeaders = new HashMap<String, String>();
@@ -130,44 +128,6 @@ public class HurlStack implements HttpStack {
     }
 
     /**
-     * Reads the contents of HttpEntity into a byte[].
-     */
-    private byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool byteArrayPool) throws IOException {
-        PoolingByteArrayOutputStream bytes =
-                new PoolingByteArrayOutputStream(byteArrayPool, connection.getContentLength());
-        byte[] buffer = null;
-        InputStream inputStream;
-        try {
-            inputStream = connection.getInputStream();
-        } catch (IOException ioe) {
-            inputStream = connection.getErrorStream();
-        }
-        try {
-
-            if (inputStream == null) {
-                return new byte[0];
-            }
-            buffer = byteArrayPool.getBuf(1024);
-            int count;
-            while ((count = inputStream.read(buffer)) != -1) {
-                bytes.write(buffer, 0, count);
-            }
-            return bytes.toByteArray();
-        } finally {
-            try {
-                // Close the InputStream and release the resources
-                inputStream.close();
-            } catch (IOException e) {
-                // This can happen if there was an exception above that left the entity in
-                // an invalid state.
-                JusLog.v("Error occurred when calling consumingContent");
-            }
-            byteArrayPool.returnBuf(buffer);
-            bytes.close();
-        }
-    }
-
-    /**
      * Create an {@link HttpURLConnection} for the specified {@code url}.
      */
     protected HttpURLConnection createConnection(URL url) throws IOException {
@@ -199,12 +159,10 @@ public class HurlStack implements HttpStack {
     }
 
     static void setConnectionParametersForRequest(HttpURLConnection connection,
-                                                  Request<?> request) throws IOException, AuthFailureError {
+                                                  Request<?> request) throws IOException,
+            AuthFailureError {
         switch (request.getMethod()) {
             case Method.GET:
-                // Not necessary to set the request method because connection defaults to GET but
-                // being explicit here.
-                connection.setRequestMethod("GET");
                 break;
             case Method.DELETE:
                 connection.setRequestMethod("DELETE");
@@ -231,7 +189,9 @@ public class HurlStack implements HttpStack {
                 addBodyIfExists(connection, request);
                 break;
             default:
-                throw new IllegalStateException("Unknown method type.");
+                connection.setRequestMethod(request.getMethod());
+                addBodyIfExists(connection, request);
+                break;
         }
     }
 

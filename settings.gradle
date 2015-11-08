@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-include ':jus-android',
+include ':jus-android', ':jus-okhttp',
         ':examples-android',
         ':rx-jus', ':retro-jus', ':jus-java',
         //':examples-java',

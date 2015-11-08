@@ -95,10 +95,10 @@ public class HttpNetwork implements Network {
                 //check completeness of body
                 if (httpResponse != null && httpResponse.headers != null) {
                     String contentLen = httpResponse.headers.get(HTTP.CONTENT_LEN);
-                    if(contentLen!=null) {
+                    if (contentLen != null) {
                         int cLen = Integer.parseInt(contentLen);
-                        if(cLen>httpResponse.data.length
-                                && request.getMethod()!=Request.Method.HEAD) {
+                        if (cLen > httpResponse.data.length
+                                && request.getMethod() != Request.Method.HEAD) {
                             throw new NetworkError("Response Body not completely received",
                                     httpResponse);
                         }
@@ -106,7 +106,8 @@ public class HttpNetwork implements Network {
                 }
                 // if the request is slow, log it.
                 long requestLifetime = System.nanoTime() - requestStart;
-                logSlowRequests(requestLifetime, request, httpResponse.data, httpResponse.statusCode);
+                logSlowRequests(requestLifetime, request, httpResponse.data, httpResponse
+                        .statusCode);
 
                 // Handle cache validation.
                 if (httpResponse.statusCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
@@ -151,7 +152,8 @@ public class HttpNetwork implements Network {
                 } else {
                     throw new NoConnectionError(e);
                 }
-                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode, request.getUrlString());
+                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode,
+                        request.getUrlString());
                 if (networkResponse != null) {
                     if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         // thrown when available Authenticator is available
@@ -174,12 +176,18 @@ public class HttpNetwork implements Network {
                         }
                     } else if (networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
                         throw new ForbiddenError(networkResponse);
-                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_CLIENT_TIMEOUT) {
-                        attemptRetryOnException("http-client", request, new TimeoutError("HTTP_CLIENT_TIMEOUT"));
-                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_GATEWAY_TIMEOUT) {
-                        attemptRetryOnException("gateway-client", request, new TimeoutError("HTTP_GATEWAY_TIMEOUT"));
-                    } else if (networkResponse.statusCode > 399 && networkResponse.statusCode < 500) {
-                        //some request query error that does not make sense to retry, assuming the service we use is deterministic
+                    } else if (networkResponse.statusCode == HttpURLConnection
+                            .HTTP_CLIENT_TIMEOUT) {
+                        attemptRetryOnException("http-client", request, new TimeoutError
+                                ("HTTP_CLIENT_TIMEOUT"));
+                    } else if (networkResponse.statusCode == HttpURLConnection
+                            .HTTP_GATEWAY_TIMEOUT) {
+                        attemptRetryOnException("gateway-client", request, new TimeoutError
+                                ("HTTP_GATEWAY_TIMEOUT"));
+                    } else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
+                            500) {
+                        //some request query error that does not make sense to retry, assuming
+                        // the service we use is deterministic
                         throw new RequestError(networkResponse);
                     } else if (networkResponse.statusCode > 499) {
                         //TODO some server error might not need to be retried
@@ -233,7 +241,8 @@ public class HttpNetwork implements Network {
         request.addMarker(String.format("%s-retry [timeout=%s]", logPrefix, oldTimeout));
     }
 
-    private void addAuthHeaders(Authenticator authenticator, Map<String, String> headers) throws AuthenticatorError {
+    private void addAuthHeaders(Authenticator authenticator, Map<String, String> headers) throws
+            AuthenticatorError {
         if (authenticator == null) return;
         headers.put("Authorization", "Bearer " + authenticator.getToken());
     }

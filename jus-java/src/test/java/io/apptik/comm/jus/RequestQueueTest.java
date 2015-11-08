@@ -123,7 +123,7 @@ public class RequestQueueTest {
         DelayedRequest req1 = new DelayedRequest(1500, parsed, delivered);
         DelayedRequest req2 = new DelayedRequest(0, parsed, delivered) {
             @Override
-            protected Response<Object> parseNetworkResponse(NetworkResponse response) {
+            protected Response<String> parseNetworkResponse(NetworkResponse response) {
                 assertEquals(1, parsed.get());  // req1 must have been parsed.
                 assertEquals(1, delivered.get());  // req1 must have been parsed.
                 return super.parseNetworkResponse(response);
@@ -190,31 +190,31 @@ public class RequestQueueTest {
         }
     }
 
-    private class DelayedRequest extends Request<Object> {
+    private class DelayedRequest extends Request<String> {
         private final long mDelayMillis;
         private final AtomicInteger mParsedCount;
         private final AtomicInteger mDeliveredCount;
 
         public DelayedRequest(long delayMillis, AtomicInteger parsed, AtomicInteger delivered) {
-            super(Method.GET, "http://buganizer/", null);
+            super(Method.GET, "http://buganizer/");
             mDelayMillis = delayMillis;
             mParsedCount = parsed;
             mDeliveredCount = delivered;
         }
 
         @Override
-        protected Response<Object> parseNetworkResponse(NetworkResponse response) {
+        protected Response<String> parseNetworkResponse(NetworkResponse response) {
             mParsedCount.incrementAndGet();
             try {
                 Thread.sleep(mDelayMillis);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return Response.success(new Object(), CacheTestUtils.makeRandomCacheEntry(null));
+            return Response.success(new String(), CacheTestUtils.makeRandomCacheEntry(null));
         }
 
         @Override
-        protected void deliverResponse(Object response) {
+        protected void deliverResponse(String response) {
             mDeliveredCount.incrementAndGet();
         }
     }

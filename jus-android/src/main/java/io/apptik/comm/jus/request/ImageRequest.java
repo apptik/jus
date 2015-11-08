@@ -74,7 +74,7 @@ public class ImageRequest extends Request<Bitmap> {
      */
     public ImageRequest(String url, int maxWidth, int maxHeight,
                         ScaleType scaleType, Config decodeConfig) {
-        super(Method.GET, url, null);
+        super(Method.GET, url);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
         mDecodeConfig = decodeConfig;

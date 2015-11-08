@@ -50,7 +50,7 @@ public class RequestTest {
     private class TestRequest extends Request<Object> {
         private Priority mPriority = Priority.NORMAL;
         public TestRequest(Priority priority) {
-            super(Method.GET, "", null);
+            super(Method.GET, "");
             mPriority = priority;
         }
 
@@ -82,7 +82,7 @@ public class RequestTest {
 
     private class UrlParseRequest extends Request<Object> {
         public UrlParseRequest(String url) {
-            super(Method.GET, url, null);
+            super(Method.GET, url);
         }
 
         @Override

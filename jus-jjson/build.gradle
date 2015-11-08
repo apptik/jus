@@ -26,6 +26,7 @@ dependencies {
     compile project(':jus-java')
     compile 'io.apptik.json:json-core:1.0.3'
 
+    testCompile project (':retro-jus')
     testCompile 'junit:junit:[4,)'
     testCompile 'org.assertj:assertj-core:2.2.0'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'

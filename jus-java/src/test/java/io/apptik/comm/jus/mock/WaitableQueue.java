@@ -54,7 +54,7 @@ public class WaitableQueue extends PriorityBlockingQueue<Request<?>> {
 
     private static class MagicStopRequest extends Request<Object> {
         public MagicStopRequest() {
-            super(Method.GET, "", null);
+            super(Method.GET, "");
         }
 
         @Override

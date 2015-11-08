@@ -77,7 +77,7 @@ public class ImageRequest extends Request<Bitmap> {
      */
     public ImageRequest(String url, Listener.ResponseListener<Bitmap> listener, int maxWidth, int maxHeight,
                         ScaleType scaleType, Config decodeConfig, Listener.ErrorListener errorListener) {
-        super(Method.GET, url, null);
+        super(Method.GET, url);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
         addErrorListener(errorListener);

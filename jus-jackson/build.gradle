@@ -25,6 +25,7 @@ dependencies {
     compile project(':jus-java')
     compile 'com.fasterxml.jackson.core:jackson-databind:2.6.3'
 
+    testCompile project (':retro-jus')
     testCompile 'junit:junit:[4,)'
     testCompile 'org.assertj:assertj-core:2.2.0'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'

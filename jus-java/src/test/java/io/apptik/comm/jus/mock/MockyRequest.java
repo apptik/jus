@@ -33,7 +33,7 @@ public class MockyRequest extends Request<byte[]> {
     }
 
     public MockyRequest(String url, ErrorListener listener) {
-        super(Method.GET, url, null);
+        super(Method.GET, url);
         if(listener!=null) {
             addErrorListener(listener);
         }

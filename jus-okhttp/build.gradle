@@ -1,3 +1,5 @@
+apply plugin: 'java'
+
 /*
  * Copyright (C) 2015 AppTik Project
  *
@@ -14,23 +16,24 @@
  * limitations under the License.
  */
 
-apply plugin: 'java'
-
 compileJava {
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
 }
 
+test {
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
+    }
+}
 
 dependencies {
     compile project(':jus-java')
-    compile 'com.google.code.gson:gson:2.4'
+    compile 'com.squareup.okhttp:okhttp:2.5.0'
 
     testCompile project (':retro-jus')
-    testCompile 'junit:junit:[4,)'
     testCompile 'org.assertj:assertj-core:2.2.0'
     testCompile 'org.mockito:mockito-core:2.0.31-beta'
     testCompile 'com.squareup.okhttp:mockwebserver:2.5.0'
 }
-
-apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

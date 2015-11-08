@@ -25,11 +25,13 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 
+import static io.apptik.comm.jus.toolbox.Utils.hasUnresolvableType;
+
 final class MethodHandler<T> {
     @SuppressWarnings("unchecked")
     static MethodHandler<?> create(RetroProxy retroProxy, Method method) {
         Type responseType = method.getGenericReturnType();
-        if (Utils.hasUnresolvableType(responseType)) {
+        if (hasUnresolvableType(responseType)) {
             throw Utils.methodError(method,
                     "Method return type must not include a type variable or wildcard: %s", responseType);
         }
