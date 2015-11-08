@@ -42,6 +42,7 @@ import io.apptik.comm.jus.retro.http.HTTP;
 import io.apptik.comm.jus.retro.http.Header;
 import io.apptik.comm.jus.retro.http.Headers;
 import io.apptik.comm.jus.retro.http.Multipart;
+import io.apptik.comm.jus.retro.http.OPTIONS;
 import io.apptik.comm.jus.retro.http.PATCH;
 import io.apptik.comm.jus.retro.http.POST;
 import io.apptik.comm.jus.retro.http.PUT;
@@ -52,6 +53,7 @@ import io.apptik.comm.jus.retro.http.Priority;
 import io.apptik.comm.jus.retro.http.Query;
 import io.apptik.comm.jus.retro.http.QueryMap;
 import io.apptik.comm.jus.retro.http.ShouldCache;
+import io.apptik.comm.jus.retro.http.TRACE;
 import io.apptik.comm.jus.retro.http.Tag;
 import io.apptik.comm.jus.retro.http.Url;
 
@@ -119,6 +121,10 @@ final class RequestFactoryParser {
                 parseHttpMethodAndPath("POST", ((POST) annotation).value(), true);
             } else if (annotation instanceof PUT) {
                 parseHttpMethodAndPath("PUT", ((PUT) annotation).value(), true);
+            } else if (annotation instanceof TRACE) {
+                parseHttpMethodAndPath("TRACE", ((TRACE) annotation).value(), false);
+            } else if (annotation instanceof OPTIONS) {
+                parseHttpMethodAndPath("OPTIONS", ((OPTIONS) annotation).value(), true);
             } else if (annotation instanceof HTTP) {
                 HTTP http = (HTTP) annotation;
                 parseHttpMethodAndPath(http.method(), http.path(), http.hasBody());
