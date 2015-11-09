@@ -14,12 +14,12 @@ Find [the latest JARs][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-XXX</artifactId>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-XXX:0.6.1'
+compile 'io.apptik.comm:jus-XXX:0.6.2'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
@@ -30,6 +30,8 @@ Jus requires at minimum Java 7 or Android SDK 15.
 ## Modules
 * [jus for Java][jus-java] - main jus library for java
 * [Reactive jus][rx-jus] - RxJava support for jus
+* HTTP Stacks
+    * [OkHttp][jus-okhttp] = OkHttp Client Stack for jus
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
     * [Reactive Android jus][jus-android-rx] - RxJava support for jus for Android
@@ -72,3 +74,4 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [jus-wire]: https://github.com/apptik/jus/tree/master/jus-wire
  [retro-jus]: https://github.com/apptik/jus/tree/master/retro-jus
  [rx-jus]: https://github.com/apptik/jus/tree/master/rx-jus
+ [jus-okhttp]: https://github.com/apptik/jus/tree/master/jus-okhttp

@@ -1,6 +1,6 @@
-#Wire support for jus
+#OkHttp 4 jus
 
-Custom Converters and Request which supports Wire for protocol buffer-compatible serialization.
+[OkHttp][okhttp] Support for jus.  
 
 ##Download
 
@@ -8,17 +8,16 @@ Download [the latest JAR][mvn] or grab via Maven:
 ```xml
 <dependency>
   <groupId>io.apptik.comm</groupId>
-  <artifactId>jus-wire</artifactId>
+  <artifactId>jus-okhttp</artifactId>
   <version>0.6.2</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-wire:0.6.2'
+compile 'io.apptik.comm:jus-okhttp:0.6.2'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
-
 
 ## Licence
 
@@ -36,5 +35,6 @@ Snapshots of the development version are available in [Sonatype's `snapshots` re
     See the License for the specific language governing permissions and
     limitations under the License.
 
- [mvn]: https://search.maven.org/remote_content?g=io.apptik.comm&a=jus-wire&v=LATEST
+ [mvn]: https://search.maven.org/remote_content?g=io.apptik.comm&a=jus-okhttp&v=LATEST
  [snap]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
+ [okhttp]: http://square.github.io/okhttp/

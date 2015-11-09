@@ -9,12 +9,12 @@ Download [the latest JAR][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-protobuf</artifactId>
-  <version>0.6.1</version>
+  <version>0.6.2</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-protobuf:0.6.1'
+compile 'io.apptik.comm:jus-protobuf:0.6.2'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].

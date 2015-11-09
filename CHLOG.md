@@ -1,8 +1,17 @@
 Change Log
 ==========
 
-NEXT Version 0.6.2 *(FUTURE-Nov-2015)*
+NEXT Version 0.6.3 *(FUTURE-Nov-2015)*
 ----------------------------------
+
+Version 0.6.2 *(9-Nov-2015)*
+----------------------------------
+* Fix: providing NetworkResponse converters using converter factories added in the queue 
+* New: Add OkHttp Client HTTP Stack
+* New: in RetroProxy add @Tag, @Priority, @ShouldCache as property annotations
+* New: in RetroProxy add TRACE and OPTIONS inbuilt http methods
+* Fix: race condition bug
+* Fix: RequestQueue closeWhenDone()
 
 Version 0.6.1 *(2-Nov-2015)*
 ----------------------------------
