@@ -1276,18 +1276,18 @@ public final class RequestBuilderTest {
     public void requestDoNotCache() {
 
         class Example {
+            @ShouldCache(false)
             @POST("/foo/bar/")
-                //
-            Request<NetworkResponse> method(@Tag String tag) {
+            Request<NetworkResponse> method() {
                 return null;
             }
         }
-        Request request = buildRequest(Example.class, "cool tag");
+        Request request = buildRequest(Example.class);
         assertThat(request.getMethod()).isEqualTo("POST");
         assertThat(request.getHeaders().size()).isEqualTo(0);
         assertThat(request.getUrlString()).isEqualTo("http://example.com/foo/bar/");
         assertBody(request.getNetworkRequest(), "");
-        assertThat(request.getTag()).isEqualTo("cool tag");
+        assertThat(request.shouldCache()).isEqualTo(false);
     }
 
     @Test
