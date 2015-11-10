@@ -26,6 +26,13 @@ public class UtilsTest {
     }
 
     @Test
+    public void getRespTypeClassNotResolvable2() {
+        Request<String> request = new Request<String>("GET", "test");
+        Type t = Utils.tryIdentifyResultType(request);
+        assertThat(t).isNull();
+    }
+
+    @Test
     public void getRespTypeMethod() {
         Request request = new SmRequest("GET", "test");
         Type t = Utils.tryIdentifyResultType(request);
