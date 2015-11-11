@@ -1,5 +1,4 @@
 language: java
-install: android deps
 
 jdk:
   - oraclejdk8
