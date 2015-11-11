@@ -1,0 +1,33 @@
+language: java
+
+jdk:
+  - oraclejdk8
+
+script:
+  - ./gradlew ":$MODULE:build"
+
+after_success:
+  - ./gradlew "clean uploadArchives"
+
+env:
+   matrix:
+     - MODULE=jus-java
+     - MODULE=jus-gson
+     - MODULE=jus-jackson
+     - MODULE=jus-jjson
+     - MODULE=jus-moshi
+     - MODULE=jus-okhttp
+     - MODULE=jus-protobuf
+     - MODULE=jus-simplexml
+     - MODULE=jus-wire
+     - MODULE=retro-jus
+     - MODULE=rx-jus
+
+notifications:
+  email: true
+
+sudo: false
+
+cache:
+   directories:
+        - $HOME/.gradle
