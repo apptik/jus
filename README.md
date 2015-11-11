@@ -22,7 +22,8 @@ or Gradle:
 compile 'io.apptik.comm:jus-XXX:0.6.3'
 ```
 
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+Downloads of the released versions are available in [Sonatype's `releases` repository][release].
+Snapshots of the development versions are available in [Sonatype's `snapshots` repository][snap].
 
 Jus requires at minimum Java 7 or Android SDK 15.
 
@@ -61,7 +62,8 @@ Jus requires at minimum Java 7 or Android SDK 15.
     limitations under the License.
 
  [mvn]: http://search.maven.org/#search|ga|1|io.apptik.comm.jus
- [snap]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
+ [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
+ [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/comm/
  [jus-android]: https://github.com/apptik/jus/tree/master/jus-android
  [jus-android-rx]: https://github.com/apptik/jus/tree/master/jus-android-rx
  [jus-gson]: https://github.com/apptik/jus/tree/master/jus-gson
