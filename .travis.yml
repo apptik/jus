@@ -1,7 +1,15 @@
 language: java
+install: android deps
 
 jdk:
   - oraclejdk8
+
+android:
+  components:
+    - build-tools-23.0.1
+    - android-23
+    - extra-android-m2repository
+    - sys-img-armeabi-v7a-android-18
 
 script:
   - ./gradlew ":$MODULE:build"
