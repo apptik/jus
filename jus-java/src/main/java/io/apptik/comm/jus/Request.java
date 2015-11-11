@@ -528,7 +528,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     <R extends Request<T>> R setRequestQueue(RequestQueue requestQueue) {
         checkIfActive();
         java.lang.reflect.Method m = null;
-        if(!(this instanceof Request)) {
+        if(!(this.getClass().equals(Request.class))) {
             try {
                 m = this.getClass().getDeclaredMethod("parseNetworkResponse", NetworkResponse
                         .class);
@@ -758,8 +758,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      *                 {@link #parseNetworkResponse(NetworkResponse)}
      */
     protected void deliverResponse(T response) {
-        for (Listener.ResponseListener responseListener : responseListeners) {
-            responseListener.onResponse(response);
+        synchronized (responseListeners) {
+            for (Listener.ResponseListener responseListener : responseListeners) {
+                responseListener.onResponse(response);
+            }
         }
     }
 
@@ -770,8 +772,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * @param error Error details
      */
     public void deliverError(JusError error) {
-        for (Listener.ErrorListener errorListener : errorListeners) {
-            errorListener.onErrorResponse(error);
+        synchronized (errorListeners) {
+            for (Listener.ErrorListener errorListener : errorListeners) {
+                errorListener.onErrorResponse(error);
+            }
         }
     }
 
