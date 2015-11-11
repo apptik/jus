@@ -11,7 +11,7 @@ android:
     - sys-img-armeabi-v7a-android-18
 
 script:
-  - ./gradlew ":$MODULE:build :$MODULE:uploadArchives"
+  - ./gradlew ":$MODULE:build" ":$MODULE:uploadArchives"
 
 env:
    matrix:
