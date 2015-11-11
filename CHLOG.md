@@ -1,8 +1,13 @@
 Change Log
 ==========
 
-NEXT Version 0.6.3 *(FUTURE-Nov-2015)*
+NEXT Version 0.6.4 *(FUTURE-Nov-2015)*
 ----------------------------------
+
+Version 0.6.3 *(11-Nov-2015)*
+----------------------------------
+* Fix: Do not throw when response converter is not set but parseNetworkResponse is overridden
+* New: Add NetworkRequest and NetworkResponse transformers to the queue
 
 Version 0.6.2 *(9-Nov-2015)*
 ----------------------------------

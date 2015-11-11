@@ -9,12 +9,12 @@ Download [the latest JAR][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-android</artifactId>
-  <version>0.6.2</version>
+  <version>0.6.3</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-android:0.6.2'
+compile 'io.apptik.comm:jus-android:0.6.3'
 ```
 
 Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].

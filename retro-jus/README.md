@@ -10,12 +10,12 @@ Download [the latest JAR][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>retro-jus</artifactId>
-  <version>0.6.2</version>
+  <version>0.6.3</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:retro-jus:0.6.2'
+compile 'io.apptik.comm:retro-jus:0.6.3'
 ```
 
 
