@@ -27,6 +27,8 @@ import java.nio.charset.Charset;
 import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.MediaType;
+import io.apptik.comm.jus.toolbox.Utils;
+import okio.Buffer;
 import okio.BufferedSource;
 import okio.ByteString;
 import okio.Okio;
@@ -116,6 +118,21 @@ public final class NetworkResponse {
                 '}';
     }
 
+    public static NetworkResponse create(MediaType mediaType, String data) {
+        Utils.checkNotNull(mediaType, "mediaType==null");
+        return create(mediaType, new Buffer()
+                .writeString(data, mediaType.charset(Charset.forName(HTTP.UTF_8)))
+                .readByteArray());
+    }
+
+    public static NetworkResponse create(MediaType mediaType, byte[] bytes) {
+        Utils.checkNotNull(mediaType, "mediaType==null");
+        return new NetworkResponse.Builder()
+                .setContentType(mediaType)
+                .setBody(bytes)
+                .build();
+    }
+
     public static class Builder {
 
         /** The HTTP status code. */
@@ -162,6 +179,15 @@ public final class NetworkResponse {
 
         public NetworkResponse.Builder setStatusCode(int statusCode) {
             this.statusCode = statusCode;
+            return this;
+        }
+
+        public NetworkResponse.Builder setContentType(MediaType value) {
+            if (value != null) {
+                this.headers.set(HTTP.CONTENT_TYPE, value.toString());
+            } else {
+                this.headers.removeAll(HTTP.CONTENT_TYPE);
+            }
             return this;
         }
 

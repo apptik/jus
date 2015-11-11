@@ -243,6 +243,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         this(method, HttpUrl.parse(url), converterFromResponse);
     }
 
+    public final RequestQueue getRequestQueue() {
+        return requestQueue;
+    }
+
     private void checkIfActive() {
         if (requestQueue != null) {
             throw new IllegalStateException("Request already added to a queue");
@@ -523,14 +527,16 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     <R extends Request<T>> R setRequestQueue(RequestQueue requestQueue) {
         checkIfActive();
-        Class c = null;
-        try {
-             c = this.getClass().getMethod("parseNetworkResponse", NetworkResponse.class)
-                     .getDeclaringClass();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
+        java.lang.reflect.Method m = null;
+        if(!(this instanceof Request)) {
+            try {
+                m = this.getClass().getDeclaredMethod("parseNetworkResponse", NetworkResponse
+                        .class);
+            } catch (NoSuchMethodException e) {
+                //e.printStackTrace();
+            }
         }
-        if(converterFromResponse == null && Request.class==c) {
+        if(converterFromResponse == null && m==null) {
             Type t;
             if(responseType!=null) {
                 t = responseType;

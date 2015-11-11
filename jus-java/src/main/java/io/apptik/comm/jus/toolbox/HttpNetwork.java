@@ -92,6 +92,7 @@ public class HttpNetwork implements Network {
                 addAuthHeaders(request.getAuthenticator(), headers);
 
                 httpResponse = mHttpStack.performRequest(request, headers, mPool);
+                httpResponse = request.getRequestQueue().transformResponse(request, httpResponse);
                 //check completeness of body
                 if (httpResponse != null && httpResponse.headers != null) {
                     String contentLen = httpResponse.headers.get(HTTP.CONTENT_LEN);

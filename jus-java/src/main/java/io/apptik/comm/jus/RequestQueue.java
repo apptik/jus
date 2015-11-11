@@ -134,7 +134,9 @@ public class RequestQueue {
             new ArrayList<>();
 
     private final List<Authenticator.Factory> authenticatorFactories = new ArrayList<>();
-    final List<Converter.Factory> converterFactories = new ArrayList<>();
+    private final List<Converter.Factory> converterFactories = new ArrayList<>();
+    private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
+    private final List<Transformer.ResponseTransformer> responseTransformers = new ArrayList<>();
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -207,7 +209,7 @@ public class RequestQueue {
         if (networkDispatcherFactory == null) {
             networkDispatcherFactory = new NetworkDispatcher.NetworkDispatcherFactory
                     (mNetworkQueue, mNetwork,
-                    mCache, mDelivery);
+                            mCache, mDelivery);
         }
 
         for (int i = 0; i < mDispatchers.length; i++) {
@@ -236,7 +238,7 @@ public class RequestQueue {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (getCurrentRequests() > 0 ) {
+                while (getCurrentRequests() > 0) {
                     JusLog.d("Waiting to finish. Requests left: " +
                             getCurrentRequests() + " / " + getWaitingRequests());
                     try {
@@ -250,7 +252,7 @@ public class RequestQueue {
                 synchronized (mCurrentRequests) {
                     mCurrentRequests.notify();
                 }
-               // stop();
+                // stop();
             }
         }).start();
 
@@ -347,6 +349,13 @@ public class RequestQueue {
                 break;
             }
         }
+
+        for (Transformer.RequestTransformer transformer : requestTransformers) {
+            if (transformer.filter == null || transformer.filter.apply(request)) {
+                request.setNetworkRequest(transformer.transform(request.getNetworkRequest()));
+            }
+        }
+
         synchronized (mCurrentRequests) {
             //check if not already cancelled
             if (request.isCanceled()) {
@@ -389,6 +398,17 @@ public class RequestQueue {
             return request;
         }
     }
+
+    public final NetworkResponse transformResponse(Request<?> request, NetworkResponse response) {
+        NetworkResponse currResponse = response;
+        for (Transformer.ResponseTransformer transformer : responseTransformers) {
+            if (transformer.filter == null || transformer.filter.apply(request)) {
+                currResponse = transformer.transform(currResponse);
+            }
+        }
+        return currResponse;
+    }
+
 
     /**
      * Called from {@link Request#finish(String)}, indicating that processing of the given request
@@ -470,6 +490,35 @@ public class RequestQueue {
             converterFactories.remove(factory);
         }
 
+        return this;
+    }
+
+    public RequestQueue addRequestTransformer(Transformer.RequestTransformer transformer) {
+        synchronized (requestTransformers) {
+            requestTransformers.add(transformer);
+        }
+        return this;
+    }
+
+
+    public RequestQueue removeRequestTransformer(Transformer.RequestTransformer transformer) {
+        synchronized (requestTransformers) {
+            requestTransformers.remove(transformer);
+        }
+        return this;
+    }
+
+    public RequestQueue addResponseTransformer(Transformer.ResponseTransformer transformer) {
+        synchronized (responseTransformers) {
+            responseTransformers.add(transformer);
+        }
+        return this;
+    }
+
+    public RequestQueue removeResponseTransformer(Transformer.ResponseTransformer transformer) {
+        synchronized (responseTransformers) {
+            responseTransformers.remove(transformer);
+        }
         return this;
     }
 
