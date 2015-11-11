@@ -26,6 +26,8 @@ env:
      - MODULE=jus-wire
      - MODULE=retro-jus
      - MODULE=rx-jus
+     - MODULE=jus-android
+     - MODULE=jus-android-rx
 
 notifications:
   email: true
