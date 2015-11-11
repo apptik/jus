@@ -25,6 +25,7 @@ compile 'io.apptik.comm:jus-XXX:0.6.3'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].
+
 Snapshots of the development versions are available in [Sonatype's `snapshots` repository][snap].
 
 Jus requires at minimum Java 7 or Android SDK 15.
