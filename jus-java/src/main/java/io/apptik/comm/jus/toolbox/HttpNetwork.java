@@ -92,7 +92,13 @@ public class HttpNetwork implements Network {
                 addAuthHeaders(request.getAuthenticator(), headers);
 
                 httpResponse = mHttpStack.performRequest(request, headers, mPool);
-                httpResponse = request.getRequestQueue().transformResponse(request, httpResponse);
+                //currently all requests that came to here normally needs to be attached to the queue
+                //however due the complete decoupling of the components in Jus a Network may be set
+                //to perform internal requests, i.e. which was not passed to the queue, possibly auth
+                //requests. So we shall check
+                if(request.getRequestQueue()!=null) {
+                    httpResponse = request.getRequestQueue().transformResponse(request, httpResponse);
+                }
                 //check completeness of body
                 if (httpResponse != null && httpResponse.headers != null) {
                     String contentLen = httpResponse.headers.get(HTTP.CONTENT_LEN);

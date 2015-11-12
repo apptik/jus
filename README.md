@@ -1,5 +1,7 @@
 #jus
 
+[![Build Status](https://travis-ci.org/apptik/jus.svg?branch=master)](https://travis-ci.org/apptik/jus)
+
 Flexible and Easy HTTP/REST(not 100% yet) Communication library for Java and Android
 Based on Volley, inspired by many.
 
@@ -23,6 +25,7 @@ compile 'io.apptik.comm:jus-XXX:0.6.3'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].
+
 Snapshots of the development versions are available in [Sonatype's `snapshots` repository][snap].
 
 Jus requires at minimum Java 7 or Android SDK 15.

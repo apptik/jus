@@ -1,0 +1,39 @@
+language: android
+
+jdk:
+  - oraclejdk8
+
+android:
+  components:
+    - build-tools-23.0.1
+    - android-23
+    - extra-android-m2repository
+    - sys-img-armeabi-v7a-android-18
+
+script:
+  - ./gradlew ":$MODULE:build" ":$MODULE:uploadArchives"
+
+env:
+   matrix:
+     - MODULE=jus-java
+     - MODULE=jus-gson
+     - MODULE=jus-jackson
+     - MODULE=jus-jjson
+     - MODULE=jus-moshi
+     - MODULE=jus-okhttp
+     - MODULE=jus-protobuf
+     - MODULE=jus-simplexml
+     - MODULE=jus-wire
+     - MODULE=retro-jus
+     - MODULE=rx-jus
+     - MODULE=jus-android
+     - MODULE=jus-android-rx
+
+notifications:
+  email: true
+
+sudo: false
+
+cache:
+   directories:
+        - $HOME/.gradle

@@ -536,7 +536,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 //e.printStackTrace();
             }
         }
-        if(converterFromResponse == null && m==null) {
+        if(converterFromResponse == null) {
             Type t;
             if(responseType!=null) {
                 t = responseType;
@@ -548,10 +548,19 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                         "identify Response Converter for Request : " + this);
             }
 
-            this.converterFromResponse =
-                    (Converter<NetworkResponse, T>) requestQueue
-                            .getResponseConverter(t, new Annotation[0]);
-
+            try {
+                this.converterFromResponse =
+                        (Converter<NetworkResponse, T>) requestQueue
+                                .getResponseConverter(t, new Annotation[0]);
+            } catch (IllegalArgumentException ex) {
+                //check if parseNetworkResponse is overridden
+                if(m==null) {
+                    //it is not so it is for sure that we cannot parse response thus throw
+                    throw ex;
+                }
+                //else keep quiet as conversion can probably be handled by the overridden method.
+                // if it fails parse exception will be thrown.
+            }
 
 
         }
