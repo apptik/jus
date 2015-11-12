@@ -48,7 +48,7 @@ public final class NetworkResponse {
     /** Response headers. */
     public final Headers headers;
 
-    /** Network roundtrip time in milliseconds. */
+    /** Network roundtrip time in nanoseconds. */
     public final long networkTimeNs;
 
     public final MediaType contentType;
