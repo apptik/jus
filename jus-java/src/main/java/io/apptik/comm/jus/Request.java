@@ -333,40 +333,51 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     //--> Listeners
 
 
-    public <R extends Request<T>> R addResponseListener(Listener.ResponseListener<T>
-                                                                responseListener) {
+    public <R extends Request<T>> R addResponseListener(Listener.ResponseListener<T> responseListener) {
         if (responseListeners != null) {
-            this.responseListeners.add(responseListener);
+            synchronized (responseListeners) {
+                this.responseListeners.add(responseListener);
+            }
         }
         return (R) this;
     }
 
     public <R extends Request<T>> R addMarkerListener(Listener.MarkerListener markerListener) {
         if (markerListener != null) {
-            this.markerListeners.add(markerListener);
+            synchronized (markerListeners) {
+                this.markerListeners.add(markerListener);
+            }
         }
         return (R) this;
     }
 
     public <R extends Request<T>> R addErrorListener(Listener.ErrorListener errorListener) {
         if (errorListener != null) {
-            this.errorListeners.add(errorListener);
+            synchronized (errorListeners) {
+                this.errorListeners.add(errorListener);
+            }
         }
         return (R) this;
     }
 
     public Request<T> removeResponseListener(Listener.ResponseListener<T> responseListener) {
-        this.responseListeners.remove(responseListener);
+        synchronized (responseListeners) {
+            this.responseListeners.remove(responseListener);
+        }
         return this;
     }
 
     public <R extends Request<T>> R removeMarkerListener(Listener.MarkerListener markerListener) {
-        this.markerListeners.remove(markerListener);
+        synchronized (markerListeners) {
+            this.markerListeners.remove(markerListener);
+        }
         return (R) this;
     }
 
     public <R extends Request<T>> R removeErrorListener(Listener.ErrorListener errorListener) {
-        this.errorListeners.remove(errorListener);
+        synchronized (errorListeners) {
+            this.errorListeners.remove(errorListener);
+        }
         return (R) this;
     }
 
@@ -514,9 +525,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 JusLog.d("%d ns: %s", requestTime, this.toString());
             }
         }
-        errorListeners.clear();
-        responseListeners.clear();
-        markerListeners.clear();
+        synchronized (markerListeners) {
+            markerListeners.clear();
+        }
     }
 
     /**
@@ -771,6 +782,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             for (Listener.ResponseListener responseListener : responseListeners) {
                 responseListener.onResponse(response);
             }
+            responseListeners.clear();
+        }
+        synchronized (errorListeners) {
+            errorListeners.clear();
         }
     }
 
@@ -785,6 +800,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             for (Listener.ErrorListener errorListener : errorListeners) {
                 errorListener.onErrorResponse(error);
             }
+            errorListeners.clear();
+        }
+        synchronized (responseListeners) {
+            responseListeners.clear();
         }
     }
 
