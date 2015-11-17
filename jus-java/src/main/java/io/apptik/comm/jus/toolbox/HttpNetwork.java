@@ -23,8 +23,6 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.Cache.Entry;
@@ -85,12 +83,12 @@ public class HttpNetwork implements Network {
             NetworkResponse httpResponse = null;
             try {
                 // Gather headers.
-                Map<String, String> headers = new HashMap<String, String>();
+                Headers.Builder headers = new Headers.Builder();
                 addCacheHeaders(headers, request.getCacheEntry());
                 addAuthHeaders(request.getAuthenticator(), headers);
 
-                request.addMarker(Request.EVENT_NETWORK_STACK_SEND);
-                httpResponse = mHttpStack.performRequest(request, headers, mPool);
+                request.addMarker(Request.EVENT_NETWORK_STACK_SEND, headers);
+                httpResponse = mHttpStack.performRequest(request, headers.build(), mPool);
                 request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
                 //currently all requests that came to here normally needs to be attached to the queue
                 //however due the complete decoupling of the components in Jus a Network may be set
@@ -251,25 +249,25 @@ public class HttpNetwork implements Network {
         request.addMarker(String.format("%s-retry [timeout=%s]", logPrefix, oldTimeout));
     }
 
-    private void addAuthHeaders(Authenticator authenticator, Map<String, String> headers) throws
+    private void addAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
             AuthenticatorError {
         if (authenticator == null) return;
-        headers.put("Authorization", "Bearer " + authenticator.getToken());
+        headers.add("Authorization", "Bearer " + authenticator.getToken());
     }
 
-    private void addCacheHeaders(Map<String, String> headers, Cache.Entry entry) {
+    private void addCacheHeaders(Headers.Builder headers, Cache.Entry entry) {
         // If there's no cache entry, we're done.
         if (entry == null) {
             return;
         }
 
         if (entry.etag != null) {
-            headers.put("If-None-Match", entry.etag);
+            headers.add("If-None-Match", entry.etag);
         }
 
         if (entry.lastModified > 0) {
             Date refTime = new Date(entry.lastModified);
-            headers.put("If-Modified-Since", DateUtils.formatDate(refTime));
+            headers.add("If-Modified-Since", DateUtils.formatDate(refTime));
         }
     }
 

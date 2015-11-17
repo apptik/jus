@@ -7,6 +7,7 @@ import android.util.Log;
 
 import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.AndroidRxJus;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
@@ -33,6 +34,9 @@ public class CustomJusHelper {
 
 
     public static void init(Context context) {
+        JusLog.ErrorLog.on();
+        JusLog.ResponseLog.on();
+        JusLog.MarkerLog.on();
         queue = AndroidJus.newRequestQueue(context);
 
         imageLoader = new ImageLoader(queue,

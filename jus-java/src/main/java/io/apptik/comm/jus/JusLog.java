@@ -138,7 +138,8 @@ public class JusLog {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
-            log.log(buildMessage(request, marker.toString() + "\nargs=" + Arrays.toString(args)));
+            log.log(buildMessage(request, "%s\n\t\targs=%s", marker.toString(), Arrays.toString
+                    (args)));
             mMarkers.add(marker);
             if (Request.EVENT_DONE.equals(marker.name)) {
                 finish("[" + request.getMethod() + "]" + request.getUrlString());
@@ -163,7 +164,7 @@ public class JusLog {
             log.log(buildMessage(request, "(%-10d ns) %s", duration, header));
             for (Marker marker : mMarkers) {
                 long thisTime = marker.time;
-                log.log(buildMessage(request, "(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
+                log.log(String.format("(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
                         , marker.threadId, marker
                         .threadName, marker.name));
                 prevTime = thisTime;
@@ -198,7 +199,7 @@ public class JusLog {
 
     private static String buildMessage(Request request, String format, Object... args) {
         String msg = (args == null) ? format : String.format(Locale.US, format, args);
-        return String.format(Locale.US, "[%d] Request: %s:\n\t %s",
+        return String.format(Locale.US, "[%d]: %s:\n\t\t%s",
                 Thread.currentThread().getId(), request.toString(), msg);
     }
 

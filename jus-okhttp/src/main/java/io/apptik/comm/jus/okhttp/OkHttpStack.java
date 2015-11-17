@@ -11,6 +11,7 @@ import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.AbstractHttpStack;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
@@ -36,7 +37,7 @@ public class OkHttpStack extends AbstractHttpStack {
     }
 
     @Override
-    public NetworkResponse performRequest(Request<?> request, Map<String, String>
+    public NetworkResponse performRequest(Request<?> request, Headers
             additionalHeaders, ByteArrayPool byteArrayPool) throws IOException, AuthFailureError {
 
         //OkHttpClient client = this.client.clone();

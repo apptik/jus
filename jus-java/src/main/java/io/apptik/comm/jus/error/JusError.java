@@ -18,6 +18,8 @@
 
 package io.apptik.comm.jus.error;
 
+import java.util.Arrays;
+
 import io.apptik.comm.jus.NetworkResponse;
 
 /**
@@ -74,6 +76,9 @@ public class JusError extends Exception {
         return "JusError{" +
                 "networkResponse=" + networkResponse +
                 ", networkTimeMs=" + networkTimeMs +
-                "} " + super.toString();
+                ", \nmessage=" + getLocalizedMessage() +
+                ", \nstacktrace= "+ Arrays.toString(getStackTrace()) + "\n\tCause: " + Arrays
+                .toString
+                (getCause().getStackTrace()) + "} ";
     }
 }

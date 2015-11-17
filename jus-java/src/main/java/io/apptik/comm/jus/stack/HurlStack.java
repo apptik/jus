@@ -23,7 +23,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
@@ -77,7 +76,7 @@ public class HurlStack extends AbstractHttpStack {
     }
 
     @Override
-    public NetworkResponse performRequest(Request<?> request, Map<String, String>
+    public NetworkResponse performRequest(Request<?> request, Headers
             additionalHeaders, ByteArrayPool byteArrayPool)
             throws IOException, AuthFailureError {
         String url = request.getUrlString();
@@ -86,9 +85,9 @@ public class HurlStack extends AbstractHttpStack {
         int statusCode;
         byte[] data;
         Headers.Builder headers = new Headers.Builder();
-        ///
+        ///TODO optimise
         requestHeaders.putAll(request.getHeadersMap());
-        requestHeaders.putAll(additionalHeaders);
+        requestHeaders.putAll(additionalHeaders.toMap());
         if (mUrlRewriter != null) {
             String rewritten = mUrlRewriter.rewriteUrl(url);
             if (rewritten == null) {

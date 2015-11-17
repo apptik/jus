@@ -18,18 +18,22 @@ public class JusOk {
         return new Headers.Builder().addMMap(okHeaders.toMultimap()).build();
     }
 
-    public static com.squareup.okhttp.Headers okHeaders(Headers jusHeaders, Map<String, String>
+    public static com.squareup.okhttp.Headers okHeaders(Headers jusHeaders, Headers
             additionalHeaders) {
-        if(jusHeaders==null) {
+        if (jusHeaders == null) {
             jusHeaders = new Headers.Builder().build();
         }
+
         Map<String, String> headers = jusHeaders.toMap();
-        headers.putAll(additionalHeaders);
+        if (additionalHeaders == null)
+        {
+            headers.putAll(additionalHeaders.toMap());
+        }
         return com.squareup.okhttp.Headers.of(headers);
     }
 
     public static RequestBody okBody(NetworkRequest request) {
-        if(request==null)
+        if (request == null)
             return null;
         return RequestBody.create(MediaType.parse(request.contentType.toString()), request.data);
     }

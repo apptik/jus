@@ -18,9 +18,10 @@
 
 package io.apptik.comm.jus.examples.request;
 
+import android.util.Log;
+
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.Listener.ResponseListener;
 import io.apptik.comm.jus.NetworkResponse;
@@ -65,8 +66,9 @@ public abstract class JsonRequest<T> extends Request<T> {
         try {
             return mRequestBody == null ? null : mRequestBody.getBytes(PROTOCOL_CHARSET);
         } catch (UnsupportedEncodingException uee) {
-            JusLog.e("Unsupported Encoding while trying to get the bytes of %s using %s",
-                    mRequestBody, PROTOCOL_CHARSET);
+            Log.e("JusLog", String.format("Unsupported Encoding while trying to get the bytes of " +
+                            "%s using %s",
+                    mRequestBody, PROTOCOL_CHARSET));
             return null;
         }
     }

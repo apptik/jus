@@ -44,6 +44,7 @@ public class AndroidJus {
      * @return A started {@link RequestQueue} instance.
      */
     public static RequestQueue newRequestQueue(Context context, HttpStack stack) {
+        JusLog.log = new ALog();
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
         String userAgent = "jus/0";
         try {
