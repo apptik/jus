@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.net.ProtocolException;
 import java.util.Map;
 
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
@@ -96,7 +95,7 @@ public class OkHttpStack extends AbstractHttpStack {
             } catch (IOException e) {
                 // This can happen if there was an exception above that left the entity in
                 // an invalid state.
-                JusLog.v("Error occurred when calling consumingContent");
+                //todo add queue markers
             }
             byteArrayPool.returnBuf(buffer);
             bytes.close();

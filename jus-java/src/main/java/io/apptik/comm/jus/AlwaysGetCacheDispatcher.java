@@ -41,7 +41,7 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
 
     @Override
     public void run() {
-        if (DEBUG) JusLog.v("start new always cache dispatcher");
+        //todo add queue markers
         setThreadPriority();
         // Make a blocking call to initialize the cache.
         mCache.initialize();

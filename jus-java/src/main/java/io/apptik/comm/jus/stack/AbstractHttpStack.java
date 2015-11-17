@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
 
@@ -50,7 +49,7 @@ public abstract class AbstractHttpStack implements HttpStack {
             } catch (IOException e) {
                 // This can happen if there was an exception above that left the entity in
                 // an invalid state.
-                JusLog.v("Error occurred when calling consumingContent");
+                //todo add queue markers
             }
             byteArrayPool.returnBuf(buffer);
             bytes.close();

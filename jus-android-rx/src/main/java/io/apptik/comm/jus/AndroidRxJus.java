@@ -46,7 +46,6 @@ public class AndroidRxJus {
      */
     public static RxRequestQueue newRequestQueue(Context context, HttpStack stack) {
         File cacheDir = new File(context.getCacheDir(), DEFAULT_CACHE_DIR);
-        JusLog.log = new ALog();
         String userAgent = "jus/0";
         try {
             String packageName = context.getPackageName();

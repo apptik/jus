@@ -130,9 +130,6 @@ public class RequestQueue {
      */
     protected NetworkDispatcher.NetworkDispatcherFactory networkDispatcherFactory;
 
-    private List<RequestFinishedListener> finishedListeners =
-            new ArrayList<>();
-
     private final List<Authenticator.Factory> authenticatorFactories = new ArrayList<>();
     private final List<Converter.Factory> converterFactories = new ArrayList<>();
     private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
@@ -239,16 +236,18 @@ public class RequestQueue {
             @Override
             public void run() {
                 while (getCurrentRequests() > 0) {
-                    JusLog.d("Waiting to finish. Requests left: " +
-                            getCurrentRequests() + " / " + getWaitingRequests());
+                    //todo
+//                    JusLog.d("Waiting to finish. Requests left: " +
+//                            getCurrentRequests() + " / " + getWaitingRequests());
                     try {
                         Thread.sleep(33);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-                JusLog.d("READY to finish. Requests left: " +
-                        getCurrentRequests() + " / " + getWaitingRequests());
+                //todo
+//                JusLog.d("READY to finish. Requests left: " +
+//                        getCurrentRequests() + " / " + getWaitingRequests());
                 synchronized (mCurrentRequests) {
                     mCurrentRequests.notify();
                 }
@@ -356,6 +355,18 @@ public class RequestQueue {
             }
         }
 
+        if(JusLog.ErrorLog.isOn()) {
+            request.addErrorListener(new JusLog.ErrorLog(request));
+        }
+
+        if(JusLog.ResponseLog.isOn()) {
+            request.addResponseListener(new JusLog.ResponseLog(request));
+        }
+
+        if(JusLog.MarkerLog.isOn()) {
+            request.addMarkerListener(new JusLog.MarkerLog(request));
+        }
+
         synchronized (mCurrentRequests) {
             //check if not already cancelled
             if (request.isCanceled()) {
@@ -386,9 +397,10 @@ public class RequestQueue {
                 }
                 stagedRequests.add(request);
                 mWaitingRequests.put(cacheKey, stagedRequests);
-                if (JusLog.DEBUG) {
-                    JusLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
-                }
+//                if (JusLog.DEBUG) {
+//                    JusLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
+//                }
+                //todo add queue markers
             } else {
                 // Insert 'empty list' queue for this cacheKey, indicating there is now a request in
                 // flight.
@@ -422,40 +434,21 @@ public class RequestQueue {
         synchronized (mCurrentRequests) {
             mCurrentRequests.remove(request);
         }
-        synchronized (finishedListeners) {
-            for (RequestFinishedListener<T> listener : finishedListeners) {
-                listener.onRequestFinished(request);
-            }
-        }
         if (request.shouldCache()) {
             synchronized (mWaitingRequests) {
                 String cacheKey = request.getCacheKey();
                 Queue<Request<?>> waitingRequests = mWaitingRequests.remove(cacheKey);
                 if (waitingRequests != null) {
-                    if (JusLog.DEBUG) {
-                        JusLog.v("Releasing %d waiting requests for cacheKey=%s.",
-                                waitingRequests.size(), cacheKey);
-                    }
+                    //todo add queue markers
+//                    if (JusLog.DEBUG) {
+//                        JusLog.v("Releasing %d waiting requests for cacheKey=%s.",
+//                                waitingRequests.size(), cacheKey);
+//                    }
                     // Process all queued up requests. They won't be considered as in flight, but
                     // that's not a problem as the cache has been primed by 'request'.
                     mCacheQueue.addAll(waitingRequests);
                 }
             }
-        }
-    }
-
-    public <T> void addRequestFinishedListener(RequestFinishedListener<T> listener) {
-        synchronized (finishedListeners) {
-            finishedListeners.add(listener);
-        }
-    }
-
-    /**
-     * Remove a RequestFinishedListener. Has no effect if listener was not previously added.
-     */
-    public <T> void removeRequestFinishedListener(RequestFinishedListener<T> listener) {
-        synchronized (finishedListeners) {
-            finishedListeners.remove(listener);
         }
     }
 

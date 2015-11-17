@@ -33,8 +33,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.apptik.comm.jus.Converter;
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;

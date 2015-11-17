@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2015 AppTik Project
- * Copyright (C) 2006 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -18,159 +17,15 @@
 package io.apptik.comm.jus;
 
 
-/**
- * API for sending log output.
- * <p>
- * <p>Generally, use the Log.v() Log.d() Log.i() Log.w() and Log.e()
- * methods.
- * <p>
- * <p>The order in terms of verbosity, from least to most is
- * ERROR, WARN, INFO, DEBUG, VERBOSE.  Verbose should never be compiled
- * into an application except during development.  Debug logs are compiled
- * in but stripped at runtime.  Error, warning and info logs are always kept.
- * <p>
- * <p><b>Tip:</b> A good convention is to declare a <code>TAG</code> constant
- * in your class:
- * <p>
- * <pre>private static final String TAG = "MyActivity";</pre>
- * <p>
- * and use that in subsequent calls to the log methods.
- * <p>
- * <p>
- * <p><b>Tip:</b> Don't forget that when you make a call like
- * <pre>Log.v(TAG, "index=" + i);</pre>
- * that when you're building the string to pass into Log.d, the compiler uses a
- * StringBuilder and at least three allocations occur: the StringBuilder
- * itself, the buffer, and the String object.  Realistically, there is also
- * another buffer allocation and copy, and even more pressure on the gc.
- * That means that if your log message is filtered out, you might be doing
- * significant work and incurring significant overhead.
- */
 public final class ALog implements Log{
 
-    /**
-     * Send a {@link #VERBOSE} log message.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     */
-    public int v(String tag, String msg) {
-        return android.util.Log.v(tag, msg);
+    @Override
+    public void log(String msg) {
+        android.util.Log.d("Jus: ", msg);
     }
 
-    /**
-     * Send a {@link #VERBOSE} log message and log the exception.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     * @param tr  An exception to log
-     */
-    public int v(String tag, String msg, Throwable tr) {
-        return android.util.Log.v(tag, msg, tr);
+    @Override
+    public void error(String msg) {
+        android.util.Log.e("Jus: ", msg);
     }
-
-    /**
-     * Send a {@link #DEBUG} log message.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     */
-    public int d(String tag, String msg) {
-        return android.util.Log.d(tag, msg);
-    }
-
-    /**
-     * Send a {@link #DEBUG} log message and log the exception.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     * @param tr  An exception to log
-     */
-    public int d(String tag, String msg, Throwable tr) {
-        return android.util.Log.d(tag, msg, tr);
-    }
-
-
-    /**
-     * Send a {@link #WARN} log message.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     */
-    public int w(String tag, String msg) {
-        return android.util.Log.w(tag, msg);
-    }
-
-    /**
-     * Send a {@link #WARN} log message and log the exception.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     * @param tr  An exception to log
-     */
-    public int w(String tag, String msg, Throwable tr) {
-        return android.util.Log.w(tag, msg, tr);
-    }
-
-    /**
-     * Checks to see whether or not a log for the specified tag is loggable at the specified level.
-     * <p>
-     * The default level of any tag is set to INFO. This means that any level above and including
-     * INFO will be logged. Before you make any calls to a logging method you should check to see
-     * if your tag should be logged. You can change the default level by setting a system property:
-     * 'setprop log.tag.&lt;YOUR_LOG_TAG&gt; &lt;LEVEL&gt;'
-     * Where level is either VERBOSE, DEBUG, INFO, WARN, ERROR, ASSERT, or SUPPRESS. SUPPRESS will
-     * turn off all logging for your tag. You can also create a local.prop file that with the
-     * following in it:
-     * 'log.tag.&lt;YOUR_LOG_TAG&gt;=&lt;LEVEL&gt;'
-     * and place that in /data/local.prop.
-     *
-     * @param tag   The tag to check.
-     * @param level The level to check.
-     * @return Whether or not that this is allowed to be logged.
-     * @throws IllegalArgumentException is thrown if the tag.length() &gt; 23.
-     */
-    public boolean isLoggable(String tag, int level) {
-        return android.util.Log.isLoggable(tag, level);
-    }
-
-    /*
-     * Send a {@link #WARN} log message and log the exception.
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *        the class or activity where the log call occurs.
-     * @param tr An exception to log
-     */
-    public int w(String tag, Throwable tr) {
-        return android.util.Log.w(tag, tr);
-    }
-
-    /**
-     * Send an {@link #ERROR} log message.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     */
-    public int e(String tag, String msg) {
-        return android.util.Log.e(tag, msg);
-    }
-
-    /**
-     * Send a {@link #ERROR} log message and log the exception.
-     *
-     * @param tag Used to identify the source of a log message.  It usually identifies
-     *            the class or activity where the log call occurs.
-     * @param msg The message you would like logged.
-     * @param tr  An exception to log
-     */
-    public int e(String tag, String msg, Throwable tr) {
-        return android.util.Log.e(tag, msg, tr);
-    }
-
 }

@@ -24,7 +24,6 @@ import android.graphics.BitmapFactory;
 import android.widget.ImageView.ScaleType;
 
 import io.apptik.comm.jus.DefaultRetryPolicy;
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
@@ -156,7 +155,6 @@ public class ImageRequest extends Request<Bitmap> {
             try {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
-                JusLog.e("Caught OOM for %d byte image, url=%s", response.data.length, getUrlString());
                 return Response.error(new ParseError(e));
             }
         }

@@ -51,6 +51,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 public final class SimpleRequestTest {
+
     @Rule
     public final MockWebServer server = new MockWebServer();
 

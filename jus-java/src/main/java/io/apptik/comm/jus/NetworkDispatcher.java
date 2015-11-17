@@ -32,8 +32,6 @@ import io.apptik.comm.jus.error.JusError;
  * errors are posted back to the caller via a {@link ResponseDelivery}.
  */
 public class NetworkDispatcher extends Thread {
-    protected static final boolean DEBUG = JusLog.DEBUG;
-
     /**
      * The queue of requests to service.
      */
@@ -107,7 +105,7 @@ public class NetworkDispatcher extends Thread {
 
     @Override
     public void run() {
-        if (DEBUG) JusLog.v("start new network dispatcher " + this.toString());
+        //todo add queue markers
         setThreadPriority();
         while (true) {
             long startTimeMs = System.nanoTime();
@@ -177,7 +175,6 @@ public class NetworkDispatcher extends Thread {
                 jusError.setNetworkTimeNs(System.nanoTime() - startTimeMs);
                 parseAndDeliverNetworkError(request, jusError);
             } catch (Exception e) {
-                JusLog.e(e, "Unhandled exception %s", e.toString());
                 JusError jusError = new JusError(e);
                 jusError.setNetworkTimeNs(System.nanoTime() - startTimeMs);
                 mDelivery.postError(request, jusError);

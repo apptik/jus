@@ -31,9 +31,6 @@ import java.util.concurrent.BlockingQueue;
  * by a {@link NetworkDispatcher}.
  */
 public class CacheDispatcher extends Thread {
-
-    protected static final boolean DEBUG = JusLog.DEBUG;
-
     /**
      * The queue of requests coming in for triage.
      */
@@ -92,7 +89,7 @@ public class CacheDispatcher extends Thread {
 
     @Override
     public void run() {
-        if (DEBUG) JusLog.v("start new cache dispatcher");
+        //todo add queue markers
         setThreadPriority();
         // Make a blocking call to initialize the cache.
         mCache.initialize();

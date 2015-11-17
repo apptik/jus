@@ -28,7 +28,6 @@ import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.Cache.Entry;
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Network;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
@@ -52,7 +51,6 @@ import io.apptik.comm.jus.stack.HttpStack;
  * A network performing Jus requests over an {@link HttpStack}.
  */
 public class HttpNetwork implements Network {
-    protected static final boolean DEBUG = JusLog.DEBUG;
 
     private static long SLOW_REQUEST_THRESHOLD_MS = 3000000000l;
 
@@ -91,13 +89,16 @@ public class HttpNetwork implements Network {
                 addCacheHeaders(headers, request.getCacheEntry());
                 addAuthHeaders(request.getAuthenticator(), headers);
 
+                request.addMarker(Request.EVENT_NETWORK_STACK_SEND);
                 httpResponse = mHttpStack.performRequest(request, headers, mPool);
+                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
                 //currently all requests that came to here normally needs to be attached to the queue
                 //however due the complete decoupling of the components in Jus a Network may be set
                 //to perform internal requests, i.e. which was not passed to the queue, possibly auth
                 //requests. So we shall check
                 if(request.getRequestQueue()!=null) {
                     httpResponse = request.getRequestQueue().transformResponse(request, httpResponse);
+                    request.addMarker(Request.EVENT_NETWORK_TRANSFORM_COMPLETE, httpResponse);
                 }
                 //check completeness of body
                 if (httpResponse != null && httpResponse.headers != null) {
@@ -159,8 +160,9 @@ public class HttpNetwork implements Network {
                 } else {
                     throw new NoConnectionError(e);
                 }
-                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode,
-                        request.getUrlString());
+                //todo add queue markers
+//                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode,
+//                        request.getUrlString());
                 if (networkResponse != null) {
                     if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         // thrown when available Authenticator is available
@@ -219,11 +221,12 @@ public class HttpNetwork implements Network {
      */
     private void logSlowRequests(long requestLifetime, Request<?> request,
                                  byte[] responseContents, int statusCode) {
-        if (DEBUG || requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
-            JusLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +
-                            "[rc=%d], [retryCount=%s]", request, requestLifetime,
-                    responseContents != null ? responseContents.length : "null",
-                    statusCode, request.getRetryPolicy().getCurrentRetryCount());
+        if (requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
+            //todo add queue markers
+//            JusLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +
+//                            "[rc=%d], [retryCount=%s]", request, requestLifetime,
+//                    responseContents != null ? responseContents.length : "null",
+//                    statusCode, request.getRetryPolicy().getCurrentRetryCount());
         }
     }
 
@@ -268,11 +271,6 @@ public class HttpNetwork implements Network {
             Date refTime = new Date(entry.lastModified);
             headers.put("If-Modified-Since", DateUtils.formatDate(refTime));
         }
-    }
-
-    protected void logError(String what, String url, long start) {
-        long now = System.nanoTime();
-        JusLog.v("HTTP ERROR(%s) %d ms to fetch %s", what, (now - start), url);
     }
 
 }

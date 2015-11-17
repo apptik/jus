@@ -35,7 +35,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.http.Headers;
 
 /**
@@ -98,7 +97,8 @@ public class DiskBasedCache implements Cache {
         }
         mEntries.clear();
         mTotalSize = 0;
-        JusLog.d("Cache cleared.");
+        //todo add queue markers
+        //JusLog.d("Cache cleared.");
     }
 
     /**
@@ -120,7 +120,8 @@ public class DiskBasedCache implements Cache {
             byte[] data = streamToBytes(cis, (int) (file.length() - cis.bytesRead));
             return entry.toCacheEntry(data);
         } catch (IOException e) {
-            JusLog.d("%s: %s", file.getAbsolutePath(), e.toString());
+            //todo add queue markers
+            //JusLog.d("%s: %s", file.getAbsolutePath(), e.toString());
             remove(key);
             return null;
         } finally {
@@ -142,7 +143,8 @@ public class DiskBasedCache implements Cache {
     public synchronized void initialize() {
         if (!mRootDirectory.exists()) {
             if (!mRootDirectory.mkdirs()) {
-                JusLog.e("Unable to create cache dir %s", mRootDirectory.getAbsolutePath());
+               throw new IllegalStateException("Unable to create cache dir: " +mRootDirectory
+                       .getAbsolutePath());
             }
             return;
         }
@@ -203,7 +205,8 @@ public class DiskBasedCache implements Cache {
             boolean success = e.writeHeader(fos);
             if (!success) {
                 fos.close();
-                JusLog.d("Failed to write header for %s", file.getAbsolutePath());
+                //todo add queue markers
+//                JusLog.d("Failed to write header for %s", file.getAbsolutePath());
                 throw new IOException();
             }
             fos.write(entry.data);
@@ -214,7 +217,8 @@ public class DiskBasedCache implements Cache {
         }
         boolean deleted = file.delete();
         if (!deleted) {
-            JusLog.d("Could not clean up file %s", file.getAbsolutePath());
+            //todo add queue markers
+//            JusLog.d("Could not clean up file %s", file.getAbsolutePath());
         }
     }
 
@@ -226,8 +230,9 @@ public class DiskBasedCache implements Cache {
         boolean deleted = getFileForKey(key).delete();
         removeEntry(key);
         if (!deleted) {
-            JusLog.d("Could not delete cache entry for key=%s, filename=%s",
-                    key, getFilenameForKey(key));
+            //todo add queue markers
+//            JusLog.d("Could not delete cache entry for key=%s, filename=%s",
+//                    key, getFilenameForKey(key));
         }
     }
 
@@ -258,9 +263,10 @@ public class DiskBasedCache implements Cache {
         if ((mTotalSize + neededSpace) < mMaxCacheSizeInBytes) {
             return;
         }
-        if (JusLog.DEBUG) {
-            JusLog.v("Pruning old cache entries.");
-        }
+//        if (JusLog.DEBUG) {
+//            JusLog.v("Pruning old cache entries.");
+//        }
+        //todo add queue markers
 
         long before = mTotalSize;
         int prunedFiles = 0;
@@ -274,8 +280,9 @@ public class DiskBasedCache implements Cache {
             if (deleted) {
                 mTotalSize -= e.size;
             } else {
-               JusLog.d("Could not delete cache entry for key=%s, filename=%s",
-                       e.key, getFilenameForKey(e.key));
+                //todo add queue markers
+//               JusLog.d("Could not delete cache entry for key=%s, filename=%s",
+//                       e.key, getFilenameForKey(e.key));
             }
             iterator.remove();
             prunedFiles++;
@@ -284,11 +291,11 @@ public class DiskBasedCache implements Cache {
                 break;
             }
         }
-
-        if (JusLog.DEBUG) {
-            JusLog.v("pruned %d files, %d bytes, %d ms",
-                    prunedFiles, (mTotalSize - before), System.nanoTime() - startTime);
-        }
+//todo add queue markers
+//        if (JusLog.DEBUG) {
+//            JusLog.v("pruned %d files, %d bytes, %d ms",
+//                    prunedFiles, (mTotalSize - before), System.nanoTime() - startTime);
+//        }
     }
 
     /**
@@ -438,7 +445,8 @@ public class DiskBasedCache implements Cache {
                 os.flush();
                 return true;
             } catch (IOException e) {
-                JusLog.d("%s", e.toString());
+                //todo add queue markers
+//                JusLog.d("%s", e.toString());
                 return false;
             }
         }

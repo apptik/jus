@@ -16,8 +16,8 @@
 
 package io.apptik.comm.jus.rx.request;
 
-import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.rx.BaseSubscription;
 import io.apptik.comm.jus.rx.event.MarkerEvent;

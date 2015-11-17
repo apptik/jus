@@ -1,116 +1,102 @@
-/*
- * Copyright (C) 2015 Apptik Project
- * Copyright (C) 2014 Kalin Maldzhanski
- * Copyright (C) 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package io.apptik.comm.jus;
 
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-/**
- * Logging helper class.
- * <p/>
- * For Android Platform to see Jus logs call:<br/>
- * {@code <android-sdk>/platform-tools/adb shell setprop log.tag.Jus VERBOSE}
- */
+import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.toolbox.Utils;
+
 public class JusLog {
-    public static String TAG = "Jus";
+
     public static Log log = new DefaultLog();
-    public static boolean DEBUG = log.isLoggable(TAG, Log.VERBOSE);
-    //public static boolean DEBUG = true;
-    /**
-     * Customize the log tag for your application, so that other apps
-     * using Jus don't mix their logs with yours.
-     * <br />
-     * Enable the log property for your tag before starting your app:
-     * <br />
-     * {@code adb shell setprop log.tag.&lt;tag&gt;}
-     */
-    public static void setTag(String tag) {
-        d("Changing log tag to %s", tag);
-        TAG = tag;
+    private static boolean markerLogOn = false;
+    private static boolean reponseLogOn = false;
+    private static boolean errorLogOn = false;
 
-        // Reinitialize the DEBUG "constant"
-        DEBUG = log.isLoggable(TAG, Log.VERBOSE);
-    }
 
-    public static void v(String format, Object... args) {
-        if (DEBUG) {
-            log.v(TAG, buildMessage(format, args));
+    public static class ErrorLog implements Listener.ErrorListener {
+        public static void on() {
+            errorLogOn = true;
+        }
+
+        public static boolean isOn() {
+            return errorLogOn;
+        }
+
+        public static void off() {
+            errorLogOn = false;
+        }
+
+        private final Request request;
+
+        public ErrorLog(Request request) {
+            Utils.checkNotNull(request, "request==null");
+            this.request = request;
+        }
+
+        @Override
+        public void onErrorResponse(JusError error) {
+            if (log == null) return;
+            log.log(buildMessage(request, "Error: " + error));
         }
     }
 
-    public static void d(String format, Object... args) {
-        if (DEBUG) {
-            log.d(TAG, buildMessage(format, args));
+    public static class ResponseLog implements Listener.ResponseListener {
+        public static void on() {
+            reponseLogOn = true;
         }
-    }
 
-    public static void e(String format, Object... args) {
-        log.e(TAG, buildMessage(format, args));
-    }
-
-    public static void e(Throwable tr, String format, Object... args) {
-        log.e(TAG, buildMessage(format, args), tr);
-    }
-
-    public static void w(String format, Object... args) {
-        log.w(TAG, buildMessage(format, args));
-    }
-
-    public static void w(Throwable tr, String format, Object... args) {
-        log.w(TAG, buildMessage(format, args), tr);
-    }
-
-    /**
-     * Formats the caller's provided message and prepends useful info like
-     * calling threadId ID and method name.
-     */
-    private static String buildMessage(String format, Object... args) {
-        String msg = (args == null) ? format : String.format(Locale.US, format, args);
-        StackTraceElement[] trace = new Throwable().fillInStackTrace().getStackTrace();
-
-        String caller = "<unknown>";
-        // Walk up the stack looking for the first caller outside of JusLog.
-        // It will be at least two frames up, so start there.
-        for (int i = 2; i < trace.length; i++) {
-            Class<?> clazz = trace[i].getClass();
-            if (!clazz.equals(JusLog.class)) {
-                String callingClass = trace[i].getClassName();
-                callingClass = callingClass.substring(callingClass.lastIndexOf('.') + 1);
-                callingClass = callingClass.substring(callingClass.lastIndexOf('$') + 1);
-
-                caller = callingClass + "." + trace[i].getMethodName();
-                break;
-            }
+        public static void off() {
+            reponseLogOn = false;
         }
-        return String.format(Locale.US, "[%d] %s: %s",
-                Thread.currentThread().getId(), caller, msg);
+
+        public static boolean isOn() {
+            return reponseLogOn;
+        }
+
+        private final Request request;
+
+        public ResponseLog(Request request) {
+            Utils.checkNotNull(request, "request==null");
+            this.request = request;
+        }
+
+        @Override
+        public void onResponse(Object response) {
+            if (log == null) return;
+            log.log(buildMessage(request, "Response: " + response));
+        }
     }
 
     /**
      * A simple event log with records containing a name, threadId ID, and timestamp.
      */
-    public static class MarkerLog {
-        public static final boolean ENABLED = JusLog.DEBUG;
+    public static class MarkerLog implements Listener.MarkerListener {
+        public static void on() {
+            markerLogOn = true;
+        }
 
-        /** Minimum duration from first marker to last in an marker log to warrant logging. */
+        public static void off() {
+            markerLogOn = false;
+        }
+
+        public static boolean isOn() {
+            return markerLogOn;
+        }
+
+        /**
+         * Minimum duration from first marker to last in an marker log to warrant logging.
+         */
         private static final long MIN_DURATION_FOR_LOGGING_MS = 0;
+
+        @Override
+        public void onMarker(Marker marker, Object... args) {
+            if (log == null) return;
+            add(marker, args);
+        }
 
         public static class Marker {
             public final String name;
@@ -138,19 +124,31 @@ public class JusLog {
 
         private final List<Marker> mMarkers = new ArrayList<Marker>();
         private volatile boolean mFinished = false;
+        private final Request request;
 
-        /** Adds a marker to this log with the specified name. */
-        public synchronized void add(String name, long threadId, String threadName) {
+        public MarkerLog(Request request) {
+            Utils.checkNotNull(request, "request==null");
+            this.request = request;
+        }
+
+        /**
+         * Adds a marker to this log with the specified name.
+         */
+        public synchronized void add(Marker marker, Object... args) {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
-            d(new Marker(name, threadId, threadName, System.nanoTime()).toString());
-            mMarkers.add(new Marker(name, threadId, threadName, System.nanoTime()));
+            log.log(buildMessage(request, marker.toString() + "\nargs=" + Arrays.toString(args)));
+            mMarkers.add(marker);
+            if (Request.EVENT_DONE.equals(marker.name)) {
+                finish("[" + request.getMethod() + "]" + request.getUrlString());
+            }
         }
 
         /**
          * Closes the log, dumping it to logcat if the time difference between
          * the first and last markers is greater than {@link #MIN_DURATION_FOR_LOGGING_MS}.
+         *
          * @param header Header string to print above the marker log.
          */
         public synchronized void finish(String header) {
@@ -162,11 +160,12 @@ public class JusLog {
             }
 
             long prevTime = mMarkers.get(0).time;
-            d("(%-10d ns) %s", duration, header);
+            log.log(buildMessage(request, "(%-10d ns) %s", duration, header));
             for (Marker marker : mMarkers) {
                 long thisTime = marker.time;
-                d("(+%-10d) [%2d/%s] %s", (thisTime - prevTime), marker.threadId, marker
-                        .threadName, marker.name);
+                log.log(buildMessage(request, "(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
+                        , marker.threadId, marker
+                        .threadName, marker.name));
                 prevTime = thisTime;
             }
         }
@@ -177,11 +176,14 @@ public class JusLog {
             // but had no debugging output printed for them.
             if (!mFinished) {
                 finish("Request on the loose");
-                e("Marker log finalized without finish() - uncaught exit point for request");
+                log.log(buildMessage(request, "Marker log finalized without finish() - " +
+                        "uncaught exit point for request"));
             }
         }
 
-        /** Returns the time difference between the first and last events in this log. */
+        /**
+         * Returns the time difference between the first and last events in this log.
+         */
         private long getTotalDuration() {
             if (mMarkers.size() == 0) {
                 return 0;
@@ -192,4 +194,38 @@ public class JusLog {
             return last - first;
         }
     }
+
+
+    private static String buildMessage(Request request, String format, Object... args) {
+        String msg = (args == null) ? format : String.format(Locale.US, format, args);
+        return String.format(Locale.US, "[%d] Request: %s:\n\t %s",
+                Thread.currentThread().getId(), request.toString(), msg);
+    }
+
+    /**
+     * Formats the caller's provided message and prepends useful info like
+     * calling threadId ID and method name.
+     */
+    private static String buildCallerMessage(String format, Object... args) {
+        String msg = (args == null) ? format : String.format(Locale.US, format, args);
+        StackTraceElement[] trace = new Throwable().fillInStackTrace().getStackTrace();
+
+        String caller = "<unknown>";
+        // Walk up the stack looking for the first caller outside of JusLog.
+        // It will be at least two frames up, so start there.
+        for (int i = 2; i < trace.length; i++) {
+            Class<?> clazz = trace[i].getClass();
+            if (!clazz.equals(JusLog.class)) {
+                String callingClass = trace[i].getClassName();
+                callingClass = callingClass.substring(callingClass.lastIndexOf('.') + 1);
+                callingClass = callingClass.substring(callingClass.lastIndexOf('$') + 1);
+
+                caller = callingClass + "." + trace[i].getMethodName();
+                break;
+            }
+        }
+        return String.format(Locale.US, "[%d] %s: %s",
+                Thread.currentThread().getId(), caller, msg);
+    }
+
 }

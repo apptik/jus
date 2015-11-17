@@ -61,6 +61,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_CANCELED_AT_DELIVERY = "canceled-at-delivery";
     public static final String EVENT_DONE = "done";
     public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
+    public static final String EVENT_NETWORK_STACK_SEND = "network-stack-send";
+    public static final String EVENT_NETWORK_STACK_COMPLETE = "network-stack-complete";
+    public static final String EVENT_NETWORK_TRANSFORM_COMPLETE = "network-transform-complete";
     public static final String EVENT_NETWORK_DISCARD_CANCELED = "network-discard-canceled";
     public static final String EVENT_NETWORK_HTTP_COMPLETE = "network-http-complete";
     public static final String EVENT_NOT_MODIFIED = "not-modified";
@@ -102,11 +105,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     /**
-     * An event log tracing the lifetime of this request; for debugging.
-     */
-    private final MarkerLog mEventLog = MarkerLog.ENABLED ? new MarkerLog() : null;
-
-    /**
      * Request method of this request.  Currently supports GET, POST, PUT, DELETE, HEAD, OPTIONS,
      * TRACE, and PATCH.
      */
@@ -118,7 +116,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private final HttpUrl url;
 
     /**
-     * Default tag for {@link android.net.TrafficStats (Android)}.
+     * Default tag for {@see android.net.TrafficStats (Android)}.
      */
     private final int mDefaultTrafficStatsTag;
 
@@ -442,7 +440,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     /**
      * @return A tag for use with {@link NetworkDispatcher#addTrafficStatsTag}
-     * currently active only in {@link io.apptik.comm.jus.AndroidNetworkDispatcher}
+     * currently active only in {@see io.apptik.comm.jus.AndroidNetworkDispatcher}
      */
     public int getTrafficStatsTag() {
         return mDefaultTrafficStatsTag;
@@ -492,9 +490,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                             System.nanoTime()), args);
         }
 
-        if (MarkerLog.ENABLED) {
-            mEventLog.add(tag, Thread.currentThread().getId(), Thread.currentThread().getName());
-        }
         if (logSlowRequests && requestBirthTime == 0) {
             requestBirthTime = System.nanoTime();
         }
@@ -512,17 +507,14 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             requestQueue.finish(this);
         }
         addMarker(tag);
-        if (MarkerLog.ENABLED) {
-            final long threadId = Thread.currentThread().getId();
-            // If we finish marking off of the main threadId, we need to
-            // actually do it on the main threadId to ensure correct ordering.
-            //todo DO we really?
-            mEventLog.finish(this.toString());
+        if(!EVENT_DONE.equals(tag)) {
+            addMarker(EVENT_DONE);
         }
         if (logSlowRequests) {
             long requestTime = System.nanoTime() - requestBirthTime;
             if (requestTime >= SLOW_REQUEST_THRESHOLD_NS) {
-                JusLog.d("%d ns: %s", requestTime, this.toString());
+                //todo add queue markers
+                //JusLog.d("%d ns: %s", requestTime, this.toString());
             }
         }
         synchronized (markerListeners) {
