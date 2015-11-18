@@ -141,9 +141,9 @@ public final class Headers {
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder("Headers: \n");
+        StringBuilder result = new StringBuilder();
         for (int i = 0, size = size(); i < size; i++) {
-            result.append(name(i)).append(": ").append(value(i)).append("\n\t");
+            result.append(name(i)).append(": ").append(value(i)).append("\n");
         }
         return result.toString();
     }

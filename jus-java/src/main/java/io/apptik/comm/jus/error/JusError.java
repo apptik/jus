@@ -77,8 +77,8 @@ public class JusError extends Exception {
                 "networkResponse=" + networkResponse +
                 ", networkTimeMs=" + networkTimeMs +
                 ", \nmessage=" + getLocalizedMessage() +
-                ", \nstacktrace= "+ Arrays.toString(getStackTrace()) + "\n\tCause: " + Arrays
-                .toString
-                (getCause().getStackTrace()) + "} ";
+                ", \nstacktrace= "+ Arrays.toString(getStackTrace())
+                + ((getCause()==null)?"":
+                "\n\tCause: " + Arrays.toString(getCause().getStackTrace())) + "} ";
     }
 }
