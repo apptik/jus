@@ -40,7 +40,7 @@ public class JusLog {
         @Override
         public void onErrorResponse(JusError error) {
             if (log == null) return;
-            log.log(buildMessage(request, "Error: " + error));
+            log.log(buildMessage(request, "Error: %s", error));
         }
     }
 
@@ -67,7 +67,7 @@ public class JusLog {
         @Override
         public void onResponse(Object response) {
             if (log == null) return;
-            log.log(buildMessage(request, "Response: " + response));
+            log.log(buildMessage(request, "Response: %s", response));
         }
     }
 
