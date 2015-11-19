@@ -32,7 +32,6 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Request.Method;
 import io.apptik.comm.jus.error.AuthFailureError;
-import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 
@@ -199,9 +198,6 @@ public class HurlStack extends AbstractHttpStack {
         byte[] body = request.getBody();
         if (body != null) {
             connection.setDoOutput(true);
-            if (request.getBodyContentType() != null) {
-                connection.addRequestProperty(HTTP.CONTENT_TYPE, request.getBodyContentType());
-            }
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
             out.write(body);
             out.close();
