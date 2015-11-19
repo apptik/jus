@@ -144,6 +144,7 @@ public class HttpNetwork implements Network {
                         );
                     }
                 } else if (httpResponse.statusCode < 200 || httpResponse.statusCode > 299) {
+                    //todo Not really nice throw better
                     throw new IOException();
                 }
                 return httpResponse;

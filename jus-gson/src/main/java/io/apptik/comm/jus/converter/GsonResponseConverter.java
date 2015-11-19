@@ -34,11 +34,15 @@ public final class GsonResponseConverter<T> implements Converter<NetworkResponse
 
     @Override
     public T convert(NetworkResponse value) throws IOException {
-        Reader reader = value.getCharStream();
-        try {
-            return adapter.fromJson(reader);
-        } finally {
-            Utils.closeQuietly(reader);
+        if(value.statusCode == 204) {
+            return null;
+        } else {
+            Reader reader = value.getCharStream();
+            try {
+                return adapter.fromJson(reader);
+            } finally {
+                Utils.closeQuietly(reader);
+            }
         }
     }
 }

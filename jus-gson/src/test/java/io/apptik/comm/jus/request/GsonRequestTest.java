@@ -134,4 +134,19 @@ public class GsonRequestTest {
         assertThat(sRequest.getHeader("Accept")).isEqualTo("application/json");
     }
 
+    @Test
+    public void ignoresBodyFor204() throws IOException, InterruptedException,
+            ExecutionException {
+        server.enqueue(new MockResponse().setResponseCode(204));
+
+        GsonRequest<AnImplementation> request =
+                new GsonRequest<AnImplementation>(Request.Method.GET,
+                        server.url("").toString(), AnImplementation.class);
+
+        AnImplementation response  = queue.add(request).getFuture().get();
+
+
+        assertThat(response).isNull(); // Null value was not serialized.
+    }
+
 }
