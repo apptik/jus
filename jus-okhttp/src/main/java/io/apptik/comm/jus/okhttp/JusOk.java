@@ -4,6 +4,7 @@ package io.apptik.comm.jus.okhttp;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 
+import java.util.Collections;
 import java.util.Map;
 
 import io.apptik.comm.jus.NetworkRequest;
@@ -20,12 +21,17 @@ public class JusOk {
 
     public static com.squareup.okhttp.Headers okHeaders(Headers jusHeaders, Headers
             additionalHeaders) {
+
+        Map<String, String> headers;
         if (jusHeaders == null) {
-            jusHeaders = new Headers.Builder().build();
+            headers = Collections.emptyMap();
+        } else {
+            //check if we have content type in Jus headers ad remove it if yes
+            headers = jusHeaders.toMap();
+            headers.remove("Content-Type");
         }
 
-        Map<String, String> headers = jusHeaders.toMap();
-        if (additionalHeaders == null)
+        if (additionalHeaders != null)
         {
             headers.putAll(additionalHeaders.toMap());
         }
