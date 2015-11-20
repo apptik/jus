@@ -579,55 +579,55 @@ public class RequestQueue {
         boolean apply(Request<?> request);
     }
 
-    private abstract static class QListener {
-        protected final Request request;
+    private abstract static class QListener<T> {
+        protected final Request<T> request;
 
-        protected QListener(Request request) {
+        protected QListener(Request<T> request) {
             Utils.checkNotNull(request, "request==null");
             this.request = request;
         }
     }
 
-    public abstract static class QResponseListener extends QListener implements Listener
+    public abstract static class QResponseListener<T> extends QListener implements Listener
             .ResponseListener {
-        protected QResponseListener(Request request) {
+        protected QResponseListener(Request<T> request) {
             super(request);
         }
     }
 
     public abstract static class QErrorListener extends QListener implements Listener
             .ErrorListener {
-        protected QErrorListener(Request request) {
+        protected QErrorListener(Request<?> request) {
             super(request);
         }
     }
 
     public abstract static class QMarkerListener extends QListener implements Listener
             .MarkerListener {
-        protected QMarkerListener(Request request) {
+        protected QMarkerListener(Request<?> request) {
             super(request);
         }
     }
 
     public interface QListenerFactory {
-        QResponseListener getResponseListener(Request request);
-        QErrorListener getErrorListener(Request request);
-        QMarkerListener getMarkerListener(Request request);
+        QResponseListener getResponseListener(Request<?> request);
+        QErrorListener getErrorListener(Request<?> request);
+        QMarkerListener getMarkerListener(Request<?> request);
     }
 
     public static class SimpleQListenerFactory implements QListenerFactory {
         @Override
-        public QResponseListener getResponseListener(Request request) {
+        public QResponseListener getResponseListener(Request<?> request) {
             return null;
         }
 
         @Override
-        public QErrorListener getErrorListener(Request request) {
+        public QErrorListener getErrorListener(Request<?> request) {
             return null;
         }
 
         @Override
-        public QMarkerListener getMarkerListener(Request request) {
+        public QMarkerListener getMarkerListener(Request<?> request) {
             return null;
         }
     }
@@ -639,14 +639,14 @@ public class RequestQueue {
             this.filter = filter;
         }
 
-        protected abstract QResponseListener getFilteredResponseListener(Request request);
+        protected abstract QResponseListener getFilteredResponseListener(Request<?> request);
 
-        protected abstract QErrorListener getFilteredErrorListener(Request request);
+        protected abstract QErrorListener getFilteredErrorListener(Request<?> request);
 
-        protected abstract QMarkerListener getFilteredMarkerListener(Request request);
+        protected abstract QMarkerListener getFilteredMarkerListener(Request<?> request);
 
         @Override
-        public final QResponseListener getResponseListener(Request request) {
+        public final QResponseListener getResponseListener(Request<?> request) {
             if (filter!=null && filter.apply(request)) {
                 return getFilteredResponseListener(request);
             }
@@ -654,7 +654,7 @@ public class RequestQueue {
         }
 
         @Override
-        public final QErrorListener getErrorListener(Request request) {
+        public final QErrorListener getErrorListener(Request<?> request) {
             if (filter!=null && filter.apply(request)) {
                 return getFilteredErrorListener(request);
             }
@@ -662,7 +662,7 @@ public class RequestQueue {
         }
 
         @Override
-        public final QMarkerListener getMarkerListener(Request request) {
+        public final QMarkerListener getMarkerListener(Request<?> request) {
             if (filter!=null && filter.apply(request)) {
                 return getFilteredMarkerListener(request);
             }
@@ -686,17 +686,17 @@ public class RequestQueue {
         }
 
         @Override
-        protected QResponseListener getFilteredResponseListener(Request request) {
+        protected QResponseListener getFilteredResponseListener(Request<?> request) {
             return null;
         }
 
         @Override
-        protected QErrorListener getFilteredErrorListener(Request request) {
+        protected QErrorListener getFilteredErrorListener(Request<?> request) {
             return null;
         }
 
         @Override
-        protected QMarkerListener getFilteredMarkerListener(Request request) {
+        protected QMarkerListener getFilteredMarkerListener(Request<?> request) {
             return null;
         }
     }

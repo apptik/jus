@@ -44,5 +44,5 @@ dependencies {
     compile project(':rx-jus')
     compile project(':jus-android')
 }
-apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
+//apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
 

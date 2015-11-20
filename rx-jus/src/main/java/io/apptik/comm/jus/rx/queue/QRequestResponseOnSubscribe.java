@@ -39,17 +39,22 @@ public class QRequestResponseOnSubscribe<T> implements Observable.OnSubscribe<Re
 
         final RequestQueue.QListenerFactory qListenerFactory =
                 new RequestQueue.SimpleFilteredQListenerFactory(filter) {
+//                    @Override
+//                    public RequestQueue.QResponseListener<T> getFilteredResponseListener
+//                            (Request<T> request) {
+//                        return new RequestQueue.QResponseListener(request) {
+//                            @Override
+//                            public void onResponse(T response) {
+//                                if (!subscriber.isUnsubscribed()) {
+//                                    subscriber.onNext(new ResultEvent<T>(request, response));
+//                                }
+//                            }
+//                        };
+//                    }
+
                     @Override
-                    public RequestQueue.QResponseListener getFilteredResponseListener
-                            (Request request) {
-                        return new RequestQueue.QResponseListener(request) {
-                            @Override
-                            public void onResponse(Object response) {
-                                if (!subscriber.isUnsubscribed()) {
-                                    subscriber.onNext(new ResultEvent(request, response));
-                                }
-                            }
-                        };
+                    protected RequestQueue.QResponseListener getFilteredResponseListener(Request request) {
+                        return super.getFilteredResponseListener(request);
                     }
                 };
 
