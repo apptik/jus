@@ -40,6 +40,4 @@ public class Listener {
         /** Called when a marker is set. */
         void onMarker(JusLog.MarkerLog.Marker marker, Object... args);
     }
-
-
 }

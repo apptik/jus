@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Locale;
 
 import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.toolbox.Utils;
 
 public class JusLog {
 
@@ -17,7 +16,7 @@ public class JusLog {
     private static boolean errorLogOn = false;
 
 
-    public static class ErrorLog implements Listener.ErrorListener {
+    public static class ErrorLog extends RequestQueue.QErrorListener {
         public static void on() {
             errorLogOn = true;
         }
@@ -30,11 +29,8 @@ public class JusLog {
             errorLogOn = false;
         }
 
-        private final Request request;
-
         public ErrorLog(Request request) {
-            Utils.checkNotNull(request, "request==null");
-            this.request = request;
+            super(request);
         }
 
         @Override
@@ -44,7 +40,7 @@ public class JusLog {
         }
     }
 
-    public static class ResponseLog implements Listener.ResponseListener {
+    public static class ResponseLog extends RequestQueue.QResponseListener {
         public static void on() {
             reponseLogOn = true;
         }
@@ -57,11 +53,9 @@ public class JusLog {
             return reponseLogOn;
         }
 
-        private final Request request;
 
         public ResponseLog(Request request) {
-            Utils.checkNotNull(request, "request==null");
-            this.request = request;
+           super(request);
         }
 
         @Override
@@ -74,7 +68,7 @@ public class JusLog {
     /**
      * A simple event log with records containing a name, threadId ID, and timestamp.
      */
-    public static class MarkerLog implements Listener.MarkerListener {
+    public static class MarkerLog extends RequestQueue.QMarkerListener {
         public static void on() {
             markerLogOn = true;
         }
@@ -124,11 +118,9 @@ public class JusLog {
 
         private final List<Marker> mMarkers = new ArrayList<Marker>();
         private volatile boolean mFinished = false;
-        private final Request request;
 
         public MarkerLog(Request request) {
-            Utils.checkNotNull(request, "request==null");
-            this.request = request;
+           super(request);
         }
 
         /**

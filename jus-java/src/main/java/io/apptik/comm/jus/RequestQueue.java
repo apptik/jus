@@ -34,6 +34,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.converter.BasicConverterFactory;
+import io.apptik.comm.jus.toolbox.Utils;
 
 import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
@@ -45,16 +46,6 @@ import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
  * a parsed response on the main threadId.
  */
 public class RequestQueue {
-
-    /**
-     * Callback interface for completed requests.
-     */
-    public static interface RequestFinishedListener<T> {
-        /**
-         * Called when a request has finished processing.
-         */
-        public void onRequestFinished(Request<T> request);
-    }
 
     /**
      * Used for generating monotonically-increasing sequence numbers for requests.
@@ -134,6 +125,7 @@ public class RequestQueue {
     private final List<Converter.Factory> converterFactories = new ArrayList<>();
     private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
     private final List<Transformer.ResponseTransformer> responseTransformers = new ArrayList<>();
+    private final List<QListenerFactory> qListenerFactories = new ArrayList<>();
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -295,14 +287,6 @@ public class RequestQueue {
     }
 
     /**
-     * A simple predicate or filter interface for Requests, for use by
-     * {@link RequestQueue#cancelAll(RequestFilter)}.
-     */
-    public interface RequestFilter {
-        public boolean apply(Request<?> request);
-    }
-
-    /**
      * Cancels all requests in this queue for which the given filter applies.
      *
      * @param filter The filtering function to use
@@ -355,15 +339,31 @@ public class RequestQueue {
             }
         }
 
-        if(JusLog.ErrorLog.isOn()) {
+        for (QListenerFactory qListenerFactory : qListenerFactories) {
+            QResponseListener qResponseListener = qListenerFactory.getResponseListener(request);
+            QErrorListener qErrorListener = qListenerFactory.getErrorListener(request);
+            QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener(request);
+
+            if(qResponseListener!=null) {
+                request.addResponseListener(qResponseListener);
+            }
+            if(qErrorListener!=null) {
+                request.addErrorListener(qErrorListener);
+            }
+            if(qMarkerListener!=null) {
+                request.addMarkerListener(qMarkerListener);
+            }
+        }
+
+        if (JusLog.ErrorLog.isOn()) {
             request.addErrorListener(new JusLog.ErrorLog(request));
         }
 
-        if(JusLog.ResponseLog.isOn()) {
+        if (JusLog.ResponseLog.isOn()) {
             request.addResponseListener(new JusLog.ResponseLog(request));
         }
 
-        if(JusLog.MarkerLog.isOn()) {
+        if (JusLog.MarkerLog.isOn()) {
             request.addMarkerListener(new JusLog.MarkerLog(request));
         }
 
@@ -515,6 +515,21 @@ public class RequestQueue {
         return this;
     }
 
+    public RequestQueue addQListenerFactory(QListenerFactory qListenerFactory) {
+        Utils.checkNotNull(qListenerFactory, "qListenerFactory==null");
+        synchronized (qListenerFactories) {
+            qListenerFactories.add(qListenerFactory);
+        }
+        return this;
+    }
+
+    public RequestQueue removeQListenerFactory(QListenerFactory qListenerFactory) {
+        synchronized (qListenerFactories) {
+            qListenerFactories.remove(qListenerFactory);
+        }
+        return this;
+    }
+
     /**
      * Returns a {@link Converter} for {@link io.apptik.comm.jus.NetworkResponse} to {@code type}
      * from the available
@@ -553,4 +568,114 @@ public class RequestQueue {
             return mWaitingRequests.size();
         }
     }
+
+    ////
+
+    /**
+     * A simple predicate or filter interface for Requests, for use by
+     * {@link RequestQueue#cancelAll(RequestFilter)}.
+     */
+    public interface RequestFilter {
+        boolean apply(Request<?> request);
+    }
+
+    private abstract static class QListener {
+        protected final Request request;
+
+        protected QListener(Request request) {
+            Utils.checkNotNull(request, "request==null");
+            this.request = request;
+        }
+    }
+
+    public abstract static class QResponseListener extends QListener implements Listener
+            .ResponseListener {
+        protected QResponseListener(Request request) {
+            super(request);
+        }
+    }
+
+    public abstract static class QErrorListener extends QListener implements Listener
+            .ErrorListener {
+        protected QErrorListener(Request request) {
+            super(request);
+        }
+    }
+
+    public abstract static class QMarkerListener extends QListener implements Listener
+            .MarkerListener {
+        protected QMarkerListener(Request request) {
+            super(request);
+        }
+    }
+
+    public abstract static class QListenerFactory {
+        protected abstract QResponseListener getResponseListener(Request request);
+
+        protected abstract QErrorListener getErrorListener(Request request);
+
+        protected abstract QMarkerListener getMarkerListener(Request request);
+    }
+
+    public abstract static class FilteredQListenerFactory extends QListenerFactory {
+        protected final RequestQueue.RequestFilter filter;
+
+        protected FilteredQListenerFactory(RequestFilter filter) {
+            this.filter = filter;
+        }
+
+        protected abstract QResponseListener getResponseListener();
+
+        protected abstract QErrorListener getErrorListener();
+
+        protected abstract QMarkerListener getMarkerListener();
+
+        @Override
+        protected QResponseListener getResponseListener(Request request) {
+            if (filter.apply(request)) {
+                return getResponseListener();
+            }
+            return null;
+        }
+
+        @Override
+        protected QErrorListener getErrorListener(Request request) {
+            if (filter.apply(request)) {
+                return getErrorListener();
+            }
+            return null;
+        }
+
+        @Override
+        protected QMarkerListener getMarkerListener(Request request) {
+            if (filter.apply(request)) {
+                return getMarkerListener();
+            }
+            return null;
+        }
+    }
+
+    public static class SimpleQListenerFactory extends FilteredQListenerFactory {
+
+        protected SimpleQListenerFactory(RequestFilter filter) {
+            super(filter);
+        }
+
+        @Override
+        protected QResponseListener getResponseListener() {
+            return null;
+        }
+
+        @Override
+        protected QErrorListener getErrorListener() {
+            return null;
+        }
+
+        @Override
+        protected QMarkerListener getMarkerListener() {
+            return null;
+        }
+    }
+
+
 }
