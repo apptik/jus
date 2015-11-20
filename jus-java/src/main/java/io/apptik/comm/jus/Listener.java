@@ -32,7 +32,7 @@ public class Listener {
          * Callback method that an error has been occurred with the
          * provided error code and optional user-readable message.
          */
-        void onErrorResponse(JusError error);
+        void onError(JusError error);
     }
 
     /** Callback interface for delivering markers. */

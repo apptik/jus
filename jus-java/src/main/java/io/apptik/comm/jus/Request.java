@@ -790,7 +790,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public void deliverError(JusError error) {
         synchronized (errorListeners) {
             for (Listener.ErrorListener errorListener : errorListeners) {
-                errorListener.onErrorResponse(error);
+                errorListener.onError(error);
             }
             errorListeners.clear();
         }

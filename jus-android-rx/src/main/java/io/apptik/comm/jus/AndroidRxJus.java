@@ -24,7 +24,7 @@ import android.os.Looper;
 
 import java.io.File;
 
-import io.apptik.comm.jus.rx.RxRequestQueue;
+import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.stack.HurlStack;
 import io.apptik.comm.jus.toolbox.DiskBasedCache;

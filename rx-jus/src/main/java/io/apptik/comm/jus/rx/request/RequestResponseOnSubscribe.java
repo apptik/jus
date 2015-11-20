@@ -23,10 +23,10 @@ import io.apptik.comm.jus.rx.event.ResultEvent;
 import rx.Observable;
 import rx.Subscriber;
 
-public class RequestResultOnSubscribe<T> implements Observable.OnSubscribe<ResultEvent<T>> {
+public class RequestResponseOnSubscribe<T> implements Observable.OnSubscribe<ResultEvent<T>> {
     private final Request<T> request;
 
-    public RequestResultOnSubscribe(Request<T> request) {
+    public RequestResponseOnSubscribe(Request<T> request) {
         this.request = request;
     }
 

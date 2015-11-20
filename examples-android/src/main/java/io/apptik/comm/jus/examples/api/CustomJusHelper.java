@@ -12,7 +12,7 @@ import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.rx.RxRequestQueue;
+import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import io.apptik.comm.jus.rx.event.ErrorEvent;
 import io.apptik.comm.jus.rx.event.JusEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
@@ -154,7 +154,7 @@ public class CustomJusHelper {
                 },
                 new Listener.ErrorListener() {
                     @Override
-                    public void onErrorResponse(JusError error) {
+                    public void onError(JusError error) {
                         Log.d("Jus-Test", "jus error : " + error);
                     }
                 }

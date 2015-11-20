@@ -148,7 +148,7 @@ public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>
     }
 
     @Override
-    public synchronized void onErrorResponse(JusError error) {
+    public synchronized void onError(JusError error) {
         exception = error;
         notifyAll();
     }

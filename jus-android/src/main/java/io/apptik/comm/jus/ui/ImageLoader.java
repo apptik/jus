@@ -101,7 +101,7 @@ public class ImageLoader {
                                                  final int defaultImageResId, final int errorImageResId) {
         return new ImageListener() {
             @Override
-            public void onErrorResponse(JusError error) {
+            public void onError(JusError error) {
                 if (errorImageResId != 0) {
                     view.setImageResource(errorImageResId);
                 }
@@ -129,7 +129,7 @@ public class ImageLoader {
      * 2. After a network response returns, only one of the following cases will happen:
      *   - onResponse(response, false) will be called if the image was loaded.
      *   or
-     *   - onErrorResponse will be called if there was an error loading the image.
+     *   - onError will be called if there was an error loading the image.
      */
     public interface ImageListener extends ErrorListener {
         /**
@@ -261,7 +261,7 @@ public class ImageLoader {
                 })
                 .addErrorListener(new ErrorListener() {
                     @Override
-                    public void onErrorResponse(JusError error) {
+                    public void onError(JusError error) {
                         onGetImageError(cacheKey, error);
                     }
                 })
@@ -479,7 +479,7 @@ public class ImageLoader {
                                 container.mBitmap = bir.mResponseBitmap;
                                 container.mListener.onResponse(container, false);
                             } else {
-                                container.mListener.onErrorResponse(bir.getError());
+                                container.mListener.onError(bir.getError());
                             }
                         }
                     }

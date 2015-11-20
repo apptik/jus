@@ -26,6 +26,8 @@ import rx.Observable;
 
 public final class RxRequest{
 
+    private RxRequest() {}
+
     public static <T> Observable<JusEvent> allEventsObservable(Request<T> request) {
         return Observable.merge(
                 resultObservable(request),
@@ -34,7 +36,7 @@ public final class RxRequest{
     }
 
     public static <T> Observable<ResultEvent<T>> resultObservable(Request<T> request) {
-        return Observable.create(new RequestResultOnSubscribe(request));
+        return Observable.create(new RequestResponseOnSubscribe(request));
     }
 
     public static Observable<ErrorEvent> errorObservable(Request request) {

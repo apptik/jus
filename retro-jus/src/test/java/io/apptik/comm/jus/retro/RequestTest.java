@@ -136,7 +136,7 @@ public final class RequestTest {
         final CountDownLatch latch = new CountDownLatch(1);
         Request<String> request = example.getString().addErrorListener(new Listener.ErrorListener() {
             @Override
-            public void onErrorResponse(JusError error) {
+            public void onError(JusError error) {
                 error.printStackTrace();
             }
         }).addResponseListener(new Listener.ResponseListener<String>() {
@@ -196,7 +196,7 @@ public final class RequestTest {
         final CountDownLatch latch = new CountDownLatch(1);
         Request<String> request = example.getString().addErrorListener(new Listener.ErrorListener() {
             @Override
-            public void onErrorResponse(JusError error) {
+            public void onError(JusError error) {
                 responseRef.set(error.networkResponse.getBodyAsString());
                 latch.countDown();
             }
@@ -251,7 +251,7 @@ public final class RequestTest {
         Request<String> request = example.getString()
                 .addErrorListener(new Listener.ErrorListener() {
                     @Override
-                    public void onErrorResponse(JusError error) {
+                    public void onError(JusError error) {
                         failureRef.set(error);
                         latch.countDown();
                     }
@@ -399,7 +399,7 @@ public final class RequestTest {
         Request<Number> request = example.postNumber(777)
                 .addErrorListener(new Listener.ErrorListener() {
                     @Override
-                    public void onErrorResponse(JusError error) {
+                    public void onError(JusError error) {
                         failureRef.set(error.getCause());
                         latch.countDown();
                     }
@@ -634,7 +634,7 @@ public final class RequestTest {
         call
                 .addErrorListener(new Listener.ErrorListener() {
                     @Override
-                    public void onErrorResponse(JusError error) {
+                    public void onError(JusError error) {
                         throw new AssertionError();
                     }
                 })

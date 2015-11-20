@@ -609,70 +609,94 @@ public class RequestQueue {
         }
     }
 
-    public abstract static class QListenerFactory {
-        protected abstract QResponseListener getResponseListener(Request request);
-
-        protected abstract QErrorListener getErrorListener(Request request);
-
-        protected abstract QMarkerListener getMarkerListener(Request request);
+    public interface QListenerFactory {
+        QResponseListener getResponseListener(Request request);
+        QErrorListener getErrorListener(Request request);
+        QMarkerListener getMarkerListener(Request request);
     }
 
-    public abstract static class FilteredQListenerFactory extends QListenerFactory {
+    public static class SimpleQListenerFactory implements QListenerFactory {
+        @Override
+        public QResponseListener getResponseListener(Request request) {
+            return null;
+        }
+
+        @Override
+        public QErrorListener getErrorListener(Request request) {
+            return null;
+        }
+
+        @Override
+        public QMarkerListener getMarkerListener(Request request) {
+            return null;
+        }
+    }
+
+    public abstract static class FilteredQListenerFactory implements QListenerFactory {
         protected final RequestQueue.RequestFilter filter;
 
         protected FilteredQListenerFactory(RequestFilter filter) {
             this.filter = filter;
         }
 
-        protected abstract QResponseListener getResponseListener();
+        protected abstract QResponseListener getFilteredResponseListener(Request request);
 
-        protected abstract QErrorListener getErrorListener();
+        protected abstract QErrorListener getFilteredErrorListener(Request request);
 
-        protected abstract QMarkerListener getMarkerListener();
+        protected abstract QMarkerListener getFilteredMarkerListener(Request request);
 
         @Override
-        protected QResponseListener getResponseListener(Request request) {
-            if (filter.apply(request)) {
-                return getResponseListener();
+        public final QResponseListener getResponseListener(Request request) {
+            if (filter!=null && filter.apply(request)) {
+                return getFilteredResponseListener(request);
             }
             return null;
         }
 
         @Override
-        protected QErrorListener getErrorListener(Request request) {
-            if (filter.apply(request)) {
-                return getErrorListener();
+        public final QErrorListener getErrorListener(Request request) {
+            if (filter!=null && filter.apply(request)) {
+                return getFilteredErrorListener(request);
             }
             return null;
         }
 
         @Override
-        protected QMarkerListener getMarkerListener(Request request) {
-            if (filter.apply(request)) {
-                return getMarkerListener();
+        public final QMarkerListener getMarkerListener(Request request) {
+            if (filter!=null && filter.apply(request)) {
+                return getFilteredMarkerListener(request);
             }
             return null;
         }
     }
 
-    public static class SimpleQListenerFactory extends FilteredQListenerFactory {
+    public static class SimpleFilteredQListenerFactory extends FilteredQListenerFactory {
 
-        protected SimpleQListenerFactory(RequestFilter filter) {
+        public SimpleFilteredQListenerFactory() {
+            super(new RequestFilter() {
+                @Override
+                public boolean apply(Request<?> request) {
+                    return true;
+                }
+            });
+        }
+
+        public SimpleFilteredQListenerFactory(RequestFilter filter) {
             super(filter);
         }
 
         @Override
-        protected QResponseListener getResponseListener() {
+        protected QResponseListener getFilteredResponseListener(Request request) {
             return null;
         }
 
         @Override
-        protected QErrorListener getErrorListener() {
+        protected QErrorListener getFilteredErrorListener(Request request) {
             return null;
         }
 
         @Override
-        protected QMarkerListener getMarkerListener() {
+        protected QMarkerListener getFilteredMarkerListener(Request request) {
             return null;
         }
     }

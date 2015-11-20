@@ -37,7 +37,7 @@ public class RequestErrorOnSubscribe implements Observable.OnSubscribe<ErrorEven
 
         final Listener.ErrorListener listener = new Listener.ErrorListener() {
             @Override
-            public void onErrorResponse(JusError error) {
+            public void onError(JusError error) {
                 if (!subscriber.isUnsubscribed()) {
                     subscriber.onNext(new ErrorEvent(request, error));
                 }
