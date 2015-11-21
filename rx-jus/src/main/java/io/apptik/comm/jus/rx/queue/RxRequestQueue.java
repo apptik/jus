@@ -28,7 +28,7 @@ public final class RxRequestQueue {
 
     private RxRequestQueue() {}
 
-    public static <T> Observable<JusEvent> allEventsObservable(
+    public static Observable<JusEvent> allEventsObservable(
             RequestQueue queue, RequestQueue.RequestFilter filter) {
         return Observable.merge(
                 resultObservable(queue, filter),
@@ -36,7 +36,7 @@ public final class RxRequestQueue {
                 markerObservable(queue, filter));
     }
 
-    public static <T> Observable<ResultEvent<T>> resultObservable(
+    public static Observable<ResultEvent<?>> resultObservable(
             RequestQueue queue, RequestQueue.RequestFilter filter) {
         return Observable.create(new QRequestResponseOnSubscribe(queue, filter));
     }
