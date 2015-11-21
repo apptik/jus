@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.Jus;
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
@@ -143,13 +143,13 @@ public final class SimpleRequestTest {
 
         final AtomicReference<String> responseRef = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
-        Request<String> request = example.getString().addErrorListener(new Listener.ErrorListener
+        Request<String> request = example.getString().addErrorListener(new RequestListener.ErrorListener
                 () {
             @Override
             public void onError(JusError error) {
                 error.printStackTrace();
             }
-        }).addResponseListener(new Listener.ResponseListener<String>() {
+        }).addResponseListener(new RequestListener.ResponseListener<String>() {
             @Override
             public void onResponse(String response) {
                 responseRef.set(response);
@@ -194,14 +194,14 @@ public final class SimpleRequestTest {
         final AtomicReference<String> responseRef = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
         Request<String> request = example.getString()
-                .addErrorListener(new Listener.ErrorListener() {
+                .addErrorListener(new RequestListener.ErrorListener() {
                     @Override
                     public void onError(JusError error) {
                         responseRef.set(error.networkResponse.getBodyAsString());
                         latch.countDown();
                     }
                 })
-                .addResponseListener(new Listener.ResponseListener<String>() {
+                .addResponseListener(new RequestListener.ResponseListener<String>() {
                     @Override
                     public void onResponse(String response) {
                         fail();
@@ -252,14 +252,14 @@ public final class SimpleRequestTest {
         final CountDownLatch latch = new CountDownLatch(1);
 
         Request<String> request = example.getString()
-                .addErrorListener(new Listener.ErrorListener() {
+                .addErrorListener(new RequestListener.ErrorListener() {
                     @Override
                     public void onError(JusError error) {
                         failureRef.set(error);
                         latch.countDown();
                     }
                 })
-                .addResponseListener(new Listener.ResponseListener<String>() {
+                .addResponseListener(new RequestListener.ResponseListener<String>() {
                     @Override
                     public void onResponse(String response) {
                         throw new AssertionError();
@@ -379,14 +379,14 @@ public final class SimpleRequestTest {
 
         Request<Number> request = example.postNumber(777, new
                 ToNumberConverterFactory().toRequest(Number.class, null))
-                .addErrorListener(new Listener.ErrorListener() {
+                .addErrorListener(new RequestListener.ErrorListener() {
                     @Override
                     public void onError(JusError error) {
                         failureRef.set(error.getCause());
                         latch.countDown();
                     }
                 })
-                .addResponseListener(new Listener.ResponseListener<Number>() {
+                .addResponseListener(new RequestListener.ResponseListener<Number>() {
                     @Override
                     public void onResponse(Number response) {
                         throw new AssertionError();
@@ -554,19 +554,19 @@ public final class SimpleRequestTest {
         final AtomicReference<JusLog.MarkerLog.Marker> markerRef = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
         call
-                .addErrorListener(new Listener.ErrorListener() {
+                .addErrorListener(new RequestListener.ErrorListener() {
                     @Override
                     public void onError(JusError error) {
                         throw new AssertionError();
                     }
                 })
-                .addResponseListener(new Listener.ResponseListener<String>() {
+                .addResponseListener(new RequestListener.ResponseListener<String>() {
                     @Override
                     public void onResponse(String response) {
                         throw new AssertionError();
                     }
                 })
-                .addMarkerListener(new Listener.MarkerListener() {
+                .addMarkerListener(new RequestListener.MarkerListener() {
                     @Override
                     public void onMarker(JusLog.MarkerLog.Marker marker, Object... args) {
 

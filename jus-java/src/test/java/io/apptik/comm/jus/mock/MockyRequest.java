@@ -18,7 +18,7 @@
 
 package io.apptik.comm.jus.mock;
 
-import io.apptik.comm.jus.Listener.ErrorListener;
+import io.apptik.comm.jus.RequestListener.ErrorListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;

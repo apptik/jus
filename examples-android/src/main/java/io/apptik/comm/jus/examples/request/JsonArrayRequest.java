@@ -23,8 +23,8 @@ import org.json.JSONException;
 
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.RequestListener.ErrorListener;
+import io.apptik.comm.jus.RequestListener.ResponseListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Response;
@@ -38,7 +38,7 @@ public class JsonArrayRequest extends JsonRequest<JSONArray> {
     /**
      * Creates a new request.
      * @param url URL to fetch the JSON from
-     * @param listener Listener to receive the JSON response
+     * @param listener RequestListener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
     public JsonArrayRequest(String url, ResponseListener<JSONArray> listener, ErrorListener errorListener) {

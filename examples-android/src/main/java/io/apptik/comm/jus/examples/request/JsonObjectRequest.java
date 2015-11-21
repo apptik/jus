@@ -23,8 +23,8 @@ import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.RequestListener.ErrorListener;
+import io.apptik.comm.jus.RequestListener.ResponseListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Response;
@@ -42,7 +42,7 @@ public class JsonObjectRequest extends JsonRequest<JSONObject> {
      * @param url URL to fetch the JSON from
      * @param jsonRequest A {@link JSONObject} to post with the request. Null is allowed and
      *   indicates no parameters will be posted along with request.
-     * @param listener Listener to receive the JSON response
+     * @param listener RequestListener to receive the JSON response
      * @param errorListener Error listener, or null to ignore errors.
      */
     public JsonObjectRequest(String method, String url, JSONObject jsonRequest,

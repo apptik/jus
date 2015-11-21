@@ -69,6 +69,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_NOT_MODIFIED = "not-modified";
     public static final String EVENT_NETWORK_PARSE_COMPLETE = "network-parse-complete";
     public static final String EVENT_NETWORK_CACHE_WRITTEN = "network-cache-written";
+    public static final String EVENT_PRE_ADD_TO_QUEUE = "pre-add-to-queue";
     public static final String EVENT_ADD_TO_QUEUE = "add-to-queue";
     public static final String EVENT_CACHE_QUEUE_TAKE = "cache-queue-take";
     public static final String EVENT_CACHE_DISCARD_CANCELED = "cache-discard-canceled";
@@ -121,19 +122,19 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private final int mDefaultTrafficStatsTag;
 
     /**
-     * Listener interface for errors.
+     * RequestListener interface for errors.
      */
-    private List<Listener.ErrorListener> errorListeners = new ArrayList<>();
+    private final List<RequestListener.ErrorListener> errorListeners = new ArrayList<>();
 
     /**
-     * Listener interface for non error responses.
+     * RequestListener interface for non error responses.
      */
-    private List<Listener.ResponseListener<T>> responseListeners = new ArrayList<>();
+    private final List<RequestListener.ResponseListener<T>> responseListeners = new ArrayList<>();
 
     /**
-     * Listener interface for markers.
+     * RequestListener interface for markers.
      */
-    private List<Listener.MarkerListener> markerListeners = new ArrayList<>();
+    private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
     /**
      * Sequence number of this request, used to enforce FIFO ordering.
@@ -210,7 +211,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     public Request(String method, HttpUrl url) {
-        this(method, url, (Converter)null);
+        this(method, url, (Converter) null);
     }
 
     public Request(String method, String url, Class<T> responseType) {
@@ -331,7 +332,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     //--> Listeners
 
 
-    public <R extends Request<T>> R addResponseListener(Listener.ResponseListener<T> responseListener) {
+    public <R extends Request<T>> R addResponseListener(RequestListener.ResponseListener<T>
+                                                                responseListener) {
         if (responseListeners != null) {
             synchronized (responseListeners) {
                 this.responseListeners.add(responseListener);
@@ -340,7 +342,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return (R) this;
     }
 
-    public <R extends Request<T>> R addMarkerListener(Listener.MarkerListener markerListener) {
+    public <R extends Request<T>> R addMarkerListener(RequestListener.MarkerListener
+                                                              markerListener) {
         if (markerListener != null) {
             synchronized (markerListeners) {
                 this.markerListeners.add(markerListener);
@@ -349,7 +352,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return (R) this;
     }
 
-    public <R extends Request<T>> R addErrorListener(Listener.ErrorListener errorListener) {
+    public <R extends Request<T>> R addErrorListener(RequestListener.ErrorListener errorListener) {
         if (errorListener != null) {
             synchronized (errorListeners) {
                 this.errorListeners.add(errorListener);
@@ -358,21 +361,23 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return (R) this;
     }
 
-    public Request<T> removeResponseListener(Listener.ResponseListener<T> responseListener) {
+    public Request<T> removeResponseListener(RequestListener.ResponseListener<T> responseListener) {
         synchronized (responseListeners) {
             this.responseListeners.remove(responseListener);
         }
         return this;
     }
 
-    public <R extends Request<T>> R removeMarkerListener(Listener.MarkerListener markerListener) {
+    public <R extends Request<T>> R removeMarkerListener(RequestListener.MarkerListener
+                                                                 markerListener) {
         synchronized (markerListeners) {
             this.markerListeners.remove(markerListener);
         }
         return (R) this;
     }
 
-    public <R extends Request<T>> R removeErrorListener(Listener.ErrorListener errorListener) {
+    public <R extends Request<T>> R removeErrorListener(RequestListener.ErrorListener
+                                                                errorListener) {
         synchronized (errorListeners) {
             this.errorListeners.remove(errorListener);
         }
@@ -482,7 +487,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Adds an event to this request's event log; for debugging.
      */
     public <R extends Request<T>> R addMarker(String tag, Object... args) {
-        for (Listener.MarkerListener markerListener : markerListeners) {
+        for (RequestListener.MarkerListener markerListener : markerListeners) {
             markerListener.onMarker(
                     new MarkerLog.Marker(tag,
                             Thread.currentThread().getId(),
@@ -507,7 +512,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             requestQueue.finish(this);
         }
         addMarker(tag);
-        if(!EVENT_DONE.equals(tag)) {
+        if (!EVENT_DONE.equals(tag)) {
             addMarker(EVENT_DONE);
         }
         if (logSlowRequests) {
@@ -531,7 +536,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     <R extends Request<T>> R setRequestQueue(RequestQueue requestQueue) {
         checkIfActive();
         java.lang.reflect.Method m = null;
-        if(!(this.getClass().equals(Request.class))) {
+        if (!(this.getClass().equals(Request.class))) {
             try {
                 m = this.getClass().getDeclaredMethod("parseNetworkResponse", NetworkResponse
                         .class);
@@ -539,14 +544,14 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 //e.printStackTrace();
             }
         }
-        if(converterFromResponse == null) {
+        if (converterFromResponse == null) {
             Type t;
-            if(responseType!=null) {
+            if (responseType != null) {
                 t = responseType;
             } else {
                 t = tryIdentifyResultType(this);
             }
-            if (t==null) {
+            if (t == null) {
                 throw new IllegalArgumentException("Cannot resolve Response type in order to " +
                         "identify Response Converter for Request : " + this);
             }
@@ -557,7 +562,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                                 .getResponseConverter(t, new Annotation[0]);
             } catch (IllegalArgumentException ex) {
                 //check if parseNetworkResponse is overridden
-                if(m==null) {
+                if (m == null) {
                     //it is not so it is for sure that we cannot parse response thus throw
                     throw ex;
                 }
@@ -771,7 +776,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     protected void deliverResponse(T response) {
         synchronized (responseListeners) {
-            for (Listener.ResponseListener responseListener : responseListeners) {
+            for (RequestListener.ResponseListener responseListener : responseListeners) {
                 responseListener.onResponse(response);
             }
             responseListeners.clear();
@@ -789,7 +794,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     public void deliverError(JusError error) {
         synchronized (errorListeners) {
-            for (Listener.ErrorListener errorListener : errorListeners) {
+            for (RequestListener.ErrorListener errorListener : errorListeners) {
                 errorListener.onError(error);
             }
             errorListeners.clear();

@@ -16,7 +16,7 @@
 
 package io.apptik.comm.jus.rx.request;
 
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.rx.BaseSubscription;
@@ -33,7 +33,7 @@ public class RequestMarkerOnSubscribe implements Observable.OnSubscribe<MarkerEv
 
     @Override
     public void call(final Subscriber<? super MarkerEvent> subscriber) {
-        final Listener.MarkerListener listener = new Listener.MarkerListener() {
+        final RequestListener.MarkerListener listener = new RequestListener.MarkerListener() {
             @Override
             public void onMarker(JusLog.MarkerLog.Marker marker, Object... args) {
                 if (!subscriber.isUnsubscribed()) {

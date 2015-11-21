@@ -16,7 +16,7 @@
 
 package io.apptik.comm.jus.rx.request;
 
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.rx.BaseSubscription;
@@ -35,7 +35,7 @@ public class RequestErrorOnSubscribe implements Observable.OnSubscribe<ErrorEven
     public void call(final Subscriber<? super ErrorEvent> subscriber) {
 
 
-        final Listener.ErrorListener listener = new Listener.ErrorListener() {
+        final RequestListener.ErrorListener listener = new RequestListener.ErrorListener() {
             @Override
             public void onError(JusError error) {
                 if (!subscriber.isUnsubscribed()) {

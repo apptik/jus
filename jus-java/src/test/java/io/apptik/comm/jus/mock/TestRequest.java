@@ -17,7 +17,7 @@
 package io.apptik.comm.jus.mock;
 
 import io.apptik.comm.jus.FormEncodingBuilder;
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
@@ -28,12 +28,12 @@ public class TestRequest {
     /** Base Request class for testing allowing both the deprecated and new constructor. */
     private static class Base extends Request<byte[]> {
         @SuppressWarnings("deprecation")
-        public Base(String url, Listener.ErrorListener listener) {
+        public Base(String url, RequestListener.ErrorListener listener) {
             super(Method.GET, url);
             this.addErrorListener(listener);
         }
 
-        public Base(String method, String url, Listener.ErrorListener listener) {
+        public Base(String method, String url, RequestListener.ErrorListener listener) {
             super(method, url);
             this.addErrorListener(listener);
         }

@@ -25,7 +25,7 @@ import android.util.Log;
 import android.widget.ImageView.ScaleType;
 
 import io.apptik.comm.jus.DefaultRetryPolicy;
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
@@ -67,7 +67,7 @@ public class ImageRequest extends Request<Bitmap> {
      * aspect ratio.
      *
      * @param url URL of the image
-     * @param listener Listener to receive the decoded bitmap
+     * @param listener RequestListener to receive the decoded bitmap
      * @param maxWidth Maximum width to decode this bitmap to, or zero for none
      * @param maxHeight Maximum height to decode this bitmap to, or zero for
      *            none
@@ -75,8 +75,8 @@ public class ImageRequest extends Request<Bitmap> {
      * @param decodeConfig Format to decode the bitmap to
      * @param errorListener Error listener, or null to ignore errors
      */
-    public ImageRequest(String url, Listener.ResponseListener<Bitmap> listener, int maxWidth, int maxHeight,
-                        ScaleType scaleType, Config decodeConfig, Listener.ErrorListener errorListener) {
+    public ImageRequest(String url, RequestListener.ResponseListener<Bitmap> listener, int maxWidth, int maxHeight,
+                        ScaleType scaleType, Config decodeConfig, RequestListener.ErrorListener errorListener) {
         super(Method.GET, url);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));

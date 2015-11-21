@@ -8,7 +8,7 @@ import android.util.Log;
 import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.AndroidRxJus;
 import io.apptik.comm.jus.JusLog;
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
@@ -146,13 +146,13 @@ public class CustomJusHelper {
 
     public static void addDummyRequest(String key, String val) {
         addRequest(Requests.getDummyRequest(key, val,
-                new Listener.ResponseListener<String>() {
+                new RequestListener.ResponseListener<String>() {
                     @Override
                     public void onResponse(String response) {
                         Log.d("Jus-Test", "jus response : " + response);
                     }
                 },
-                new Listener.ErrorListener() {
+                new RequestListener.ErrorListener() {
                     @Override
                     public void onError(JusError error) {
                         Log.d("Jus-Test", "jus error : " + error);

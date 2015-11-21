@@ -22,8 +22,8 @@ import android.util.Log;
 
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.RequestListener.ErrorListener;
+import io.apptik.comm.jus.RequestListener.ResponseListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;

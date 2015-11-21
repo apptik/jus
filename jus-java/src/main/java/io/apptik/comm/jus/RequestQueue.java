@@ -32,10 +32,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import io.apptik.comm.jus.QueueListener.QListenerFactory;
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.converter.BasicConverterFactory;
 import io.apptik.comm.jus.toolbox.Utils;
 
+import static io.apptik.comm.jus.Converter.*;
 import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
 /**
@@ -324,6 +326,7 @@ public class RequestQueue {
      * @return The passed-in request
      */
     public <R extends Request<T>, T> R add(R request) {
+        request.addMarker(Request.EVENT_PRE_ADD_TO_QUEUE);
         for (Authenticator.Factory factory : authenticatorFactories) {
             Authenticator authenticator =
                     factory.forRequest(request.getUrl(), request.getNetworkRequest());
@@ -340,9 +343,9 @@ public class RequestQueue {
         }
 
         for (QListenerFactory qListenerFactory : qListenerFactories) {
-            QResponseListener qResponseListener = qListenerFactory.getResponseListener(request);
-            QErrorListener qErrorListener = qListenerFactory.getErrorListener(request);
-            QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener(request);
+            QueueListener.QResponseListener qResponseListener = qListenerFactory.getResponseListener(request);
+            QueueListener.QErrorListener qErrorListener = qListenerFactory.getErrorListener(request);
+            QueueListener.QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener(request);
 
             if(qResponseListener!=null) {
                 request.addResponseListener(qResponseListener);
@@ -469,7 +472,7 @@ public class RequestQueue {
         return this;
     }
 
-    public RequestQueue addConverterFactory(Converter.Factory factory) {
+    public RequestQueue addConverterFactory(Factory factory) {
         synchronized (converterFactories) {
             converterFactories.add(factory);
         }
@@ -478,7 +481,7 @@ public class RequestQueue {
     }
 
 
-    public RequestQueue removeConverterFactory(Converter.Factory factory) {
+    public RequestQueue removeConverterFactory(Factory factory) {
         synchronized (converterFactories) {
             converterFactories.remove(factory);
         }
@@ -550,7 +553,7 @@ public class RequestQueue {
         StringBuilder builder = new StringBuilder("Could not locate Response converter for ")
                 .append(type)
                 .append(". Tried:");
-        for (Converter.Factory converterFactory : converterFactories) {
+        for (Factory converterFactory : converterFactories) {
             builder.append("\n * ").append(converterFactory.getClass().getName());
         }
         throw new IllegalArgumentException(builder.toString());
@@ -579,127 +582,6 @@ public class RequestQueue {
         boolean apply(Request<?> request);
     }
 
-    private abstract static class QListener<T> {
-        protected final Request<T> request;
-
-        protected QListener(Request<T> request) {
-            Utils.checkNotNull(request, "request==null");
-            this.request = request;
-        }
-    }
-
-    public abstract static class QResponseListener<T> extends QListener implements Listener
-            .ResponseListener {
-        protected QResponseListener(Request<T> request) {
-            super(request);
-        }
-    }
-
-    public abstract static class QErrorListener extends QListener implements Listener
-            .ErrorListener {
-        protected QErrorListener(Request<?> request) {
-            super(request);
-        }
-    }
-
-    public abstract static class QMarkerListener extends QListener implements Listener
-            .MarkerListener {
-        protected QMarkerListener(Request<?> request) {
-            super(request);
-        }
-    }
-
-    public interface QListenerFactory {
-        QResponseListener getResponseListener(Request<?> request);
-        QErrorListener getErrorListener(Request<?> request);
-        QMarkerListener getMarkerListener(Request<?> request);
-    }
-
-    public static class SimpleQListenerFactory implements QListenerFactory {
-        @Override
-        public QResponseListener getResponseListener(Request<?> request) {
-            return null;
-        }
-
-        @Override
-        public QErrorListener getErrorListener(Request<?> request) {
-            return null;
-        }
-
-        @Override
-        public QMarkerListener getMarkerListener(Request<?> request) {
-            return null;
-        }
-    }
-
-    public abstract static class FilteredQListenerFactory implements QListenerFactory {
-        protected final RequestQueue.RequestFilter filter;
-
-        protected FilteredQListenerFactory(RequestFilter filter) {
-            this.filter = filter;
-        }
-
-        protected abstract QResponseListener getFilteredResponseListener(Request<?> request);
-
-        protected abstract QErrorListener getFilteredErrorListener(Request<?> request);
-
-        protected abstract QMarkerListener getFilteredMarkerListener(Request<?> request);
-
-        @Override
-        public final QResponseListener getResponseListener(Request<?> request) {
-            if (filter!=null && filter.apply(request)) {
-                return getFilteredResponseListener(request);
-            }
-            return null;
-        }
-
-        @Override
-        public final QErrorListener getErrorListener(Request<?> request) {
-            if (filter!=null && filter.apply(request)) {
-                return getFilteredErrorListener(request);
-            }
-            return null;
-        }
-
-        @Override
-        public final QMarkerListener getMarkerListener(Request<?> request) {
-            if (filter!=null && filter.apply(request)) {
-                return getFilteredMarkerListener(request);
-            }
-            return null;
-        }
-    }
-
-    public static class SimpleFilteredQListenerFactory extends FilteredQListenerFactory {
-
-        public SimpleFilteredQListenerFactory() {
-            super(new RequestFilter() {
-                @Override
-                public boolean apply(Request<?> request) {
-                    return true;
-                }
-            });
-        }
-
-        public SimpleFilteredQListenerFactory(RequestFilter filter) {
-            super(filter);
-        }
-
-        @Override
-        protected QResponseListener getFilteredResponseListener(Request<?> request) {
-            return null;
-        }
-
-        @Override
-        protected QErrorListener getFilteredErrorListener(Request<?> request) {
-            return null;
-        }
-
-        @Override
-        protected QMarkerListener getFilteredMarkerListener(Request<?> request) {
-            return null;
-        }
-    }
 
 
 }

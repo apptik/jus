@@ -25,8 +25,8 @@ import android.widget.ImageView.ScaleType;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import io.apptik.comm.jus.Listener.ErrorListener;
-import io.apptik.comm.jus.Listener.ResponseListener;
+import io.apptik.comm.jus.RequestListener.ErrorListener;
+import io.apptik.comm.jus.RequestListener.ResponseListener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;

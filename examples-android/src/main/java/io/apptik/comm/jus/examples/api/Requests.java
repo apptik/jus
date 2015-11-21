@@ -1,7 +1,7 @@
 package io.apptik.comm.jus.examples.api;
 
 
-import io.apptik.comm.jus.Listener;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.request.JsonObjectRequest;
 import io.apptik.comm.jus.request.StringRequest;
@@ -21,8 +21,8 @@ public class Requests {
     }
 
 
-    public static Request<String> getDummyRequest(String key, String val, Listener.ResponseListener<String> listener,
-                                           Listener.ErrorListener errorListener) {
+    public static Request<String> getDummyRequest(String key, String val, RequestListener.ResponseListener<String> listener,
+                                           RequestListener.ErrorListener errorListener) {
         Request<String> res =
                 new StringRequest(Request.Method.GET, "http://validate.jsontest.com/?json={'" + key + "':'" + val + "'}")
                 .addResponseListener(listener)

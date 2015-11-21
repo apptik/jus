@@ -16,7 +16,7 @@ public class JusLog {
     private static boolean errorLogOn = false;
 
 
-    public static class ErrorLog extends RequestQueue.QErrorListener {
+    public static class ErrorLog extends QueueListener.QErrorListener {
         public static void on() {
             errorLogOn = true;
         }
@@ -40,7 +40,7 @@ public class JusLog {
         }
     }
 
-    public static class ResponseLog extends RequestQueue.QResponseListener {
+    public static class ResponseLog extends QueueListener.QResponseListener {
         public static void on() {
             reponseLogOn = true;
         }
@@ -68,7 +68,7 @@ public class JusLog {
     /**
      * A simple event log with records containing a name, threadId ID, and timestamp.
      */
-    public static class MarkerLog extends RequestQueue.QMarkerListener {
+    public static class MarkerLog extends QueueListener.QMarkerListener {
         public static void on() {
             markerLogOn = true;
         }

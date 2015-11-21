@@ -51,8 +51,8 @@ import io.apptik.comm.jus.error.JusError;
  *
  * @param <T> The type of parsed response this future expects.
  */
-public class RequestFuture<T> implements Future<T>, Listener.ResponseListener<T>,
-       Listener.ErrorListener {
+public class RequestFuture<T> implements Future<T>, RequestListener.ResponseListener<T>,
+       RequestListener.ErrorListener {
     private Request<T> request;
     private boolean resultReceived = false;
     private T result;
