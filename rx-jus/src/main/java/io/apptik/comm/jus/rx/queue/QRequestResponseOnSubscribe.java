@@ -16,6 +16,7 @@
 
 package io.apptik.comm.jus.rx.queue;
 
+import io.apptik.comm.jus.QueueListener;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.rx.BaseSubscription;
@@ -24,7 +25,7 @@ import io.apptik.comm.jus.toolbox.Utils;
 import rx.Observable;
 import rx.Subscriber;
 
-public class QRequestResponseOnSubscribe<T> implements Observable.OnSubscribe<ResultEvent<T>> {
+public class QRequestResponseOnSubscribe implements Observable.OnSubscribe<ResultEvent<?>> {
     private final RequestQueue.RequestFilter filter;
     private final RequestQueue queue;
 
@@ -35,26 +36,21 @@ public class QRequestResponseOnSubscribe<T> implements Observable.OnSubscribe<Re
     }
 
     @Override
-    public void call(final Subscriber<? super ResultEvent<T>> subscriber) {
+    public void call(final Subscriber<? super ResultEvent<?>> subscriber) {
 
-        final RequestQueue.QListenerFactory qListenerFactory =
-                new RequestQueue.SimpleFilteredQListenerFactory(filter) {
-//                    @Override
-//                    public RequestQueue.QResponseListener<T> getFilteredResponseListener
-//                            (Request<T> request) {
-//                        return new RequestQueue.QResponseListener(request) {
-//                            @Override
-//                            public void onResponse(T response) {
-//                                if (!subscriber.isUnsubscribed()) {
-//                                    subscriber.onNext(new ResultEvent<T>(request, response));
-//                                }
-//                            }
-//                        };
-//                    }
-
+        final QueueListener.QListenerFactory qListenerFactory =
+                new QueueListener.SimpleFilteredQListenerFactory(filter) {
                     @Override
-                    protected RequestQueue.QResponseListener getFilteredResponseListener(Request request) {
-                        return super.getFilteredResponseListener(request);
+                    protected <T> QueueListener.QResponseListener<T> getFilteredResponseListener
+                            (Request<T> request) {
+                        return new QueueListener.QResponseListener<T>(request) {
+                            @Override
+                            public void onResponse(T response) {
+                                if (!subscriber.isUnsubscribed()) {
+                                    subscriber.onNext(new ResultEvent<>(request, response));
+                                }
+                            }
+                        };
                     }
                 };
 
@@ -67,5 +63,4 @@ public class QRequestResponseOnSubscribe<T> implements Observable.OnSubscribe<Re
             }
         });
     }
-
 }

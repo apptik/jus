@@ -14,7 +14,7 @@ public interface QueueListener {
     }
 
     abstract class QResponseListener<T> extends QListener implements RequestListener
-            .ResponseListener {
+            .ResponseListener<T> {
         protected QResponseListener(Request<T> request) {
             super(request);
         }
@@ -66,7 +66,7 @@ public interface QueueListener {
             this.filter = filter;
         }
 
-        protected abstract QResponseListener getFilteredResponseListener(Request<?> request);
+        protected abstract <T> QResponseListener<T> getFilteredResponseListener(Request<T> request);
 
         protected abstract QErrorListener getFilteredErrorListener(Request<?> request);
 
@@ -113,7 +113,7 @@ public interface QueueListener {
         }
 
         @Override
-        protected QResponseListener getFilteredResponseListener(Request<?> request) {
+        protected <T> QResponseListener<T> getFilteredResponseListener(Request<T> request) {
             return null;
         }
 
