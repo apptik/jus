@@ -16,8 +16,8 @@
 
 package io.apptik.comm.jus.rx.queue;
 
-import io.apptik.comm.jus.QueueListener;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.rx.BaseSubscription;
@@ -39,11 +39,11 @@ public class QRequestErrorOnSubscribe<T> implements Observable.OnSubscribe<Error
     @Override
     public void call(final Subscriber<? super ErrorEvent> subscriber) {
 
-        final QueueListener.QListenerFactory qListenerFactory =
-                new QueueListener.SimpleFilteredQListenerFactory(filter) {
+        final RequestListener.QListenerFactory qListenerFactory =
+                new RequestListener.SimpleFilteredQListenerFactory(filter) {
                     @Override
-                    public QueueListener.QErrorListener getFilteredErrorListener(Request request) {
-                        return new QueueListener.QErrorListener(request) {
+                    public RequestListener.QErrorListener getFilteredErrorListener(Request request) {
+                        return new RequestListener.QErrorListener(request) {
                             @Override
                             public void onError(JusError error) {
                                 if (!subscriber.isUnsubscribed()) {

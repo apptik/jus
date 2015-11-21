@@ -65,13 +65,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     private final ImageLoader imageLoader;
 
     // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
+
     /**
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-       // private final TextView textView;
+        // private final TextView textView;
 
-       public final NetworkImageView niv ;
+        public final NetworkImageView niv;
 
         public ViewHolder(View v) {
             super(v);
@@ -85,24 +86,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 }
             });
             niv = (NetworkImageView) v.findViewById(R.id.img1);
-          //  textView = (TextView) v.findViewById(R.id.textView);
+            //  textView = (TextView) v.findViewById(R.id.textView);
         }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
 
     /**
      * Initialize the dataset of the Adapter.
-     *
      */
     public RecyclerAdapter(JsonArray jsonArray, Activity activity,
-                           ListScrollListener scrollListener,
-                           boolean reactive) {
+                           ListScrollListener scrollListener) {
         jarr = jsonArray;
-        if(!reactive) {
-            this.imageLoader = CustomJusHelper.getImageLoader();
-        } else {
-            this.imageLoader = CustomJusHelper.getRxImageLoader();
-        }
+        this.imageLoader = CustomJusHelper.getImageLoader();
+
 
         this.scrollListener = scrollListener;
         animDuration = ANIM_DEFAULT_SPEED;
@@ -111,7 +107,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 
         interpolator = new DecelerateInterpolator();
 
-        WindowManager windowManager = (WindowManager) activity.getSystemService(Context.WINDOW_SERVICE);
+        WindowManager windowManager = (WindowManager) activity.getSystemService(Context
+                .WINDOW_SERVICE);
         height = windowManager.getDefaultDisplay().getHeight();
     }
 
@@ -157,7 +154,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
             v.setScaleY(0.55F);
 
             ViewPropertyAnimator localViewPropertyAnimator =
-                    v.animate().rotationX(0.0F).rotationY(0.0F).translationX(0).translationY(0).setDuration(animDuration).scaleX(
+                    v.animate().rotationX(0.0F).rotationY(0.0F).translationX(0).translationY(0)
+                            .setDuration(animDuration).scaleX(
                             1.0F).scaleY(1.0F).setInterpolator(interpolator);
 
             localViewPropertyAnimator.setStartDelay(0).start();

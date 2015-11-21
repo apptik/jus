@@ -64,8 +64,7 @@ public class RxImageListFragment extends Fragment {
         RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(
                 MockData.getMockJsonArray(500, 500)
                 //MockData.getAssetsMock(getActivity())
-                , getActivity(), listScrollListener, true
-        );
+                , getActivity(), listScrollListener);
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
         recyclerView.setOnScrollListener(listScrollListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));

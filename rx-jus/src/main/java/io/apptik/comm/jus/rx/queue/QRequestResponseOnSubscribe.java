@@ -16,8 +16,8 @@
 
 package io.apptik.comm.jus.rx.queue;
 
-import io.apptik.comm.jus.QueueListener;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.rx.BaseSubscription;
 import io.apptik.comm.jus.rx.event.ResultEvent;
@@ -38,12 +38,12 @@ public class QRequestResponseOnSubscribe implements Observable.OnSubscribe<Resul
     @Override
     public void call(final Subscriber<? super ResultEvent<?>> subscriber) {
 
-        final QueueListener.QListenerFactory qListenerFactory =
-                new QueueListener.SimpleFilteredQListenerFactory(filter) {
+        final RequestListener.QListenerFactory qListenerFactory =
+                new RequestListener.SimpleFilteredQListenerFactory(filter) {
                     @Override
-                    protected <T> QueueListener.QResponseListener<T> getFilteredResponseListener
+                    protected <T> RequestListener.QResponseListener<T> getFilteredResponseListener
                             (Request<T> request) {
-                        return new QueueListener.QResponseListener<T>(request) {
+                        return new RequestListener.QResponseListener<T>(request) {
                             @Override
                             public void onResponse(T response) {
                                 if (!subscriber.isUnsubscribed()) {

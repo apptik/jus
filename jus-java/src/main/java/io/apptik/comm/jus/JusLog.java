@@ -16,7 +16,7 @@ public class JusLog {
     private static boolean errorLogOn = false;
 
 
-    public static class ErrorLog extends QueueListener.QErrorListener {
+    public static class ErrorLog extends RequestListener.QErrorListener {
         public static void on() {
             errorLogOn = true;
         }
@@ -40,7 +40,7 @@ public class JusLog {
         }
     }
 
-    public static class ResponseLog extends QueueListener.QResponseListener {
+    public static class ResponseLog extends RequestListener.QResponseListener {
         public static void on() {
             reponseLogOn = true;
         }
@@ -68,7 +68,7 @@ public class JusLog {
     /**
      * A simple event log with records containing a name, threadId ID, and timestamp.
      */
-    public static class MarkerLog extends QueueListener.QMarkerListener {
+    public static class MarkerLog extends RequestListener.QMarkerListener {
         public static void on() {
             markerLogOn = true;
         }
@@ -87,36 +87,12 @@ public class JusLog {
         private static final long MIN_DURATION_FOR_LOGGING_MS = 0;
 
         @Override
-        public void onMarker(Marker marker, Object... args) {
+        public void onMarker(RequestQueue.Marker marker, Object... args) {
             if (log == null) return;
             add(marker, args);
         }
 
-        public static class Marker {
-            public final String name;
-            public final long threadId;
-            public final String threadName;
-            public final long time;
-
-            public Marker(String name, long threadId, String threadName, long time) {
-                this.name = name;
-                this.threadId = threadId;
-                this.threadName = threadName;
-                this.time = time;
-            }
-
-            @Override
-            public String toString() {
-                return "Marker{" +
-                        "name='" + name + '\'' +
-                        ", threadId=" + threadId +
-                        ", threadName='" + threadName + '\'' +
-                        ", time=" + time +
-                        '}';
-            }
-        }
-
-        private final List<Marker> mMarkers = new ArrayList<Marker>();
+        private final List<RequestQueue.Marker> mMarkers = new ArrayList<RequestQueue.Marker>();
         private volatile boolean mFinished = false;
 
         public MarkerLog(Request request) {
@@ -126,7 +102,7 @@ public class JusLog {
         /**
          * Adds a marker to this log with the specified name.
          */
-        public synchronized void add(Marker marker, Object... args) {
+        public synchronized void add(RequestQueue.Marker marker, Object... args) {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
@@ -154,7 +130,7 @@ public class JusLog {
 
             long prevTime = mMarkers.get(0).time;
             log.log(buildMessage(request, "(%-10d ns) %s", duration, header));
-            for (Marker marker : mMarkers) {
+            for (RequestQueue.Marker marker : mMarkers) {
                 long thisTime = marker.time;
                 log.log(String.format("(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
                         , marker.threadId, marker
@@ -220,5 +196,7 @@ public class JusLog {
         return String.format(Locale.US, "[%d] %s: %s",
                 Thread.currentThread().getId(), caller, msg);
     }
+
+
 
 }

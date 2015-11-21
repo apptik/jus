@@ -32,12 +32,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.apptik.comm.jus.QueueListener.QListenerFactory;
+import io.apptik.comm.jus.RequestListener.QListenerFactory;
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.converter.BasicConverterFactory;
 import io.apptik.comm.jus.toolbox.Utils;
 
-import static io.apptik.comm.jus.Converter.*;
+import static io.apptik.comm.jus.Converter.Factory;
 import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
 /**
@@ -343,17 +343,20 @@ public class RequestQueue {
         }
 
         for (QListenerFactory qListenerFactory : qListenerFactories) {
-            QueueListener.QResponseListener qResponseListener = qListenerFactory.getResponseListener(request);
-            QueueListener.QErrorListener qErrorListener = qListenerFactory.getErrorListener(request);
-            QueueListener.QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener(request);
+            RequestListener.QResponseListener qResponseListener = qListenerFactory
+                    .getResponseListener(request);
+            RequestListener.QErrorListener qErrorListener = qListenerFactory.getErrorListener
+                    (request);
+            RequestListener.QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener
+                    (request);
 
-            if(qResponseListener!=null) {
+            if (qResponseListener != null) {
                 request.addResponseListener(qResponseListener);
             }
-            if(qErrorListener!=null) {
+            if (qErrorListener != null) {
                 request.addErrorListener(qErrorListener);
             }
-            if(qMarkerListener!=null) {
+            if (qMarkerListener != null) {
                 request.addMarkerListener(qMarkerListener);
             }
         }
@@ -583,5 +586,70 @@ public class RequestQueue {
     }
 
 
+    public static class Marker {
+        public final String name;
+        public final long threadId;
+        public final String threadName;
+        public final long time;
 
+        public Marker(String name, long threadId, String threadName, long time) {
+            Utils.checkNotNull(name, "name==null");
+            this.name = name;
+            this.threadId = threadId;
+            this.threadName = threadName;
+            this.time = time;
+        }
+
+        @Override
+        public String toString() {
+            return "Marker{" +
+                    "name='" + name + '\'' +
+                    ", threadId=" + threadId +
+                    ", threadName='" + threadName + '\'' +
+                    ", time=" + time +
+                    '}';
+        }
+    }
+
+    public interface MarkerFilter {
+        boolean apply(Marker marker);
+    }
+
+    public static class SimpleMarkerFilter implements MarkerFilter {
+        final String val;
+        final int type;
+        int exact = 1;
+        int contains = 2;
+        int matches = 3;
+
+
+        private SimpleMarkerFilter(String val, int type) {
+            this.val = val;
+            this.type = type;
+        }
+
+        public static SimpleMarkerFilter withName(String name) {
+            return new SimpleMarkerFilter(name, 1);
+        }
+
+        public SimpleMarkerFilter containsName(String name) {
+            return new SimpleMarkerFilter(name, 2);
+        }
+
+        public SimpleMarkerFilter matchesName(String name) {
+            return new SimpleMarkerFilter(name, 3);
+        }
+
+        @Override
+        public boolean apply(Marker marker) {
+            if (type == exact) {
+                return marker.name.equals(val);
+            } else if (type == contains) {
+                return marker.name.contains(val);
+            } else if (type == matches) {
+                return marker.name.matches(val);
+            }
+            return false;
+        }
+    }
 }

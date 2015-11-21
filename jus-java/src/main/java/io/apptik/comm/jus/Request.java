@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import io.apptik.comm.jus.JusLog.MarkerLog;
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.TimeoutError;
@@ -489,7 +488,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public <R extends Request<T>> R addMarker(String tag, Object... args) {
         for (RequestListener.MarkerListener markerListener : markerListeners) {
             markerListener.onMarker(
-                    new MarkerLog.Marker(tag,
+                    new RequestQueue.Marker(tag,
                             Thread.currentThread().getId(),
                             Thread.currentThread().getName(),
                             System.nanoTime()), args);
@@ -862,4 +861,5 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         HIGH,
         IMMEDIATE
     }
+
 }
