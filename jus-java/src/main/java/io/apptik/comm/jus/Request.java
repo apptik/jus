@@ -486,12 +486,12 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Adds an event to this request's event log; for debugging.
      */
     public <R extends Request<T>> R addMarker(String tag, Object... args) {
+        Marker marker =  new Marker(tag,
+                Thread.currentThread().getId(),
+                Thread.currentThread().getName(),
+                System.nanoTime());
         for (RequestListener.MarkerListener markerListener : markerListeners) {
-            markerListener.onMarker(
-                    new RequestQueue.Marker(tag,
-                            Thread.currentThread().getId(),
-                            Thread.currentThread().getName(),
-                            System.nanoTime()), args);
+            markerListener.onMarker(marker, args);
         }
 
         if (logSlowRequests && requestBirthTime == 0) {

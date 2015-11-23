@@ -87,12 +87,12 @@ public class JusLog {
         private static final long MIN_DURATION_FOR_LOGGING_MS = 0;
 
         @Override
-        public void onMarker(RequestQueue.Marker marker, Object... args) {
+        public void onMarker(Marker marker, Object... args) {
             if (log == null) return;
             add(marker, args);
         }
 
-        private final List<RequestQueue.Marker> mMarkers = new ArrayList<RequestQueue.Marker>();
+        private final List<Marker> mMarkers = new ArrayList<Marker>();
         private volatile boolean mFinished = false;
 
         public MarkerLog(Request request) {
@@ -102,7 +102,7 @@ public class JusLog {
         /**
          * Adds a marker to this log with the specified name.
          */
-        public synchronized void add(RequestQueue.Marker marker, Object... args) {
+        public synchronized void add(Marker marker, Object... args) {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
@@ -130,7 +130,7 @@ public class JusLog {
 
             long prevTime = mMarkers.get(0).time;
             log.log(buildMessage(request, "(%-10d ns) %s", duration, header));
-            for (RequestQueue.Marker marker : mMarkers) {
+            for (Marker marker : mMarkers) {
                 long thisTime = marker.time;
                 log.log(String.format("(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
                         , marker.threadId, marker
@@ -148,6 +148,7 @@ public class JusLog {
                 log.log(buildMessage(request, "Marker log finalized without finish() - " +
                         "uncaught exit point for request"));
             }
+            super.finalize();
         }
 
         /**

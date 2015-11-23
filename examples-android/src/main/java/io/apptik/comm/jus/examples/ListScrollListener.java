@@ -4,7 +4,7 @@ import android.support.v7.widget.RecyclerView;
 
 
 public class ListScrollListener extends RecyclerView.OnScrollListener {
-    private long previousEventTime = System.nanoTime(), currTime, timeToScrollOneElement;
+    private long previousEventTime = System.nanoTime();
     private double speed = 0;
 
     @Override
@@ -12,8 +12,8 @@ public class ListScrollListener extends RecyclerView.OnScrollListener {
         super.onScrolled(recyclerView, dx, dy);
 
         if (dy > 0) {
-            currTime = System.nanoTime();
-            timeToScrollOneElement = currTime - previousEventTime;
+            long currTime = System.nanoTime();
+            long timeToScrollOneElement = currTime - previousEventTime;
             //calc px/ms
             speed = ((double) dy / timeToScrollOneElement) * 1000 * 1000;
 

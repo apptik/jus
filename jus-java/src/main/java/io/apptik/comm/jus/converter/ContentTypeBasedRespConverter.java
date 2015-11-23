@@ -20,7 +20,7 @@ public class ContentTypeBasedRespConverter<T> extends AbstractSmartResponseConve
         }
         StringBuilder str = new StringBuilder("Cannot find converter for :" + value + ", tried:");
         for(Map.Entry entry:converters.entrySet()) {
-            str.append("\n\t" + entry.getKey() + " : " + entry.getValue());
+            str.append("\n\t").append(entry.getKey()).append(" : ").append(entry.getValue());
         }
         throw new RuntimeException(str.toString());
     }

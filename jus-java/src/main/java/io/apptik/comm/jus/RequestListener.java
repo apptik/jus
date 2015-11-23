@@ -49,7 +49,7 @@ public interface RequestListener {
         /**
          * Called when a marker is set.
          */
-        void onMarker(RequestQueue.Marker marker, Object... args);
+        void onMarker(Marker marker, Object... args);
     }
 
     interface QListenerFactory {

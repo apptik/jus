@@ -48,7 +48,7 @@ public class HurlStack extends AbstractHttpStack {
          * Returns a URL to use instead of the provided one, or null to indicate
          * this URL should not be used at all.
          */
-        public String rewriteUrl(String originalUrl);
+        String rewriteUrl(String originalUrl);
     }
 
     private final UrlRewriter mUrlRewriter;

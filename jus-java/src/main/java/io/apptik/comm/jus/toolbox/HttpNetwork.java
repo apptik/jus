@@ -50,13 +50,10 @@ import io.apptik.comm.jus.stack.HttpStack;
  */
 public class HttpNetwork implements Network {
 
-    private static long SLOW_REQUEST_THRESHOLD_MS = 3000000000l;
-
-    private static int DEFAULT_POOL_SIZE = 4096;
-
     protected final HttpStack mHttpStack;
 
     protected final ByteArrayPool mPool;
+    public static final int DEFAULT_POOL_SIZE = 4096;
 
     /**
      * @param httpStack HTTP stack to be used
@@ -220,6 +217,7 @@ public class HttpNetwork implements Network {
      */
     private void logSlowRequests(long requestLifetime, Request<?> request,
                                  byte[] responseContents, int statusCode) {
+        long SLOW_REQUEST_THRESHOLD_MS = 3000000000l;
         if (requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
             //todo add queue markers
 //            JusLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +

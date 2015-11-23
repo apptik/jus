@@ -26,8 +26,6 @@ import io.apptik.comm.jus.toolbox.Utils;
 import io.apptik.json.JsonArray;
 import io.apptik.json.JsonElement;
 
-;
-
 public final class JJsonArrayResponseConverter implements Converter<NetworkResponse, JsonArray> {
 
   public JJsonArrayResponseConverter() {

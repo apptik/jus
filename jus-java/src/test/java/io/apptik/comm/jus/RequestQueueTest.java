@@ -210,7 +210,7 @@ public class RequestQueueTest {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            return Response.success(new String(), CacheTestUtils.makeRandomCacheEntry(null));
+            return Response.success("", CacheTestUtils.makeRandomCacheEntry(null));
         }
 
         @Override

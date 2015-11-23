@@ -116,11 +116,8 @@ final class Utils {
   }
 
   static boolean checkIfRequestRawType(Type type) {
-    if(type instanceof ParameterizedType) {
-      return ((ParameterizedType)type).getRawType() == Request.class;
-    } else {
-      return false;
-    }
+    return type instanceof ParameterizedType && ((ParameterizedType) type).getRawType() ==
+            Request.class;
   }
 
   static RuntimeException methodError(Method method, String message, Object... args) {

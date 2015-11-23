@@ -35,6 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.Jus;
+import io.apptik.comm.jus.Marker;
 import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
@@ -550,7 +551,7 @@ public final class SimpleRequestTest {
 
         Request<String> call = example.getString();
 
-        final AtomicReference<RequestQueue.Marker> markerRef = new AtomicReference<>();
+        final AtomicReference<Marker> markerRef = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
         call
                 .addErrorListener(new RequestListener.ErrorListener() {
@@ -567,7 +568,7 @@ public final class SimpleRequestTest {
                 })
                 .addMarkerListener(new RequestListener.MarkerListener() {
                     @Override
-                    public void onMarker(RequestQueue.Marker marker, Object... args) {
+                    public void onMarker(Marker marker, Object... args) {
 
                         if (Request.EVENT_CACHE_DISCARD_CANCELED.equals(marker.name)
                                 || Request.EVENT_NETWORK_DISCARD_CANCELED.equals(marker.name)

@@ -483,10 +483,10 @@ public class JToggle implements DrawerLayout.DrawerListener {
     /**
      * Interface for toggle drawables. Can be public in the future
      */
-    static interface DrawerToggle {
-        public void setPosition(float position);
+    interface DrawerToggle {
+        void setPosition(float position);
 
-        public float getPosition();
+        float getPosition();
     }
 
     /**
@@ -521,7 +521,7 @@ public class JToggle implements DrawerLayout.DrawerListener {
         public void setActionBarUpIndicator(Drawable themeImage, int contentDescRes) {
             mActivity.getActionBar().setDisplayShowHomeEnabled(true);
             mSetIndicatorInfo = JToggleHoneycomb.setActionBarUpIndicator(
-                    mSetIndicatorInfo, mActivity, themeImage, contentDescRes);
+                    mActivity, themeImage, contentDescRes);
             mActivity.getActionBar().setDisplayShowHomeEnabled(false);
         }
 

@@ -108,17 +108,17 @@ public class TransformersTests {
 
         server.enqueue(new MockResponse().setBody("Hi"));
         queue.add(request);
-        assertThat(request.getFuture().get().toString()).isEqualTo("Hi");
+        assertThat(request.getFuture().get()).isEqualTo("Hi");
         request = request.clone();
         queue.addResponseTransformer(inactiveTransformer);
         server.enqueue(new MockResponse().setBody("Hi"));
         queue.add(request);
-        assertThat(request.getFuture().get().toString()).isEqualTo("Hi");
+        assertThat(request.getFuture().get()).isEqualTo("Hi");
         request = request.clone();
         queue.addResponseTransformer(activeTransformer);
         server.enqueue(new MockResponse().setBody("Hi"));
         queue.add(request);
-        assertThat(request.getFuture().get().toString()).isEqualTo("Holla");
+        assertThat(request.getFuture().get()).isEqualTo("Holla");
 
     }
 

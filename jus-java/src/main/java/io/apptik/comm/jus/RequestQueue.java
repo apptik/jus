@@ -48,6 +48,10 @@ import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
  * a parsed response on the main threadId.
  */
 public class RequestQueue {
+    public static final String EVENT_CACHE_DISPATCHER_START = "cache_dispatcher_start";
+    public static final String EVENT_CACHE_DISPATCHER_STOP = "cache_dispatcher_stop";
+    public static final String EVENT_NETWORK_DISPATCHER_START = "network_dispatcher_start";
+    public static final String EVENT_NETWORK_DISPATCHER_STOP = "network_dispatcher_stop";
 
     /**
      * Used for generating monotonically-increasing sequence numbers for requests.
@@ -111,7 +115,7 @@ public class RequestQueue {
     /**
      * The network dispatchers.
      */
-    protected NetworkDispatcher[] mDispatchers;
+    protected NetworkDispatcher[] networkDispatchers;
 
     /**
      * The cache dispatcher.
@@ -128,6 +132,11 @@ public class RequestQueue {
     private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
     private final List<Transformer.ResponseTransformer> responseTransformers = new ArrayList<>();
     private final List<QListenerFactory> qListenerFactories = new ArrayList<>();
+    /**
+     * RequestListener interface for markers.
+     */
+    private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
+
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -141,7 +150,7 @@ public class RequestQueue {
                         ResponseDelivery delivery) {
         mCache = cache;
         mNetwork = network;
-        mDispatchers = new NetworkDispatcher[threadPoolSize];
+        networkDispatchers = new NetworkDispatcher[threadPoolSize];
         mDelivery = delivery;
         converterFactories.add(new BasicConverterFactory());
     }
@@ -184,9 +193,9 @@ public class RequestQueue {
 
     public RequestQueue withNetworkDispatcherFactory(NetworkDispatcher.NetworkDispatcherFactory
                                                              networkDispatcherFactory) {
-        for (int i = 0; i < mDispatchers.length; i++) {
-            if (mDispatchers[i] != null) {
-                mDispatchers[i].quit();
+        for (int i = 0; i < networkDispatchers.length; i++) {
+            if (networkDispatchers[i] != null) {
+                networkDispatchers[i].quit();
             }
         }
         this.networkDispatcherFactory = networkDispatcherFactory;
@@ -203,9 +212,11 @@ public class RequestQueue {
                             mCache, mDelivery);
         }
 
-        for (int i = 0; i < mDispatchers.length; i++) {
-            mDispatchers[i] = networkDispatcherFactory.create();
-            mDispatchers[i].start();
+        for (int i = 0; i < networkDispatchers.length; i++) {
+            networkDispatchers[i] = networkDispatcherFactory.create();
+            networkDispatchers[i].start();
+            addMarker(EVENT_NETWORK_DISPATCHER_START, networkDispatchers[i]);
+
         }
     }
 
@@ -216,10 +227,12 @@ public class RequestQueue {
         stop();  // Make sure any currently running dispatchers are stopped.
         // Create the cache dispatcher and start it.
 
+
         if (cacheDispatcher == null) {
             cacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
         }
         cacheDispatcher.start();
+        addMarker(EVENT_CACHE_DISPATCHER_START, cacheDispatcher);
 
         // Create network dispatchers (and corresponding threads) up to the pool size.
         setUpNetworkDispatchers();
@@ -260,16 +273,49 @@ public class RequestQueue {
         stop();
     }
 
+    public <R extends RequestQueue> R addMarkerListener(RequestListener.MarkerListener
+                                                              markerListener) {
+        if (markerListener != null) {
+            synchronized (markerListeners) {
+                this.markerListeners.add(markerListener);
+            }
+        }
+        return (R) this;
+    }
+
+    public <R extends RequestQueue> R removeMarkerListener(RequestListener.MarkerListener
+                                                                 markerListener) {
+        synchronized (markerListeners) {
+            this.markerListeners.remove(markerListener);
+        }
+        return (R) this;
+    }
+
+    public <R extends RequestQueue> R addMarker(String tag, Object... args) {
+        Marker marker =  new Marker(tag,
+                Thread.currentThread().getId(),
+                Thread.currentThread().getName(),
+                System.nanoTime());
+        for (RequestListener.MarkerListener markerListener : markerListeners) {
+            markerListener.onMarker(marker, args);
+        }
+        return (R) this;
+    }
+
     /**
      * Stops the cache and network dispatchers.
      */
     public void stop() {
         if (cacheDispatcher != null) {
             cacheDispatcher.quit();
+            addMarker(EVENT_CACHE_DISPATCHER_STOP, cacheDispatcher);
+
         }
-        for (int i = 0; i < mDispatchers.length; i++) {
-            if (mDispatchers[i] != null) {
-                mDispatchers[i].quit();
+        for (NetworkDispatcher netDispatcher : networkDispatchers) {
+            if (netDispatcher != null) {
+                netDispatcher.quit();
+                addMarker(EVENT_NETWORK_DISPATCHER_STOP, netDispatcher);
+
             }
         }
     }
@@ -585,71 +631,4 @@ public class RequestQueue {
         boolean apply(Request<?> request);
     }
 
-
-    public static class Marker {
-        public final String name;
-        public final long threadId;
-        public final String threadName;
-        public final long time;
-
-        public Marker(String name, long threadId, String threadName, long time) {
-            Utils.checkNotNull(name, "name==null");
-            this.name = name;
-            this.threadId = threadId;
-            this.threadName = threadName;
-            this.time = time;
-        }
-
-        @Override
-        public String toString() {
-            return "Marker{" +
-                    "name='" + name + '\'' +
-                    ", threadId=" + threadId +
-                    ", threadName='" + threadName + '\'' +
-                    ", time=" + time +
-                    '}';
-        }
-    }
-
-    public interface MarkerFilter {
-        boolean apply(Marker marker);
-    }
-
-    public static class SimpleMarkerFilter implements MarkerFilter {
-        final String val;
-        final int type;
-        int exact = 1;
-        int contains = 2;
-        int matches = 3;
-
-
-        private SimpleMarkerFilter(String val, int type) {
-            this.val = val;
-            this.type = type;
-        }
-
-        public static SimpleMarkerFilter withName(String name) {
-            return new SimpleMarkerFilter(name, 1);
-        }
-
-        public SimpleMarkerFilter containsName(String name) {
-            return new SimpleMarkerFilter(name, 2);
-        }
-
-        public SimpleMarkerFilter matchesName(String name) {
-            return new SimpleMarkerFilter(name, 3);
-        }
-
-        @Override
-        public boolean apply(Marker marker) {
-            if (type == exact) {
-                return marker.name.equals(val);
-            } else if (type == contains) {
-                return marker.name.contains(val);
-            } else if (type == matches) {
-                return marker.name.matches(val);
-            }
-            return false;
-        }
-    }
 }

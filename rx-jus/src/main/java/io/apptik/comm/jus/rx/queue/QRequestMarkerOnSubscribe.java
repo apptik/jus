@@ -16,6 +16,7 @@
 
 package io.apptik.comm.jus.rx.queue;
 
+import io.apptik.comm.jus.Marker;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
@@ -43,7 +44,7 @@ public class QRequestMarkerOnSubscribe<T> implements Observable.OnSubscribe<Mark
                     public RequestListener.QMarkerListener getFilteredMarkerListener(Request request) {
                         return new RequestListener.QMarkerListener(request) {
                             @Override
-                            public void onMarker(RequestQueue.Marker marker, Object... args) {
+                            public void onMarker(Marker marker, Object... args) {
                                 if (!subscriber.isUnsubscribed()) {
                                     subscriber.onNext(new MarkerEvent(request, marker, args));
                                 }

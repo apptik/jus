@@ -43,8 +43,9 @@ class JToggleHoneycomb {
     private static final int[] THEME_ATTRS = new int[] {
             android.R.attr.homeAsUpIndicator
     };
-    public static SetIndicatorInfo setActionBarUpIndicator(SetIndicatorInfo info, Activity activity,
+    public static SetIndicatorInfo setActionBarUpIndicator(Activity activity,
                                                            Drawable drawable, int contentDescRes) {
+        SetIndicatorInfo info;
         if (true || info == null) {
             info = new SetIndicatorInfo(activity);
         }

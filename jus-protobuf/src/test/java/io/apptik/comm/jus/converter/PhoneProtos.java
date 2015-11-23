@@ -112,7 +112,7 @@ public final class PhoneProtos {
         makeExtensionsImmutable();
       }
     }
-    public static final com.google.protobuf.Descriptors.Descriptor
+    public static com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
       return PhoneProtos.internal_static_retrofit_Phone_descriptor;
     }
@@ -298,7 +298,7 @@ public final class PhoneProtos {
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
        implements PhoneProtos.PhoneOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
+      public static com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
         return PhoneProtos.internal_static_retrofit_Phone_descriptor;
       }

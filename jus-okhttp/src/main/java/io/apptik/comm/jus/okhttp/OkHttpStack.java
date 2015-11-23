@@ -5,7 +5,6 @@ import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.net.ProtocolException;
-import java.util.Map;
 
 import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
