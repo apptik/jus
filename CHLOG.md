@@ -1,8 +1,21 @@
 Change Log
 ==========
 
-NEXT Version 0.6.4 *(FUTURE-Nov-2015)*
+NEXT Version 0.6.5 *(FUTURE-Dec-2015)*
 ----------------------------------
+
+Version 0.6.4 *(23-Nov-2015)*
+----------------------------------
+* New: add retry policy factory in the queue
+* Upd: retry policy split read and connect timeout
+* New: add queue markers and callbacks
+* Upd: replace RxQueue with RxQueue binder
+* New: add request event callbacks to the queue
+* Fix: improve & simplify logs
+* Fix: fix async listeners
+* New: response converter based on returned Content type
+* Fix: custom requests which override parseNetworkResponse
+* New: add NetworkRequest transformers
 
 Version 0.6.3 *(11-Nov-2015)*
 ----------------------------------
@@ -12,7 +25,7 @@ Version 0.6.3 *(11-Nov-2015)*
 Version 0.6.2 *(9-Nov-2015)*
 ----------------------------------
 * Fix: providing NetworkResponse converters using converter factories added in the queue 
-* New: Add OkHttp Client HTTP Stack
+* New: add OkHttp Client HTTP Stack
 * New: in RetroProxy add @Tag, @Priority, @ShouldCache as property annotations
 * New: in RetroProxy add TRACE and OPTIONS inbuilt http methods
 * Fix: race condition bug
