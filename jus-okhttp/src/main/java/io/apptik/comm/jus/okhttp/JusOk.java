@@ -31,8 +31,7 @@ public class JusOk {
             headers.remove("Content-Type");
         }
 
-        if (additionalHeaders != null)
-        {
+        if (additionalHeaders != null) {
             headers.putAll(additionalHeaders.toMap());
         }
         return com.squareup.okhttp.Headers.of(headers);
@@ -41,6 +40,10 @@ public class JusOk {
     public static RequestBody okBody(NetworkRequest request) {
         if (request == null)
             return null;
-        return RequestBody.create(MediaType.parse(request.contentType.toString()), request.data);
+        MediaType mediaType = null;
+        if (request.contentType != null) {
+            mediaType = MediaType.parse(request.contentType.toString());
+        }
+        return RequestBody.create(mediaType, request.data);
     }
 }
