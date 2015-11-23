@@ -38,7 +38,7 @@ public class JusOk {
     }
 
     public static RequestBody okBody(NetworkRequest request) {
-        if (request == null)
+        if (request == null || (request.contentType == null && request.data == null))
             return null;
         MediaType mediaType = null;
         if (request.contentType != null) {
