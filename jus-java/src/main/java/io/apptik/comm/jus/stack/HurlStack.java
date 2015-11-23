@@ -142,9 +142,8 @@ public class HurlStack extends AbstractHttpStack {
     private HttpURLConnection openConnection(URL url, Request<?> request) throws IOException {
         HttpURLConnection connection = createConnection(url);
 
-        int timeoutMs = request.getTimeoutMs();
-        connection.setConnectTimeout(timeoutMs);
-        connection.setReadTimeout(timeoutMs);
+        connection.setConnectTimeout(request.getRetryPolicy().getCurrentConnectTimeout());
+        connection.setReadTimeout(request.getRetryPolicy().getCurrentReadTimeout());
         connection.setUseCaches(false);
         connection.setDoInput(true);
 

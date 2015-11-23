@@ -29,7 +29,6 @@ import java.util.Map;
 
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.error.TimeoutError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
@@ -233,7 +232,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         this.method = method;
         this.url = url;
         this.converterFromResponse = converterFromResponse;
-        setRetryPolicy(new DefaultRetryPolicy());
         mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);
     }
 
@@ -571,6 +569,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
 
         }
+        if(retryPolicy==null) {
+            setRetryPolicy(new DefaultRetryPolicy());
+        }
         this.requestQueue = requestQueue;
         return (R) this;
     }
@@ -706,16 +707,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     public final boolean shouldCache() {
         return shouldCache;
-    }
-
-
-    /**
-     * Returns the socket timeout in milliseconds per retry attempt. (This value can be changed
-     * per retry attempt if a backoff is specified via backoffTimeout()). If there are no retry
-     * attempts remaining, this will cause delivery of a {@link TimeoutError} error.
-     */
-    public final int getTimeoutMs() {
-        return retryPolicy.getCurrentTimeout();
     }
 
     /**

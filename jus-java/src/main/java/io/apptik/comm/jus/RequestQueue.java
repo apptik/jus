@@ -137,7 +137,7 @@ public class RequestQueue {
      */
     private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
-
+    private RetryPolicy.Factory retryPolicyFactory = null;
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
      *
@@ -419,6 +419,10 @@ public class RequestQueue {
             request.addMarkerListener(new JusLog.MarkerLog(request));
         }
 
+        if(retryPolicyFactory!=null) {
+            request.setRetryPolicy(retryPolicyFactory.get(request));
+        }
+
         synchronized (mCurrentRequests) {
             //check if not already cancelled
             if (request.isCanceled()) {
@@ -504,11 +508,19 @@ public class RequestQueue {
         }
     }
 
+    public RetryPolicy.Factory getRetryPolicyFactory() {
+        return retryPolicyFactory;
+    }
+
+    public RequestQueue setRetryPolicyFactory(RetryPolicy.Factory retryPolicyFactory) {
+        this.retryPolicyFactory = retryPolicyFactory;
+        return this;
+    }
+
     public RequestQueue addAuthenticatorFactory(Authenticator.Factory factory) {
         synchronized (authenticatorFactories) {
             authenticatorFactories.add(factory);
         }
-
         return this;
     }
 

@@ -26,9 +26,14 @@ import io.apptik.comm.jus.error.JusError;
 public interface RetryPolicy {
 
     /**
-     * Returns the current timeout (used for logging).
+     * Returns the current connect timeout (used for logging).
      */
-    int getCurrentTimeout();
+    int getCurrentConnectTimeout();
+
+    /**
+     * Returns the current read timeout (used for logging).
+     */
+    int getCurrentReadTimeout();
 
     /**
      * Returns the current retry count (used for logging).
@@ -42,4 +47,11 @@ public interface RetryPolicy {
      * ran out of attempts), the passed in error is thrown.
      */
     void retry(JusError error) throws JusError;
+
+
+    abstract class Factory {
+        public RetryPolicy get(Request request) {
+            return new DefaultRetryPolicy();
+        }
+    }
 }

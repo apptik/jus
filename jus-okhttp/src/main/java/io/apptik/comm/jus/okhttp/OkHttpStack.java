@@ -5,6 +5,7 @@ import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 import java.net.ProtocolException;
+import java.util.concurrent.TimeUnit;
 
 import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
@@ -39,7 +40,11 @@ public class OkHttpStack extends AbstractHttpStack {
     public NetworkResponse performRequest(Request<?> request, Headers
             additionalHeaders, ByteArrayPool byteArrayPool) throws IOException, AuthFailureError {
 
-        //OkHttpClient client = this.client.clone();
+        OkHttpClient client = this.client.clone();
+        client.setConnectTimeout(request.getRetryPolicy().getCurrentConnectTimeout(), TimeUnit
+                .MILLISECONDS);
+        client.setReadTimeout(request.getRetryPolicy().getCurrentReadTimeout(), TimeUnit
+                .MILLISECONDS);
         com.squareup.okhttp.Request okRequest = new com.squareup.okhttp.Request.Builder()
                 .url(request.getUrlString())
                 .headers(JusOk.okHeaders(request.getHeaders(), additionalHeaders))
@@ -84,7 +89,7 @@ public class OkHttpStack extends AbstractHttpStack {
                 while ((count = bufferedSource.read(buffer)) != -1) {
                     bytes.write(buffer, 0, count);
                 }
-            } catch(ProtocolException ex) {
+            } catch (ProtocolException ex) {
                 //we will get this anyway keep on so we can have whatever we got from the body
             }
             return bytes.toByteArray();

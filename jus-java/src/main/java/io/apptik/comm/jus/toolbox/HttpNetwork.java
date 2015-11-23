@@ -236,16 +236,17 @@ public class HttpNetwork implements Network {
     private static void attemptRetryOnException(String logPrefix, Request<?> request,
                                                 JusError exception) throws JusError {
         RetryPolicy retryPolicy = request.getRetryPolicy();
-        int oldTimeout = request.getTimeoutMs();
 
         try {
             retryPolicy.retry(exception);
         } catch (JusError e) {
             request.addMarker(
-                    String.format("%s-timeout-giveup [timeout=%s]", logPrefix, oldTimeout));
+                    String.format("%s-timeout-giveup [conn-timeout=%s] [read-timeout=%s]",
+                            logPrefix, retryPolicy.getCurrentConnectTimeout(), retryPolicy.getCurrentReadTimeout()));
             throw e;
         }
-        request.addMarker(String.format("%s-retry [timeout=%s]", logPrefix, oldTimeout));
+        request.addMarker(String.format("%s-retry [conn-timeout=%s] [read-timeout=%s]",
+                logPrefix, retryPolicy.getCurrentConnectTimeout(), retryPolicy.getCurrentReadTimeout()));
     }
 
     private void addAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws

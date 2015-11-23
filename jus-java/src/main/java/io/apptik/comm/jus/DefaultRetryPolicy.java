@@ -68,7 +68,15 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * Returns the current timeout.
      */
     @Override
-    public int getCurrentTimeout() {
+    public int getCurrentConnectTimeout() {
+        return mCurrentTimeoutMs;
+    }
+
+    /**
+     * Returns the current timeout.
+     */
+    @Override
+    public int getCurrentReadTimeout() {
         return mCurrentTimeoutMs;
     }
 
