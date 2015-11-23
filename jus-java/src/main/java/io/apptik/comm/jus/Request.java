@@ -63,6 +63,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_NETWORK_STACK_COMPLETE = "network-stack-complete";
     public static final String EVENT_NETWORK_TRANSFORM_COMPLETE = "network-transform-complete";
     public static final String EVENT_NETWORK_DISCARD_CANCELED = "network-discard-canceled";
+    public static final String EVENT_NETWORK_RETRY = "network-retry";
+    public static final String EVENT_NETWORK_RETRY_FAILED = "network-retry-failed";
     public static final String EVENT_NETWORK_HTTP_COMPLETE = "network-http-complete";
     public static final String EVENT_NOT_MODIFIED = "not-modified";
     public static final String EVENT_NETWORK_PARSE_COMPLETE = "network-parse-complete";

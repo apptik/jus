@@ -87,12 +87,15 @@ public class HttpNetwork implements Network {
                 request.addMarker(Request.EVENT_NETWORK_STACK_SEND, headers);
                 httpResponse = mHttpStack.performRequest(request, headers.build(), mPool);
                 request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
-                //currently all requests that came to here normally needs to be attached to the queue
+                //currently all requests that came to here normally needs to be attached to the
+                // queue
                 //however due the complete decoupling of the components in Jus a Network may be set
-                //to perform internal requests, i.e. which was not passed to the queue, possibly auth
+                //to perform internal requests, i.e. which was not passed to the queue, possibly
+                // auth
                 //requests. So we shall check
-                if(request.getRequestQueue()!=null) {
-                    httpResponse = request.getRequestQueue().transformResponse(request, httpResponse);
+                if (request.getRequestQueue() != null) {
+                    httpResponse = request.getRequestQueue().transformResponse(request,
+                            httpResponse);
                     request.addMarker(Request.EVENT_NETWORK_TRANSFORM_COMPLETE, httpResponse);
                 }
                 //check completeness of body
@@ -240,13 +243,16 @@ public class HttpNetwork implements Network {
         try {
             retryPolicy.retry(exception);
         } catch (JusError e) {
-            request.addMarker(
+            request.addMarker(Request.EVENT_NETWORK_RETRY_FAILED,
                     String.format("%s-timeout-giveup [conn-timeout=%s] [read-timeout=%s]",
-                            logPrefix, retryPolicy.getCurrentConnectTimeout(), retryPolicy.getCurrentReadTimeout()));
+                            logPrefix, retryPolicy.getCurrentConnectTimeout(),
+                            retryPolicy.getCurrentReadTimeout()));
             throw e;
         }
-        request.addMarker(String.format("%s-retry [conn-timeout=%s] [read-timeout=%s]",
-                logPrefix, retryPolicy.getCurrentConnectTimeout(), retryPolicy.getCurrentReadTimeout()));
+        request.addMarker(Request.EVENT_NETWORK_RETRY,
+                String.format("%s-retry [conn-timeout=%s] [read-timeout=%s]",
+                        logPrefix, retryPolicy.getCurrentConnectTimeout(),
+                        retryPolicy.getCurrentReadTimeout()));
     }
 
     private void addAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
