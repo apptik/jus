@@ -135,6 +135,11 @@ public class NetworkDispatcher extends Thread {
 
                 // Perform the network request.
                 NetworkResponse networkResponse = mNetwork.performRequest(request);
+
+                if (request.isCanceled()) {
+                    request.finish(Request.EVENT_NETWORK_DISCARD_CANCELED);
+                    continue;
+                }
                 request.addMarker(Request.EVENT_NETWORK_HTTP_COMPLETE, networkResponse);
 
                 // If the server returned 304 AND we delivered a response already,

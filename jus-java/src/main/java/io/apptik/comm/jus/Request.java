@@ -159,7 +159,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * Whether or not this request has been canceled.
      */
-    private boolean canceled = false;
+    private volatile boolean canceled = false;
 
     /**
      * Whether or not a response has been delivered for this request yet.
@@ -506,7 +506,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * <p/>
      * <p>Also dumps all events from this request's event log; for debugging.</p>
      */
-    protected void finish(final String tag) {
+    void finish(final String tag) {
         if (requestQueue != null) {
             requestQueue.finish(this);
         }

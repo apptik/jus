@@ -77,6 +77,9 @@ public class HttpNetwork implements Network {
     public NetworkResponse performRequest(Request<?> request) throws JusError {
         long requestStart = System.nanoTime();
         while (true) {
+            if (request.isCanceled()) {
+                return null;
+            }
             NetworkResponse httpResponse = null;
             try {
                 // Gather headers.

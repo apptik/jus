@@ -47,6 +47,7 @@ import java.lang.reflect.Type;
 import java.net.SocketTimeoutException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.apptik.comm.jus.converter.Converters;
@@ -77,7 +78,7 @@ public final class SimpleRequestTest {
     class Service {
 
         Request<String> getString() {
-            return new Request<>(GET, server.url("/").toString(), String.class)
+            return new Request<>(GET, server.url("/").toString(), String.class).setTag("str")
                     .prepRequestQueue(queue);
         }
 
@@ -150,7 +151,8 @@ public final class SimpleRequestTest {
 
         final AtomicReference<String> responseRef = new AtomicReference<>();
         final CountDownLatch latch = new CountDownLatch(1);
-        Request<String> request = example.getString().addErrorListener(new RequestListener.ErrorListener
+        Request<String> request = example.getString().addErrorListener(new RequestListener
+                .ErrorListener
                 () {
             @Override
             public void onError(JusError error) {
@@ -585,6 +587,33 @@ public final class SimpleRequestTest {
 
         assertTrue(latch.await(2, SECONDS));
         assertThat(markerRef.get().name).containsIgnoringCase("canceled");
+    }
+
+    @Test
+    public void cancelRequestWhenInRetry() throws InterruptedException, ExecutionException {
+        server.enqueue(new MockResponse().setResponseCode(200).setBody("#whatcanyoudo")
+                .setBodyDelay(1101, TimeUnit.MILLISECONDS));
+        final CountDownLatch latch = new CountDownLatch(2);
+
+        example.getString().addMarkerListener(new RequestListener.MarkerListener() {
+            @Override
+            public void onMarker(Marker marker, Object... args) {
+                if (Request.EVENT_NETWORK_RETRY.equals(marker.name)) {
+                    queue.cancelAll("str");
+                    latch.countDown();
+                } else if (Request.EVENT_NETWORK_RETRY_FAILED.equals(marker.name)) {
+                    throw new AssertionError();
+                } else if (Request.EVENT_NETWORK_DISCARD_CANCELED.equals(marker.name)) {
+                    latch.countDown();
+                }
+            }
+        }).addErrorListener(new RequestListener.ErrorListener() {
+            @Override
+            public void onError(JusError error) {
+                throw new AssertionError();
+            }
+        }).enqueue();
+        assertTrue(latch.await(8, SECONDS));
     }
 
 
