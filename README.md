@@ -41,34 +41,24 @@ Jus requires at minimum Java 7 or Android SDK 15.
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp)
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android)
     * [Reactive Android jus][jus-android-rx] - RxJava support for jus for Android
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android-rx
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik
-    .comm/jus-android-rx)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android-rx.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android-rx)
 * Data Serializers Support for jus
     * [Gson][jus-gson] - support for Gson
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-gson.svg?style=flat)
-    ](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-gson)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-gson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-gson)
     * [Jackson][jus-jackson] - support for Jackson
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jackson
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jackson)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jackson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jackson)
     * [JJson][jus-jjson] - support for JustJson
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jjson
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jjson)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jjson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jjson)
     * [Moshi][jus-moshi] - support for Moshi
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-moshi
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-moshi)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-moshi.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-moshi)
     * [Protobuf][jus-protobuf] - support for Google Protobuf
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-protobuf
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-protobuf)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-protobuf.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-protobuf)
     * [SimpleXML][jus-simplexml] - support for Simple
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-simplexml
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-simplexml)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-simplexml.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-simplexml)
     * [Wire][jus-wire] - support for wire
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-wire
-    .svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-wire)
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-wire.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-wire)
 
 ## Licence
 
