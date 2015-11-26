@@ -33,10 +33,10 @@ Jus requires at minimum Java 7 or Android SDK 15.
 
 ## Modules
 * [jus for Java][jus-java] - main jus library for java
-[![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-java.svg?style=flat-square)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-java)
+[![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-java.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-java)
 * [Reactive jus][rx-jus] - RxJava support for jus
 * HTTP Stacks
-    * [OkHttp][jus-okhttp] = OkHttp Client Stack for jus
+    * [OkHttp][jus-okhttp] - OkHttp Client Stack for jus
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
     * [Reactive Android jus][jus-android-rx] - RxJava support for jus for Android
