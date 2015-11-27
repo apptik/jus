@@ -627,8 +627,7 @@ public final class SimpleRequestTest {
         }).enqueue();
         assertTrue(latch.await(8, SECONDS));
     }
-
-
+    
     @After
     public void after() {
         queue.stopWhenDone();
