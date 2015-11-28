@@ -17,18 +17,18 @@ script:
 env:
    matrix:
      - MODULE=jus-java
-     - MODULE=jus-gson
-     - MODULE=jus-jackson
-     - MODULE=jus-jjson
-     - MODULE=jus-moshi
-     - MODULE=jus-okhttp
-     - MODULE=jus-protobuf
-     - MODULE=jus-simplexml
-     - MODULE=jus-wire
+     - MODULE=converter:jus-gson
+     - MODULE=converter:jus-jackson
+     - MODULE=converter:jus-jjson
+     - MODULE=converter:jus-moshi
+     - MODULE=stack:jus-okhttp
+     - MODULE=converter:jus-protobuf
+     - MODULE=converter:jus-simplexml
+     - MODULE=converter:jus-wire
      - MODULE=retro-jus
      - MODULE=rx-jus
-     - MODULE=jus-android
-     - MODULE=jus-android-rx
+     - MODULE=android:jus-android
+     - MODULE=android:jus-android-rx
 
 notifications:
   email: true
