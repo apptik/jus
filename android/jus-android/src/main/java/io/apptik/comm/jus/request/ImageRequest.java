@@ -29,6 +29,7 @@ import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
+import io.apptik.comm.jus.util.BitmapPool;
 
 /**
  * A canned request for getting an image at a given URL and calling
@@ -51,6 +52,7 @@ public class ImageRequest extends Request<Bitmap> {
     private final int mMaxWidth;
     private final int mMaxHeight;
     private ScaleType mScaleType;
+    private BitmapPool bitmapPool;
 
     /** Decoding lock so that we don't decode more than one image at a time (to avoid OOM's) */
     private static final Object sDecodeLock = new Object();
@@ -83,9 +85,18 @@ public class ImageRequest extends Request<Bitmap> {
     }
 
     @Override
-    public Request<Bitmap> clone() {
+    public ImageRequest clone() {
         return new ImageRequest(getUrlString(), mMaxWidth, mMaxHeight,
-                mScaleType,mDecodeConfig);
+                mScaleType,mDecodeConfig).setBitmapPool(bitmapPool);
+    }
+
+    public BitmapPool getBitmapPool() {
+        return bitmapPool;
+    }
+
+    public ImageRequest setBitmapPool(BitmapPool bitmapPool) {
+        this.bitmapPool = bitmapPool;
+        return this;
     }
 
     @Override
@@ -169,6 +180,7 @@ public class ImageRequest extends Request<Bitmap> {
         Bitmap bitmap = null;
         if (mMaxWidth == 0 && mMaxHeight == 0) {
             decodeOptions.inPreferredConfig = mDecodeConfig;
+            addInBitmapOptions(decodeOptions);
             bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
         } else {
             // If we have to resize this image, first get the natural bounds.
@@ -189,9 +201,11 @@ public class ImageRequest extends Request<Bitmap> {
              decodeOptions.inPreferQualityOverSpeed = PREFER_QUALITY_OVER_SPEED;
             decodeOptions.inSampleSize =
                 findBestSampleSize(actualWidth, actualHeight, desiredWidth, desiredHeight);
+            addInBitmapOptions(decodeOptions);
             Bitmap tempBitmap =
                 BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
 
+            //TODO shall we optimise this with BitmapDrawable
             // If necessary, scale down to the maximal acceptable size.
             if (tempBitmap != null && (tempBitmap.getWidth() > desiredWidth ||
                     tempBitmap.getHeight() > desiredHeight)) {
@@ -207,6 +221,21 @@ public class ImageRequest extends Request<Bitmap> {
             return Response.error(new ParseError(response));
         } else {
             return Response.success(bitmap, HttpHeaderParser.parseCacheHeaders(response));
+        }
+    }
+
+    private void addInBitmapOptions(BitmapFactory.Options options) {
+        // inBitmap only works with mutable bitmaps so force the decoder to
+        // return mutable bitmaps.
+        options.inMutable = true;
+
+        if (bitmapPool != null) {
+            // Try and find a bitmap to use for inBitmap
+            Bitmap inBitmap = bitmapPool.getReusableBitmap(options);
+
+            if (inBitmap != null) {
+                options.inBitmap = inBitmap;
+            }
         }
     }
 

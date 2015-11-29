@@ -48,10 +48,10 @@ public class CustomJusHelper {
         JusLog.ResponseLog.on();
         JusLog.MarkerLog.on();
         queue = AndroidJus.newRequestQueue(context);
-
+        DefaultBitmapLruCache defaultBitmapLruCache = new DefaultBitmapLruCache();
         imageLoader = new ImageLoader(queue,
                 // new NoCache()
-                new DefaultBitmapLruCache()
+                defaultBitmapLruCache, defaultBitmapLruCache
         );
 
         RxRequestQueue.resultObservable(queue, null).subscribe(new Action1<ResultEvent>() {

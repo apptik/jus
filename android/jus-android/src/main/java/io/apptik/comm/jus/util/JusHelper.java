@@ -24,8 +24,8 @@ import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
 
 public class JusHelper {
-    private static RequestQueue mRequestQueue;
-    private static ImageLoader mImageLoader;
+    private static RequestQueue requestQueue;
+    private static ImageLoader imageLoader;
 
 
     private JusHelper() {
@@ -34,18 +34,18 @@ public class JusHelper {
 
 
     public static void init(Context context) {
-        mRequestQueue = AndroidJus.newRequestQueue(context);
-
-        mImageLoader = new ImageLoader(mRequestQueue,
+        requestQueue = AndroidJus.newRequestQueue(context);
+        DefaultBitmapLruCache defaultBitmapLruCache = new DefaultBitmapLruCache();
+        imageLoader = new ImageLoader(requestQueue,
                 // new NoCache()
-                new DefaultBitmapLruCache()
+                defaultBitmapLruCache, defaultBitmapLruCache
         );
     }
 
 
     public static RequestQueue getRequestQueue() {
-        if (mRequestQueue != null) {
-            return mRequestQueue;
+        if (requestQueue != null) {
+            return requestQueue;
         } else {
             throw new IllegalStateException("RequestQueue not initialized");
         }
@@ -60,8 +60,8 @@ public class JusHelper {
      * @return
      */
     public static ImageLoader getImageLoader() {
-        if (mImageLoader != null) {
-            return mImageLoader;
+        if (imageLoader != null) {
+            return imageLoader;
         } else {
             throw new IllegalStateException("ImageLoader not initialized");
         }

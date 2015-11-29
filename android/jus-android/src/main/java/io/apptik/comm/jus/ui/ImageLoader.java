@@ -31,6 +31,8 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.request.ImageRequest;
+import io.apptik.comm.jus.util.BitmapPool;
+import io.apptik.comm.jus.util.DefaultBitmapLruCache;
 
 /**
  * Helper that handles loading and caching images from remote URLs.
@@ -43,13 +45,15 @@ import io.apptik.comm.jus.request.ImageRequest;
  */
 public class ImageLoader {
     /** RequestQueue for dispatching ImageRequests onto. */
-    private final RequestQueue mRequestQueue;
+    private final RequestQueue requestQueue;
 
     /** Amount of time to wait after first response arrives before delivering all responses. */
     private int mBatchResponseDelayMs = 100;
 
     /** The cache implementation to be used as an L1 cache before calling into jus. */
-    private final ImageCache mCache;
+    private final ImageCache imageCache;
+
+    private final BitmapPool bitmapPool;
 
     /**
      * HashMap of Cache keys -> BatchedImageRequest used to track in-flight requests so
@@ -81,12 +85,23 @@ public class ImageLoader {
 
     /**
      * Constructs a new ImageLoader.
+     */
+    public ImageLoader(RequestQueue queue) {
+        this.requestQueue = queue;
+        DefaultBitmapLruCache defaultBitmapLruCache =  new DefaultBitmapLruCache();
+        this.imageCache = defaultBitmapLruCache;
+        this.bitmapPool = defaultBitmapLruCache;
+    }
+
+    /**
+     * Constructs a new ImageLoader.
      * @param queue The RequestQueue to use for making image requests.
      * @param imageCache The cache to use as an L1 cache.
      */
-    public ImageLoader(RequestQueue queue, ImageCache imageCache) {
-        mRequestQueue = queue;
-        mCache = imageCache;
+    public ImageLoader(RequestQueue queue, ImageCache imageCache, BitmapPool bitmapPool) {
+        this.requestQueue = queue;
+        this.imageCache = imageCache;
+        this.bitmapPool = bitmapPool;
     }
 
     /**
@@ -169,7 +184,7 @@ public class ImageLoader {
         throwIfNotOnMainThread();
 
         String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight, scaleType);
-        return mCache.getBitmap(cacheKey) != null;
+        return imageCache.getBitmap(cacheKey) != null;
     }
 
     /**
@@ -215,7 +230,7 @@ public class ImageLoader {
         final String cacheKey = getCacheKey(requestUrl, maxWidth, maxHeight, scaleType);
 
         // Try to look up the request in the cache of remote images.
-        Bitmap cachedBitmap = mCache.getBitmap(cacheKey);
+        Bitmap cachedBitmap = imageCache.getBitmap(cacheKey);
         if (cachedBitmap != null) {
             // Return the cached bitmap.
             ImageContainer container = new ImageContainer(cachedBitmap, requestUrl, null, null);
@@ -243,7 +258,7 @@ public class ImageLoader {
         ImageRequest newRequest = makeImageRequest(requestUrl, maxWidth, maxHeight, scaleType,
                 cacheKey);
 
-        mRequestQueue.add(newRequest);
+        requestQueue.add(newRequest);
         mInFlightRequests.put(cacheKey,
                 new BatchedImageRequest(newRequest, imageContainer));
         return imageContainer;
@@ -252,7 +267,7 @@ public class ImageLoader {
     protected ImageRequest makeImageRequest(String requestUrl, int maxWidth, int maxHeight,
                                             ScaleType scaleType, final String cacheKey) {
         return (ImageRequest) new ImageRequest(requestUrl, maxWidth, maxHeight, scaleType, Config.RGB_565)
-
+                .setBitmapPool(bitmapPool)
                 .addResponseListener(new ResponseListener<Bitmap>() {
                     @Override
                     public void onResponse(Bitmap response) {
@@ -284,7 +299,7 @@ public class ImageLoader {
      */
     protected void onGetImageSuccess(String cacheKey, Bitmap response) {
         // cache the image that was fetched.
-        mCache.putBitmap(cacheKey, response);
+        imageCache.putBitmap(cacheKey, response);
 
         // remove the request from the list of in-flight requests.
         BatchedImageRequest request = mInFlightRequests.remove(cacheKey);

@@ -18,12 +18,13 @@ package io.apptik.comm.jus.util;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import io.apptik.comm.jus.ui.ImageLoader;
 
 
 public class NoLruCache
-        implements ImageLoader.ImageCache {
+        implements ImageLoader.ImageCache, BitmapPool {
 
     @Override
     public Bitmap getBitmap(String url) {
@@ -34,6 +35,15 @@ public class NoLruCache
     @Override
     public void putBitmap(String url, Bitmap bitmap) {
         //do nothing;
+    }
+
+    @Override
+    public Bitmap getReusableBitmap(BitmapFactory.Options options) {
+        return null;
+    }
+
+    @Override
+    public void addToPool(Bitmap bitmap) {
     }
 }
 
