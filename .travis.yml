@@ -21,7 +21,6 @@ env:
      - MODULE=converter:jus-jackson
      - MODULE=converter:jus-jjson
      - MODULE=converter:jus-moshi
-     - MODULE=stack:jus-okhttp
      - MODULE=converter:jus-protobuf
      - MODULE=converter:jus-simplexml
      - MODULE=converter:jus-wire
@@ -29,6 +28,8 @@ env:
      - MODULE=rx-jus
      - MODULE=android:jus-android
      - MODULE=android:jus-android-rx
+     - MODULE=stack:jus-okhttp
+     - MODULE=stack:jus-apachehttp
 
 notifications:
   email: true
