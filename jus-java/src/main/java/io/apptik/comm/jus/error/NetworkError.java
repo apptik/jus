@@ -30,8 +30,8 @@ public class NetworkError extends JusError {
         super(cause);
     }
 
-    public NetworkError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
+    public NetworkError(String exceptionMessage, Throwable reason, NetworkResponse networkResponse) {
+        super(exceptionMessage, reason, networkResponse);
     }
 
     public NetworkError(String exceptionMessage) {

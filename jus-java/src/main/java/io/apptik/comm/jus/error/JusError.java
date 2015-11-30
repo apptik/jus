@@ -52,6 +52,11 @@ public class JusError extends Exception {
         networkResponse = null;
     }
 
+    public JusError(String exceptionMessage, Throwable reason, NetworkResponse networkResponse) {
+        super(exceptionMessage, reason);
+        this.networkResponse = networkResponse;
+    }
+
     public JusError(Throwable cause) {
         super(cause);
         networkResponse = null;

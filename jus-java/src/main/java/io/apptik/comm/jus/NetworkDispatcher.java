@@ -83,6 +83,7 @@ public class NetworkDispatcher extends Thread {
         return requestMethod != Request.Method.HEAD
                 && !(100 <= responseCode && responseCode < HttpURLConnection.HTTP_OK)
                 && responseCode != HttpURLConnection.HTTP_NO_CONTENT
+                && responseCode != HttpURLConnection.HTTP_RESET
                 && responseCode != HttpURLConnection.HTTP_NOT_MODIFIED;
     }
 

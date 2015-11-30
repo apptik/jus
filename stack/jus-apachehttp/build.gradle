@@ -1,3 +1,5 @@
+apply plugin: 'java'
+
 /*
  * Copyright (C) 2015 AppTik Project
  *
@@ -14,17 +16,25 @@
  * limitations under the License.
  */
 
-include ':android:jus-android',
-        ':stack:jus-apachehttp',
-        ':stack:jus-okhttp',
-        ':examples-android',
-        ':rx-jus', ':retro-jus', ':jus-java',
-        //':examples-java',
-        ':converter:jus-gson',
-        ':converter:jus-jjson',
-        ':converter:jus-wire',
-        ':converter:jus-simplexml',
-        ':converter:jus-protobuf',
-        ':converter:jus-moshi',
-        ':converter:jus-jackson',
-        ':android:jus-android-rx'
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+test {
+    testLogging {
+        // Show that tests are run in the command-line output
+        events 'started', 'passed'
+    }
+}
+
+dependencies {
+    compile project(':jus-java')
+    compile 'org.apache.httpcomponents:httpclient:4.5.1'
+
+    testCompile 'org.assertj:assertj-core:2.2.0'
+    testCompile 'org.mockito:mockito-core:2.0.31-beta'
+    testCompile 'com.squareup.okhttp:mockwebserver:2.6.0'
+}
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

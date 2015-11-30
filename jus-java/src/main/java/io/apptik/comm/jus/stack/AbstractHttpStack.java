@@ -24,6 +24,10 @@ import java.net.HttpURLConnection;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
 
+
+/**
+ * A base abstract class to extend when implementing new Http Stack.
+ */
 public abstract class AbstractHttpStack implements HttpStack {
 
     /**
@@ -54,8 +58,12 @@ public abstract class AbstractHttpStack implements HttpStack {
             }
             buffer = byteArrayPool.getBuf(1024);
             int count;
-            while ((count = inputStream.read(buffer)) != -1) {
-                bytes.write(buffer, 0, count);
+            try {
+                while ((count = inputStream.read(buffer)) != -1) {
+                    bytes.write(buffer, 0, count);
+                }
+            } catch (Exception ex) {
+                //we will get this anyway keep on so we can have whatever we got from the body
             }
             return bytes.toByteArray();
         } finally {

@@ -28,6 +28,7 @@ import io.apptik.comm.jus.toolbox.ByteArrayPool;
 
 /**
  * An HTTP stack abstraction.
+ * When implementing a new Http Stack it is recommended to extend {@link AbstractHttpStack}
  */
 public interface HttpStack {
     /**
