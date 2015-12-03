@@ -30,6 +30,7 @@ env:
      - MODULE=android:jus-android-rx
      - MODULE=stack:jus-okhttp
      - MODULE=stack:jus-apachehttp
+     - MODULE=stack:jus-netty
 
 notifications:
   email: true
