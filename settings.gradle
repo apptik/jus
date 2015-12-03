@@ -15,6 +15,7 @@
  */
 
 include ':android:jus-android',
+        ':stack:jus-netty',
         ':stack:jus-apachehttp',
         ':stack:jus-okhttp',
         ':examples-android',

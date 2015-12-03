@@ -33,7 +33,7 @@ public abstract class AbstractHttpStack implements HttpStack {
     /**
      * Reads the contents of HttpEntity into a byte[].
      */
-    protected final byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool
+    public static final byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool
             byteArrayPool)
             throws IOException {
         InputStream inputStream;
@@ -45,7 +45,7 @@ public abstract class AbstractHttpStack implements HttpStack {
         return getContentBytes(inputStream, byteArrayPool, connection.getContentLength());
     }
 
-    protected final byte[] getContentBytes(InputStream inputStream, ByteArrayPool
+    public static final byte[] getContentBytes(InputStream inputStream, ByteArrayPool
             byteArrayPool, int contentLen) throws IOException {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(byteArrayPool, contentLen);
