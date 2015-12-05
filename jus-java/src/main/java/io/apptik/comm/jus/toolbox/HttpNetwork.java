@@ -160,6 +160,7 @@ public class HttpNetwork implements Network {
                 if (httpResponse != null) {
                     networkResponse = httpResponse;
                 } else {
+                    //assume No connection
                     throw new NoConnectionError(e);
                 }
                 //todo add queue markers

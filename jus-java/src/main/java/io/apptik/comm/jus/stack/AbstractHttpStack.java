@@ -20,6 +20,7 @@ package io.apptik.comm.jus.stack;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
@@ -62,8 +63,12 @@ public abstract class AbstractHttpStack implements HttpStack {
                 while ((count = inputStream.read(buffer)) != -1) {
                     bytes.write(buffer, 0, count);
                 }
-            } catch (Exception ex) {
+            } catch (IOException ex) {
                 //we will get this anyway keep on so we can have whatever we got from the body
+                //except timeout error
+                if(ex instanceof SocketTimeoutException) {
+                    throw ex;
+                }
             }
             return bytes.toByteArray();
         } finally {

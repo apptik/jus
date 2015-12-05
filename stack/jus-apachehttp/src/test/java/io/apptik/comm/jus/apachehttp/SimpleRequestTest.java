@@ -628,7 +628,8 @@ public final class SimpleRequestTest {
                 throw new AssertionError();
             }
         }).enqueue();
-        assertTrue(latch.await(7, SECONDS));
+
+        assertTrue(latch.await(8, SECONDS));
     }
     
     @After

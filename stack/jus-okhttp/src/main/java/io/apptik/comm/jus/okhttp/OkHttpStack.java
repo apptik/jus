@@ -20,7 +20,7 @@ import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
-import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
 import io.apptik.comm.jus.NetworkDispatcher;
@@ -105,8 +105,12 @@ public class OkHttpStack extends AbstractHttpStack {
                 while ((count = bufferedSource.read(buffer)) != -1) {
                     bytes.write(buffer, 0, count);
                 }
-            } catch (ProtocolException ex) {
+            } catch (IOException ex) {
                 //we will get this anyway keep on so we can have whatever we got from the body
+                //except timeout error
+                if(ex instanceof SocketTimeoutException) {
+                    throw ex;
+                }
             }
             return bytes.toByteArray();
         } finally {

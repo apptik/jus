@@ -51,6 +51,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.DefaultRetryPolicy;
 import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Marker;
 import io.apptik.comm.jus.RequestListener;
@@ -238,8 +239,7 @@ public final class SimpleRequestTest {
     @Test
     public void transportProblemSync() {
         server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
-
-        Request<String> call = example.getString().enqueue();
+        Request<String> call = example.getString().setRetryPolicy(new DefaultRetryPolicy(1,0,1)).enqueue();
         try {
             call.getFuture().get();
             fail();
