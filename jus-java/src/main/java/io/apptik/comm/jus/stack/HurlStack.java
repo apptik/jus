@@ -127,7 +127,15 @@ public class HurlStack extends AbstractHttpStack {
      * Create an {@link HttpURLConnection} for the specified {@code url}.
      */
     protected HttpURLConnection createConnection(URL url) throws IOException {
-        return (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Workaround for HttpURLConnection not observing the
+        // HttpURLConnection.setFollowRedirects() property.
+        // Happening in Android M release
+        // https://code.google.com/p/android/issues/detail?id=194495
+        connection.setInstanceFollowRedirects(HttpURLConnection.getFollowRedirects());
+
+        return connection;
     }
 
     /**
