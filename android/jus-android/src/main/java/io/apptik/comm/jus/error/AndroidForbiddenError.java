@@ -21,17 +21,19 @@ package io.apptik.comm.jus.error;
 import android.content.Intent;
 
 import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.Request;
 
 /**
  * Error indicating that there was an authentication failure when performing a Request.
  */
 @SuppressWarnings("serial")
-public class AndroidForbiddenError extends ForbiddenError {
-    /** An intent that can be used to resolve this exception. (Brings up the password dialog.) */
+public class AndroidForbiddenError extends RequestError implements AndroidError {
+    /**
+     * An intent that can be used to resolve this exception. (Brings up the password dialog.)
+     */
     private Intent mResolutionIntent;
 
-    public AndroidForbiddenError(Intent intent) {
+    public AndroidForbiddenError(Intent intent, NetworkResponse response) {
+        super(response, "User needs to (re)enter credentials");
         mResolutionIntent = intent;
     }
 
@@ -43,26 +45,11 @@ public class AndroidForbiddenError extends ForbiddenError {
         return mResolutionIntent;
     }
 
-    public AndroidForbiddenError(Throwable cause, Request<?> request) {
-        super(cause, request);
-    }
-
-    public AndroidForbiddenError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
-    }
-
-    public AndroidForbiddenError(String exceptionMessage, Request<?> request) {
-        super(exceptionMessage, request);
-    }
-
-    public AndroidForbiddenError(Request<?> request) {
-        super();
-    }
-
     @Override
     public String getMessage() {
         if (mResolutionIntent != null) {
-            return "User needs to (re)enter credentials.";
+            return "Access not granted with current credentials.\nUser needs to (re)enter " +
+                    "credentials.";
         }
         return super.getMessage();
     }

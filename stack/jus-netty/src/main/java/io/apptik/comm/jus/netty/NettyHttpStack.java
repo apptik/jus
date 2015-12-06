@@ -9,7 +9,6 @@ import java.util.concurrent.ExecutionException;
 
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.AbstractHttpStack;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
@@ -32,8 +31,7 @@ public class NettyHttpStack extends AbstractHttpStack {
 
     @Override
     public NetworkResponse performRequest(Request<?> request, Headers additionalHeaders,
-                                          ByteArrayPool byteArrayPool) throws IOException,
-            AuthFailureError {
+                                          ByteArrayPool byteArrayPool) throws IOException {
         URI uri = null;
         NettyHttpClientHandler nettyHttpClientHandler = new NettyHttpClientHandler(byteArrayPool);
         try {

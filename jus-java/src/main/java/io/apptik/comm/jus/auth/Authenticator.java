@@ -19,7 +19,7 @@
 package io.apptik.comm.jus.auth;
 
 import io.apptik.comm.jus.NetworkRequest;
-import io.apptik.comm.jus.error.AuthenticatorError;
+import io.apptik.comm.jus.error.AuthError;
 import io.apptik.comm.jus.http.HttpUrl;
 
 /**
@@ -33,9 +33,9 @@ public interface Authenticator {
      * Implementations must have into consideration that this can be a
      * called from different threads at the same time.
      *
-     * @throws AuthenticatorError If authentication did not succeed
+     * @throws AuthError If authentication did not succeed
      */
-    String getToken() throws AuthenticatorError;
+    String getToken() throws AuthError;
 
     /**
      * Clears cached user token. In typical implementation calling this before {@link #getToken()}

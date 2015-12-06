@@ -25,7 +25,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import io.apptik.comm.jus.error.AndroidAuthenticatorError;
+import io.apptik.comm.jus.error.AndroidAuthError;
 
 /**
  * An Authenticator that uses {@link AccountManager} to get auth
@@ -87,24 +87,25 @@ public class AndroidAuthenticator implements Authenticator {
     // TODO: Figure out what to do about notifyAuthFailure
     @SuppressWarnings("deprecation")
     @Override
-    public String getToken() throws AndroidAuthenticatorError {
+    public String getToken() throws AndroidAuthError {
         AccountManagerFuture<Bundle> future = mAccountManager.getAuthToken(mAccount,
                 mAuthTokenType, mNotifyAuthFailure, null, null);
         Bundle result;
         try {
             result = future.getResult();
         } catch (Exception e) {
-            throw new AndroidAuthenticatorError("Error while retrieving auth token", e);
+            throw new AndroidAuthError("Error while retrieving auth token", e);
         }
         if (future.isDone() && !future.isCancelled()) {
             if (result.containsKey(AccountManager.KEY_INTENT)) {
                 Intent intent = result.getParcelable(AccountManager.KEY_INTENT);
-                throw new AndroidAuthenticatorError(intent);
+                throw new AndroidAuthError(intent, null);
             }
             authToken = result.getString(AccountManager.KEY_AUTHTOKEN);
         }
         if (authToken == null) {
-            throw new AndroidAuthenticatorError("Got null auth token for type: " + mAuthTokenType);
+            throw new AndroidAuthError("Got null auth token for type: " +
+                    mAuthTokenType);
         }
 
         return authToken;

@@ -31,12 +31,9 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RetryPolicy;
 import io.apptik.comm.jus.auth.Authenticator;
-import io.apptik.comm.jus.error.AuthFailureError;
-import io.apptik.comm.jus.error.AuthenticatorError;
-import io.apptik.comm.jus.error.ForbiddenError;
+import io.apptik.comm.jus.error.AuthError;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.error.NetworkError;
-import io.apptik.comm.jus.error.NoConnectionError;
 import io.apptik.comm.jus.error.RequestError;
 import io.apptik.comm.jus.error.ServerError;
 import io.apptik.comm.jus.error.TimeoutError;
@@ -108,8 +105,8 @@ public class HttpNetwork implements Network {
                         int cLen = Integer.parseInt(contentLen);
                         if (cLen > httpResponse.data.length
                                 && request.getMethod() != Request.Method.HEAD) {
-                            throw new NetworkError("Response Body not completely received",
-                                    httpResponse);
+                            throw new NetworkError(httpResponse, "Response Body not completely " +
+                                    "received");
                         }
                     }
                 }
@@ -160,8 +157,7 @@ public class HttpNetwork implements Network {
                 if (httpResponse != null) {
                     networkResponse = httpResponse;
                 } else {
-                    //assume No connection
-                    throw new NoConnectionError(e);
+                    throw new NetworkError(e);
                 }
                 //todo add queue markers
 //                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode,
@@ -175,46 +171,41 @@ public class HttpNetwork implements Network {
                                 //typical implementation would try to refresh the token
                                 //after being set to invalid
                                 request.getAuthenticator().getToken();
-                            } catch (AuthenticatorError authenticatorError) {
+                            } catch (AuthError authError) {
                                 //finally we didn't succeed
-                                throw new AuthFailureError();
+                                throw authError;
                             }
                             //retry the request
                             attemptRetryOnException("auth", request,
-                                    new AuthFailureError(networkResponse));
+                                    new AuthError(networkResponse));
                         } else {
                             //or if another way of auth is used
-                            throw new AuthFailureError(networkResponse);
+                            throw new AuthError(networkResponse);
                         }
-                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_FORBIDDEN) {
-                        throw new ForbiddenError(networkResponse);
                     } else if (networkResponse.statusCode == HttpURLConnection
                             .HTTP_CLIENT_TIMEOUT) {
-                        attemptRetryOnException("http-client", request, new TimeoutError
-                                ("HTTP_CLIENT_TIMEOUT"));
-                    } else if (networkResponse.statusCode == HttpURLConnection
-                            .HTTP_GATEWAY_TIMEOUT) {
-                        attemptRetryOnException("gateway-client", request, new TimeoutError
-                                ("HTTP_GATEWAY_TIMEOUT"));
+                        attemptRetryOnException("http-client", request, new RequestError
+                                (networkResponse, "HTTP_CLIENT_TIMEOUT"));
                     } else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
                             500) {
                         //some request query error that does not make sense to retry, assuming
                         // the service we use is deterministic
                         throw new RequestError(networkResponse);
                     } else if (networkResponse.statusCode > 499) {
-                        //TODO some server error might not need to be retried
+                        //some server error might not need to be retried
+                        //however retry policy set to this request should handle it as it needs.
                         attemptRetryOnException("server",
-                                request, new ServerError(request, networkResponse));
+                                request, new ServerError(networkResponse));
                     } else {
                         //unclassified error
                         throw new JusError(networkResponse, e);
                     }
                 } else {
-                    throw new NetworkError(networkResponse);
+                    throw new NetworkError();
                 }
-            } catch (AuthenticatorError authenticatorError) {
+            } catch (AuthError authError) {
                 //we have failed to get a token so give it up
-                throw new AuthFailureError();
+                throw authError;
             }
         }
     }
@@ -260,7 +251,7 @@ public class HttpNetwork implements Network {
     }
 
     private void addAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
-            AuthenticatorError {
+            AuthError {
         if (authenticator == null) return;
         headers.add("Authorization", "Bearer " + authenticator.getToken());
     }

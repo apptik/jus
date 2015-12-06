@@ -70,7 +70,7 @@ public class MockNetwork implements Network {
             if (mNumExceptionsToThrow != ALWAYS_THROW_EXCEPTIONS) {
                 mNumExceptionsToThrow--;
             }
-            throw new ServerError();
+            throw new ServerError(null);
         }
 
         requestHandled = request;

@@ -18,26 +18,27 @@
 
 package io.apptik.comm.jus.error;
 
+import io.apptik.comm.jus.NetworkResponse;
+
 /**
  * Error indicating that there was an authentication failure when performing a Request.
  */
 @SuppressWarnings("serial")
-public class AuthenticatorError extends JusError  {
+public class AuthError extends RequestError  {
 
-    public AuthenticatorError(Throwable cause) {
-        super(cause);
+    public AuthError(NetworkResponse response) {
+        super(response);
     }
 
-    public AuthenticatorError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
+    public AuthError(NetworkResponse response, String exceptionMessage) {
+        super(response, exceptionMessage);
     }
 
-    public AuthenticatorError(String exceptionMessage) {
-        super(exceptionMessage);
+    public AuthError(NetworkResponse response, String exceptionMessage, Throwable reason) {
+        super(response, exceptionMessage, reason);
     }
 
-    @Override
-    public String getMessage() {
-        return super.getMessage();
+    public AuthError(NetworkResponse response, Throwable reason) {
+        super(response, reason);
     }
 }

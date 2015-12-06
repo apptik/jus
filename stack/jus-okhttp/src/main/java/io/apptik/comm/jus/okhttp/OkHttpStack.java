@@ -26,7 +26,6 @@ import java.util.concurrent.TimeUnit;
 import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.AbstractHttpStack;
 import io.apptik.comm.jus.stack.HttpStack;
@@ -54,7 +53,7 @@ public class OkHttpStack extends AbstractHttpStack {
 
     @Override
     public NetworkResponse performRequest(Request<?> request, Headers
-            additionalHeaders, ByteArrayPool byteArrayPool) throws IOException, AuthFailureError {
+            additionalHeaders, ByteArrayPool byteArrayPool) throws IOException {
 
         OkHttpClient client = this.client.clone();
         client.setConnectTimeout(request.getRetryPolicy().getCurrentConnectTimeout(), TimeUnit

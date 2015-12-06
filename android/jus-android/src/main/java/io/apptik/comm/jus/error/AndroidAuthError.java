@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 AppTik Project
+ * Copyright (C) 2015 Apptik Project
  * Copyright (C) 2014 Kalin Maldzhanski
  * Copyright (C) 2011 The Android Open Source Project
  *
@@ -18,41 +18,40 @@
 
 package io.apptik.comm.jus.error;
 
+import android.content.Intent;
+
 import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.Request;
 
 /**
  * Error indicating that there was an authentication failure when performing a Request.
  */
 @SuppressWarnings("serial")
-public class ForbiddenError extends JusError {
+public class AndroidAuthError extends AuthError implements AndroidError {
+    /** An intent that can be used to resolve this exception. (Brings up the password dialog.) */
+    private Intent mResolutionIntent;
 
-    public ForbiddenError() {
+    public AndroidAuthError(Intent intent, NetworkResponse response) {
+        super(response, "User needs to (re)enter credentials");
+        mResolutionIntent = intent;
     }
 
-    public ForbiddenError(NetworkResponse networkResponse) {
-        super(networkResponse);
+    public AndroidAuthError(String exceptionMessage, Throwable reason) {
+        super(null, exceptionMessage, reason);
     }
 
-
-    public ForbiddenError(Throwable cause, Request<?> request) {
-        super(cause);
+    public AndroidAuthError(String exceptionMessage) {
+        super(null, exceptionMessage);
     }
 
-    public ForbiddenError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
-    }
-
-    public ForbiddenError(String exceptionMessage, Request<?> request) {
-        super(exceptionMessage);
-    }
-
-    public ForbiddenError(Request<?> request) {
-        super();
+    public Intent getResolutionIntent() {
+        return mResolutionIntent;
     }
 
     @Override
     public String getMessage() {
+        if (mResolutionIntent != null) {
+            return "User needs to (re)enter credentials.";
+        }
         return super.getMessage();
     }
 }

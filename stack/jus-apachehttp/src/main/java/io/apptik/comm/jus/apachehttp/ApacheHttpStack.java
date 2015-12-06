@@ -31,7 +31,6 @@ import java.util.Map;
 import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.AbstractHttpStack;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
@@ -81,11 +80,10 @@ public class ApacheHttpStack extends AbstractHttpStack {
 
     @Override
     public NetworkResponse performRequest(Request<?> request, Headers additionalHeaders,
-                                          ByteArrayPool byteArrayPool) throws IOException,
-            AuthFailureError {
+                                          ByteArrayPool byteArrayPool) throws IOException {
         HttpRequestBase httpRequest = createHttpRequest(request, additionalHeaders.toMap());
         addHeaders(httpRequest, additionalHeaders.toMap());
-        if(request.getHeaders()!=null) {
+        if (request.getHeaders() != null) {
             addHeaders(httpRequest, request.getHeaders().toMap());
         }
         RequestConfig requestConfig = org.apache.http.client.config.RequestConfig.custom()
@@ -119,8 +117,7 @@ public class ApacheHttpStack extends AbstractHttpStack {
      * Creates the appropriate subclass of HttpUriRequest for passed in request.
      */
     static HttpRequestBase createHttpRequest(
-            Request<?> request, Map<String, String> additionalHeaders) throws
-            AuthFailureError {
+            Request<?> request, Map<String, String> additionalHeaders) {
         switch (request.getMethod()) {
             case Request.Method.GET:
                 return new HttpGet(request.getUrlString());
@@ -156,7 +153,7 @@ public class ApacheHttpStack extends AbstractHttpStack {
     }
 
     private static void setEntityIfNonEmptyBody(HttpEntityEnclosingRequestBase httpRequest,
-                                                Request<?> request) throws AuthFailureError {
+                                                Request<?> request) {
         byte[] body = request.getBody();
         if (body != null) {
             HttpEntity entity = new ByteArrayEntity(body);

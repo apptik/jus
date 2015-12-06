@@ -59,7 +59,7 @@ public class ResponseDeliveryTest {
     }
 
     @Test public void postErrorCallsDeliverError() {
-        Response<byte[]> errorResponse = Response.error(new ServerError());
+        Response<byte[]> errorResponse = Response.error(new ServerError(null));
 
         mDelivery.postResponse(mRequest, errorResponse);
         assertTrue(mRequest.deliverError_called);

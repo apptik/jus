@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.error.AuthError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 
@@ -45,6 +45,6 @@ public interface HttpStack {
     NetworkResponse performRequest(Request<?> request,
                                    Headers additionalHeaders,
                                    ByteArrayPool byteArrayPool)
-        throws IOException, AuthFailureError;
+        throws IOException, AuthError;
 
 }
