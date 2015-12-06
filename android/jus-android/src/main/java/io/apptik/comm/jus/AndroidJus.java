@@ -65,12 +65,12 @@ public class AndroidJus {
                 new AndroidExecutorDelivery(new Handler(Looper.getMainLooper())));
         queue.withCacheDispatcher(
                 new AndroidCacheDispatcher(
-                        queue.mCacheQueue, queue.mNetworkQueue, queue.mCache,
-                        queue.mDelivery))
+                        queue.cacheQueue, queue.networkQueue, queue.cache,
+                        queue.delivery))
                 .withNetworkDispatcherFactory(
                         new AndroidNetworkDispatcher.NetworkDispatcherFactory(
-                                queue.mNetworkQueue, queue.mNetwork,
-                                queue.mCache, queue.mDelivery));
+                                queue.networkQueue, queue.network,
+                                queue.cache, queue.delivery));
         queue.start();
 
         return queue;

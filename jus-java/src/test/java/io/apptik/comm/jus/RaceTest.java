@@ -42,8 +42,8 @@ public class RaceTest {
 
         RequestQueue queue = new RequestQueue(new NoCache(), network, 4, mDelivery);
 
-        CacheDispatcher cacheDispatcher = new CacheDispatcher(queue.mCacheQueue, queue
-                .mNetworkQueue, queue.getCache(), queue.mDelivery);
+        CacheDispatcher cacheDispatcher = new CacheDispatcher(queue.cacheQueue, queue
+                .networkQueue, queue.getCache(), queue.delivery);
 
         queue.withCacheDispatcher(cacheDispatcher);
         queue.start();
@@ -67,8 +67,8 @@ public class RaceTest {
 
         RequestQueue queue = new RequestQueue(new NoCache(), network, 4, mDelivery);
 
-        CacheDispatcher cacheDispatcher = new CacheDispatcher(queue.mCacheQueue, queue
-                .mNetworkQueue, queue.getCache(), queue.mDelivery);
+        CacheDispatcher cacheDispatcher = new CacheDispatcher(queue.cacheQueue, queue
+                .networkQueue, queue.getCache(), queue.delivery);
 
         queue.withCacheDispatcher(cacheDispatcher);
         queue.start();
