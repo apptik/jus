@@ -32,7 +32,7 @@ import io.apptik.comm.jus.error.AndroidAuthError;
  * tokens of a specified type for a specified account.
  */
 //TODO make use of this
-public class AndroidAuthenticator implements Authenticator {
+public class AndroidAuthenticator extends TokenAuthenticator {
     private final AccountManager mAccountManager;
     private final Account mAccount;
     private final String mAuthTokenType;
@@ -112,12 +112,12 @@ public class AndroidAuthenticator implements Authenticator {
     }
 
     @Override
-    public void clearToken() {
-        invalidateToken();
+    public void invalidateToken() {
+        mAccountManager.invalidateAuthToken(mAccount.type, authToken);
     }
 
     @Override
-    public void invalidateToken() {
-        mAccountManager.invalidateAuthToken(mAccount.type, authToken);
+    public void clearAuthValue() {
+        invalidateToken();
     }
 }

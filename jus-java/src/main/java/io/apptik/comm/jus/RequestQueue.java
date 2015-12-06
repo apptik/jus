@@ -131,9 +131,11 @@ public class RequestQueue {
     private final List<Converter.Factory> converterFactories = new ArrayList<>();
     private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
     private final List<Transformer.ResponseTransformer> responseTransformers = new ArrayList<>();
+
     private final List<QListenerFactory> qListenerFactories = new ArrayList<>();
+
     /**
-     * RequestListener interface for markers.
+     * Marker listeners for RequestQueue related events
      */
     private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
@@ -181,7 +183,6 @@ public class RequestQueue {
     public RequestQueue(Cache cache, Network network) {
         this(cache, network, DEFAULT_NETWORK_THREAD_POOL_SIZE);
     }
-
 
     public RequestQueue withCacheDispatcher(CacheDispatcher cacheDispatcher) {
         if (this.cacheDispatcher != null) {
@@ -238,6 +239,9 @@ public class RequestQueue {
         setUpNetworkDispatchers();
     }
 
+    /**
+     * Stops the queue when all requests are finished
+     */
     public void stopWhenDone() {
         new Thread(new Runnable() {
             @Override
@@ -271,6 +275,9 @@ public class RequestQueue {
         stop();
     }
 
+    /**
+     * Add marker listener for RequestQueue related events
+     */
     public <R extends RequestQueue> R addMarkerListener(RequestListener.MarkerListener
                                                               markerListener) {
         if (markerListener != null) {
@@ -281,6 +288,9 @@ public class RequestQueue {
         return (R) this;
     }
 
+    /**
+     * Remove marker listener for RequestQueue related events
+     */
     public <R extends RequestQueue> R removeMarkerListener(RequestListener.MarkerListener
                                                                  markerListener) {
         synchronized (markerListeners) {

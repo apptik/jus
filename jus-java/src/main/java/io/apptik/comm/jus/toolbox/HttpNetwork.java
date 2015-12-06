@@ -166,11 +166,11 @@ public class HttpNetwork implements Network {
                     if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         // thrown when available Authenticator is available
                         if (request.getAuthenticator() != null) {
-                            request.getAuthenticator().clearToken();
+                            request.getAuthenticator().clearAuthValue();
                             try {
                                 //typical implementation would try to refresh the token
                                 //after being set to invalid
-                                request.getAuthenticator().getToken();
+                                request.getAuthenticator().getAuthValue();
                             } catch (AuthError authError) {
                                 //finally we didn't succeed
                                 throw authError;
@@ -253,7 +253,7 @@ public class HttpNetwork implements Network {
     private void addAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
             AuthError {
         if (authenticator == null) return;
-        headers.add("Authorization", "Bearer " + authenticator.getToken());
+        headers.add("Authorization", authenticator.getAuthValue());
     }
 
     private void addCacheHeaders(Headers.Builder headers, Cache.Entry entry) {
