@@ -57,7 +57,17 @@ public interface Authenticator {
          * @param networkRequest Request data
          * @return Authenticator providing token for this request
          */
-        public Authenticator forRequest(HttpUrl url, NetworkRequest networkRequest) {
+        public Authenticator forServer(HttpUrl url, NetworkRequest networkRequest) {
+            return null;
+        }
+        /**
+         * Overwrite this method to return authenticator for specific request
+         *
+         * @param url            The url of the request
+         * @param networkRequest Request data
+         * @return Authenticator providing token for this request
+         */
+        public Authenticator forProxy(HttpUrl url, NetworkRequest networkRequest) {
             return null;
         }
     }

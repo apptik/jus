@@ -140,6 +140,7 @@ public class RequestQueue {
     private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
     private RetryPolicy.Factory retryPolicyFactory = null;
+
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
      *
@@ -279,7 +280,7 @@ public class RequestQueue {
      * Add marker listener for RequestQueue related events
      */
     public <R extends RequestQueue> R addMarkerListener(RequestListener.MarkerListener
-                                                              markerListener) {
+                                                                markerListener) {
         if (markerListener != null) {
             synchronized (markerListeners) {
                 this.markerListeners.add(markerListener);
@@ -292,7 +293,7 @@ public class RequestQueue {
      * Remove marker listener for RequestQueue related events
      */
     public <R extends RequestQueue> R removeMarkerListener(RequestListener.MarkerListener
-                                                                 markerListener) {
+                                                                   markerListener) {
         synchronized (markerListeners) {
             this.markerListeners.remove(markerListener);
         }
@@ -300,7 +301,7 @@ public class RequestQueue {
     }
 
     public <R extends RequestQueue> R addMarker(String tag, Object... args) {
-        Marker marker =  new Marker(tag,
+        Marker marker = new Marker(tag,
                 Thread.currentThread().getId(),
                 Thread.currentThread().getName(),
                 System.nanoTime());
@@ -381,13 +382,27 @@ public class RequestQueue {
      */
     public <R extends Request<T>, T> R add(R request) {
         request.addMarker(Request.EVENT_PRE_ADD_TO_QUEUE);
+        Authenticator serverAuthenticator = null;
+        Authenticator proxyAuthenticator = null;
         for (Authenticator.Factory factory : authenticatorFactories) {
-            Authenticator authenticator =
-                    factory.forRequest(request.getUrl(), request.getNetworkRequest());
-            if (authenticator != null) {
-                request.setAuthenticator(authenticator);
+
+            if (serverAuthenticator != null) {
+                serverAuthenticator = factory.forServer(request.getUrl(), request
+                        .getNetworkRequest());
+                if (serverAuthenticator != null)
+                    request.setServerAuthenticator(serverAuthenticator);
+            }
+            if (proxyAuthenticator != null) {
+                proxyAuthenticator = factory.forProxy(request.getUrl(), request.getNetworkRequest
+                        ());
+                if (proxyAuthenticator != null)
+                    request.setProxyAuthenticator(proxyAuthenticator);
+            }
+
+            if (proxyAuthenticator != null && serverAuthenticator != null) {
                 break;
             }
+
         }
 
         for (Transformer.RequestTransformer transformer : requestTransformers) {
@@ -427,7 +442,7 @@ public class RequestQueue {
             request.addMarkerListener(new JusLog.MarkerLog(request));
         }
 
-        if(retryPolicyFactory!=null) {
+        if (retryPolicyFactory != null) {
             request.setRetryPolicy(retryPolicyFactory.get(request));
         }
 

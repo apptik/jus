@@ -82,7 +82,8 @@ public class HttpNetwork implements Network {
                 // Gather headers.
                 Headers.Builder headers = new Headers.Builder();
                 addCacheHeaders(headers, request.getCacheEntry());
-                addAuthHeaders(request.getAuthenticator(), headers);
+                addServerAuthHeaders(request.getServerAuthenticator(), headers);
+                addProxyAuthHeaders(request.getProxyAuthenticator(), headers);
 
                 request.addMarker(Request.EVENT_NETWORK_STACK_SEND, headers);
                 httpResponse = mHttpStack.performRequest(request, headers.build(), mPool);
@@ -165,18 +166,37 @@ public class HttpNetwork implements Network {
                 if (networkResponse != null) {
                     if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         // thrown when available Authenticator is available
-                        if (request.getAuthenticator() != null) {
-                            request.getAuthenticator().clearAuthValue();
+                        if (request.getServerAuthenticator() != null) {
+                            request.getServerAuthenticator().clearAuthValue();
                             try {
                                 //typical implementation would try to refresh the token
                                 //after being set to invalid
-                                request.getAuthenticator().getAuthValue();
+                                request.getServerAuthenticator().getAuthValue();
                             } catch (AuthError authError) {
                                 //finally we didn't succeed
                                 throw authError;
                             }
                             //retry the request
                             attemptRetryOnException("auth", request,
+                                    new AuthError(networkResponse));
+                        } else {
+                            //or if another way of auth is used
+                            throw new AuthError(networkResponse);
+                        }
+                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_PROXY_AUTH) {
+                        // thrown when available Authenticator is available
+                        if (request.getProxyAuthenticator() != null) {
+                            request.getProxyAuthenticator().clearAuthValue();
+                            try {
+                                //typical implementation would try to refresh the token
+                                //after being set to invalid
+                                request.getProxyAuthenticator().getAuthValue();
+                            } catch (AuthError authError) {
+                                //finally we didn't succeed
+                                throw authError;
+                            }
+                            //retry the request
+                            attemptRetryOnException("proxy-auth", request,
                                     new AuthError(networkResponse));
                         } else {
                             //or if another way of auth is used
@@ -250,10 +270,16 @@ public class HttpNetwork implements Network {
                         retryPolicy.getCurrentReadTimeout()));
     }
 
-    private void addAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
+    private void addServerAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
             AuthError {
         if (authenticator == null) return;
         headers.add("Authorization", authenticator.getAuthValue());
+    }
+
+    private void addProxyAuthHeaders(Authenticator authenticator, Headers.Builder headers) throws
+            AuthError {
+        if (authenticator == null) return;
+        headers.add("Proxy-Authorization", authenticator.getAuthValue());
     }
 
     private void addCacheHeaders(Headers.Builder headers, Cache.Entry entry) {

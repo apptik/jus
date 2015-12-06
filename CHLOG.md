@@ -45,7 +45,7 @@ Version 0.6.1 *(2-Nov-2015)*
 Version 0.6.0 *(29-Oct-2015)*
 ----------------------------------
 * Fix: fix logs
-* New: add authenticator for each `Request` not global for the `Network`
+* New: add serverAuthenticator for each `Request` not global for the `Network`
 * New: add `Authenticator` factory for `RequestQueue`
 * Change: Update `Wire converter` to v2.0.0.
 
