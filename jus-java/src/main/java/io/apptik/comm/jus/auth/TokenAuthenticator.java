@@ -38,10 +38,10 @@ public abstract class TokenAuthenticator implements Authenticator {
      *
      * @throws AuthError If authentication did not succeed
      */
-    abstract String getToken() throws AuthError;
+    abstract public String getToken() throws AuthError;
 
     /**
      * Invalidates the provided auth token.
      */
-     abstract void invalidateToken();
+    abstract public void invalidateToken();
 }
