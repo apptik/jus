@@ -386,13 +386,15 @@ public class RequestQueue {
         Authenticator proxyAuthenticator = null;
         for (Authenticator.Factory factory : authenticatorFactories) {
 
-            if (serverAuthenticator != null) {
+            //TODO tests
+            if (serverAuthenticator == null) {
                 serverAuthenticator = factory.forServer(request.getUrl(), request
                         .getNetworkRequest());
                 if (serverAuthenticator != null)
                     request.setServerAuthenticator(serverAuthenticator);
             }
-            if (proxyAuthenticator != null) {
+
+            if (proxyAuthenticator == null) {
                 proxyAuthenticator = factory.forProxy(request.getUrl(), request.getNetworkRequest
                         ());
                 if (proxyAuthenticator != null)
