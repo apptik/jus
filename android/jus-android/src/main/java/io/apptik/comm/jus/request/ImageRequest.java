@@ -228,7 +228,6 @@ public class ImageRequest extends Request<Bitmap> {
         // inBitmap only works with mutable bitmaps so force the decoder to
         // return mutable bitmaps.
         options.inMutable = true;
-
         if (bitmapPool != null) {
             // Try and find a bitmap to use for inBitmap
             Bitmap inBitmap = bitmapPool.getReusableBitmap(options);

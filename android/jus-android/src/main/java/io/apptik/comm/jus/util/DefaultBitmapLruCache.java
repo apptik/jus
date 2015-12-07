@@ -31,10 +31,18 @@ import java.util.Set;
 
 import io.apptik.comm.jus.ui.ImageLoader;
 
+/**
+ * Bitmap LRU cache with option to save (soft) and reuse Bitmaps when removed from cache.
+ * As {@link #reusableBitmaps} is a {@link SoftReference} means that we might not have really big
+ * pool thus re-usability and performance due to less GC will be not that high.
+ *
+ * For true pooled option use {@link PooledBitmapLruCache}.
+ */
+
 public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements ImageLoader
         .ImageCache, BitmapPool {
 
-    Set<SoftReference<Bitmap>> mReusableBitmaps = Collections.synchronizedSet(new
+    Set<SoftReference<Bitmap>> reusableBitmaps = Collections.synchronizedSet(new
             HashSet<SoftReference<Bitmap>>());
 
     public DefaultBitmapLruCache() {
@@ -120,9 +128,9 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
     public Bitmap getReusableBitmap(BitmapFactory.Options options) {
         Bitmap bitmap = null;
 
-        if (mReusableBitmaps != null && !mReusableBitmaps.isEmpty()) {
-            synchronized (mReusableBitmaps) {
-                final Iterator<SoftReference<Bitmap>> iterator = mReusableBitmaps.iterator();
+        if (reusableBitmaps != null && !reusableBitmaps.isEmpty()) {
+            synchronized (reusableBitmaps) {
+                final Iterator<SoftReference<Bitmap>> iterator = reusableBitmaps.iterator();
                 Bitmap item;
 
                 while (iterator.hasNext()) {
@@ -150,7 +158,7 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
     @Override
     public void addToPool(Bitmap bitmap) {
         if (bitmap.isMutable() && !bitmap.isRecycled()) {
-            mReusableBitmaps.add(new SoftReference<>(bitmap));
+            reusableBitmaps.add(new SoftReference<>(bitmap));
         }
     }
 
@@ -161,7 +169,7 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
      * <code>targetOptions</code>
      */
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    private static boolean canUseForInBitmap(
+    protected static boolean canUseForInBitmap(
             Bitmap candidate, BitmapFactory.Options targetOptions) {
         if (!Utils.hasKitKat()) {
             // On earlier versions, the dimensions must match exactly and the inSampleSize must be 1
@@ -184,7 +192,7 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
      * @param config The bitmap configuration.
      * @return The byte usage per pixel.
      */
-    private static int getBytesPerPixel(Bitmap.Config config) {
+    protected static int getBytesPerPixel(Bitmap.Config config) {
         if (config == Bitmap.Config.ARGB_8888) {
             return 4;
         } else if (config == Bitmap.Config.RGB_565) {

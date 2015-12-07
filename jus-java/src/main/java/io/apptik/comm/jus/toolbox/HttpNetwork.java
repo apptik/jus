@@ -47,9 +47,9 @@ import io.apptik.comm.jus.stack.HttpStack;
  */
 public class HttpNetwork implements Network {
 
-    protected final HttpStack mHttpStack;
+    protected final HttpStack httpStack;
 
-    protected final ByteArrayPool mPool;
+    protected final ByteArrayPool pool;
     public static final int DEFAULT_POOL_SIZE = 4096;
 
     /**
@@ -66,8 +66,8 @@ public class HttpNetwork implements Network {
      * @param pool      a buffer pool that improves GC performance in copy operations
      */
     public HttpNetwork(HttpStack httpStack, ByteArrayPool pool) {
-        mHttpStack = httpStack;
-        mPool = pool;
+        this.httpStack = httpStack;
+        this.pool = pool;
     }
 
     @Override
@@ -86,7 +86,7 @@ public class HttpNetwork implements Network {
                 addProxyAuthHeaders(request.getProxyAuthenticator(), headers);
 
                 request.addMarker(Request.EVENT_NETWORK_STACK_SEND, headers);
-                httpResponse = mHttpStack.performRequest(request, headers.build(), mPool);
+                httpResponse = httpStack.performRequest(request, headers.build(), pool);
                 request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
                 //currently all requests that came to here normally needs to be attached to the
                 // queue
