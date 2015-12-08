@@ -52,7 +52,7 @@ public class JusLog {
         @Override
         public void onError(JusError error) {
             if (log == null) return;
-            log.log(buildMessage(request, "Error: %s", error));
+            log.error(buildMessage(request, "Error: %s", error));
         }
     }
 

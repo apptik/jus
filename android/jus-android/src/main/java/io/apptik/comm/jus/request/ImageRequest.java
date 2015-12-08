@@ -209,6 +209,7 @@ public class ImageRequest extends Request<Bitmap> {
             decodeOptions.inPreferQualityOverSpeed = PREFER_QUALITY_OVER_SPEED;
             decodeOptions.inSampleSize =
                     findBestSampleSize(actualWidth, actualHeight, desiredWidth, desiredHeight);
+
             addInBitmapOptions(decodeOptions);
             Bitmap tempBitmap =
                     BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
@@ -271,5 +272,16 @@ public class ImageRequest extends Request<Bitmap> {
         }
 
         return (int) n;
+    }
+
+    @Override
+    public String toString() {
+        return "ImageRequest{" +
+                "bitmapPool=" + bitmapPool +
+                ", mDecodeConfig=" + mDecodeConfig +
+                ", mMaxWidth=" + mMaxWidth +
+                ", mMaxHeight=" + mMaxHeight +
+                ", mScaleType=" + mScaleType +
+                "} " + super.toString();
     }
 }

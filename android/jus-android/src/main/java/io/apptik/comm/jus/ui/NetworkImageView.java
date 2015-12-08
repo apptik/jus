@@ -157,6 +157,11 @@ public class NetworkImageView extends ImageView {
 
                     @Override
                     public void onResponse(final ImageContainer response, boolean isImmediate) {
+                        //verify if we expect the same url
+                        if (NetworkImageView.this.mUrl != response.getRequestUrl()) {
+                            return;
+                        }
+
                         // If this was an immediate response that was delivered inside of a layout
                         // pass do not set the image immediately as it will trigger a requestLayout
                         // inside of a layout. Instead, defer setting the image by posting back to
