@@ -42,8 +42,24 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
         };
     }
 
+    public LruCache<String, Bitmap> pool() {
+        return bPool;
+    }
+
+    public void preFill(int w, int h) {
+        int fill = size();
+        Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
+        int size = getBitmapSize(bmp) / 1024;
+        addToPool(bmp);
+        fill+=size;
+        while (fill<maxSize()) {
+            addToPool(Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888));
+            fill+=size;
+        }
+    }
+
     @Override
-    public Bitmap getReusableBitmap(BitmapFactory.Options options) {
+    public synchronized Bitmap getReusableBitmap(BitmapFactory.Options options) {
         Set<Map.Entry<String, Bitmap>> bitmaps = bPool.snapshot().entrySet();
         Bitmap bitmap = null;
 
@@ -78,7 +94,7 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
      * {@link DefaultBitmapLruCache#addToPool(Bitmap)}.
      */
     @Override
-    public void addToPool(Bitmap bitmap) {
+    public synchronized void addToPool(Bitmap bitmap) {
         bPool.put(UUID.randomUUID().toString(), bitmap);
     }
 }
