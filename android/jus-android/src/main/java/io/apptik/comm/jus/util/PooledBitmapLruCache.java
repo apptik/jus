@@ -95,6 +95,8 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
      */
     @Override
     public synchronized void addToPool(Bitmap bitmap) {
-        bPool.put(UUID.randomUUID().toString(), bitmap);
+        if (bitmap.isMutable() && !bitmap.isRecycled()) {
+            bPool.put(UUID.randomUUID().toString(), bitmap);
+        }
     }
 }
