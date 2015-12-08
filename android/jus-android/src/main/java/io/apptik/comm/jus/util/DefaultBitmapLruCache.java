@@ -136,7 +136,7 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
                 while (iterator.hasNext()) {
                     item = iterator.next().get();
 
-                    if (null != item && item.isMutable()) {
+                    if (null != item && canBePooled(item)) {
                         // Check to see it the item can be used for inBitmap
                         if (canUseForInBitmap(item, options)) {
                             bitmap = item;
@@ -157,9 +157,19 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
 
     @Override
     public void addToPool(Bitmap bitmap) {
-        if (bitmap.isMutable() && !bitmap.isRecycled()) {
+        if (canBePooled(bitmap)) {
             reusableBitmaps.add(new SoftReference<>(bitmap));
         }
+    }
+
+    protected boolean canBePooled(Bitmap bitmap) {
+        if (bitmap.isMutable() && !bitmap.isRecycled()) {
+            return true;
+        }
+        try {
+            bitmap.recycle();
+        } catch(Exception ex) {}
+        return false;
     }
 
     /**

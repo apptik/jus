@@ -22,12 +22,12 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
     LruCache<String, Bitmap> bPool;
 
     public PooledBitmapLruCache() {
-        this(getDefaultLruCacheSize());
+        this(getDefaultLruCacheSize(), (int) (getDefaultLruCacheSize()*1.25));
     }
 
-    public PooledBitmapLruCache(int maxSize) {
-        super(maxSize);
-        bPool = new LruCache<String, Bitmap>(maxSize) {
+    public PooledBitmapLruCache(int maxSizeCache, int maxSizePool) {
+        super(maxSizeCache);
+        bPool = new LruCache<String, Bitmap>(maxSizePool) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
                 return PooledBitmapLruCache.super.sizeOf(key, value);
@@ -66,7 +66,7 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
         if (bitmaps != null && !bitmaps.isEmpty()) {
             for (Map.Entry<String, Bitmap> bmpEntry : bitmaps) {
                 Bitmap item = bmpEntry.getValue();
-                if (null != item && item.isMutable()) {
+                if (null != item && canBePooled(item)) {
                     // Check to see it the item can be used for inBitmap
                     if (canUseForInBitmap(item, options)) {
                         bitmap = item;
@@ -95,7 +95,7 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
      */
     @Override
     public synchronized void addToPool(Bitmap bitmap) {
-        if (bitmap.isMutable() && !bitmap.isRecycled()) {
+        if (canBePooled(bitmap)) {
             bPool.put(UUID.randomUUID().toString(), bitmap);
         }
     }

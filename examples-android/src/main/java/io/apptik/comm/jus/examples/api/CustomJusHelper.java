@@ -31,7 +31,7 @@ import io.apptik.comm.jus.rx.event.ErrorEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
 import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
-import io.apptik.comm.jus.util.DefaultBitmapLruCache;
+import io.apptik.comm.jus.util.PooledBitmapLruCache;
 import rx.functions.Action1;
 
 public class CustomJusHelper {
@@ -48,7 +48,7 @@ public class CustomJusHelper {
         JusLog.ResponseLog.on();
         JusLog.MarkerLog.on();
         queue = AndroidJus.newRequestQueue(context);
-        DefaultBitmapLruCache defaultBitmapLruCache = new DefaultBitmapLruCache();
+        PooledBitmapLruCache defaultBitmapLruCache = new PooledBitmapLruCache();
         imageLoader = new ImageLoader(queue,
                 // new NoCache()
                 defaultBitmapLruCache, defaultBitmapLruCache
