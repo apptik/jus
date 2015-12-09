@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/apptik/jus.svg?branch=master)](https://travis-ci.org/apptik/jus)
 
-Flexible and Easy HTTP/REST(not 100% yet) Communication library for Java and Android
+Flexible and Easy HTTP/REST Communication library for Java and Android
 Based on Volley, inspired by many.
 
 * it is like Volley but much easier
