@@ -28,6 +28,7 @@ import android.view.ViewPropertyAnimator;
 import android.view.WindowManager;
 import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
+import android.widget.TextView;
 
 import org.djodjo.json.JsonArray;
 
@@ -70,7 +71,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
      * Provide a reference to the type of views that you are using (custom ViewHolder)
      */
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        // private final TextView textView;
+         private final TextView txt1;
 
         public final NetworkImageView niv;
 
@@ -86,7 +87,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
                 }
             });
             niv = (NetworkImageView) v.findViewById(R.id.img1);
-            //  textView = (TextView) v.findViewById(R.id.textView);
+            txt1 = (TextView) v.findViewById(R.id.txt1);
         }
     }
     // END_INCLUDE(recyclerViewSampleViewHolder)
@@ -133,6 +134,8 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         // with that element
         Log.e("jus", jarr.get(position).asJsonObject().getString("pic"));
         viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), imageLoader);
+        viewHolder.txt1.setText(position + " : " + jarr.get(position).asJsonObject().getString
+                ("txt1"));
 
         /// COOL ANIM
         View v = (View) viewHolder.niv.getParent().getParent();
