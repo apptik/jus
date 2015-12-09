@@ -20,16 +20,21 @@ package io.apptik.comm.jus.stack;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 import io.apptik.comm.jus.toolbox.PoolingByteArrayOutputStream;
 
+
+/**
+ * A base abstract class to extend when implementing new Http Stack.
+ */
 public abstract class AbstractHttpStack implements HttpStack {
 
     /**
      * Reads the contents of HttpEntity into a byte[].
      */
-    protected final byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool
+    public static final byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool
             byteArrayPool)
             throws IOException {
         InputStream inputStream;
@@ -41,7 +46,7 @@ public abstract class AbstractHttpStack implements HttpStack {
         return getContentBytes(inputStream, byteArrayPool, connection.getContentLength());
     }
 
-    protected final byte[] getContentBytes(InputStream inputStream, ByteArrayPool
+    public static final byte[] getContentBytes(InputStream inputStream, ByteArrayPool
             byteArrayPool, int contentLen) throws IOException {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(byteArrayPool, contentLen);
@@ -54,8 +59,16 @@ public abstract class AbstractHttpStack implements HttpStack {
             }
             buffer = byteArrayPool.getBuf(1024);
             int count;
-            while ((count = inputStream.read(buffer)) != -1) {
-                bytes.write(buffer, 0, count);
+            try {
+                while ((count = inputStream.read(buffer)) != -1) {
+                    bytes.write(buffer, 0, count);
+                }
+            } catch (IOException ex) {
+                //we will get this anyway keep on so we can have whatever we got from the body
+                //except timeout error
+                if(ex instanceof SocketTimeoutException) {
+                    throw ex;
+                }
             }
             return bytes.toByteArray();
         } finally {

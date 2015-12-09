@@ -71,4 +71,14 @@ public class Response<T> {
         this.cacheEntry = null;
         this.error = error;
     }
+
+    @Override
+    public String toString() {
+        return "Response{" +
+                "cacheEntry=" + cacheEntry +
+                ", result=" + result +
+                ", error=" + error +
+                ", intermediate=" + intermediate +
+                '}';
+    }
 }

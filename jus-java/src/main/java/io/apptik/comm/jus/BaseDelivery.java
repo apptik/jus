@@ -52,19 +52,23 @@ public abstract class BaseDelivery implements ResponseDelivery {
         if (request.isCanceled()) {
             request.finish(Request.EVENT_CANCELED_AT_DELIVERY);
         } else {
-            if(response.error==null) {
-                request.addMarker(Request.EVENT_DELIVER_RESPONSE, response.result, response.intermediate);
-                doDeliver(request, response, runnable);
-            } else {
-                request.addMarker(Request.EVENT_DELIVER_ERROR, response.error);
-                doDeliver(request, response, runnable);
-            }
-            // If this is an intermediate response, add a marker, otherwise we're done
-            // and the request can be finished.
-            if (response.intermediate) {
-                request.addMarker(Request.EVENT_INTERMEDIATE_RESPONSE);
-            } else {
-                request.finish(Request.EVENT_DONE);
+            try {
+                if (response.error == null) {
+                    request.addMarker(Request.EVENT_DELIVER_RESPONSE, response.result, response.intermediate);
+
+                    doDeliver(request, response, runnable);
+                } else {
+                    request.addMarker(Request.EVENT_DELIVER_ERROR, response.error);
+                    doDeliver(request, response, runnable);
+                }
+            } finally {
+                // If this is an intermediate response, add a marker, otherwise we're done
+                // and the request can be finished.
+                if (response.intermediate) {
+                    request.addMarker(Request.EVENT_INTERMEDIATE_RESPONSE);
+                } else {
+                    request.finish(Request.EVENT_DONE);
+                }
             }
         }
     }

@@ -21,28 +21,127 @@ package io.apptik.comm.jus.error;
 import io.apptik.comm.jus.NetworkResponse;
 
 /**
- * Indicates that the server responded with an error response.
+ * Indicates that the server responded with an error response 4xx.
  */
 @SuppressWarnings("serial")
 public class RequestError extends JusError {
 
-    public RequestError(Throwable cause) {
-        super(cause);
-    }
-
-    public RequestError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
-    }
-
-    public RequestError(String exceptionMessage) {
-        super(exceptionMessage);
-    }
-
-    public RequestError() {
-        super();
-    }
-
     public RequestError(NetworkResponse response) {
         super(response);
+    }
+
+    public RequestError(NetworkResponse response, String exceptionMessage) {
+        super(response, exceptionMessage);
+    }
+
+    public RequestError(NetworkResponse response, String exceptionMessage, Throwable reason) {
+        super(response, exceptionMessage, reason);
+    }
+
+    public RequestError(NetworkResponse response, Throwable reason) {
+        super(response, reason);
+    }
+
+    public boolean isBadRequest() {
+        if(networkResponse!=null) {
+            return 400 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isUnauthorized() {
+        if(networkResponse!=null) {
+            return 401 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isPaymentRequired() {
+        if(networkResponse!=null) {
+            return 402 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isForbidden() {
+        if(networkResponse!=null) {
+            return 403 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isNotFound() {
+        if(networkResponse!=null) {
+            return 404 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isMethodNotAllowed() {
+        if(networkResponse!=null) {
+            return 405 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isNotAcceptable() {
+        if(networkResponse!=null) {
+            return 406 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isProxyAuthenticationRequired() {
+        if(networkResponse!=null) {
+            return 407 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isRequestTimeOut() {
+        if(networkResponse!=null) {
+            return 408 == networkResponse.statusCode;
+        }
+        return false;
+    }
+
+    public boolean isConflict() {
+        if(networkResponse!=null) {
+            return 409 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isGone() {
+        if(networkResponse!=null) {
+            return 410 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isLengthRequired() {
+        if(networkResponse!=null) {
+            return 411 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isPreconditionFailed() {
+        if(networkResponse!=null) {
+            return 412 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isRequestEntityTooLarge() {
+        if(networkResponse!=null) {
+            return 413 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isRequestURITooLarge() {
+        if(networkResponse!=null) {
+            return 414 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isUnsupportedMediaType() {
+        if(networkResponse!=null) {
+            return 415 == networkResponse.statusCode;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "RequestError{} " + super.toString();
     }
 }

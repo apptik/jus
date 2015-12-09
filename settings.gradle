@@ -14,8 +14,18 @@
  * limitations under the License.
  */
 
-include ':jus-android', ':jus-okhttp',
+include ':android:jus-android',
+        ':stack:jus-netty',
+        ':stack:jus-apachehttp',
+        ':stack:jus-okhttp',
         ':examples-android',
         ':rx-jus', ':retro-jus', ':jus-java',
         //':examples-java',
-        ':jus-gson', ':jus-jjson', ':jus-wire', ':jus-simplexml', ':jus-protobuf', ':jus-moshi', ':jus-jackson', ':jus-android-rx'
+        ':converter:jus-gson',
+        ':converter:jus-jjson',
+        ':converter:jus-wire',
+        ':converter:jus-simplexml',
+        ':converter:jus-protobuf',
+        ':converter:jus-moshi',
+        ':converter:jus-jackson',
+        ':android:jus-android-rx'

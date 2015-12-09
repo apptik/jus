@@ -19,34 +19,32 @@
 package io.apptik.comm.jus.auth;
 
 import io.apptik.comm.jus.NetworkRequest;
-import io.apptik.comm.jus.error.AuthenticatorError;
+import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.error.AuthError;
 import io.apptik.comm.jus.http.HttpUrl;
+import io.apptik.comm.jus.toolbox.HttpNetwork;
 
 /**
- * An interface for interacting with auth tokens.
+ * An interface for adding a Authorization header to the request
  */
 public interface Authenticator {
 
     /**
-     * Synchronously retrieves an auth token.
-     * It should handle refreshing the token if needed (evaluating its lifetime for example).
+     * Synchronously retrieves an Authorization header value.
      * Implementations must have into consideration that this can be a
      * called from different threads at the same time.
      *
-     * @throws AuthenticatorError If authentication did not succeed
+     * @throws AuthError If authentication did not succeed
      */
-    String getToken() throws AuthenticatorError;
+    String getAuthValue() throws AuthError;
 
     /**
-     * Clears cached user token. In typical implementation calling this before {@link #getToken()}
-     * will make sure the token returned is not expired.
+     * Clears cached Authorization value. Implementations can call this before
+     * {@link #getAuthValue()} to make sure the value returned is not expired.
+     * This is also called in {@link HttpNetwork#performRequest(Request)}  when 401 is returned
+     * and followed by {@link #getAuthValue()}
      */
-    void clearToken();
-
-    /**
-     * Invalidates the provided auth token.
-     */
-     void invalidateToken();
+     void clearAuthValue();
 
     /**
      * Authenticator Factory class that provides authenticators for specific requests
@@ -54,12 +52,23 @@ public interface Authenticator {
     abstract class Factory {
         /**
          * Overwrite this method to return authenticator for specific request
-         * @param url The url of the request
+         *
+         * @param url            The url of the request
          * @param networkRequest Request data
          * @return Authenticator providing token for this request
          */
-       public Authenticator forRequest(HttpUrl url, NetworkRequest networkRequest) {
-           return null;
-       }
+        public Authenticator forServer(HttpUrl url, NetworkRequest networkRequest) {
+            return null;
+        }
+        /**
+         * Overwrite this method to return authenticator for specific request
+         *
+         * @param url            The url of the request
+         * @param networkRequest Request data
+         * @return Authenticator providing token for this request
+         */
+        public Authenticator forProxy(HttpUrl url, NetworkRequest networkRequest) {
+            return null;
+        }
     }
 }

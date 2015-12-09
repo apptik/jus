@@ -232,9 +232,9 @@ public final class SimpleRequestTest {
     public void transportProblemSync() {
         server.enqueue(new MockResponse().setSocketPolicy(SocketPolicy.DISCONNECT_AT_START));
 
-        Request<String> call = example.getString();
+        Request<String> call = example.getString().setRetryPolicy(new DefaultRetryPolicy(1,0,1)).enqueue();
         try {
-            call.enqueue().getFuture().get();
+            call.getFuture().get();
             fail();
         } catch (Exception ignored) {
             Throwable failure = ignored.getCause();

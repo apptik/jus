@@ -30,9 +30,14 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.apptik.comm.jus.Request.Priority;
+import io.apptik.comm.jus.auth.Authenticator;
+import io.apptik.comm.jus.error.AuthError;
+import io.apptik.comm.jus.http.HttpUrl;
+import io.apptik.comm.jus.mock.MockHttpStack;
 import io.apptik.comm.jus.mock.MockNetwork;
 import io.apptik.comm.jus.mock.MockRequest;
 import io.apptik.comm.jus.mock.MockyRequest;
+import io.apptik.comm.jus.toolbox.HttpNetwork;
 import io.apptik.comm.jus.toolbox.NoCache;
 import io.apptik.comm.jus.utils.CacheTestUtils;
 import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
@@ -40,7 +45,6 @@ import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
 
 public class RequestQueueTest {
     private ResponseDelivery mDelivery;
@@ -164,6 +168,55 @@ public class RequestQueueTest {
         assertFalse(req4.cancel_called); // A added after cancel not cancelled
 
     }
+
+    @Test
+    public void authFactoryTest() throws Exception {
+        MockHttpStack httpStack = new MockHttpStack();
+        HttpNetwork network = new HttpNetwork(httpStack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
+        queue.addAuthenticatorFactory(new Authenticator.Factory() {
+            @Override
+            public Authenticator forServer(HttpUrl url, NetworkRequest networkRequest) {
+                return new Authenticator() {
+                    @Override
+                    public String getAuthValue() throws AuthError {
+                        return "server_auth";
+                    }
+
+                    @Override
+                    public void clearAuthValue() {
+                    }
+                };
+            }
+
+            @Override
+            public Authenticator forProxy(HttpUrl url, NetworkRequest networkRequest) {
+                return new Authenticator() {
+                    @Override
+                    public String getAuthValue() throws AuthError {
+                        return "proxy_auth";
+                    }
+
+                    @Override
+                    public void clearAuthValue() {
+                    }
+                };
+            }
+        });
+
+        MockRequest req1 = new MockRequest();
+        queue.start();
+        queue.add(req1);
+
+        assertEquals(req1.getServerAuthenticator().getAuthValue(), "server_auth");
+        assertEquals(req1.getProxyAuthenticator().getAuthValue(), "proxy_auth");
+        Thread.sleep(500);
+        assertEquals(httpStack.getLastHeaders().get("Authorization"), "server_auth");
+        assertEquals(httpStack.getLastHeaders().get("Proxy-Authorization"), "proxy_auth");
+
+        queue.stop();
+    }
+
 
     private class OrderCheckingNetwork implements Network {
         private Priority mLastPriority = Priority.IMMEDIATE;

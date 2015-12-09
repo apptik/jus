@@ -56,7 +56,7 @@ public class RequestQueue {
     /**
      * Used for generating monotonically-increasing sequence numbers for requests.
      */
-    private AtomicInteger mSequenceGenerator = new AtomicInteger();
+    private AtomicInteger sequenceGenerator = new AtomicInteger();
 
     /**
      * Staging area for requests that already have a duplicate request in flight.
@@ -68,28 +68,28 @@ public class RequestQueue {
      * is <em>not</em> contained in that list. Is null if no requests are staged.</li>
      * </ul>
      */
-    private final Map<String, Queue<Request<?>>> mWaitingRequests =
-            new ConcurrentHashMap<String, Queue<Request<?>>>();
+    private final Map<String, Queue<Request<?>>> waitingRequests =
+            new ConcurrentHashMap<>();
 
     /**
      * The set of all requests currently being processed by this RequestQueue. A Request
      * will be in this set if it is waiting in any queue or currently being processed by
      * any dispatcher.
      */
-    private final Set<Request<?>> mCurrentRequests
+    private final Set<Request<?>> currentRequests
             = Collections.newSetFromMap(new ConcurrentHashMap<Request<?>, Boolean>());
     //   = new HashSet<Request<?>>();
 
     /**
      * The cache triage queue.
      */
-    protected final PriorityBlockingQueue<Request<?>> mCacheQueue =
+    protected final PriorityBlockingQueue<Request<?>> cacheQueue =
             new PriorityBlockingQueue<>();
 
     /**
      * The queue of requests that are actually going out to the network.
      */
-    protected final PriorityBlockingQueue<Request<?>> mNetworkQueue =
+    protected final PriorityBlockingQueue<Request<?>> networkQueue =
             new PriorityBlockingQueue<>();
 
     /**
@@ -100,17 +100,17 @@ public class RequestQueue {
     /**
      * Cache interface for retrieving and storing responses.
      */
-    protected final Cache mCache;
+    protected final Cache cache;
 
     /**
      * Network interface for performing requests.
      */
-    protected final Network mNetwork;
+    protected final Network network;
 
     /**
      * Response delivery mechanism.
      */
-    protected final ResponseDelivery mDelivery;
+    protected final ResponseDelivery delivery;
 
     /**
      * The network dispatchers.
@@ -131,13 +131,16 @@ public class RequestQueue {
     private final List<Converter.Factory> converterFactories = new ArrayList<>();
     private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
     private final List<Transformer.ResponseTransformer> responseTransformers = new ArrayList<>();
+
     private final List<QListenerFactory> qListenerFactories = new ArrayList<>();
+
     /**
-     * RequestListener interface for markers.
+     * Marker listeners for RequestQueue related events
      */
     private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
     private RetryPolicy.Factory retryPolicyFactory = null;
+
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
      *
@@ -148,11 +151,11 @@ public class RequestQueue {
      */
     public RequestQueue(Cache cache, Network network, int threadPoolSize,
                         ResponseDelivery delivery) {
-        mCache = cache;
-        mNetwork = network;
-        networkDispatchers = new NetworkDispatcher[threadPoolSize];
-        mDelivery = delivery;
-        converterFactories.add(new BasicConverterFactory());
+        this.cache = cache;
+        this.network = network;
+        this.networkDispatchers = new NetworkDispatcher[threadPoolSize];
+        this.delivery = delivery;
+        this.converterFactories.add(new BasicConverterFactory());
     }
 
     /**
@@ -182,7 +185,6 @@ public class RequestQueue {
         this(cache, network, DEFAULT_NETWORK_THREAD_POOL_SIZE);
     }
 
-
     public RequestQueue withCacheDispatcher(CacheDispatcher cacheDispatcher) {
         if (this.cacheDispatcher != null) {
             this.cacheDispatcher.quit();
@@ -193,9 +195,9 @@ public class RequestQueue {
 
     public RequestQueue withNetworkDispatcherFactory(NetworkDispatcher.NetworkDispatcherFactory
                                                              networkDispatcherFactory) {
-        for (int i = 0; i < networkDispatchers.length; i++) {
-            if (networkDispatchers[i] != null) {
-                networkDispatchers[i].quit();
+        for (NetworkDispatcher networkDispatcher : networkDispatchers) {
+            if (networkDispatcher != null) {
+                networkDispatcher.quit();
             }
         }
         this.networkDispatcherFactory = networkDispatcherFactory;
@@ -208,8 +210,8 @@ public class RequestQueue {
     private void setUpNetworkDispatchers() {
         if (networkDispatcherFactory == null) {
             networkDispatcherFactory = new NetworkDispatcher.NetworkDispatcherFactory
-                    (mNetworkQueue, mNetwork,
-                            mCache, mDelivery);
+                    (networkQueue, network,
+                            cache, delivery);
         }
 
         for (int i = 0; i < networkDispatchers.length; i++) {
@@ -229,7 +231,7 @@ public class RequestQueue {
 
 
         if (cacheDispatcher == null) {
-            cacheDispatcher = new CacheDispatcher(mCacheQueue, mNetworkQueue, mCache, mDelivery);
+            cacheDispatcher = new CacheDispatcher(cacheQueue, networkQueue, cache, delivery);
         }
         cacheDispatcher.start();
         addMarker(EVENT_CACHE_DISPATCHER_START, cacheDispatcher);
@@ -238,13 +240,15 @@ public class RequestQueue {
         setUpNetworkDispatchers();
     }
 
+    /**
+     * Stops the queue when all requests are finished
+     */
     public void stopWhenDone() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 while (getCurrentRequests() > 0) {
-                    //todo
-//                    JusLog.d("Waiting to finish. Requests left: " +
+//                   JusLog.log.error("Waiting to finish. Requests left: " +
 //                            getCurrentRequests() + " / " + getWaitingRequests());
                     try {
                         Thread.sleep(33);
@@ -252,19 +256,18 @@ public class RequestQueue {
                         e.printStackTrace();
                     }
                 }
-                //todo
-//                JusLog.d("READY to finish. Requests left: " +
+//                JusLog.log.error("READY to finish. Requests left: " +
 //                        getCurrentRequests() + " / " + getWaitingRequests());
-                synchronized (mCurrentRequests) {
-                    mCurrentRequests.notify();
+                synchronized (currentRequests) {
+                    currentRequests.notify();
                 }
                 // stop();
             }
         }).start();
 
-        synchronized (mCurrentRequests) {
+        synchronized (currentRequests) {
             try {
-                mCurrentRequests.wait();
+                currentRequests.wait();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -273,8 +276,11 @@ public class RequestQueue {
         stop();
     }
 
+    /**
+     * Add marker listener for RequestQueue related events
+     */
     public <R extends RequestQueue> R addMarkerListener(RequestListener.MarkerListener
-                                                              markerListener) {
+                                                                markerListener) {
         if (markerListener != null) {
             synchronized (markerListeners) {
                 this.markerListeners.add(markerListener);
@@ -283,8 +289,11 @@ public class RequestQueue {
         return (R) this;
     }
 
+    /**
+     * Remove marker listener for RequestQueue related events
+     */
     public <R extends RequestQueue> R removeMarkerListener(RequestListener.MarkerListener
-                                                                 markerListener) {
+                                                                   markerListener) {
         synchronized (markerListeners) {
             this.markerListeners.remove(markerListener);
         }
@@ -292,7 +301,7 @@ public class RequestQueue {
     }
 
     public <R extends RequestQueue> R addMarker(String tag, Object... args) {
-        Marker marker =  new Marker(tag,
+        Marker marker = new Marker(tag,
                 Thread.currentThread().getId(),
                 Thread.currentThread().getName(),
                 System.nanoTime());
@@ -324,14 +333,14 @@ public class RequestQueue {
      * Gets a sequence number.
      */
     public int getSequenceNumber() {
-        return mSequenceGenerator.incrementAndGet();
+        return sequenceGenerator.incrementAndGet();
     }
 
     /**
      * Gets the {@link Cache} instance being used.
      */
     public Cache getCache() {
-        return mCache;
+        return cache;
     }
 
     /**
@@ -340,8 +349,8 @@ public class RequestQueue {
      * @param filter The filtering function to use
      */
     public void cancelAll(RequestFilter filter) {
-        synchronized (mCurrentRequests) {
-            for (Request<?> request : mCurrentRequests) {
+        synchronized (currentRequests) {
+            for (Request<?> request : currentRequests) {
                 if (filter.apply(request)) {
                     request.cancel();
                 }
@@ -373,13 +382,28 @@ public class RequestQueue {
      */
     public <R extends Request<T>, T> R add(R request) {
         request.addMarker(Request.EVENT_PRE_ADD_TO_QUEUE);
+        Authenticator serverAuthenticator = null;
+        Authenticator proxyAuthenticator = null;
         for (Authenticator.Factory factory : authenticatorFactories) {
-            Authenticator authenticator =
-                    factory.forRequest(request.getUrl(), request.getNetworkRequest());
-            if (authenticator != null) {
-                request.setAuthenticator(authenticator);
+
+            if (serverAuthenticator == null) {
+                serverAuthenticator = factory.forServer(request.getUrl(), request
+                        .getNetworkRequest());
+                if (serverAuthenticator != null)
+                    request.setServerAuthenticator(serverAuthenticator);
+            }
+
+            if (proxyAuthenticator == null) {
+                proxyAuthenticator = factory.forProxy(request.getUrl(), request.getNetworkRequest
+                        ());
+                if (proxyAuthenticator != null)
+                    request.setProxyAuthenticator(proxyAuthenticator);
+            }
+
+            if (proxyAuthenticator != null && serverAuthenticator != null) {
                 break;
             }
+
         }
 
         for (Transformer.RequestTransformer transformer : requestTransformers) {
@@ -419,11 +443,11 @@ public class RequestQueue {
             request.addMarkerListener(new JusLog.MarkerLog(request));
         }
 
-        if(retryPolicyFactory!=null) {
+        if (retryPolicyFactory != null) {
             request.setRetryPolicy(retryPolicyFactory.get(request));
         }
 
-        synchronized (mCurrentRequests) {
+        synchronized (currentRequests) {
             //check if not already cancelled
             if (request.isCanceled()) {
                 request.finish(Request.EVENT_CACHE_DISCARD_CANCELED);
@@ -432,27 +456,27 @@ public class RequestQueue {
             request.setSequence(getSequenceNumber());
             // Tag the request as belonging to this queue and add it to the set of current requests.
             request.setRequestQueue(this);
-            mCurrentRequests.add(request);
+            currentRequests.add(request);
         }
         request.addMarker(Request.EVENT_ADD_TO_QUEUE);
 
         // If the request is uncacheable, skip the cache queue and go straight to the network.
         if (!request.shouldCache()) {
-            mNetworkQueue.add(request);
+            networkQueue.add(request);
             return request;
         }
 
         // Insert request into stage if there's already a request with the same cache key in flight.
-        synchronized (mWaitingRequests) {
+        synchronized (waitingRequests) {
             String cacheKey = request.getCacheKey();
-            if (mWaitingRequests.containsKey(cacheKey)) {
+            if (waitingRequests.containsKey(cacheKey)) {
                 // There is already a request in flight. Queue up.
-                Queue<Request<?>> stagedRequests = mWaitingRequests.get(cacheKey);
+                Queue<Request<?>> stagedRequests = waitingRequests.get(cacheKey);
                 if (stagedRequests == null) {
-                    stagedRequests = new LinkedList<Request<?>>();
+                    stagedRequests = new LinkedList<>();
                 }
                 stagedRequests.add(request);
-                mWaitingRequests.put(cacheKey, stagedRequests);
+                waitingRequests.put(cacheKey, stagedRequests);
 //                if (JusLog.DEBUG) {
 //                    JusLog.v("Request for cacheKey=%s is in flight, putting on hold.", cacheKey);
 //                }
@@ -460,8 +484,8 @@ public class RequestQueue {
             } else {
                 // Insert 'empty list' queue for this cacheKey, indicating there is now a request in
                 // flight.
-                mWaitingRequests.put(cacheKey, new LinkedList<Request<?>>());
-                mCacheQueue.add(request);
+                waitingRequests.put(cacheKey, new LinkedList<Request<?>>());
+                cacheQueue.add(request);
             }
             return request;
         }
@@ -487,13 +511,13 @@ public class RequestQueue {
      */
     <T> void finish(Request<T> request) {
         // Remove from the set of requests currently being processed.
-        synchronized (mCurrentRequests) {
-            mCurrentRequests.remove(request);
+        synchronized (currentRequests) {
+            currentRequests.remove(request);
         }
         if (request.shouldCache()) {
-            synchronized (mWaitingRequests) {
+            synchronized (waitingRequests) {
                 String cacheKey = request.getCacheKey();
-                Queue<Request<?>> waitingRequests = mWaitingRequests.remove(cacheKey);
+                Queue<Request<?>> waitingRequests = this.waitingRequests.remove(cacheKey);
                 if (waitingRequests != null) {
                     //todo add queue markers
 //                    if (JusLog.DEBUG) {
@@ -502,7 +526,7 @@ public class RequestQueue {
 //                    }
                     // Process all queued up requests. They won't be considered as in flight, but
                     // that's not a problem as the cache has been primed by 'request'.
-                    mCacheQueue.addAll(waitingRequests);
+                    cacheQueue.addAll(waitingRequests);
                 }
             }
         }
@@ -622,14 +646,14 @@ public class RequestQueue {
 
 
     public int getCurrentRequests() {
-        synchronized (mCurrentRequests) {
-            return mCurrentRequests.size();
+        synchronized (currentRequests) {
+            return currentRequests.size();
         }
     }
 
     public int getWaitingRequests() {
-        synchronized (mWaitingRequests) {
-            return mWaitingRequests.size();
+        synchronized (waitingRequests) {
+            return waitingRequests.size();
         }
     }
 

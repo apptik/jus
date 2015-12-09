@@ -24,7 +24,7 @@ import java.util.Map;
 
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.error.AuthFailureError;
+import io.apptik.comm.jus.error.AuthError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.stack.HttpStack;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
@@ -58,7 +58,7 @@ public class MockHttpStack implements HttpStack {
     @Override
     public NetworkResponse performRequest(Request<?> request, Headers additionalHeaders, ByteArrayPool
             byteArrayPool)
-            throws IOException, AuthFailureError {
+            throws IOException, AuthError {
         mLastUrl = request.getUrl().toString();
         mLastHeaders = new HashMap<String, String>();
         if (request.getHeaders() != null) {

@@ -21,32 +21,44 @@ package io.apptik.comm.jus.error;
 import io.apptik.comm.jus.NetworkResponse;
 
 /**
- * Indicates that there was a network error when performing a Jus request.
+ * Indicates that there was a network/socket error when performing a Jus request.
  */
 @SuppressWarnings("serial")
 public class NetworkError extends JusError {
 
-    public NetworkError(Throwable cause) {
-        super(cause);
+    public NetworkError() {
     }
 
-    public NetworkError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
+    public NetworkError(Throwable cause) {
+        super(cause);
     }
 
     public NetworkError(String exceptionMessage) {
         super(exceptionMessage);
     }
 
-    public NetworkError() {
-        super();
+    public NetworkError(String exceptionMessage, Throwable reason) {
+        super(exceptionMessage, reason);
     }
 
     public NetworkError(NetworkResponse response) {
         super(response);
     }
 
-    public NetworkError(String exceptionMessage, NetworkResponse response) {
-        super(exceptionMessage, response);
+    public NetworkError(NetworkResponse response, String exceptionMessage) {
+        super(response, exceptionMessage);
+    }
+
+    public NetworkError(NetworkResponse response, String exceptionMessage, Throwable reason) {
+        super(response, exceptionMessage, reason);
+    }
+
+    public NetworkError(NetworkResponse response, Throwable reason) {
+        super(response, reason);
+    }
+
+    @Override
+    public String toString() {
+        return "NetworkError{} " + super.toString();
     }
 }

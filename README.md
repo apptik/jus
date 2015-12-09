@@ -79,16 +79,16 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [mvn]: http://search.maven.org/#search|ga|1|io.apptik.comm.jus
  [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/comm/
- [jus-android]: https://github.com/apptik/jus/tree/master/jus-android
- [jus-android-rx]: https://github.com/apptik/jus/tree/master/jus-android-rx
- [jus-gson]: https://github.com/apptik/jus/tree/master/jus-gson
- [jus-jackson]: https://github.com/apptik/jus/tree/master/jus-jackson
+ [jus-android]: https://github.com/apptik/jus/tree/master/android/jus-android
+ [jus-android-rx]: https://github.com/apptik/jus/tree/master/android/jus-android-rx
+ [jus-gson]: https://github.com/apptik/jus/tree/master/converter/jus-gson
+ [jus-jackson]: https://github.com/apptik/jus/tree/master/converter/jus-jackson
  [jus-java]: https://github.com/apptik/jus/tree/master/jus-java
- [jus-jjson]: https://github.com/apptik/jus/tree/master/jus-jjson
- [jus-moshi]: https://github.com/apptik/jus/tree/master/jus-moshi
- [jus-protobuf]: https://github.com/apptik/jus/tree/master/jus-protobuf
- [jus-simplexml]: https://github.com/apptik/jus/tree/master/jus-simplexml
- [jus-wire]: https://github.com/apptik/jus/tree/master/jus-wire
+ [jus-jjson]: https://github.com/apptik/jus/tree/master/converter/jus-jjson
+ [jus-moshi]: https://github.com/apptik/jus/tree/master/converter/jus-moshi
+ [jus-protobuf]: https://github.com/apptik/jus/tree/master/converter/jus-protobuf
+ [jus-simplexml]: https://github.com/apptik/jus/tree/master/converter/jus-simplexml
+ [jus-wire]: https://github.com/apptik/jus/tree/master/converter/jus-wire
  [retro-jus]: https://github.com/apptik/jus/tree/master/retro-jus
  [rx-jus]: https://github.com/apptik/jus/tree/master/rx-jus
- [jus-okhttp]: https://github.com/apptik/jus/tree/master/jus-okhttp
+ [jus-okhttp]: https://github.com/apptik/jus/tree/master/stack/jus-okhttp

@@ -19,31 +19,68 @@
 package io.apptik.comm.jus.error;
 
 import io.apptik.comm.jus.NetworkResponse;
-import io.apptik.comm.jus.Request;
 
 /**
- * Indicates that the server responded with an error response.
+ * Indicates that the server responded with an error response 5xx.
  */
 @SuppressWarnings("serial")
 public class ServerError extends JusError {
 
-    public ServerError(Throwable cause) {
-        super(cause);
-    }
-
-    public ServerError(String exceptionMessage, Throwable reason) {
-        super(exceptionMessage, reason);
-    }
-
-    public ServerError(String exceptionMessage) {
-        super(exceptionMessage);
-    }
-
-    public ServerError() {
-        super();
-    }
-
-    public ServerError(Request<?> request, NetworkResponse response) {
+    public ServerError(NetworkResponse response) {
         super(response);
+    }
+
+    public ServerError(NetworkResponse response, String exceptionMessage) {
+        super(response, exceptionMessage);
+    }
+
+    public ServerError(NetworkResponse response, String exceptionMessage, Throwable reason) {
+        super(response, exceptionMessage, reason);
+    }
+
+    public ServerError(NetworkResponse response, Throwable reason) {
+        super(response, reason);
+    }
+
+    public boolean isInternalServerError() {
+        if(networkResponse!=null) {
+            return 500 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isNotImplemented() {
+        if(networkResponse!=null) {
+            return 501 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isBadGateway() {
+        if(networkResponse!=null) {
+            return 502 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isServiceUnavailable() {
+        if(networkResponse!=null) {
+            return 503 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isGatewayTimeout() {
+        if(networkResponse!=null) {
+            return 504 == networkResponse.statusCode;
+        }
+        return false;
+    }
+    public boolean isHTTPVersionNotSupported() {
+        if(networkResponse!=null) {
+            return 505 == networkResponse.statusCode;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "ServerError{} " + super.toString();
     }
 }

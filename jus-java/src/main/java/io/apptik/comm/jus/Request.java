@@ -198,7 +198,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private NetworkRequest networkRequest;
     private Converter<NetworkResponse, T> converterFromResponse;
 
-    private Authenticator authenticator;
+    private Authenticator serverAuthenticator;
+    private Authenticator proxyAuthenticator;
 
     private Priority priority = Priority.NORMAL;
 
@@ -432,13 +433,23 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return priority;
     }
 
-    public Authenticator getAuthenticator() {
-        return authenticator;
+    public Authenticator getServerAuthenticator() {
+        return serverAuthenticator;
     }
 
-    public <R extends Request<T>> R setAuthenticator(Authenticator authenticator) {
+    public <R extends Request<T>> R setServerAuthenticator(Authenticator serverAuthenticator) {
         checkIfActive();
-        this.authenticator = authenticator;
+        this.serverAuthenticator = serverAuthenticator;
+        return (R) this;
+    }
+
+    public Authenticator getProxyAuthenticator() {
+        return proxyAuthenticator;
+    }
+
+    public <R extends Request<T>> R setProxyAuthenticator(Authenticator proxyAuthenticator) {
+        checkIfActive();
+        this.proxyAuthenticator = proxyAuthenticator;
         return (R) this;
     }
 

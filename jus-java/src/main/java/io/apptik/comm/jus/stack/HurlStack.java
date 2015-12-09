@@ -31,7 +31,6 @@ import io.apptik.comm.jus.NetworkDispatcher;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Request.Method;
-import io.apptik.comm.jus.error.AuthFailureError;
 import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.toolbox.ByteArrayPool;
 
@@ -76,8 +75,7 @@ public class HurlStack extends AbstractHttpStack {
 
     @Override
     public NetworkResponse performRequest(Request<?> request, Headers
-            additionalHeaders, ByteArrayPool byteArrayPool)
-            throws IOException, AuthFailureError {
+            additionalHeaders, ByteArrayPool byteArrayPool) throws IOException {
         String url = request.getUrlString();
         HashMap<String, String> requestHeaders = new HashMap<String, String>();
         /// response params
@@ -129,7 +127,15 @@ public class HurlStack extends AbstractHttpStack {
      * Create an {@link HttpURLConnection} for the specified {@code url}.
      */
     protected HttpURLConnection createConnection(URL url) throws IOException {
-        return (HttpURLConnection) url.openConnection();
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        // Workaround for HttpURLConnection not observing the
+        // HttpURLConnection.setFollowRedirects() property.
+        // Happening in Android M release
+        // https://code.google.com/p/android/issues/detail?id=194495
+        connection.setInstanceFollowRedirects(HttpURLConnection.getFollowRedirects());
+
+        return connection;
     }
 
     /**
@@ -156,8 +162,7 @@ public class HurlStack extends AbstractHttpStack {
     }
 
     static void setConnectionParametersForRequest(HttpURLConnection connection,
-                                                  Request<?> request) throws IOException,
-            AuthFailureError {
+                                                  Request<?> request) throws IOException {
         switch (request.getMethod()) {
             case Method.GET:
                 break;
@@ -193,7 +198,7 @@ public class HurlStack extends AbstractHttpStack {
     }
 
     private static void addBodyIfExists(HttpURLConnection connection, Request<?> request)
-            throws IOException, AuthFailureError {
+            throws IOException {
         byte[] body = request.getBody();
         if (body != null) {
             connection.setDoOutput(true);

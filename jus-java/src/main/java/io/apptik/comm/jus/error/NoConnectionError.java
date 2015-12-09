@@ -28,7 +28,7 @@ public class NoConnectionError extends NetworkError {
         super();
     }
 
-    public NoConnectionError(Throwable cause) {
-        super(cause);
+    public NoConnectionError(String exceptionMessage) {
+        super(exceptionMessage);
     }
 }

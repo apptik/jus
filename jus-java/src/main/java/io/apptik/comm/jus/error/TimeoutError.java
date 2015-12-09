@@ -24,7 +24,7 @@ import java.net.SocketTimeoutException;
  * Indicates that the connection or the socket timed out.
  */
 @SuppressWarnings("serial")
-public class TimeoutError extends JusError {
+public class TimeoutError extends NetworkError {
 
     public TimeoutError() {
         super();
@@ -36,5 +36,10 @@ public class TimeoutError extends JusError {
 
     public TimeoutError(String msg, SocketTimeoutException e) {
         super(msg, e);
+    }
+
+    @Override
+    public String toString() {
+        return "TimeoutError{} " + super.toString();
     }
 }

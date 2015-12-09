@@ -34,16 +34,8 @@ public class JusError extends Exception {
         networkResponse = null;
     }
 
-    public JusError( NetworkResponse response) {
-        networkResponse = response;
-    }
-    public JusError( NetworkResponse response, Throwable reason) {
-        super(reason);
-        networkResponse = response;
-    }
-
     public JusError(String exceptionMessage) {
-       super(exceptionMessage);
+        super(exceptionMessage);
         networkResponse = null;
     }
 
@@ -57,18 +49,32 @@ public class JusError extends Exception {
         networkResponse = null;
     }
 
-    public JusError(String exceptionMessage, NetworkResponse response) {
+    public JusError(NetworkResponse response) {
+        networkResponse = response;
+    }
+
+    public JusError(NetworkResponse response, Throwable reason) {
+        super(reason);
+        networkResponse = response;
+    }
+
+    public JusError(NetworkResponse response, String exceptionMessage) {
         super(exceptionMessage);
         networkResponse = response;
     }
 
+    public JusError(NetworkResponse response, String exceptionMessage, Throwable reason) {
+        super(exceptionMessage, reason);
+        this.networkResponse = response;
+    }
+
     /* package */
     public void setNetworkTimeNs(long networkTimeMs) {
-       this.networkTimeMs = networkTimeMs;
+        this.networkTimeMs = networkTimeMs;
     }
 
     public long getNetworkTimeMs() {
-       return networkTimeMs;
+        return networkTimeMs;
     }
 
     @Override
@@ -77,8 +83,8 @@ public class JusError extends Exception {
                 "networkResponse=" + networkResponse +
                 ", networkTimeMs=" + networkTimeMs +
                 ", \nmessage=" + getLocalizedMessage() +
-                ", \nstacktrace= "+ Arrays.toString(getStackTrace())
-                + ((getCause()==null)?"":
+                ", \nstacktrace= " + Arrays.toString(getStackTrace())
+                + ((getCause() == null) ? "" :
                 "\n\tCause: " + Arrays.toString(getCause().getStackTrace())) + "} ";
     }
 }
