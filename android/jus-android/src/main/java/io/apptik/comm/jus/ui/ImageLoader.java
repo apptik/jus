@@ -73,6 +73,17 @@ public class ImageLoader {
     private Runnable mRunnable;
 
     /**
+     * Resource ID of the image to be used as a placeholder until network image using this loader
+     * is loaded.
+     */
+    private int mDefaultImageId;
+
+    /**
+     * Resource ID of the image to be used if the network response fails using this loader.
+     */
+    private int mErrorImageId;
+
+    /**
      * Simple cache adapter interface. If provided to the ImageLoader, it
      * will be used as an L1 cache before dispatch to Jus. Implementations
      * must not block. Implementation with an LruCache is recommended.
@@ -102,6 +113,32 @@ public class ImageLoader {
         this.requestQueue = queue;
         this.imageCache = imageCache;
         this.bitmapPool = bitmapPool;
+    }
+
+    /**
+     * Sets the default image resource ID to be used for this view until the attempt to load it
+     * completes.
+     */
+    public ImageLoader setDefaultImageResId(int defaultImage) {
+        mDefaultImageId = defaultImage;
+        return this;
+    }
+
+    /**
+     * Sets the error image resource ID to be used for this view in the event that the image
+     * requested fails to load.
+     */
+    public ImageLoader setErrorImageResId(int errorImage) {
+        mErrorImageId = errorImage;
+        return this;
+    }
+
+    public int getErrorImageId() {
+        return mErrorImageId;
+    }
+
+    public int getDefaultImageId() {
+        return mDefaultImageId;
     }
 
     /**
