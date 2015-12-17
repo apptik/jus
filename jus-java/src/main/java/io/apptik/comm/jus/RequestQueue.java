@@ -413,11 +413,11 @@ public class RequestQueue {
         }
 
         for (QListenerFactory qListenerFactory : qListenerFactories) {
-            RequestListener.QResponseListener qResponseListener = qListenerFactory
+            RequestListener.ResponseListener qResponseListener = qListenerFactory
                     .getResponseListener(request);
-            RequestListener.QErrorListener qErrorListener = qListenerFactory.getErrorListener
+            RequestListener.ErrorListener qErrorListener = qListenerFactory.getErrorListener
                     (request);
-            RequestListener.QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener
+            RequestListener.MarkerListener qMarkerListener = qListenerFactory.getMarkerListener
                     (request);
 
             if (qResponseListener != null) {

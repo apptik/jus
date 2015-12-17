@@ -53,11 +53,11 @@ public interface RequestListener {
     }
 
     interface QListenerFactory {
-        QResponseListener getResponseListener(Request<?> request);
+        ResponseListener getResponseListener(Request<?> request);
 
-        QErrorListener getErrorListener(Request<?> request);
+        ErrorListener getErrorListener(Request<?> request);
 
-        QMarkerListener getMarkerListener(Request<?> request);
+        MarkerListener getMarkerListener(Request<?> request);
     }
 
     abstract class QListener<T> {
@@ -89,17 +89,17 @@ public interface RequestListener {
 
     class SimpleQListenerFactory implements QListenerFactory {
         @Override
-        public QResponseListener getResponseListener(Request<?> request) {
+        public ResponseListener getResponseListener(Request<?> request) {
             return null;
         }
 
         @Override
-        public QErrorListener getErrorListener(Request<?> request) {
+        public ErrorListener getErrorListener(Request<?> request) {
             return null;
         }
 
         @Override
-        public QMarkerListener getMarkerListener(Request<?> request) {
+        public MarkerListener getMarkerListener(Request<?> request) {
             return null;
         }
     }
@@ -111,14 +111,14 @@ public interface RequestListener {
             this.filter = filter;
         }
 
-        protected abstract <T> QResponseListener<T> getFilteredResponseListener(Request<T> request);
+        protected abstract <T> ResponseListener<T> getFilteredResponseListener(Request<T> request);
 
-        protected abstract QErrorListener getFilteredErrorListener(Request<?> request);
+        protected abstract ErrorListener getFilteredErrorListener(Request<?> request);
 
-        protected abstract QMarkerListener getFilteredMarkerListener(Request<?> request);
+        protected abstract MarkerListener getFilteredMarkerListener(Request<?> request);
 
         @Override
-        public final QResponseListener getResponseListener(Request<?> request) {
+        public final ResponseListener getResponseListener(Request<?> request) {
             if (filter == null || filter.apply(request)) {
                 return getFilteredResponseListener(request);
             }
@@ -126,7 +126,7 @@ public interface RequestListener {
         }
 
         @Override
-        public final QErrorListener getErrorListener(Request<?> request) {
+        public final ErrorListener getErrorListener(Request<?> request) {
             if (filter == null || filter.apply(request)) {
                 return getFilteredErrorListener(request);
             }
@@ -134,7 +134,7 @@ public interface RequestListener {
         }
 
         @Override
-        public final QMarkerListener getMarkerListener(Request<?> request) {
+        public final MarkerListener getMarkerListener(Request<?> request) {
             if (filter == null || filter.apply(request)) {
                 return getFilteredMarkerListener(request);
             }
@@ -158,17 +158,17 @@ public interface RequestListener {
         }
 
         @Override
-        protected <T> QResponseListener<T> getFilteredResponseListener(Request<T> request) {
+        protected <T> ResponseListener<T> getFilteredResponseListener(Request<T> request) {
             return null;
         }
 
         @Override
-        protected QErrorListener getFilteredErrorListener(Request<?> request) {
+        protected ErrorListener getFilteredErrorListener(Request<?> request) {
             return null;
         }
 
         @Override
-        protected QMarkerListener getFilteredMarkerListener(Request<?> request) {
+        protected MarkerListener getFilteredMarkerListener(Request<?> request) {
             return null;
         }
     }

@@ -31,4 +31,5 @@ public interface Network {
      * @throws JusError on errors
      */
     NetworkResponse performRequest(Request<?> request) throws JusError;
+
 }
