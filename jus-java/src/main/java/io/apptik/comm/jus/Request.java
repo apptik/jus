@@ -206,6 +206,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     //used only until added to the queue to identify Response Converter
     private Type responseType = null;
 
+    private ConnectivityManager connectivityManager;
+    private NoConnectionPolicy noConnectionPolicy;
+
 
     public Request(String method, String url) {
         this(method, HttpUrl.parse(url));
@@ -385,6 +388,24 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     //<-- Listeners
+
+    public NoConnectionPolicy getNoConnectionPolicy() {
+        return noConnectionPolicy;
+    }
+
+    public <R extends Request<T>> R setNoConnectionPolicy(NoConnectionPolicy noConnectionPolicy) {
+        this.noConnectionPolicy = noConnectionPolicy;
+        return (R) this;
+    }
+
+    public ConnectivityManager getConnectivityManager() {
+        return connectivityManager;
+    }
+
+    public <R extends Request<T>> R setConnectivityManager(ConnectivityManager connectivityManager) {
+        this.connectivityManager = connectivityManager;
+        return (R) this;
+    }
 
     public boolean isLogSlowRequests() {
         return logSlowRequests;
