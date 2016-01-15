@@ -217,7 +217,8 @@ public class HttpNetwork implements Network {
                             .HTTP_CLIENT_TIMEOUT) {
                         attemptRetryOnException("http-client", request, new RequestError
                                 (networkResponse, "HTTP_CLIENT_TIMEOUT"));
-                    } else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
+                    }
+                    else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
                             500) {
                         //some request query error that does not make sense to retry, assuming
                         // the service we use is deterministic
