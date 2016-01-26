@@ -280,7 +280,8 @@ public class ImageLoader {
                 new ImageContainer(null, requestUrl, cacheKey, imageListener);
 
         // Update the caller to let them know that they should use the default bitmap.
-        imageListener.onResponse(imageContainer, true);
+        //todo seems not needed
+        //imageListener.onResponse(imageContainer, true);
 
         // Check to see if a request is already in-flight.
         BatchedImageRequest request = mInFlightRequests.get(cacheKey);

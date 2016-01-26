@@ -18,6 +18,7 @@ package io.apptik.comm.jus.ui;
 import android.content.Context;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
@@ -86,6 +87,15 @@ public class NetworkImageView extends ImageView {
         loadImageIfNecessary(false);
     }
 
+    public void resetImage() {
+        mUrl = null;
+        if (mImageContainer != null) {
+            mImageContainer.cancelRequest();
+            mImageContainer = null;
+        }
+        setDefaultImageOrNull();
+    }
+
     /**
      * Sets the default image resource ID to be used for this view until the attempt to load it
      * completes.
@@ -106,7 +116,7 @@ public class NetworkImageView extends ImageView {
      * Loads the image for the view if it isn't already loaded.
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
-    void loadImageIfNecessary(final boolean isInLayoutPass) {
+    synchronized void loadImageIfNecessary(final boolean isInLayoutPass) {
         int width = getWidth();
         int height = getHeight();
 
@@ -165,6 +175,8 @@ public class NetworkImageView extends ImageView {
                     public void onResponse(final ImageContainer response, boolean isImmediate) {
                         //verify if we expect the same url
                         if (NetworkImageView.this.mUrl != response.getRequestUrl()) {
+                            Log.w("NetworkImageView", "received: " + response.getRequestUrl()
+                            + ", expected: " + NetworkImageView.this.mUrl);
                             return;
                         }
 
@@ -185,6 +197,8 @@ public class NetworkImageView extends ImageView {
                         if (response.getBitmap() != null) {
                             setImageBitmap(response.getBitmap());
                         } else if (mDefaultImageId != 0) {
+                            Log.w("NetworkImageView", "received null for: " + response
+                                    .getRequestUrl());
                             setImageResource(mDefaultImageId);
                         }
                     }
@@ -194,7 +208,7 @@ public class NetworkImageView extends ImageView {
         mImageContainer = newContainer;
     }
 
-    public void setDefaultImageOrNull() {
+    protected void setDefaultImageOrNull() {
         if(mDefaultImageId != 0) {
             setImageResource(mDefaultImageId);
         }
