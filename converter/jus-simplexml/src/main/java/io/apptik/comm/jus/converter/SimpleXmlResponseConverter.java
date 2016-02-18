@@ -26,33 +26,38 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 
 public final class SimpleXmlResponseConverter<T> implements Converter<NetworkResponse, T> {
-  private final Class<T> cls;
-  private final Serializer serializer;
-  private final boolean strict;
+    private final Class<T> cls;
+    private final Serializer serializer;
+    private final boolean strict;
 
-  public SimpleXmlResponseConverter(Class<T> cls, Serializer serializer, boolean strict) {
-    this.cls = cls;
-    this.serializer = serializer;
-    this.strict = strict;
-  }
-
-  @Override public T convert(NetworkResponse value) throws IOException {
-    InputStream is = value.getByteStream();
-    try {
-      T read = serializer.read(cls, is, strict);
-      if (read == null) {
-        throw new IllegalStateException("Could not deserialize body as " + cls);
-      }
-      return read;
-    } catch (RuntimeException | IOException e) {
-      throw e;
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    } finally {
-      try {
-        is.close();
-      } catch (IOException ignored) {
-      }
+    public SimpleXmlResponseConverter(Class<T> cls, Serializer serializer, boolean strict) {
+        this.cls = cls;
+        this.serializer = serializer;
+        this.strict = strict;
     }
-  }
+
+    @Override
+    public T convert(NetworkResponse value) throws IOException {
+        if (value.statusCode == 204 || value.statusCode == 205) {
+            return null;
+        } else {
+            InputStream is = value.getByteStream();
+            try {
+                T read = serializer.read(cls, is, strict);
+                if (read == null) {
+                    throw new IllegalStateException("Could not deserialize body as " + cls);
+                }
+                return read;
+            } catch (RuntimeException | IOException e) {
+                throw e;
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException ignored) {
+                }
+            }
+        }
+    }
 }

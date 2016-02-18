@@ -34,11 +34,15 @@ public final class MoshiResponseConverter<T> implements Converter<NetworkRespons
 
     @Override
     public T convert(NetworkResponse value) throws IOException {
-        BufferedSource source = value.getBufferedSource();
-        try {
-            return adapter.fromJson(source);
-        } finally {
-            Utils.closeQuietly(source);
+        if (value.statusCode == 204 || value.statusCode == 205) {
+            return null;
+        } else {
+            BufferedSource source = value.getBufferedSource();
+            try {
+                return adapter.fromJson(source);
+            } finally {
+                Utils.closeQuietly(source);
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ public final class GsonResponseConverter<T> implements Converter<NetworkResponse
 
     @Override
     public T convert(NetworkResponse value) throws IOException {
-        if(value.statusCode == 204) {
+        if (value.statusCode == 204 || value.statusCode == 205) {
             return null;
         } else {
             Reader reader = value.getCharStream();

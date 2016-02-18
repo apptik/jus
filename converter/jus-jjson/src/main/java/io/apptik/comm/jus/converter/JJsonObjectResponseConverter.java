@@ -28,15 +28,20 @@ import io.apptik.json.JsonObject;
 
 public final class JJsonObjectResponseConverter implements Converter<NetworkResponse, JsonObject> {
 
-  public JJsonObjectResponseConverter() {
-  }
-
-  @Override public JsonObject convert(NetworkResponse value) throws IOException {
-    Reader reader = value.getCharStream();
-    try {
-      return JsonElement.readFrom(reader).asJsonObject();
-    } finally {
-      Utils.closeQuietly(reader);
+    public JJsonObjectResponseConverter() {
     }
-  }
+
+    @Override
+    public JsonObject convert(NetworkResponse value) throws IOException {
+        if (value.statusCode == 204 || value.statusCode == 205) {
+            return null;
+        } else {
+            Reader reader = value.getCharStream();
+            try {
+                return JsonElement.readFrom(reader).asJsonObject();
+            } finally {
+                Utils.closeQuietly(reader);
+            }
+        }
+    }
 }

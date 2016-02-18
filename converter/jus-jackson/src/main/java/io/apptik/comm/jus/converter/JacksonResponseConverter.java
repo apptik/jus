@@ -26,18 +26,23 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.toolbox.Utils;
 
 public final class JacksonResponseConverter<T> implements Converter<NetworkResponse, T> {
-  private final ObjectReader adapter;
+    private final ObjectReader adapter;
 
-  public JacksonResponseConverter(ObjectReader adapter) {
-    this.adapter = adapter;
-  }
-
-  @Override public T convert(NetworkResponse value) throws IOException {
-    Reader reader = value.getCharStream();
-    try {
-      return adapter.readValue(reader);
-    } finally {
-      Utils.closeQuietly(reader);
+    public JacksonResponseConverter(ObjectReader adapter) {
+        this.adapter = adapter;
     }
-  }
+
+    @Override
+    public T convert(NetworkResponse value) throws IOException {
+        if (value.statusCode == 204 || value.statusCode == 205) {
+            return null;
+        } else {
+            Reader reader = value.getCharStream();
+            try {
+                return adapter.readValue(reader);
+            } finally {
+                Utils.closeQuietly(reader);
+            }
+        }
+    }
 }

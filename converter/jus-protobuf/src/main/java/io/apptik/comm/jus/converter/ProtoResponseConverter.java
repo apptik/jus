@@ -37,13 +37,18 @@ public final class ProtoResponseConverter<T extends MessageLite>
 
     @Override
     public T convert(NetworkResponse value) throws IOException {
-        InputStream is = value.getByteStream();
-        try {
-            return parser.parseFrom(is);
-        } catch (InvalidProtocolBufferException e) {
-            throw new RuntimeException(e); // Despite extending IOException, this is data mismatch.
-        } finally {
-            Utils.closeQuietly(is);
+        if(value.statusCode == 204 || value.statusCode == 205) {
+            return null;
+        } else {
+            InputStream is = value.getByteStream();
+            try {
+                return parser.parseFrom(is);
+            } catch (InvalidProtocolBufferException e) {
+                throw new RuntimeException(e); // Despite extending IOException, this is data mismatch.
+
+            } finally {
+                Utils.closeQuietly(is);
+            }
         }
     }
 }
