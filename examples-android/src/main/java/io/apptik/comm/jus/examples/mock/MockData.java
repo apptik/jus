@@ -39,7 +39,8 @@ public class MockData {
                     String color = Integer.toHexString(cc);
             String color2 = Integer.toHexString((0xFFFFFF - cc) );
            // String color2 = Integer.toHexString(cc2);
-            res.add(new JsonObject().put("pic", "http://dummyimage.com/" +picSize+ "/"+ color +"/" + color2));
+            res.add(new JsonObject().put("pic", "http://dummyimage.com/" +picSize+ "/"+ color
+                    +"/" + color2 + "&text=" + i).put("txt1", ""+i));
         }
 
         return res;

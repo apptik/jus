@@ -5,21 +5,17 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.LruCache;
 
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 
 /**
  * True pooled Bitmap Cache. It works as follows.
  *
  * BitmapLruCache gets full --> overflowed bitmaps goes to the BitmapLruPool
- * BitmapLruPool gets full --> overflowed bitmaps goes to the SoftRef reusable Bitmap Set
+ * BitmapLruPool gets full --> evicted bitmaps gets recycled
  *
  */
 public class PooledBitmapLruCache extends DefaultBitmapLruCache {
 
-    LruCache<String, Bitmap> bPool;
+    BitmapLruPool bPool;
 
     public PooledBitmapLruCache() {
         this(getDefaultLruCacheSize(), (int) (getDefaultLruCacheSize()*1.25));
@@ -27,29 +23,17 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
 
     public PooledBitmapLruCache(int maxSizeCache, int maxSizePool) {
         super(maxSizeCache);
-        bPool = new LruCache<String, Bitmap>(maxSizePool) {
-            @Override
-            protected int sizeOf(String key, Bitmap value) {
-                return PooledBitmapLruCache.super.sizeOf(key, value);
-            }
-
-            @Override
-            protected void entryRemoved(boolean evicted, String key, Bitmap oldValue, Bitmap
-                    newValue) {
-                //passes to the soft ref set
-                PooledBitmapLruCache.super.addToPool(oldValue);
-            }
-        };
+        bPool = new BitmapLruPool(maxSizePool);
     }
 
-    public LruCache<String, Bitmap> pool() {
+    public BitmapLruPool pool() {
         return bPool;
     }
 
     public void preFill(int w, int h) {
         int fill = size();
         Bitmap bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
-        int size = getBitmapSize(bmp) / 1024;
+        int size = BitmapLruPool.getBitmapSize(bmp);
         addToPool(bmp);
         fill+=size;
         while (fill<maxSize()) {
@@ -60,32 +44,7 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
 
     @Override
     public synchronized Bitmap getReusableBitmap(BitmapFactory.Options options) {
-        Set<Map.Entry<String, Bitmap>> bitmaps = bPool.snapshot().entrySet();
-        Bitmap bitmap = null;
-
-        if (bitmaps != null && !bitmaps.isEmpty()) {
-            for (Map.Entry<String, Bitmap> bmpEntry : bitmaps) {
-                Bitmap item = bmpEntry.getValue();
-                if (null != item && canBePooled(item)) {
-                    // Check to see it the item can be used for inBitmap
-                    if (canUseForInBitmap(item, options)) {
-                        bitmap = item;
-                        // Remove from reusable set so it can't be used again
-                        bPool.remove(bmpEntry.getKey());
-                        break;
-                    }
-                } else {
-                    // Remove from the set if the reference has been cleared.
-                    bPool.remove(bmpEntry.getKey());
-                }
-            }
-        }
-
-        if (bitmap != null) {
-            return bitmap;
-        } else {
-            return super.getReusableBitmap(options);
-        }
+        return bPool.getBitmap(options);
     }
 
     /**
@@ -95,8 +54,6 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
      */
     @Override
     public synchronized void addToPool(Bitmap bitmap) {
-        if (canBePooled(bitmap)) {
-            bPool.put(UUID.randomUUID().toString(), bitmap);
-        }
+       bPool.returnBitmap(bitmap);
     }
 }
