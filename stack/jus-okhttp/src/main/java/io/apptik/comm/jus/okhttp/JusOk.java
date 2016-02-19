@@ -32,7 +32,7 @@ public class JusOk {
     }
 
     public static Headers jusHeaders(com.squareup.okhttp.Headers okHeaders) {
-        return new Headers.Builder().addMMap(okHeaders.toMultimap()).build();
+        return Headers.ofMMap(okHeaders.toMultimap());
     }
 
     public static com.squareup.okhttp.Headers okHeaders(Headers jusHeaders, Headers

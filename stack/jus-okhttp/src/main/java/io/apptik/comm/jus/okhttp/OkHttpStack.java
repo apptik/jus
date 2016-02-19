@@ -55,6 +55,7 @@ public class OkHttpStack extends AbstractHttpStack {
     public NetworkResponse performRequest(Request<?> request, Headers
             additionalHeaders, ByteArrayPool byteArrayPool) throws IOException {
 
+        //clone to be able to set timeouts per call
         OkHttpClient client = this.client.clone();
         client.setConnectTimeout(request.getRetryPolicy().getCurrentConnectTimeout(), TimeUnit
                 .MILLISECONDS);

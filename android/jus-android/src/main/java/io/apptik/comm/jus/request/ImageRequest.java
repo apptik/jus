@@ -210,9 +210,47 @@ public class ImageRequest extends Request<Bitmap> {
             decodeOptions.inSampleSize =
                     findBestSampleSize(actualWidth, actualHeight, desiredWidth, desiredHeight);
 
+
+            Bitmap tempBitmap = null;
             addInBitmapOptions(decodeOptions);
-            Bitmap tempBitmap =
-                    BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            try {
+                tempBitmap =
+                        BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            } catch(IllegalArgumentException ex) {}
+
+            //try to catch java.lang.IllegalArgumentException: Problem decoding into existing bitmap
+            if(tempBitmap==null) {
+                if(decodeOptions.inBitmap != null) {
+                    if (bitmapPool != null) {
+                        bitmapPool.addToPool(decodeOptions.inBitmap);
+                    } else {
+                        decodeOptions.inBitmap.recycle();
+                    }
+                    decodeOptions.inBitmap = null;
+                }
+                //try again
+                addInBitmapOptions(decodeOptions);
+                try {
+                    tempBitmap =
+                            BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+                } catch(IllegalArgumentException ex) {}
+            }
+
+            //giveup
+            if(tempBitmap==null) {
+                if(decodeOptions.inBitmap != null) {
+                    if (bitmapPool != null) {
+                        bitmapPool.addToPool(decodeOptions.inBitmap);
+                    } else {
+                        decodeOptions.inBitmap.recycle();
+                    }
+                    decodeOptions.inBitmap = null;
+                }
+                tempBitmap =
+                        BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            }
+
+
 
             //TODO shall we optimise this with BitmapDrawable?
             // If necessary, scale down to the maximal acceptable size.

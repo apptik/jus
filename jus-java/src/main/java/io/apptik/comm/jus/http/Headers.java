@@ -245,6 +245,36 @@ public final class Headers {
         return new Headers(namesAndValues);
     }
 
+    public static Headers ofMMap(Map<String, List<String>> headers) {
+        if (headers == null) {
+            throw new IllegalArgumentException("Expected map with header names and values");
+        }
+
+        // Make a defensive copy and clean it up.
+        String[] namesAndValues = new String[headers.size() * 2];
+        int i = 0;
+        for (Map.Entry<String, List<String>> header : headers.entrySet()) {
+            if (header.getKey() == null || header.getValue() == null) {
+                throw new IllegalArgumentException("Headers cannot be null");
+            }
+            String name = header.getKey().trim();
+            StringBuilder valueBuilder = new StringBuilder();
+            for(String sVal:header.getValue()) {
+                valueBuilder.append(sVal.trim() + ",");
+            }
+            valueBuilder.deleteCharAt(valueBuilder.length()-1);
+            String value = valueBuilder.toString();
+            if (name.length() == 0 || name.indexOf('\0') != -1 || value.indexOf('\0') != -1) {
+                throw new IllegalArgumentException("Unexpected header: " + name + ": " + value);
+            }
+            namesAndValues[i] = name;
+            namesAndValues[i + 1] = value;
+            i += 2;
+        }
+
+        return new Headers(namesAndValues);
+    }
+
     public static final class Builder {
         private final List<String> namesAndValues = new ArrayList<>(50);
 
@@ -377,6 +407,8 @@ public final class Headers {
             return this;
         }
 
+        //https://www.w3.org/Protocols/rfc2616/rfc2616-sec2.html#sec2.2
+        //https://www.w3.org/Protocols/rfc2616/rfc2616-sec4.html#sec4.2
         private void checkNameAndValue(String name, String value) {
             if (name == null) throw new IllegalArgumentException("name == null");
             if (name.isEmpty()) throw new IllegalArgumentException("name is empty");
@@ -384,7 +416,7 @@ public final class Headers {
                 char c = name.charAt(i);
                 if (c <= '\u001f' || c >= '\u007f') {
                     throw new IllegalArgumentException(String.format(
-                            "Unexpected char %#04x at %d in header name: %s", (int) c, i, name));
+                            "Unexpected char %#04x at %d in %s value: %s", (int) c, i, name, value));
                 }
             }
             if (value == null) throw new IllegalArgumentException("value == null");
@@ -392,7 +424,7 @@ public final class Headers {
                 char c = value.charAt(i);
                 if (c <= '\u001f' || c >= '\u007f') {
                     throw new IllegalArgumentException(String.format(
-                            "Unexpected char %#04x at %d in header value: %s", (int) c, i, value));
+                            "Unexpected char %#04x at %d in %s value: %s", (int) c, i, name, value));
                 }
             }
         }

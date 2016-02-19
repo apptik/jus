@@ -112,10 +112,14 @@ public final class NetworkResponse {
         return "NetworkResponse{" +
                 "contentType=" + contentType +
                 ", statusCode=" + statusCode +
-                ", data=" + new String(data, Charset.forName(HTTP.UTF_8)) +
+                ", data=" + (isDataLoggable()?new String(data, Charset.forName(HTTP.UTF_8)):"N/A") +
                 ", headers=" + headers +
                 ", networkTimeNs=" + networkTimeNs +
                 '}';
+    }
+
+    private boolean isDataLoggable() {
+        return data != null;
     }
 
     public static NetworkResponse create(MediaType mediaType, String data) {

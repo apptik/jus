@@ -140,6 +140,8 @@ public class RequestQueue {
     private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
     private RetryPolicy.Factory retryPolicyFactory = null;
+    private ConnectivityManager.Factory connectivityManagerFactory = null;
+    private NoConnectionPolicy.Factory noConnectionPolicyFactory = null;
 
     /**
      * Creates the worker pool. Processing will not begin until {@link #start()} is called.
@@ -413,11 +415,11 @@ public class RequestQueue {
         }
 
         for (QListenerFactory qListenerFactory : qListenerFactories) {
-            RequestListener.QResponseListener qResponseListener = qListenerFactory
+            RequestListener.ResponseListener qResponseListener = qListenerFactory
                     .getResponseListener(request);
-            RequestListener.QErrorListener qErrorListener = qListenerFactory.getErrorListener
+            RequestListener.ErrorListener qErrorListener = qListenerFactory.getErrorListener
                     (request);
-            RequestListener.QMarkerListener qMarkerListener = qListenerFactory.getMarkerListener
+            RequestListener.MarkerListener qMarkerListener = qListenerFactory.getMarkerListener
                     (request);
 
             if (qResponseListener != null) {
@@ -445,6 +447,12 @@ public class RequestQueue {
 
         if (retryPolicyFactory != null) {
             request.setRetryPolicy(retryPolicyFactory.get(request));
+        }
+        if (connectivityManagerFactory != null) {
+            request.setConnectivityManager(connectivityManagerFactory.get(request));
+        }
+        if (noConnectionPolicyFactory != null) {
+            request.setNoConnectionPolicy(noConnectionPolicyFactory.get(request));
         }
 
         synchronized (currentRequests) {
@@ -538,6 +546,26 @@ public class RequestQueue {
 
     public RequestQueue setRetryPolicyFactory(RetryPolicy.Factory retryPolicyFactory) {
         this.retryPolicyFactory = retryPolicyFactory;
+        return this;
+    }
+
+    public ConnectivityManager.Factory getConnectivityManagerFactory() {
+        return connectivityManagerFactory;
+    }
+
+    public RequestQueue setConnectivityManagerFactory(ConnectivityManager.Factory
+                                                              connectivityManagerFactory) {
+        this.connectivityManagerFactory = connectivityManagerFactory;
+        return this;
+    }
+
+    public NoConnectionPolicy.Factory getNoConnectionPolicyFactory() {
+        return noConnectionPolicyFactory;
+    }
+
+    public RequestQueue setNoConnectionPolicyFactory(NoConnectionPolicy.Factory
+                                                             noConnectionPolicyFactory) {
+        this.noConnectionPolicyFactory = noConnectionPolicyFactory;
         return this;
     }
 

@@ -75,7 +75,18 @@ public class HttpNetwork implements Network {
         long requestStart = System.nanoTime();
         while (true) {
             if (request.isCanceled()) {
+                //it will be handled/ignored later
                 return null;
+            }
+            if (request.getNoConnectionPolicy() != null
+                    && request.getConnectivityManager() != null) {
+                if (request.getConnectivityManager().getActiveNetwork() == null
+                        || !request.getConnectivityManager().getActiveNetwork().isConnected()) {
+                    JusError error = request.getNoConnectionPolicy().throwOnNoConnection(request);
+                    if (error != null) {
+                        throw error;
+                    }
+                }
             }
             NetworkResponse httpResponse = null;
             try {
@@ -85,7 +96,7 @@ public class HttpNetwork implements Network {
                 addServerAuthHeaders(request.getServerAuthenticator(), headers);
                 addProxyAuthHeaders(request.getProxyAuthenticator(), headers);
 
-                request.addMarker(Request.EVENT_NETWORK_STACK_SEND, headers);
+                request.addMarker(Request.EVENT_NETWORK_STACK_SEND, request.getNetworkRequest());
                 httpResponse = httpStack.performRequest(request, headers.build(), pool);
                 request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
                 //currently all requests that came to here normally needs to be attached to the
@@ -206,7 +217,8 @@ public class HttpNetwork implements Network {
                             .HTTP_CLIENT_TIMEOUT) {
                         attemptRetryOnException("http-client", request, new RequestError
                                 (networkResponse, "HTTP_CLIENT_TIMEOUT"));
-                    } else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
+                    }
+                    else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
                             500) {
                         //some request query error that does not make sense to retry, assuming
                         // the service we use is deterministic

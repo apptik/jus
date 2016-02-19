@@ -191,6 +191,9 @@ public class BitmapLruPool {
                     && candidate.getHeight() == targetOptions.outHeight
                     && targetOptions.inSampleSize == 1;
         }
+        if(targetOptions.inSampleSize < 1) {
+            targetOptions.inSampleSize = 1;
+        }
 
         // From Android 4.4 (KitKat) onward we can re-use if the byte size of the new bitmap
         // is smaller than the reusable bitmap candidate allocation byte count.
