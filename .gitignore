@@ -24,3 +24,15 @@ local.properties
 
 *.war
 *.ear
+
+# gulp.js
+
+
+# gh-pages
+_site
+.jekyll-metadata
+.gulp/
+node_modules/
+npm-debug.log
+assets
+Gemfile.lock
