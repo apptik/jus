@@ -23,7 +23,7 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile 'io.reactivex:rxjava:1.0.16'
+    compile rootProject.ext.rxjava
 }
 
 task mappings << {

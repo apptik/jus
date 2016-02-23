@@ -24,12 +24,13 @@ compileJava {
 
 
 dependencies {
-    compile 'com.squareup.okio:okio:1.6.0'
+    compile rootProject.ext.okio
+
     testCompile 'junit:junit:[4,)'
-    testCompile 'org.assertj:assertj-core:2.2.0'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.7.2'
-    testCompile 'com.squareup.okhttp:okhttp:2.7.2'
+    testCompile rootProject.ext.assertjCore2
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.mockwebserver
+    testCompile rootProject.ext.okhttp
 }
 
 javadoc {

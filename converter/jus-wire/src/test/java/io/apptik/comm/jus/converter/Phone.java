@@ -23,11 +23,10 @@ import com.squareup.wire.Message;
 import com.squareup.wire.ProtoAdapter;
 import com.squareup.wire.ProtoReader;
 import com.squareup.wire.ProtoWriter;
+import com.squareup.wire.internal.Internal;
+
 import java.io.IOException;
-import java.lang.Object;
-import java.lang.Override;
-import java.lang.String;
-import java.lang.StringBuilder;
+
 import okio.ByteString;
 
 public final class Phone extends Message<Phone, Phone.Builder> {
@@ -81,7 +80,7 @@ public final class Phone extends Message<Phone, Phone.Builder> {
   }
 
   public Phone(String number, ByteString unknownFields) {
-    super(unknownFields);
+    super(ADAPTER, unknownFields);
     this.number = number;
   }
 
@@ -98,8 +97,8 @@ public final class Phone extends Message<Phone, Phone.Builder> {
     if (other == this) return true;
     if (!(other instanceof Phone)) return false;
     Phone o = (Phone) other;
-    return equals(unknownFields(), o.unknownFields())
-            && equals(number, o.number);
+    return Internal.equals(unknownFields(), o.unknownFields())
+            && Internal.equals(number, o.number);
   }
 
   @Override

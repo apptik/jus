@@ -30,11 +30,11 @@ test {
 
 dependencies {
     compile project(':jus-java')
-    compile 'com.squareup.okhttp:okhttp:2.7.2'
+    compile rootProject.ext.okhttp
 
-    testCompile 'org.assertj:assertj-core:2.2.0'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.7.2'
+    testCompile rootProject.ext.assertjCore2
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.mockwebserver
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

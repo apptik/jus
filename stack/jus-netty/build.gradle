@@ -36,9 +36,9 @@ dependencies {
     compile 'io.netty:netty-codec-http2:5.0.0.Alpha3-SNAPSHOT'
     compile 'io.netty:netty-common:5.0.0.Alpha3-SNAPSHOT'
 
-    testCompile 'org.assertj:assertj-core:2.2.0'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.6.0'
+    testCompile rootProject.ext.assertjCore2
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.mockwebserver
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

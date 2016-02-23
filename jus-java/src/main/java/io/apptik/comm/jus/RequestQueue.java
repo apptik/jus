@@ -246,35 +246,25 @@ public class RequestQueue {
      * Stops the queue when all requests are finished
      */
     public void stopWhenDone() {
-        new Thread(new Runnable() {
+        Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
                 while (getCurrentRequests() > 0) {
-//                   JusLog.log.error("Waiting to finish. Requests left: " +
-//                            getCurrentRequests() + " / " + getWaitingRequests());
                     try {
                         Thread.sleep(33);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
                 }
-//                JusLog.log.error("READY to finish. Requests left: " +
-//                        getCurrentRequests() + " / " + getWaitingRequests());
-                synchronized (currentRequests) {
-                    currentRequests.notify();
-                }
-                // stop();
             }
-        }).start();
+        });
+        t.start();
 
-        synchronized (currentRequests) {
-            try {
-                currentRequests.wait();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+        try {
+            t.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
-
         stop();
     }
 

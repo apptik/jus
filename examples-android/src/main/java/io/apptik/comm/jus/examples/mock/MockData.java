@@ -18,13 +18,13 @@ package io.apptik.comm.jus.examples.mock;
 
 import android.app.Activity;
 
-import org.djodjo.json.JsonArray;
-import org.djodjo.json.JsonElement;
-import org.djodjo.json.JsonObject;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Random;
+
+import io.apptik.json.JsonArray;
+import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 
 
 public class MockData {

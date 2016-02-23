@@ -23,13 +23,13 @@ compileJava {
 
 dependencies {
     compile project(':jus-java')
-    compile 'org.simpleframework:simple-xml:2.7.1'
+    compile rootProject.ext.simpleXml
 
     testCompile project (':retro-jus')
     testCompile 'junit:junit:[4,)'
-    testCompile 'org.assertj:assertj-core:2.2.0'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.6.0'
+    testCompile rootProject.ext.assertjCore2
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.mockwebserver
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'

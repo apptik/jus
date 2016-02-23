@@ -30,7 +30,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.TextView;
 
-import org.djodjo.json.JsonArray;
+import io.apptik.json.JsonArray;
 
 import io.apptik.comm.jus.examples.ListScrollListener;
 import io.apptik.comm.jus.examples.R;

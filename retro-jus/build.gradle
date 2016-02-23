@@ -25,9 +25,9 @@ dependencies {
     compile project(':jus-java')
 
     testCompile 'junit:junit:[4,)'
-    testCompile 'org.assertj:assertj-core:2.2.0'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile 'com.squareup.okhttp:mockwebserver:2.6.0'
+    testCompile rootProject.ext.assertjCore2
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.mockwebserver
 }
 
 javadoc {

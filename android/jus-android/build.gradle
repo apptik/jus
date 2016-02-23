@@ -45,9 +45,9 @@ android {
 dependencies {
     compile project(':jus-java')
     testCompile 'junit:junit:[4,)'
-    testCompile 'org.assertj:assertj-core:1.7.1'
-    testCompile 'org.mockito:mockito-core:2.0.31-beta'
-    testCompile "org.robolectric:robolectric:3.0"
+    testCompile rootProject.ext.assertjCore1
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.robolectric
 }
 
 apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push-android.gradle'
