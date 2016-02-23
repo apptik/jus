@@ -24,10 +24,17 @@ import io.apptik.comm.jus.rx.event.MarkerEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
 import rx.Observable;
 
-public final class RxRequest{
+/**
+ * RxJava Request wrapper
+ */
+public final class RxRequest {
 
-    private RxRequest() {}
+    private RxRequest() {
+    }
 
+    /**
+     * Returns merged {@link Observable} of results, errors and markers all together.
+     */
     public static <T> Observable<JusEvent> allEventsObservable(Request<T> request) {
         return Observable.merge(
                 resultObservable(request),
@@ -35,14 +42,23 @@ public final class RxRequest{
                 markerObservable(request));
     }
 
+    /**
+     * Returns {@link Observable} of the successful results coming as {@link ResultEvent}
+     */
     public static <T> Observable<ResultEvent<T>> resultObservable(Request<T> request) {
         return Observable.create(new RequestResponseOnSubscribe(request));
     }
 
+    /**
+     * Returns {@link Observable} of error events coming as {@link ErrorEvent}
+     */
     public static Observable<ErrorEvent> errorObservable(Request request) {
         return Observable.create(new RequestErrorOnSubscribe(request));
     }
 
+    /**
+     * Returns {@link Observable} of the markers coming as {@link MarkerEvent}
+     */
     public static Observable<MarkerEvent> markerObservable(Request request) {
         return Observable.create(new RequestMarkerOnSubscribe(request));
     }

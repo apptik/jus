@@ -20,7 +20,8 @@ package io.apptik.comm.jus.rx.event;
 import io.apptik.comm.jus.Request;
 
 /**
- * General event signal that may contain a request, response and message desctribing the event
+ * General event that contains
+ * {@link Request} and 2XX (or 304 in case of cache) {@link io.apptik.comm.jus.Response}
  */
 public final class ResultEvent<T> extends JusEvent<T> {
 
@@ -37,6 +38,6 @@ public final class ResultEvent<T> extends JusEvent<T> {
         return "ResultEvent{" +
                 "request=" + request +
                 ", response=" + response +
-                "} " ;
+                "} ";
     }
 }

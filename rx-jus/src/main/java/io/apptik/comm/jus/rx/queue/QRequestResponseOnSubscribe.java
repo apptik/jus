@@ -41,9 +41,9 @@ public class QRequestResponseOnSubscribe implements Observable.OnSubscribe<Resul
         final RequestListener.QListenerFactory qListenerFactory =
                 new RequestListener.SimpleFilteredQListenerFactory(filter) {
                     @Override
-                    protected <T> RequestListener.QResponseListener<T> getFilteredResponseListener
-                            (Request<T> request) {
-                        return new RequestListener.QResponseListener<T>(request) {
+                    protected <T> RequestListener.ResponseListener<T>
+                    getFilteredResponseListener(final Request<T> request) {
+                        return new RequestListener.ResponseListener<T>() {
                             @Override
                             public void onResponse(T response) {
                                 if (!subscriber.isUnsubscribed()) {

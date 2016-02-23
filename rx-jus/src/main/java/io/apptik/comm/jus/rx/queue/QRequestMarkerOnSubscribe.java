@@ -41,8 +41,9 @@ public class QRequestMarkerOnSubscribe<T> implements Observable.OnSubscribe<Mark
         final RequestListener.QListenerFactory qListenerFactory =
                 new RequestListener.SimpleFilteredQListenerFactory(filter) {
                     @Override
-                    public RequestListener.QMarkerListener getFilteredMarkerListener(Request request) {
-                        return new RequestListener.QMarkerListener(request) {
+                    public RequestListener.MarkerListener
+                    getFilteredMarkerListener(final Request request) {
+                        return new RequestListener.MarkerListener() {
                             @Override
                             public void onMarker(Marker marker, Object... args) {
                                 if (!subscriber.isUnsubscribed()) {

@@ -42,8 +42,9 @@ public class QRequestErrorOnSubscribe<T> implements Observable.OnSubscribe<Error
         final RequestListener.QListenerFactory qListenerFactory =
                 new RequestListener.SimpleFilteredQListenerFactory(filter) {
                     @Override
-                    public RequestListener.QErrorListener getFilteredErrorListener(Request request) {
-                        return new RequestListener.QErrorListener(request) {
+                    public RequestListener.ErrorListener getFilteredErrorListener(
+                            final Request request) {
+                        return new RequestListener.ErrorListener() {
                             @Override
                             public void onError(JusError error) {
                                 if (!subscriber.isUnsubscribed()) {

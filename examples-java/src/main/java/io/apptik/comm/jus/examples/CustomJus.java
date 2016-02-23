@@ -6,8 +6,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 import io.apptik.comm.jus.Jus;
-import io.apptik.comm.jus.Listener;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.examples.request.StringRequest;
 
@@ -29,8 +29,8 @@ public class CustomJus {
         queue.stopWhenDone();
     }
 
-    private static Request<String> getBeerRequest(String q, Listener.ResponseListener<String> listener,
-                                                 Listener.ErrorListener errorListener) {
+    private static Request<String> getBeerRequest(String q, RequestListener.ResponseListener<String> listener,
+                                                  RequestListener.ErrorListener errorListener) {
         Request<String> res;
 
         final String userString = "c6266a50b6603fe87d681ef34fe11e3e";

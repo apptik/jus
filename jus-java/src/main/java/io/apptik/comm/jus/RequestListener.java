@@ -18,7 +18,6 @@ package io.apptik.comm.jus;
 
 
 import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.toolbox.Utils;
 
 public interface RequestListener {
     /**
@@ -58,33 +57,6 @@ public interface RequestListener {
         ErrorListener getErrorListener(Request<?> request);
 
         MarkerListener getMarkerListener(Request<?> request);
-    }
-
-    abstract class QListener<T> {
-        protected final Request<T> request;
-
-        protected QListener(Request<T> request) {
-            Utils.checkNotNull(request, "request==null");
-            this.request = request;
-        }
-    }
-
-    abstract class QResponseListener<T> extends QListener implements ResponseListener<T> {
-        protected QResponseListener(Request<T> request) {
-            super(request);
-        }
-    }
-
-    abstract class QErrorListener extends QListener implements ErrorListener {
-        protected QErrorListener(Request<?> request) {
-            super(request);
-        }
-    }
-
-    abstract class QMarkerListener extends QListener implements MarkerListener {
-        protected QMarkerListener(Request<?> request) {
-            super(request);
-        }
     }
 
     class SimpleQListenerFactory implements QListenerFactory {

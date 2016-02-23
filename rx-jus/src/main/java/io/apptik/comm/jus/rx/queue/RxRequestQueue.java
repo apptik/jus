@@ -24,10 +24,26 @@ import io.apptik.comm.jus.rx.event.MarkerEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
 import rx.Observable;
 
+/**
+ * RxJava {@link RequestQueue} wrapper
+ * <p/>
+ * this essentially attaches respective filtered listeners to the queue and the depending on a
+ * {@link io.apptik.comm.jus.RequestQueue.RequestFilter} hooks to the events coming from a
+ * {@link io.apptik.comm.jus.Request}
+ */
 public final class RxRequestQueue {
 
-    private RxRequestQueue() {}
+    private RxRequestQueue() {
+    }
 
+    /**
+     * Returns merged {@link Observable} of results, errors and markers all together.
+     *
+     * @param queue  the {@link RequestQueue} to listen to
+     * @param filter the {@link io.apptik.comm.jus.RequestQueue.RequestFilter} which will filter
+     *               the requests to hook to. Set null for no filtering.
+     * @return {@link Observable} of results, errors and markers
+     */
     public static Observable<JusEvent> allEventsObservable(
             RequestQueue queue, RequestQueue.RequestFilter filter) {
         return Observable.merge(
@@ -36,16 +52,40 @@ public final class RxRequestQueue {
                 markerObservable(queue, filter));
     }
 
+    /**
+     * Returns {@link Observable} of the successful results coming as {@link ResultEvent}
+     *
+     * @param queue  the {@link RequestQueue} to listen to
+     * @param filter the {@link io.apptik.comm.jus.RequestQueue.RequestFilter} which will filter
+     *               the requests to hook to. Set null for no filtering.
+     * @return {@link Observable} of results
+     */
     public static Observable<ResultEvent<?>> resultObservable(
             RequestQueue queue, RequestQueue.RequestFilter filter) {
         return Observable.create(new QRequestResponseOnSubscribe(queue, filter));
     }
 
+    /**
+     * Returns {@link Observable} of error events coming as {@link ErrorEvent}
+     *
+     * @param queue  the {@link RequestQueue} to listen to
+     * @param filter the {@link io.apptik.comm.jus.RequestQueue.RequestFilter} which will filter
+     *               the requests to hook to. Set null for no filtering.
+     * @return {@link Observable} of errors
+     */
     public static Observable<ErrorEvent> errorObservable(
             RequestQueue queue, RequestQueue.RequestFilter filter) {
         return Observable.create(new QRequestErrorOnSubscribe(queue, filter));
     }
 
+    /**
+     * Returns {@link Observable} of the markers coming as {@link MarkerEvent}
+     *
+     * @param queue  the {@link RequestQueue} to listen to
+     * @param filter the {@link io.apptik.comm.jus.RequestQueue.RequestFilter} which will filter
+     *               the requests to hook to. Set null for no filtering.
+     * @return {@link Observable} of markers
+     */
     public static Observable<MarkerEvent> markerObservable(
             RequestQueue queue, RequestQueue.RequestFilter filter) {
         return Observable.create(new QRequestMarkerOnSubscribe(queue, filter));

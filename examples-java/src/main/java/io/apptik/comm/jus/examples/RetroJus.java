@@ -22,7 +22,7 @@ public class RetroJus {
 
         RetroProxy retroJus = new RetroProxy.Builder()
                 .baseUrl(BeerService.baseUrl)
-                .queue(queue)
+                .requestQueue(queue)
                 .addConverterFactory(new BasicConverterFactory())
                 .build();
 

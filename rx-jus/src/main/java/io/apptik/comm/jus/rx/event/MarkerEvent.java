@@ -23,18 +23,26 @@ import io.apptik.comm.jus.Marker;
 import io.apptik.comm.jus.Request;
 
 /**
- * General event signal that may contain a request, response and message desctribing the event
+ * General event signal that contains {@link Request}, {@link Marker} and {@link #args} wich may
+ * contain related info for the request suck as
+ * {@link io.apptik.comm.jus.Response} {@link io.apptik.comm.jus.error.JusError} or
+ * any other relevant data
  */
 public final class MarkerEvent extends JusEvent {
 
-    //actual response
+    /**
+     * actual marker
+     */
     public final Marker marker;
 
-    //additional args
+    /**
+     * additional args
+     */
     public final Object[] args;
 
     public MarkerEvent(Request request, Marker marker, Object... args) {
-        super(request);this.marker = marker;
+        super(request);
+        this.marker = marker;
         this.args = args;
     }
 

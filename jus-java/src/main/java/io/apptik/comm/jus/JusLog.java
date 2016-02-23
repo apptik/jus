@@ -32,7 +32,7 @@ public class JusLog {
     private static boolean errorLogOn = false;
 
 
-    public static class ErrorLog extends RequestListener.QErrorListener {
+    public static class ErrorLog {
         public static void on() {
             errorLogOn = true;
         }
@@ -45,18 +45,18 @@ public class JusLog {
             errorLogOn = false;
         }
 
-        public ErrorLog(Request request) {
-            super(request);
-        }
-
-        @Override
-        public void onError(JusError error) {
-            if (log == null) return;
-            log.error(buildMessage(request, "Error: %s", error));
+        public static RequestListener.ErrorListener getLogger(final Request request) {
+            return new RequestListener.ErrorListener() {
+                @Override
+                public void onError(JusError error) {
+                    if (log == null) return;
+                    log.error(buildMessage(request, "Error: %s", error));
+                }
+            };
         }
     }
 
-    public static class ResponseLog extends RequestListener.QResponseListener {
+    public static class ResponseLog {
         public static void on() {
             reponseLogOn = true;
         }
@@ -69,22 +69,21 @@ public class JusLog {
             return reponseLogOn;
         }
 
-
-        public ResponseLog(Request request) {
-           super(request);
-        }
-
-        @Override
-        public void onResponse(Object response) {
-            if (log == null) return;
-            log.log(buildMessage(request, "Response: %s", response));
+        public static RequestListener.ResponseListener getLogger(final Request request) {
+            return new RequestListener.ResponseListener() {
+                @Override
+                public void onResponse(Object response) {
+                    if (log == null) return;
+                    log.log(buildMessage(request, "Response: %s", response));
+                }
+            };
         }
     }
 
     /**
      * A simple event log with records containing a name, threadId ID, and timestamp.
      */
-    public static class MarkerLog extends RequestListener.QMarkerListener {
+    public static class MarkerLog {
         public static void on() {
             markerLogOn = true;
         }
@@ -102,17 +101,24 @@ public class JusLog {
          */
         private static final long MIN_DURATION_FOR_LOGGING_MS = 0;
 
-        @Override
-        public void onMarker(Marker marker, Object... args) {
-            if (log == null) return;
-            add(marker, args);
+        public static RequestListener.MarkerListener getLogger(final Request request) {
+            return new RequestListener.MarkerListener() {
+                final MarkerLog markerLog = new MarkerLog(request);
+
+                @Override
+                public void onMarker(Marker marker, Object... args) {
+                    if (log == null) return;
+                    markerLog.add(marker, args);
+                }
+            };
         }
 
         private final List<Marker> mMarkers = new ArrayList<Marker>();
         private volatile boolean mFinished = false;
+        private Request request;
 
         public MarkerLog(Request request) {
-           super(request);
+            this.request = request;
         }
 
         /**
@@ -150,7 +156,7 @@ public class JusLog {
                 long thisTime = marker.time;
                 log.log(String.format("(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
                         , marker.threadId, marker
-                        .threadName, marker.name));
+                                .threadName, marker.name));
                 prevTime = thisTime;
             }
         }
@@ -213,7 +219,6 @@ public class JusLog {
         return String.format(Locale.US, "[%d] %s: %s",
                 Thread.currentThread().getId(), caller, msg);
     }
-
 
 
 }

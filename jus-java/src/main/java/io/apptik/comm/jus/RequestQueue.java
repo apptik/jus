@@ -424,15 +424,15 @@ public class RequestQueue {
         }
 
         if (JusLog.ErrorLog.isOn()) {
-            request.addErrorListener(new JusLog.ErrorLog(request));
+            request.addErrorListener(JusLog.ErrorLog.getLogger(request));
         }
 
         if (JusLog.ResponseLog.isOn()) {
-            request.addResponseListener(new JusLog.ResponseLog(request));
+            request.addResponseListener(JusLog.ResponseLog.getLogger(request));
         }
 
         if (JusLog.MarkerLog.isOn()) {
-            request.addMarkerListener(new JusLog.MarkerLog(request));
+            request.addMarkerListener(JusLog.MarkerLog.getLogger(request));
         }
 
         if (retryPolicyFactory != null) {

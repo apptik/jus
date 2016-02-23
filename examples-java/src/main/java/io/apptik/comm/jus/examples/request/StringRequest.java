@@ -20,10 +20,9 @@ package io.apptik.comm.jus.examples.request;
 
 import java.io.UnsupportedEncodingException;
 
-import io.apptik.comm.jus.Listener;
-import io.apptik.comm.jus.Listener.ErrorListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.Response;
 import io.apptik.comm.jus.toolbox.HttpHeaderParser;
 
@@ -40,9 +39,9 @@ public class StringRequest extends Request<String> {
      * @param listener Listener to receive the String response
      * @param errorListener Error listener, or null to ignore errors
      */
-    public StringRequest(String method, String url, Listener.ResponseListener<String> listener,
-            ErrorListener errorListener) {
-        super(method, url, null);
+    public StringRequest(String method, String url, RequestListener.ResponseListener<String> listener,
+                         RequestListener.ErrorListener errorListener) {
+        super(method, url);
         addResponseListener(listener);
         addErrorListener(errorListener);
     }
@@ -54,7 +53,8 @@ public class StringRequest extends Request<String> {
      * @param listener Listener to receive the String response
      * @param errorListener Error listener, or null to ignore errors
      */
-    public StringRequest(String url, Listener.ResponseListener<String> listener, ErrorListener errorListener) {
+    public StringRequest(String url, RequestListener.ResponseListener<String> listener,
+                         RequestListener.ErrorListener errorListener) {
         this(Method.GET, url, listener, errorListener);
     }
 

@@ -5,17 +5,18 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.converter.Converters;
 import io.apptik.comm.jus.http.HttpUrl;
-import io.apptik.comm.jus.rx.RxJus;
-import io.apptik.comm.jus.rx.RxRequestQueue;
 import io.apptik.comm.jus.rx.event.JusEvent;
+import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import rx.Observer;
 
 public class RxFullJus {
     public static void main(String[] args) {
-        RxRequestQueue queue = RxJus.newRequestQueue(new File("."));
+        RequestQueue queue = Jus.newRequestQueue(new File("."));
         Set<String> opts = new HashSet<>();
         if (args != null) {
             Collections.addAll(opts, args);
@@ -29,7 +30,7 @@ public class RxFullJus {
             );
         }
 
-        queue.getAllEventSubject().subscribe(new Observer<JusEvent>() {
+        RxRequestQueue.allEventsObservable(queue, null).subscribe(new Observer<JusEvent>() {
 
             @Override
             public void onCompleted() {
