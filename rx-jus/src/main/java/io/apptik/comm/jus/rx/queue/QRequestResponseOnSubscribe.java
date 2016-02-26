@@ -38,8 +38,8 @@ public class QRequestResponseOnSubscribe implements Observable.OnSubscribe<Resul
     @Override
     public void call(final Subscriber<? super ResultEvent<?>> subscriber) {
 
-        final RequestListener.QListenerFactory qListenerFactory =
-                new RequestListener.SimpleFilteredQListenerFactory(filter) {
+        final RequestListener.ListenerFactory listenerFactory =
+                new RequestListener.SimpleFilteredListenerFactory(filter) {
                     @Override
                     protected <T> RequestListener.ResponseListener<T>
                     getFilteredResponseListener(final Request<T> request) {
@@ -54,12 +54,12 @@ public class QRequestResponseOnSubscribe implements Observable.OnSubscribe<Resul
                     }
                 };
 
-        queue.addQListenerFactory(qListenerFactory);
+        queue.addListenerFactory(listenerFactory);
 
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
-                queue.removeQListenerFactory(qListenerFactory);
+                queue.removeListenerFactory(listenerFactory);
             }
         });
     }

@@ -39,7 +39,7 @@ public final class JJsonConverterFactory extends Converter.Factory {
         return new JJsonConverterFactory();
     }
 
-    private JJsonConverterFactory() {
+    public JJsonConverterFactory() {
     }
 
     @Override

@@ -39,8 +39,8 @@ public class QRequestErrorOnSubscribe<T> implements Observable.OnSubscribe<Error
     @Override
     public void call(final Subscriber<? super ErrorEvent> subscriber) {
 
-        final RequestListener.QListenerFactory qListenerFactory =
-                new RequestListener.SimpleFilteredQListenerFactory(filter) {
+        final RequestListener.ListenerFactory listenerFactory =
+                new RequestListener.SimpleFilteredListenerFactory(filter) {
                     @Override
                     public RequestListener.ErrorListener getFilteredErrorListener(
                             final Request request) {
@@ -55,12 +55,12 @@ public class QRequestErrorOnSubscribe<T> implements Observable.OnSubscribe<Error
                     }
                 };
 
-        queue.addQListenerFactory(qListenerFactory);
+        queue.addListenerFactory(listenerFactory);
 
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
-                queue.removeQListenerFactory(qListenerFactory);
+                queue.removeListenerFactory(listenerFactory);
             }
         });
     }

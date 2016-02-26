@@ -32,7 +32,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import io.apptik.comm.jus.RequestListener.QListenerFactory;
+import io.apptik.comm.jus.RequestListener.ListenerFactory;
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.converter.BasicConverterFactory;
 import io.apptik.comm.jus.toolbox.Utils;
@@ -132,7 +132,7 @@ public class RequestQueue {
     private final List<Transformer.RequestTransformer> requestTransformers = new ArrayList<>();
     private final List<Transformer.ResponseTransformer> responseTransformers = new ArrayList<>();
 
-    private final List<QListenerFactory> qListenerFactories = new ArrayList<>();
+    private final List<ListenerFactory> listenerFactories = new ArrayList<>();
 
     /**
      * Marker listeners for RequestQueue related events
@@ -172,6 +172,7 @@ public class RequestQueue {
                 new ExecutorDelivery(new Executor() {
                     @Override
                     public void execute(Runnable command) {
+                        Utils.checkNotNull(command, "command==null");
                         command.run();
                     }
                 }));
@@ -271,8 +272,8 @@ public class RequestQueue {
     /**
      * Add marker listener for RequestQueue related events
      */
-    public <R extends RequestQueue> R addMarkerListener(RequestListener.MarkerListener
-                                                                markerListener) {
+    public <R extends RequestQueue> R addQueueMarkerListener(
+            RequestListener.MarkerListener markerListener) {
         if (markerListener != null) {
             synchronized (markerListeners) {
                 this.markerListeners.add(markerListener);
@@ -284,7 +285,7 @@ public class RequestQueue {
     /**
      * Remove marker listener for RequestQueue related events
      */
-    public <R extends RequestQueue> R removeMarkerListener(RequestListener.MarkerListener
+    public <R extends RequestQueue> R removeQueueMarkerListener(RequestListener.MarkerListener
                                                                    markerListener) {
         synchronized (markerListeners) {
             this.markerListeners.remove(markerListener);
@@ -292,6 +293,13 @@ public class RequestQueue {
         return (R) this;
     }
 
+    /**
+     * Adds a marker for the {@link RequestQueue}
+     * @param tag
+     * @param args
+     * @param <R>
+     * @return
+     */
     public <R extends RequestQueue> R addMarker(String tag, Object... args) {
         Marker marker = new Marker(tag,
                 Thread.currentThread().getId(),
@@ -404,12 +412,12 @@ public class RequestQueue {
             }
         }
 
-        for (QListenerFactory qListenerFactory : qListenerFactories) {
-            RequestListener.ResponseListener qResponseListener = qListenerFactory
+        for (ListenerFactory listenerFactory : listenerFactories) {
+            RequestListener.ResponseListener qResponseListener = listenerFactory
                     .getResponseListener(request);
-            RequestListener.ErrorListener qErrorListener = qListenerFactory.getErrorListener
+            RequestListener.ErrorListener qErrorListener = listenerFactory.getErrorListener
                     (request);
-            RequestListener.MarkerListener qMarkerListener = qListenerFactory.getMarkerListener
+            RequestListener.MarkerListener qMarkerListener = listenerFactory.getMarkerListener
                     (request);
 
             if (qResponseListener != null) {
@@ -621,17 +629,17 @@ public class RequestQueue {
         return this;
     }
 
-    public RequestQueue addQListenerFactory(QListenerFactory qListenerFactory) {
-        Utils.checkNotNull(qListenerFactory, "qListenerFactory==null");
-        synchronized (qListenerFactories) {
-            qListenerFactories.add(qListenerFactory);
+    public RequestQueue addListenerFactory(RequestListener.ListenerFactory listenerFactory) {
+        Utils.checkNotNull(listenerFactory, "listenerFactory==null");
+        synchronized (listenerFactories) {
+            listenerFactories.add(listenerFactory);
         }
         return this;
     }
 
-    public RequestQueue removeQListenerFactory(QListenerFactory qListenerFactory) {
-        synchronized (qListenerFactories) {
-            qListenerFactories.remove(qListenerFactory);
+    public RequestQueue removeListenerFactory(RequestListener.ListenerFactory listenerFactory) {
+        synchronized (listenerFactories) {
+            listenerFactories.remove(listenerFactory);
         }
         return this;
     }

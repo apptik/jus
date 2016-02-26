@@ -18,6 +18,9 @@
 
 package io.apptik.comm.jus;
 
+import java.nio.charset.Charset;
+
+import io.apptik.comm.jus.http.HTTP;
 import io.apptik.comm.jus.http.Headers;
 
 /**
@@ -95,6 +98,20 @@ public interface Cache {
         /** True if a refresh is needed from the original data source. */
         public boolean refreshNeeded() {
             return this.softTtl < System.currentTimeMillis();
+        }
+
+        @Override
+        public String toString() {
+            return "Entry{" +
+                    "\n\tdata=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP
+                    .UTF_8))) +
+                    "\n\tetag='" + etag + '\'' +
+                    "\n\tserverDate=" + serverDate +
+                    "\n\tlastModified=" + lastModified +
+                    "\n\tttl=" + ttl +
+                    "\n\tsoftTtl=" + softTtl +
+                    "\n\tresponseHeaders={" + responseHeaders.toString().replace("\n\t", "\n\t\t") +
+                    "}}";
         }
     }
 

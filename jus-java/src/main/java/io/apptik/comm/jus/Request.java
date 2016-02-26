@@ -859,21 +859,21 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             mark = "[O]";
         }
         return "Request " + mark + " {" +
-                "networkRequest=" + networkRequest +
-                ", method='" + method + '\'' +
-                ", url=" + url +
+                "\n\tnetworkRequest=" + networkRequest +
+                "\n\tmethod='" + method + '\'' +
+                "\n\turl=" + url +
+                "\n\tresponse=" + response +
+                "\n(tag=" + tag +
+                ", responseDelivered=" + responseDelivered +
                 ", trafficStatsTag=" + trafficStatsTag +
                 ", priority=" + getPriority() +
                 ", requestBirthTime=" + requestBirthTime +
                 ", sequence=" + sequence +
                 ", priority=" + priority +
                 ", shouldCache=" + shouldCache +
-                ", tag=" + tag +
-                ", response=" + response +
-                ", responseDelivered=" + responseDelivered +
                 ", logSlowRequests=" + logSlowRequests +
                 ", canceled=" + canceled +
-                '}';
+                ")}";
     }
 
     /**

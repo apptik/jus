@@ -75,10 +75,10 @@ public class Response<T> {
     @Override
     public String toString() {
         return "Response{" +
-                "cacheEntry=" + cacheEntry +
-                ", result=" + result +
-                ", error=" + error +
-                ", intermediate=" + intermediate +
+                "\n\tcacheEntry=" + cacheEntry +
+                "\n\tresult=" + result +
+                "\n\terror=" + error +
+                "\n\tintermediate=" + intermediate +
                 '}';
     }
 }

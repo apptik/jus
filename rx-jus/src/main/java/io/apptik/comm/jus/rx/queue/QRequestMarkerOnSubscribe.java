@@ -38,8 +38,8 @@ public class QRequestMarkerOnSubscribe<T> implements Observable.OnSubscribe<Mark
 
     @Override
     public void call(final Subscriber<? super MarkerEvent> subscriber) {
-        final RequestListener.QListenerFactory qListenerFactory =
-                new RequestListener.SimpleFilteredQListenerFactory(filter) {
+        final RequestListener.ListenerFactory listenerFactory =
+                new RequestListener.SimpleFilteredListenerFactory(filter) {
                     @Override
                     public RequestListener.MarkerListener
                     getFilteredMarkerListener(final Request request) {
@@ -54,12 +54,12 @@ public class QRequestMarkerOnSubscribe<T> implements Observable.OnSubscribe<Mark
                     }
                 };
 
-        queue.addQListenerFactory(qListenerFactory);
+        queue.addListenerFactory(listenerFactory);
 
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
-                queue.removeQListenerFactory(qListenerFactory);
+                queue.removeListenerFactory(listenerFactory);
             }
         });
     }

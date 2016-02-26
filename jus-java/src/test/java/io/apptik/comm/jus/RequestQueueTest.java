@@ -25,26 +25,33 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import io.apptik.comm.jus.Request.Priority;
 import io.apptik.comm.jus.auth.Authenticator;
 import io.apptik.comm.jus.error.AuthError;
+import io.apptik.comm.jus.error.JusError;
+import io.apptik.comm.jus.http.Headers;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.mock.MockHttpStack;
 import io.apptik.comm.jus.mock.MockNetwork;
 import io.apptik.comm.jus.mock.MockRequest;
-import io.apptik.comm.jus.mock.MockyRequest;
 import io.apptik.comm.jus.toolbox.HttpNetwork;
 import io.apptik.comm.jus.toolbox.NoCache;
 import io.apptik.comm.jus.utils.CacheTestUtils;
 import io.apptik.comm.jus.utils.ImmediateResponseDelivery;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class RequestQueueTest {
     private ResponseDelivery mDelivery;
@@ -93,7 +100,7 @@ public class RequestQueueTest {
         });
         queue.start();
 
-        MockyRequest request = queue.add(new MockyRequest());
+        MockRequest request = queue.add(new MockRequest());
         request.getFuture().get();
 
         assertEquals(dataToReturn, request.getRawResponse().result);
@@ -217,6 +224,210 @@ public class RequestQueueTest {
         queue.stop();
     }
 
+    @Test
+    public void queueMarkerListenersTest() throws InterruptedException {
+        MockHttpStack httpStack = new MockHttpStack();
+        HttpNetwork network = new HttpNetwork(httpStack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
+
+        final AtomicReference<String> argRef = new AtomicReference<>();
+        final CountDownLatch latch1 = new CountDownLatch(1);
+        final CountDownLatch latch2 = new CountDownLatch(1);
+        final CountDownLatch latch3 = new CountDownLatch(1);
+
+        RequestListener.MarkerListener qMarkerListener = new RequestListener.MarkerListener() {
+            @Override
+            public void onMarker(Marker marker, Object... args) {
+                if (RequestQueue.EVENT_NETWORK_DISPATCHER_START.equals(marker.name)) {
+                    latch1.countDown();
+                } else if ("My custom marker".equals(marker.name)) {
+                    latch2.countDown();
+                    argRef.set(args[0].toString());
+                } else if (RequestQueue.EVENT_NETWORK_DISPATCHER_STOP.equals(marker.name)) {
+                    latch3.countDown();
+                } else if ("Not expected custom marker".equals(marker.name)) {
+                    fail();
+                }
+            }
+        };
+
+        queue.addQueueMarkerListener(qMarkerListener);
+
+        queue.start();
+        assertTrue(latch1.await(2, SECONDS));
+        queue.addMarker("My custom marker", "ARG1");
+        assertTrue(latch2.await(2, SECONDS));
+        assertEquals("ARG1", argRef.get());
+        queue.removeQueueMarkerListener(qMarkerListener);
+        queue.addMarker("Not expected custom marker", "ARG1");
+        queue.addQueueMarkerListener(qMarkerListener);
+        queue.stop();
+        assertTrue(latch3.await(2, SECONDS));
+
+    }
+
+    @Test
+    public void listenerFactoriesTest() throws InterruptedException {
+        MockHttpStack httpStack = new MockHttpStack();
+        HttpNetwork network = new HttpNetwork(httpStack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
+
+        final CountDownLatch latch1 = new CountDownLatch(1);
+        final CountDownLatch latch2 = new CountDownLatch(1);
+        final CountDownLatch latch3 = new CountDownLatch(1);
+
+        queue.addListenerFactory(new RequestListener.ListenerFactory() {
+            @Override
+            public RequestListener.ResponseListener getResponseListener(Request<?> request) {
+                return new RequestListener.ResponseListener() {
+                    @Override
+                    public void onResponse(Object response) {
+                        latch1.countDown();
+                    }
+                };
+            }
+
+            @Override
+            public RequestListener.ErrorListener getErrorListener(Request<?> request) {
+                return new RequestListener.ErrorListener() {
+                    @Override
+                    public void onError(JusError error) {
+                        latch2.countDown();
+                    }
+                };
+            }
+
+            @Override
+            public RequestListener.MarkerListener getMarkerListener(Request<?> request) {
+                return new RequestListener.MarkerListener() {
+                    @Override
+                    public void onMarker(Marker marker, Object... args) {
+                        latch3.countDown();
+                    }
+                };
+            }
+        });
+
+        MockRequest req1 = new MockRequest();
+        queue.start();
+        httpStack.setResponseToReturn(new NetworkResponse(200, new byte[0], Headers.of(new
+                HashMap<String, String>()), 0));
+        queue.add(req1);
+        assertTrue(latch3.await(2, SECONDS));
+        assertTrue(latch1.await(2, SECONDS));
+
+        MockRequest req2 = new MockRequest();
+
+        httpStack.setResponseToReturn(new NetworkResponse(404, new byte[0], Headers.of(new
+                HashMap<String, String>()), 0));
+        queue.add(req2);
+        assertTrue(latch2.await(2, SECONDS));
+        queue.stop();
+    }
+
+    @Test
+    public void requestTransformerTest() throws InterruptedException {
+        MockHttpStack httpStack = new MockHttpStack();
+        HttpNetwork network = new HttpNetwork(httpStack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
+
+        final CountDownLatch latch1 = new CountDownLatch(2);
+        final CountDownLatch latch2 = new CountDownLatch(1);
+
+        queue.addRequestTransformer(new Transformer.RequestTransformer(new RequestQueue
+                .RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                if ("trans".equals(request.getTag())) {
+                    latch1.countDown();
+                    return true;
+                }
+                latch2.countDown();
+                return false;
+            }
+        }) {
+            @Override
+            public NetworkRequest transform(NetworkRequest networkRequest) {
+                latch1.countDown();
+                return NetworkRequest.Builder.from(networkRequest).addHeader("header1", "val1")
+                        .build();
+            }
+        });
+
+        queue.start();
+        Request req = new MockRequest().setTag("trans");
+        queue.add(req);
+        try {
+            req.getFuture().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        assertTrue(latch1.await(2, SECONDS));
+        assertEquals("val1", httpStack.getLastHeaders().get("header1"));
+
+        queue.add(new MockRequest());
+        assertTrue(latch2.await(2, SECONDS));
+
+        queue.stop();
+    }
+
+    @Test
+    public void responseTransformerTest() throws InterruptedException {
+        MockHttpStack httpStack = new MockHttpStack();
+        HttpNetwork network = new HttpNetwork(httpStack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
+
+        final AtomicReference<String> argRef = new AtomicReference<>();
+        final CountDownLatch latch1 = new CountDownLatch(2);
+        final CountDownLatch latch2 = new CountDownLatch(1);
+
+        queue.addResponseTransformer(new Transformer.ResponseTransformer(new RequestQueue
+                .RequestFilter() {
+            @Override
+            public boolean apply(Request<?> request) {
+                if ("trans".equals(request.getTag())) {
+                    latch1.countDown();
+                    return true;
+                }
+                latch2.countDown();
+                return false;
+            }
+        }) {
+            @Override
+            public NetworkResponse transform(NetworkResponse networkResponse) {
+                latch1.countDown();
+                return NetworkResponse.Builder.from(networkResponse)
+                        .addHeader("header1", "val1").build();
+            }
+        });
+
+        httpStack.setResponseToReturn(new NetworkResponse(200, new byte[0], Headers.of(new
+                HashMap<String, String>()), 0));
+        queue.start();
+        Request req = new MockRequest().setTag("trans").addMarkerListener(
+                new RequestListener.MarkerListener() {
+                    @Override
+                    public void onMarker(Marker marker, Object... args) {
+                        if (Request.EVENT_NETWORK_HTTP_COMPLETE.equals(marker.name)) {
+                            argRef.set(((NetworkResponse) args[0]).headers.get("header1"));
+                        }
+                    }
+                });
+        queue.add(req);
+        try {
+            req.getFuture().get();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+        assertTrue(latch1.await(2, SECONDS));
+        assertEquals("val1", argRef.get());
+
+        queue.add(new MockRequest());
+        assertTrue(latch2.await(2, SECONDS));
+
+        queue.stop();
+
+    }
 
     private class OrderCheckingNetwork implements Network {
         private Priority mLastPriority = Priority.IMMEDIATE;

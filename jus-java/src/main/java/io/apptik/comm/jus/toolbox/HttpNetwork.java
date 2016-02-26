@@ -98,6 +98,9 @@ public class HttpNetwork implements Network {
 
                 request.addMarker(Request.EVENT_NETWORK_STACK_SEND, request.getNetworkRequest());
                 httpResponse = httpStack.performRequest(request, headers.build(), pool);
+                if(httpResponse==null) {
+                    throw new NetworkError("No Response");
+                }
                 request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
                 //currently all requests that came to here normally needs to be attached to the
                 // queue

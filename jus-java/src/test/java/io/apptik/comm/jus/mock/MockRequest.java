@@ -49,7 +49,7 @@ public class MockRequest extends Request<byte[]> {
         }
 
     }
-
+    public byte[] deliveredResponse;
     private String mCacheKey = super.getCacheKey();
 
     public void setCacheKey(String cacheKey) {
@@ -67,6 +67,7 @@ public class MockRequest extends Request<byte[]> {
     @Override
     protected void deliverResponse(byte[] response) {
         deliverResponse_called = true;
+        deliveredResponse = response;
         super.deliverResponse(response);
     }
 

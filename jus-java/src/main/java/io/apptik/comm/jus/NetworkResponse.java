@@ -151,6 +151,16 @@ public final class NetworkResponse {
         /** Network roundtrip time in milliseconds. */
         private long networkTimeNs = 0;
 
+        public static Builder from(final NetworkResponse networkResponse) {
+            if (networkResponse == null) {
+                return new Builder();
+            }
+            return new Builder()
+                    .setBody(networkResponse.data)
+                    .setContentType(networkResponse.contentType)
+                    .setHeaders(networkResponse.headers);
+        }
+
         public NetworkResponse.Builder setHeader(String name, String value) {
             this.headers.set(name, value);
             return this;

@@ -94,10 +94,10 @@ public final class NetworkRequest {
     @Override
     public String toString() {
         return "NetworkRequest{" +
-                "contentType=" + contentType +
-                ", data=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP
+                "\n\tcontentType=" + contentType +
+                "\n\tdata=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP
                 .UTF_8))) +
-                ", headers=" + headers +
+                "\n\theaders=" + headers +
                 '}';
     }
 

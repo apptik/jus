@@ -51,7 +51,7 @@ public interface RequestListener {
         void onMarker(Marker marker, Object... args);
     }
 
-    interface QListenerFactory {
+    interface ListenerFactory {
         ResponseListener getResponseListener(Request<?> request);
 
         ErrorListener getErrorListener(Request<?> request);
@@ -59,7 +59,7 @@ public interface RequestListener {
         MarkerListener getMarkerListener(Request<?> request);
     }
 
-    class SimpleQListenerFactory implements QListenerFactory {
+    class SimpleListenerFactory implements ListenerFactory {
         @Override
         public ResponseListener getResponseListener(Request<?> request) {
             return null;
@@ -76,10 +76,10 @@ public interface RequestListener {
         }
     }
 
-    abstract class FilteredQListenerFactory implements QListenerFactory {
+    abstract class FilteredListenerFactory implements ListenerFactory {
         protected final RequestQueue.RequestFilter filter;
 
-        protected FilteredQListenerFactory(RequestQueue.RequestFilter filter) {
+        protected FilteredListenerFactory(RequestQueue.RequestFilter filter) {
             this.filter = filter;
         }
 
@@ -114,9 +114,9 @@ public interface RequestListener {
         }
     }
 
-    class SimpleFilteredQListenerFactory extends FilteredQListenerFactory {
+    class SimpleFilteredListenerFactory extends FilteredListenerFactory {
 
-        public SimpleFilteredQListenerFactory() {
+        public SimpleFilteredListenerFactory() {
             super(new RequestQueue.RequestFilter() {
                 @Override
                 public boolean apply(Request<?> request) {
@@ -125,7 +125,7 @@ public interface RequestListener {
             });
         }
 
-        public SimpleFilteredQListenerFactory(RequestQueue.RequestFilter filter) {
+        public SimpleFilteredListenerFactory(RequestQueue.RequestFilter filter) {
             super(filter);
         }
 
