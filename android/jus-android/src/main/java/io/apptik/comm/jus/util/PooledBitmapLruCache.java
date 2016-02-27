@@ -10,7 +10,10 @@ import android.util.LruCache;
  * True pooled Bitmap Cache. It works as follows.
  *
  * BitmapLruCache gets full --> overflowed bitmaps goes to the BitmapLruPool
- * BitmapLruPool gets full --> evicted bitmaps gets recycled
+ * BitmapLruPool gets full --> evicted bitmaps gets removed and eventually recycled by GC
+ *
+ * Note that explicit {@link Bitmap#recycle()} is not called since it might be still used
+ * somewhere else (recycleview/listview for example) and also GC is doing perfect job anyway.
  *
  */
 public class PooledBitmapLruCache extends DefaultBitmapLruCache {

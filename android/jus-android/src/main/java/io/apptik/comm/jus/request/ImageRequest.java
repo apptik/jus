@@ -220,11 +220,10 @@ public class ImageRequest extends Request<Bitmap> {
 
             //try to catch java.lang.IllegalArgumentException: Problem decoding into existing bitmap
             if(tempBitmap==null) {
-                if(decodeOptions.inBitmap != null) {
+                if(decodeOptions.inBitmap != null && !decodeOptions.inBitmap.isRecycled()) {
                     if (bitmapPool != null) {
                         bitmapPool.addToPool(decodeOptions.inBitmap);
                     } else {
-                        decodeOptions.inBitmap.recycle();
                     }
                     decodeOptions.inBitmap = null;
                 }
@@ -238,11 +237,10 @@ public class ImageRequest extends Request<Bitmap> {
 
             //giveup
             if(tempBitmap==null) {
-                if(decodeOptions.inBitmap != null) {
+                if(decodeOptions.inBitmap != null && !decodeOptions.inBitmap.isRecycled()) {
                     if (bitmapPool != null) {
                         bitmapPool.addToPool(decodeOptions.inBitmap);
                     } else {
-                        decodeOptions.inBitmap.recycle();
                     }
                     decodeOptions.inBitmap = null;
                 }
@@ -261,7 +259,6 @@ public class ImageRequest extends Request<Bitmap> {
                 if (bitmapPool != null) {
                     bitmapPool.addToPool(tempBitmap);
                 } else {
-                    tempBitmap.recycle();
                 }
             } else {
                 bitmap = tempBitmap;

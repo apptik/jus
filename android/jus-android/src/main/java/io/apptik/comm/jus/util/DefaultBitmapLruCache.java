@@ -66,10 +66,9 @@ public class DefaultBitmapLruCache extends LruCache<String, Bitmap> implements I
                                 Bitmap oldValue, Bitmap newValue) {
         if (Utils.hasHoneycomb()) {
             // We're running on Honeycomb or later, so add the bitmap
-            // to a SoftReference set for possible use with inBitmap later
+            // to the pool set for possible use with inBitmap later
             addToPool(oldValue);
         } else {
-            oldValue.recycle();
         }
 
     }

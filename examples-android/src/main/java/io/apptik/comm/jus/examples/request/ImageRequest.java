@@ -206,7 +206,6 @@ public class ImageRequest extends Request<Bitmap> {
                     tempBitmap.getHeight() > desiredHeight)) {
                 bitmap = Bitmap.createScaledBitmap(tempBitmap,
                         desiredWidth, desiredHeight, true);
-                tempBitmap.recycle();
             } else {
                 bitmap = tempBitmap;
             }

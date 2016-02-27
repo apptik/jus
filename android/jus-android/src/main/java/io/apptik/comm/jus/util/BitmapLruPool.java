@@ -130,7 +130,7 @@ public class BitmapLruPool {
     }
 
     /**
-     * Returns a buffer to the pool, throwing away old buffers if the pool would exceed its allotted
+     * Returns a bitmap to the pool, throwing away old bitmaps if the pool would exceed its allotted
      * size.
      *
      * @param bitmap the buffer to return to the pool.
@@ -139,9 +139,6 @@ public class BitmapLruPool {
         if (bitmap == null || bitmapsBySize.contains(bitmap) ) {
             return;
         } else if(getBitmapSize(bitmap) > sizeLimit || !canBePooled(bitmap)) {
-            if(bitmap!=null) {
-                bitmap.recycle();
-            }
             return;
         }
         bitmapsByLastUse.add(bitmap);
@@ -162,7 +159,6 @@ public class BitmapLruPool {
             Bitmap bitmap = bitmapsByLastUse.remove(0);
             bitmapsBySize.remove(bitmap);
             currentSize -= getBitmapSize(bitmap);
-            bitmap.recycle();
         }
     }
 
@@ -170,9 +166,7 @@ public class BitmapLruPool {
         if (bitmap.isMutable() && !bitmap.isRecycled()) {
             return true;
         }
-        try {
-            bitmap.recycle();
-        } catch(Exception ex) {}
+        //note: do not recycle if cannot be pooled it still can be used somewhere
         return false;
     }
 
