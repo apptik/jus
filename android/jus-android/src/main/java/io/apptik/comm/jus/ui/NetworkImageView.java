@@ -1,12 +1,12 @@
 /**
  * Copyright (C) 2013 The Android Open Source Project
- *
+ * <p/>
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p/>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p/>
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,6 +16,10 @@
 package io.apptik.comm.jus.ui;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -31,7 +35,9 @@ import io.apptik.comm.jus.ui.ImageLoader.ImageListener;
  * associated request.
  */
 public class NetworkImageView extends ImageView {
-    /** The URL of the network image to load */
+    /**
+     * The URL of the network image to load
+     */
     private String mUrl;
 
     /**
@@ -44,10 +50,14 @@ public class NetworkImageView extends ImageView {
      */
     private int mErrorImageId;
 
-    /** Local copy of the ImageLoader. */
+    /**
+     * Local copy of the ImageLoader.
+     */
     private ImageLoader mImageLoader;
 
-    /** Current ImageContainer. (either in-flight or finished) */
+    /**
+     * Current ImageContainer. (either in-flight or finished)
+     */
     private ImageContainer mImageContainer;
 
     public NetworkImageView(Context context) {
@@ -66,21 +76,21 @@ public class NetworkImageView extends ImageView {
      * Sets URL of the image that should be loaded into this view. Note that calling this will
      * immediately either set the cached image (if available) or the default image specified by
      * {@link NetworkImageView#setDefaultImageResId(int)} on the view.
-     *
+     * <p/>
      * NOTE: If applicable, {@link NetworkImageView#setDefaultImageResId(int)} and
      * {@link NetworkImageView#setErrorImageResId(int)} should be called prior to calling
      * this function.
      *
-     * @param url The URL that should be loaded into this ImageView.
+     * @param url         The URL that should be loaded into this ImageView.
      * @param imageLoader ImageLoader that will be used to make the request.
      */
     public void setImageUrl(String url, ImageLoader imageLoader) {
         mUrl = url;
         mImageLoader = imageLoader;
-        if(mImageLoader.getDefaultImageId()!=0) {
+        if (mImageLoader.getDefaultImageId() != 0) {
             mDefaultImageId = mImageLoader.getDefaultImageId();
         }
-        if(mImageLoader.getErrorImageId()!=0) {
+        if (mImageLoader.getErrorImageId() != 0) {
             mErrorImageId = mImageLoader.getErrorImageId();
         }
         // The URL has potentially changed. See if we need to load it.
@@ -114,6 +124,7 @@ public class NetworkImageView extends ImageView {
 
     /**
      * Loads the image for the view if it isn't already loaded.
+     *
      * @param isInLayoutPass True if this was invoked from a layout pass, false otherwise.
      */
     synchronized void loadImageIfNecessary(final boolean isInLayoutPass) {
@@ -176,7 +187,7 @@ public class NetworkImageView extends ImageView {
                         //verify if we expect the same url
                         if (NetworkImageView.this.mUrl != response.getRequestUrl()) {
                             Log.w("NetworkImageView", "received: " + response.getRequestUrl()
-                            + ", expected: " + NetworkImageView.this.mUrl);
+                                    + ", expected: " + NetworkImageView.this.mUrl);
                             return;
                         }
 
@@ -194,7 +205,7 @@ public class NetworkImageView extends ImageView {
                             return;
                         }
 
-                        if (response.getBitmap() != null) {
+                        if (response.getBitmap() != null && canDraw(response.getBitmap())) {
                             setImageBitmap(response.getBitmap());
                         } else if (mDefaultImageId != 0) {
                             Log.w("NetworkImageView", "received null for: " + response
@@ -208,11 +219,24 @@ public class NetworkImageView extends ImageView {
         mImageContainer = newContainer;
     }
 
-    protected void setDefaultImageOrNull() {
-        if(mDefaultImageId != 0) {
-            setImageResource(mDefaultImageId);
+    protected static boolean canDraw(Bitmap bitmap) {
+        if (bitmap.isRecycled()) {
+            return false;
         }
-        else {
+        if (Build.VERSION.SDK_INT > 16) {
+            if (!bitmap.isPremultiplied() && bitmap.getConfig() == Bitmap.Config.ARGB_8888 &&
+                    bitmap.hasAlpha()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected void setDefaultImageOrNull() {
+        if (mDefaultImageId != 0) {
+            setImageResource(mDefaultImageId);
+        } else {
             setImageBitmap(null);
         }
     }
@@ -221,6 +245,24 @@ public class NetworkImageView extends ImageView {
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
         loadImageIfNecessary(true);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        if (getDrawable() != null
+                && BitmapDrawable.class.isAssignableFrom(getDrawable().getClass())) {
+            if (!canDraw(((BitmapDrawable) getDrawable()).getBitmap())) {
+                //we have a problem and we retry
+                if (mImageContainer != null) {
+                    mImageContainer.cancelRequest();
+                    mImageContainer = null;
+                }
+                setDefaultImageOrNull();
+                loadImageIfNecessary(true);
+                return;
+            }
+        }
+        super.onDraw(canvas);
     }
 
     @Override

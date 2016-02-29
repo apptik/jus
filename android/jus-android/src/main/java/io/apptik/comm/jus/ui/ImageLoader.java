@@ -142,35 +142,6 @@ public class ImageLoader {
     }
 
     /**
-     * The default implementation of ImageListener which handles basic functionality
-     * of showing a default image until the network response is received, at which point
-     * it will switch to either the actual image or the error image.
-     * @param view The imageView that the listener is associated with.
-     * @param defaultImageResId Default image resource ID to use, or 0 if it doesn't exist.
-     * @param errorImageResId Error image resource ID to use, or 0 if it doesn't exist.
-     */
-    public static ImageListener getImageListener(final ImageView view,
-                                                 final int defaultImageResId, final int errorImageResId) {
-        return new ImageListener() {
-            @Override
-            public void onError(JusError error) {
-                if (errorImageResId != 0) {
-                    view.setImageResource(errorImageResId);
-                }
-            }
-
-            @Override
-            public void onResponse(ImageContainer response, boolean isImmediate) {
-                if (response.getBitmap() != null) {
-                    view.setImageBitmap(response.getBitmap());
-                } else if (defaultImageResId != 0) {
-                    view.setImageResource(defaultImageResId);
-                }
-            }
-        };
-    }
-
-    /**
      * Interface for the response handlers on image requests.
      *
      * The call flow is this:
