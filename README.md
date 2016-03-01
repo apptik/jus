@@ -39,6 +39,7 @@ Jus requires at minimum Java 7 or Android SDK 15.
 * HTTP Stacks
     * [OkHttp][jus-okhttp] = OkHttp Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp)
+    * [OkHttp3][jus-okhttp3] = OkHttp3 Client Stack for jus
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android)
@@ -92,3 +93,4 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [retro-jus]: https://github.com/apptik/jus/tree/master/retro-jus
  [rx-jus]: https://github.com/apptik/jus/tree/master/rx-jus
  [jus-okhttp]: https://github.com/apptik/jus/tree/master/stack/jus-okhttp
+ [jus-okhttp3]: https://github.com/apptik/jus/tree/master/stack/jus-okhttp3
