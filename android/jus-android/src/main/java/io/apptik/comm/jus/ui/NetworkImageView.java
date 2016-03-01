@@ -220,7 +220,7 @@ public class NetworkImageView extends ImageView {
     }
 
     protected static boolean canDraw(Bitmap bitmap) {
-        if (bitmap.isRecycled()) {
+        if (bitmap==null || bitmap.isRecycled()) {
             return false;
         }
         if (Build.VERSION.SDK_INT > 16) {
