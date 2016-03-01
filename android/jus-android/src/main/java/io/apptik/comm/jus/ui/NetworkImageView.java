@@ -205,7 +205,7 @@ public class NetworkImageView extends ImageView {
                             return;
                         }
 
-                        if (response.getBitmap() != null && canDraw(response.getBitmap())) {
+                        if (response.getBitmap() != null && isOk2Draw(response.getBitmap())) {
                             setImageBitmap(response.getBitmap());
                         } else if (mDefaultImageId != 0) {
                             Log.w("NetworkImageView", "received null for: " + response
@@ -219,8 +219,16 @@ public class NetworkImageView extends ImageView {
         mImageContainer = newContainer;
     }
 
-    protected static boolean canDraw(Bitmap bitmap) {
-        if (bitmap==null || bitmap.isRecycled()) {
+    /**
+     * Checks if the bitmap is able to be drawn by a {@link Canvas}. If bit map is null it will
+     * return true as this is fine and will be ignored anyway, while recycled bitmaps will cause an
+     * Exception thrown
+     */
+    protected static boolean isOk2Draw(Bitmap bitmap) {
+        //ignore this if bitmap is null.
+        if(bitmap==null) return true;
+
+        if (bitmap.isRecycled()) {
             return false;
         }
         if (Build.VERSION.SDK_INT > 16) {
@@ -251,7 +259,7 @@ public class NetworkImageView extends ImageView {
     protected void onDraw(Canvas canvas) {
         if (getDrawable() != null
                 && BitmapDrawable.class.isAssignableFrom(getDrawable().getClass())) {
-            if (!canDraw(((BitmapDrawable) getDrawable()).getBitmap())) {
+            if (!isOk2Draw(((BitmapDrawable) getDrawable()).getBitmap())) {
                 //we have a problem and we retry
                 if (mImageContainer != null) {
                     mImageContainer.cancelRequest();
