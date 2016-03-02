@@ -1,5 +1,7 @@
 #jus
 
+[![Join the chat at https://gitter.im/apptik/jus](https://badges.gitter.im/apptik/jus.svg)](https://gitter.im/apptik/jus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 [![Build Status](https://travis-ci.org/apptik/jus.svg?branch=master)](https://travis-ci.org/apptik/jus)
 [![Join the chat at https://gitter.im/apptik/jus](https://badges.gitter.im/apptik/jus.svg)](https://gitter.im/apptik/jus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
