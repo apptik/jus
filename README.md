@@ -1,6 +1,7 @@
 #jus
 
 [![Build Status](https://travis-ci.org/apptik/jus.svg?branch=master)](https://travis-ci.org/apptik/jus)
+[![Join the chat at https://gitter.im/apptik/jus](https://badges.gitter.im/apptik/jus.svg)](https://gitter.im/apptik/jus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 Flexible and Easy HTTP/REST Communication library for Java and Android
 Based on Volley, inspired by many.
@@ -34,8 +35,10 @@ Jus requires at minimum Java 7 or Android SDK 15.
 ## Modules
 * [jus for Java][jus-java] - main jus library for java
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-java.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-java)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-java/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-java)
 * [Reactive jus][rx-jus] - RxJava support for jus
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/rx-jus.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/rx-jus)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:rx-jus/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:rx-jus)
 * HTTP Stacks
     * [OkHttp][jus-okhttp] = OkHttp Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp)
