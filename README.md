@@ -42,31 +42,41 @@ Jus requires at minimum Java 7 or Android SDK 15.
 * HTTP Stacks
     * [OkHttp][jus-okhttp] = OkHttp Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp)
     * [OkHttp3][jus-okhttp3] = OkHttp3 Client Stack for jus
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-android/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-android)
     * [Reactive Android jus][jus-android-rx] - RxJava support for jus for Android
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android-rx.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android-rx)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-android-rx/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-android-rx)
 * Data Serializers Support for jus
     * [Gson][jus-gson] - support for Gson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-gson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-gson)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-gson/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-gson)
     * [Jackson][jus-jackson] - support for Jackson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jackson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jackson)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-jackson/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-jackson)
     * [JJson][jus-jjson] - support for JustJson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jjson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jjson)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-jjson/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-jjson)       
     * [Moshi][jus-moshi] - support for Moshi
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-moshi.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-moshi)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-moshi/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-moshi)
     * [Protobuf][jus-protobuf] - support for Google Protobuf
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-protobuf.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-protobuf)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-protobuf/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-protobuf)
     * [SimpleXML][jus-simplexml] - support for Simple
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-simplexml.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-simplexml)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-simplexml/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-simplexml)
     * [Wire][jus-wire] - support for wire
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-wire.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-wire)
-
+	[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-wire/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-wire)
+    
 ## Licence
 
-    Copyright (C) 2015 AppTik Project
+    Copyright (C) 2016 AppTik Project
 
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
