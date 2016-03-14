@@ -1,7 +1,8 @@
-#jus
+# jus
 
 [![Build Status](https://travis-ci.org/apptik/jus.svg?branch=master)](https://travis-ci.org/apptik/jus)
 [![Join the chat at https://gitter.im/apptik/jus](https://badges.gitter.im/apptik/jus.svg)](https://gitter.im/apptik/jus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/jus.svg)](http://stackoverflow.com/questions/tagged/jus)
 
 Flexible and Easy HTTP/REST Communication library for Java and Android
 Based on Volley, inspired by many.
@@ -10,7 +11,7 @@ Based on Volley, inspired by many.
 * it is like Retrofit but infinitely more flexible
 
 
-##Download
+## Download
 
 Find [the latest JARs][mvn] or grab via Maven:
 ```xml
@@ -31,6 +32,10 @@ Snapshots of the development versions are available in [Sonatype's `snapshots` r
 
 Jus requires at minimum Java 7 or Android SDK 15.
 
+
+## Questions
+
+[StackOverflow with tag 'jus' or 'apptik'](http://stackoverflow.com/questions/ask)
 
 ## Modules
 * [jus for Java][jus-java] - main jus library for java
