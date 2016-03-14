@@ -1,4 +1,4 @@
-#OkHttp 4 jus
+#OkHttp3 for jus
 
 [OkHttp][okhttp] Support for jus.  
 
@@ -8,16 +8,18 @@ Download [the latest JAR][mvn] or grab via Maven:
 ```xml
 <dependency>
   <groupId>io.apptik.comm</groupId>
-  <artifactId>jus-okhttp</artifactId>
+  <artifactId>jus-okhttp3</artifactId>
   <version>0.6.4</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-okhttp:0.6.4'
+compile 'io.apptik.comm:jus-okhttp3:0.6.4'
 ```
 
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+Downloads of the released versions are available in [Sonatype's `releases` repository][release].
+
+Snapshots of the development versions are available in [Sonatype's `snapshots` repository][snap].
 
 ## Licence
 
@@ -36,5 +38,6 @@ Snapshots of the development version are available in [Sonatype's `snapshots` re
     limitations under the License.
 
  [mvn]: https://search.maven.org/remote_content?g=io.apptik.comm&a=jus-okhttp3&v=LATEST
- [snap]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
- [okhttp]: http://square.github.io/okhttp/
+ [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/jus-okhttp3
+  [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/comm/jus-okhttp3
+  [okhttp]: http://square.github.io/okhttp/

@@ -18,6 +18,9 @@ or Gradle:
 compile 'io.apptik.comm:retro-jus:0.6.4'
 ```
 
+Downloads of the released versions are available in [Sonatype's `releases` repository][release].
+
+Snapshots of the development versions are available in [Sonatype's `snapshots` repository][snap].
 
 ## Licence
 
@@ -36,4 +39,5 @@ compile 'io.apptik.comm:retro-jus:0.6.4'
     limitations under the License.
 
  [mvn]: https://search.maven.org/remote_content?g=io.apptik.comm&a=retro-jus&v=LATEST
- [snap]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
+ [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/retro-jus
+ [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/comm/retro-jus

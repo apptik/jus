@@ -27,7 +27,6 @@ env:
      - MODULE=retro-jus
      - MODULE=rx-jus
      - MODULE=android:jus-android
-     - MODULE=android:jus-android-rx
      - MODULE=stack:jus-okhttp
      - MODULE=stack:jus-okhttp3
      - MODULE=stack:jus-apachehttp

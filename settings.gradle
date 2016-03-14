@@ -28,5 +28,4 @@ include ':android:jus-android',
         ':converter:jus-simplexml',
         ':converter:jus-protobuf',
         ':converter:jus-moshi',
-        ':converter:jus-jackson',
-        ':android:jus-android-rx'
+        ':converter:jus-jackson'

@@ -17,7 +17,9 @@ or Gradle:
 compile 'io.apptik.comm:jus-protobuf:0.6.4'
 ```
 
-Snapshots of the development version are available in [Sonatype's `snapshots` repository][snap].
+Downloads of the released versions are available in [Sonatype's `releases` repository][release].
+
+Snapshots of the development versions are available in [Sonatype's `snapshots` repository][snap].
 
 
 ## Licence
@@ -37,5 +39,6 @@ Snapshots of the development version are available in [Sonatype's `snapshots` re
     limitations under the License.
 
  [mvn]: https://search.maven.org/remote_content?g=io.apptik.comm&a=jus-protobuf&v=LATEST
- [snap]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/
+ [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/jus-protobuf
+ [snap]: https://oss.sonatype.org/content/repositories/snapshots/io/apptik/comm/jus-protobuf
  [1]: https://developers.google.com/protocol-buffers/

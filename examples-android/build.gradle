@@ -51,6 +51,5 @@ dependencies {
     compile rootProject.ext.supportV4
     compile rootProject.ext.supportAnnotations
     compile project(':android:jus-android')
-    compile project(':android:jus-android-rx')
     compile rootProject.ext.rxjava
 }
