@@ -270,6 +270,10 @@ public class HttpNetwork implements Network {
                                                 JusError exception) throws JusError {
         RetryPolicy retryPolicy = request.getRetryPolicy();
 
+        if(retryPolicy==null) {
+            throw exception;
+        }
+
         try {
             retryPolicy.retry(exception);
         } catch (JusError e) {
