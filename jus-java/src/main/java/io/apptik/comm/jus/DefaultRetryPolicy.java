@@ -24,26 +24,29 @@ import io.apptik.comm.jus.error.JusError;
  * Default retry policy for requests.
  */
 public class DefaultRetryPolicy implements RetryPolicy {
+
+    /** The default socket timeout in milliseconds */
+    public static final int DEFAULT_TIMEOUT_MS = 5000;
+
+    /** The default number of retries */
+    public static final int DEFAULT_MAX_RETRIES = 1;
+
+    /** The default backoff multiplier */
+    public static final float DEFAULT_BACKOFF_MULT = 2f;
+
     /** The current timeout in milliseconds. */
-    private int mCurrentTimeoutMs;
+    private int currentTimeoutMs;
 
     /** The current retry count. */
     private int mCurrentRetryCount;
 
     /** The maximum number of attempts. */
-    private final int mMaxNumRetries;
+    private final int maxNumRetries;
 
     /** The backoff multiplier for the policy. */
-    private final float mBackoffMultiplier;
+    private final float backoffMultiplier;
 
-    /** The default socket timeout in milliseconds */
-    public static final int DEFAULT_TIMEOUT_MS = 1000;
-
-    /** The default number of retries */
-    public static final int DEFAULT_MAX_RETRIES = 3;
-
-    /** The default backoff multiplier */
-    public static final float DEFAULT_BACKOFF_MULT = 2f;
+    private final JusErrorFilter errorFilter;
 
     /**
      * Constructs a new retry policy using the default timeouts.
@@ -59,9 +62,22 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * @param backoffMultiplier Backoff multiplier for the policy.
      */
     public DefaultRetryPolicy(int initialTimeoutMs, int maxNumRetries, float backoffMultiplier) {
-        mCurrentTimeoutMs = initialTimeoutMs;
-        mMaxNumRetries = maxNumRetries;
-        mBackoffMultiplier = backoffMultiplier;
+        this(initialTimeoutMs, maxNumRetries, backoffMultiplier, null);
+    }
+
+    /**
+     * Constructs a new retry policy.
+     * @param initialTimeoutMs The initial timeout for the policy.
+     * @param maxNumRetries The maximum number of retries.
+     * @param backoffMultiplier Backoff multiplier for the policy.
+     * @param errorFilter Filter which should return true if we want to retry, false otherwise
+     */
+    public DefaultRetryPolicy(int initialTimeoutMs, int maxNumRetries, float backoffMultiplier,
+                              JusErrorFilter errorFilter) {
+        this.currentTimeoutMs = initialTimeoutMs;
+        this.maxNumRetries = maxNumRetries;
+        this.backoffMultiplier = backoffMultiplier;
+        this.errorFilter = errorFilter;
     }
 
     /**
@@ -69,7 +85,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
      */
     @Override
     public int getCurrentConnectTimeout() {
-        return mCurrentTimeoutMs;
+        return currentTimeoutMs;
     }
 
     /**
@@ -77,7 +93,7 @@ public class DefaultRetryPolicy implements RetryPolicy {
      */
     @Override
     public int getCurrentReadTimeout() {
-        return mCurrentTimeoutMs;
+        return currentTimeoutMs;
     }
 
     /**
@@ -92,8 +108,10 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * Returns the backoff multiplier for the policy.
      */
     public float getBackoffMultiplier() {
-        return mBackoffMultiplier;
+        return backoffMultiplier;
     }
+
+
 
     /**
      * Prepares for the next retry by applying a backoff to the timeout.
@@ -101,8 +119,11 @@ public class DefaultRetryPolicy implements RetryPolicy {
      */
     @Override
     public void retry(JusError error) throws JusError {
+        if(errorFilter != null && !errorFilter.apply(error)) {
+            throw error;
+        }
         mCurrentRetryCount++;
-        mCurrentTimeoutMs = (int) (mCurrentTimeoutMs * mBackoffMultiplier);
+        currentTimeoutMs = (int) (currentTimeoutMs * backoffMultiplier);
         if (!hasAttemptRemaining()) {
             throw error;
         }
@@ -112,6 +133,13 @@ public class DefaultRetryPolicy implements RetryPolicy {
      * Returns true if this policy has attempts remaining, false otherwise.
      */
     protected boolean hasAttemptRemaining() {
-        return mCurrentRetryCount <= mMaxNumRetries;
+        return mCurrentRetryCount <= maxNumRetries;
+    }
+
+    /**
+     * A simple predicate or filter interface for JusError
+     */
+    public interface JusErrorFilter {
+        boolean apply(JusError jusError);
     }
 }

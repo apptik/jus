@@ -137,6 +137,13 @@ public final class NetworkResponse {
                 .build();
     }
 
+    /**
+     * A simple predicate or filter interface for NetworkResponse
+     */
+    public interface Filter {
+        boolean apply(NetworkResponse networkResponse);
+    }
+
     public static class Builder {
 
         /** The HTTP status code. */
