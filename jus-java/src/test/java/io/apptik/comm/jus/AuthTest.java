@@ -49,12 +49,6 @@ public class AuthTest {
         server.enqueue(new MockResponse().setResponseCode(401)
 
                 .setBody("Invalid token"));
-        server.enqueue(new MockResponse().setResponseCode(401)
-
-                .setBody("Invalid token"));
-        server.enqueue(new MockResponse().setResponseCode(401)
-
-                .setBody("Invalid token"));
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("nice :)"));
         String result = queue.add(new StringRequest("POST", server.url("/").toString())
@@ -67,10 +61,6 @@ public class AuthTest {
 
         assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
 
-        request = server.takeRequest();
-        assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
-        request = server.takeRequest();
-        assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
     }
     @Test
     public void authRetryOn407() throws Exception {

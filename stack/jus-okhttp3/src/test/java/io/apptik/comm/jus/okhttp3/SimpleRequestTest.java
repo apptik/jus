@@ -600,7 +600,7 @@ public final class SimpleRequestTest {
     @Test
     public void cancelRequestWhenInRetry() throws InterruptedException, ExecutionException {
         server.enqueue(new MockResponse().setResponseCode(200).setBody("#whatcanyoudo")
-                .setBodyDelay(1101, TimeUnit.MILLISECONDS));
+                .setBodyDelay(5101, TimeUnit.MILLISECONDS));
         final CountDownLatch latch = new CountDownLatch(2);
 
         example.getString().addMarkerListener(new RequestListener.MarkerListener() {
