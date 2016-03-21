@@ -9,12 +9,12 @@ Download [the latest JAR][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-jackson</artifactId>
-  <version>0.6.4</version>
+  <version>0.6.5</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-jackson:0.6.4'
+compile 'io.apptik.comm:jus-jackson:0.6.5'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].

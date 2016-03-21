@@ -1,8 +1,25 @@
 Change Log
 ==========
 
-NEXT Version 0.6.5 *(FUTURE-Dec-2015)*
+NEXT Version 0.6.6 *(FUTURE-2016)*
 ----------------------------------
+
+Version 0.6.5 *(21-Mar-2016)*
+----------------------------------
+* New: add OkHttp3 stack
+* New: add ApacheHttp stack
+* New: add Netty stack
+* Fix: #28 requests cannot be canceled while looping in network for retry
+* New: #32 add bitmap pool for NetworkImageView
+* Fix: for https://code.google.com/p/android/issues/detail?id=194495
+* Upd: #29 make Authenticator more generic
+* New: #2 Add authenticator for proxy 407
+* Upd: #35 add more customizable & manageable bitmap pool
+* Upd: Improve network image view reset/refresh
+* Upd: add default and error image ids on loader
+* Upd: make listener factories more generic
+* New: #33 add networkmanager and noconnection policy
+* Upd: add error filter for dynamic retry policy
 
 Version 0.6.4 *(23-Nov-2015)*
 ----------------------------------

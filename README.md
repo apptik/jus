@@ -18,12 +18,12 @@ Find [the latest JARs][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-XXX</artifactId>
-  <version>0.6.4</version>
+  <version>0.6.5</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-XXX:0.6.4'
+compile 'io.apptik.comm:jus-XXX:0.6.5'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].
@@ -49,13 +49,19 @@ Jus requires at minimum Java 7 or Android SDK 15.
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp)
     [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp)
     * [OkHttp3][jus-okhttp3] = OkHttp3 Client Stack for jus
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp3.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp3)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp3/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp3)
+    * [ApacheHttp][jus-apachehttp] = ApacheHttp Client Stack for jus
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-apachehttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-apachehttp)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-apachehttp/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-apachehttp)
+    * [Netty][jus-netty] = Netty Client Stack for jus
+    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-netty.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-netty)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-netty/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-netty)
+
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android)
     [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-android/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-android)
-    * [Reactive Android jus][jus-android-rx] - RxJava support for jus for Android
-    [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android-rx.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android-rx)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-android-rx/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-android-rx)
 * Data Serializers Support for jus
     * [Gson][jus-gson] - support for Gson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-gson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-gson)
@@ -112,3 +118,5 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [rx-jus]: https://github.com/apptik/jus/tree/master/rx-jus
  [jus-okhttp]: https://github.com/apptik/jus/tree/master/stack/jus-okhttp
  [jus-okhttp3]: https://github.com/apptik/jus/tree/master/stack/jus-okhttp3
+ [jus-apachehttp]: https://github.com/apptik/jus/tree/master/stack/jus-apachehttp
+ [jus-netty]: https://github.com/apptik/jus/tree/master/stack/jus-netty
