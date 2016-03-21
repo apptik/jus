@@ -185,7 +185,8 @@ public class NetworkImageView extends ImageView {
                     @Override
                     public void onResponse(final ImageContainer response, boolean isImmediate) {
                         //verify if we expect the same url
-                        if (NetworkImageView.this.mUrl != response.getRequestUrl()) {
+                        if (NetworkImageView.this.mUrl == null ||
+                                !NetworkImageView.this.mUrl.equals(response.getRequestUrl())) {
                             Log.w("NetworkImageView", "received: " + response.getRequestUrl()
                                     + ", expected: " + NetworkImageView.this.mUrl);
                             return;
@@ -226,7 +227,7 @@ public class NetworkImageView extends ImageView {
      */
     protected static boolean isOk2Draw(Bitmap bitmap) {
         //ignore this if bitmap is null.
-        if(bitmap==null) return true;
+        if (bitmap == null) return true;
 
         if (bitmap.isRecycled()) {
             return false;
