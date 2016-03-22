@@ -30,9 +30,9 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
+import io.netty.handler.codec.http.HttpHeaderUtil;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpResponse;
-import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.CharsetUtil;
 
@@ -75,7 +75,7 @@ public class NettyHttpClientHandler extends SimpleChannelInboundHandler<HttpObje
                 System.err.println();
             }
 
-            if (HttpUtil.isTransferEncodingChunked(response)) {
+            if (HttpHeaderUtil.isTransferEncodingChunked(response)) {
                 System.err.println("CHUNKED CONTENT {");
             } else {
                 System.err.println("CONTENT {");

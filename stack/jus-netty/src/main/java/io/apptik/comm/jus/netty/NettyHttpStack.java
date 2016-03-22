@@ -24,7 +24,6 @@ import io.netty.handler.codec.http.HttpMethod;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.HttpVersion;
 import io.netty.handler.ssl.SslContext;
-import io.netty.handler.ssl.SslContextBuilder;
 import io.netty.handler.ssl.util.InsecureTrustManagerFactory;
 
 public class NettyHttpStack extends AbstractHttpStack {
@@ -59,8 +58,7 @@ public class NettyHttpStack extends AbstractHttpStack {
         final boolean ssl = "https".equalsIgnoreCase(scheme);
         final SslContext sslCtx;
         if (ssl) {
-            sslCtx = SslContextBuilder.forClient()
-                    .trustManager(InsecureTrustManagerFactory.INSTANCE).build();
+            sslCtx = SslContext.newClientContext(InsecureTrustManagerFactory.INSTANCE);
         } else {
             sslCtx = null;
         }
