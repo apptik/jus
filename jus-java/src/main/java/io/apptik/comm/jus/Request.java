@@ -60,6 +60,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_DONE = "done";
     public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
     public static final String EVENT_NETWORK_STACK_SEND = "network-stack-send";
+    public static final String EVENT_NETWORK_STACK_REDIRECT_SEND = "network-stack-redirect-send";
+    public static final String EVENT_NETWORK_STACK_REDIRECT_COMPLETE = "network-stack-redirect-complete";
     public static final String EVENT_NETWORK_STACK_COMPLETE = "network-stack-complete";
     public static final String EVENT_NETWORK_TRANSFORM_COMPLETE = "network-transform-complete";
     public static final String EVENT_NETWORK_DISCARD_CANCELED = "network-discard-canceled";
@@ -178,6 +180,11 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * The retry policy for this request.
      */
     private RetryPolicy retryPolicy;
+
+    /**
+     * The retry policy for this request.
+     */
+    private RedirectPolicy redirectPolicy;
 
     /**
      * When a request can be retrieved from cache but must be refreshed from
@@ -511,6 +518,24 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     public RetryPolicy getRetryPolicy() {
         return retryPolicy;
+    }
+
+    /**
+     * Sets the redirect policy for this request.
+     *
+     * @return This Request object to allow for chaining.
+     */
+    public <R extends Request<T>> R setRedirectPolicy(RedirectPolicy redirectPolicy) {
+        checkIfActive();
+        this.redirectPolicy = redirectPolicy;
+        return (R) this;
+    }
+
+    /**
+     * Returns the redirect policy that should be used for this request.
+     */
+    public RedirectPolicy getRedirectPolicy() {
+        return redirectPolicy;
     }
 
 

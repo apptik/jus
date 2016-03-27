@@ -140,6 +140,7 @@ public class RequestQueue {
     private final List<RequestListener.MarkerListener> markerListeners = new ArrayList<>();
 
     private RetryPolicy.Factory retryPolicyFactory = null;
+    private RedirectPolicy.Factory redirectPolicyFactory = null;
     private ConnectivityManager.Factory connectivityManagerFactory = null;
     private NoConnectionPolicy.Factory noConnectionPolicyFactory = null;
 
@@ -446,6 +447,10 @@ public class RequestQueue {
         if (retryPolicyFactory != null) {
             request.setRetryPolicy(retryPolicyFactory.get(request));
         }
+        if (redirectPolicyFactory != null) {
+            request.setRedirectPolicy(redirectPolicyFactory.get(request));
+        }
+
         if (connectivityManagerFactory != null) {
             request.setConnectivityManager(connectivityManagerFactory.get(request));
         }
@@ -544,6 +549,15 @@ public class RequestQueue {
 
     public RequestQueue setRetryPolicyFactory(RetryPolicy.Factory retryPolicyFactory) {
         this.retryPolicyFactory = retryPolicyFactory;
+        return this;
+    }
+
+    public RedirectPolicy.Factory getRedirectPolicyFactory() {
+        return redirectPolicyFactory;
+    }
+
+    public RequestQueue setRedirectPolicyFactory(RedirectPolicy.Factory redirectPolicyFactory) {
+        this.redirectPolicyFactory = redirectPolicyFactory;
         return this;
     }
 

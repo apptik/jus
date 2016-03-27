@@ -101,6 +101,17 @@ public class HttpNetwork implements Network {
                 if(httpResponse==null) {
                     throw new NetworkError("No Response");
                 }
+                if(request.getRedirectPolicy()!=null) {
+                    Request newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
+                    //NetworkResponse rHttpResponse = null;
+                    Headers rHeaders = new Headers.Builder().build();
+                    while (newR!=null) {
+                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_SEND, newR);
+                        httpResponse = httpStack.performRequest(newR, rHeaders, pool);
+                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_COMPLETE, httpResponse);
+                        newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
+                    }
+                }
                 request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
                 //currently all requests that came to here normally needs to be attached to the
                 // queue

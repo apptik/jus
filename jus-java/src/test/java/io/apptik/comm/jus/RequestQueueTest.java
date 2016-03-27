@@ -225,6 +225,31 @@ public class RequestQueueTest {
     }
 
     @Test
+    public void redirectFactoryTest() throws Exception {
+        MockHttpStack httpStack = new MockHttpStack();
+        HttpNetwork network = new HttpNetwork(httpStack);
+        RequestQueue queue = new RequestQueue(new NoCache(), network, 3, mDelivery);
+        queue.setRedirectPolicyFactory(new RedirectPolicy.Factory() {
+            @Override
+            public RedirectPolicy get(Request request) {
+                return new RedirectPolicy() {
+                    @Override
+                    public Request verifyRedirect(Request request, NetworkResponse networkResponse) {
+                        return new Request("GET", "http://www.another.com/");
+                    }
+                };
+            }
+        });
+
+        MockRequest req1 = new MockRequest();
+        queue.add(req1);
+
+        assertEquals("http://www.another.com/",req1.getRedirectPolicy().verifyRedirect(req1, null).getUrlString());
+        assertEquals("GET", req1.getRedirectPolicy().verifyRedirect(req1, null).getMethod());
+
+    }
+
+    @Test
     public void queueMarkerListenersTest() throws InterruptedException {
         MockHttpStack httpStack = new MockHttpStack();
         HttpNetwork network = new HttpNetwork(httpStack);

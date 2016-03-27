@@ -4,6 +4,8 @@ Change Log
 NEXT Version 0.6.6 *(FUTURE-2016)*
 ----------------------------------
 
+* New: handle Redirects (300,301,302,303,307,308)
+
 Version 0.6.5 *(21-Mar-2016)*
 ----------------------------------
 * New: add OkHttp3 stack
