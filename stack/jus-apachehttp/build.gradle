@@ -30,7 +30,7 @@ test {
 
 dependencies {
     compile project(':jus-java')
-    compile 'org.apache.httpcomponents:httpclient:4.5.2'
+    compile rootProject.ext.apacheHttp
 
     testCompile rootProject.ext.assertjCore2
     testCompile rootProject.ext.mockitoCore
