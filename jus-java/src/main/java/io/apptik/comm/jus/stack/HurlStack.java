@@ -202,6 +202,7 @@ public class HurlStack extends AbstractHttpStack {
         byte[] body = request.getBody();
         if (body != null) {
             connection.setDoOutput(true);
+            connection.setFixedLengthStreamingMode(body.length);
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
             out.write(body);
             out.close();
