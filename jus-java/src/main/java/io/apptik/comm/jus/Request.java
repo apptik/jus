@@ -547,8 +547,11 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 Thread.currentThread().getId(),
                 Thread.currentThread().getName(),
                 System.nanoTime());
-        for (RequestListener.MarkerListener markerListener : markerListeners) {
-            markerListener.onMarker(marker, args);
+
+        synchronized (markerListeners) {
+            for (RequestListener.MarkerListener markerListener : markerListeners) {
+                markerListener.onMarker(marker, args);
+            }
         }
 
         if (logSlowRequests && requestBirthTime == 0) {
@@ -577,6 +580,12 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 //todo add queue markers
                 //JusLog.d("%d ns: %s", requestTime, this.toString());
             }
+        }
+        synchronized (errorListeners) {
+            errorListeners.clear();
+        }
+        synchronized (responseListeners) {
+            responseListeners.clear();
         }
         synchronized (markerListeners) {
             markerListeners.clear();
@@ -828,10 +837,14 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             for (RequestListener.ResponseListener responseListener : responseListeners) {
                 responseListener.onResponse(response);
             }
-            responseListeners.clear();
+            if (!this.response.intermediate) {
+                responseListeners.clear();
+            }
         }
-        synchronized (errorListeners) {
-            errorListeners.clear();
+        if (!this.response.intermediate) {
+            synchronized (errorListeners) {
+                errorListeners.clear();
+            }
         }
     }
 
