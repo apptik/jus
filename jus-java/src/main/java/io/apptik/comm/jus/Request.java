@@ -580,13 +580,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 //todo add queue markers
                 //JusLog.d("%d ns: %s", requestTime, this.toString());
             }
-        }
-        synchronized (errorListeners) {
-            errorListeners.clear();
-        }
-        synchronized (responseListeners) {
-            responseListeners.clear();
-        }
+         }
         synchronized (markerListeners) {
             markerListeners.clear();
         }
