@@ -96,19 +96,23 @@ public class HttpNetwork implements Network {
                 addServerAuthHeaders(request.getServerAuthenticator(), headers);
                 addProxyAuthHeaders(request.getProxyAuthenticator(), headers);
 
-                request.addMarker(Request.EVENT_NETWORK_STACK_SEND, request.getNetworkRequest());
-                httpResponse = httpStack.performRequest(request, headers.build(), pool);
-                if(httpResponse==null) {
+                Headers extraHeaders = headers.build();
+                request.addMarker(Request.EVENT_NETWORK_STACK_SEND, request.getNetworkRequest(),
+                        extraHeaders);
+                httpResponse = httpStack.performRequest(request, extraHeaders, pool);
+                if (httpResponse == null) {
                     throw new NetworkError("No Response");
                 }
-                if(request.getRedirectPolicy()!=null) {
-                    Request newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
+                if (request.getRedirectPolicy() != null) {
+                    Request newR = request.getRedirectPolicy().verifyRedirect(request,
+                            httpResponse);
                     //NetworkResponse rHttpResponse = null;
                     Headers rHeaders = new Headers.Builder().build();
-                    while (newR!=null) {
+                    while (newR != null) {
                         request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_SEND, newR);
                         httpResponse = httpStack.performRequest(newR, rHeaders, pool);
-                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_COMPLETE, httpResponse);
+                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_COMPLETE,
+                                httpResponse);
                         newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
                     }
                 }
@@ -231,8 +235,7 @@ public class HttpNetwork implements Network {
                             .HTTP_CLIENT_TIMEOUT) {
                         attemptRetryOnException("http-client", request, new RequestError
                                 (networkResponse, "HTTP_CLIENT_TIMEOUT"));
-                    }
-                    else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
+                    } else if (networkResponse.statusCode > 399 && networkResponse.statusCode <
                             500) {
                         //some request query error that does not make sense to retry, assuming
                         // the service we use is deterministic
@@ -281,7 +284,7 @@ public class HttpNetwork implements Network {
                                                 JusError exception) throws JusError {
         RetryPolicy retryPolicy = request.getRetryPolicy();
 
-        if(retryPolicy==null) {
+        if (retryPolicy == null) {
             throw exception;
         }
 
