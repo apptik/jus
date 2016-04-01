@@ -52,6 +52,7 @@ public class HurlStack extends AbstractHttpStack {
 
     private final UrlRewriter mUrlRewriter;
     private final SSLSocketFactory mSslSocketFactory;
+    boolean isFixedLengthStreamingMode = false;
 
     public HurlStack() {
         this(null);
@@ -71,6 +72,11 @@ public class HurlStack extends AbstractHttpStack {
     public HurlStack(UrlRewriter urlRewriter, SSLSocketFactory sslSocketFactory) {
         mUrlRewriter = urlRewriter;
         mSslSocketFactory = sslSocketFactory;
+    }
+
+    public HurlStack setFixedLengthStreamingMode(boolean enabled) {
+        isFixedLengthStreamingMode = enabled;
+        return this;
     }
 
     @Override
@@ -161,8 +167,8 @@ public class HurlStack extends AbstractHttpStack {
         return connection;
     }
 
-    static void setConnectionParametersForRequest(HttpURLConnection connection,
-                                                  Request<?> request) throws IOException {
+    void setConnectionParametersForRequest(HttpURLConnection connection,
+                                           Request<?> request) throws IOException {
         switch (request.getMethod()) {
             case Method.GET:
                 break;
@@ -197,12 +203,14 @@ public class HurlStack extends AbstractHttpStack {
         }
     }
 
-    private static void addBodyIfExists(HttpURLConnection connection, Request<?> request)
+    private void addBodyIfExists(HttpURLConnection connection, Request<?> request)
             throws IOException {
         byte[] body = request.getBody();
         if (body != null) {
+            if (isFixedLengthStreamingMode) {
+                connection.setFixedLengthStreamingMode(body.length);
+            }
             connection.setDoOutput(true);
-            connection.setFixedLengthStreamingMode(body.length);
             DataOutputStream out = new DataOutputStream(connection.getOutputStream());
             out.write(body);
             out.close();

@@ -29,108 +29,122 @@ import static org.junit.Assert.assertTrue;
 
 public class HurlStackTest {
 
-    private MockHttpURLConnection mMockConnection;
+    private MockHttpURLConnection mockConnection;
+    private HurlStack hurlStack;
 
-    @Before public void setUp() throws Exception {
-        mMockConnection = new MockHttpURLConnection();
+    @Before
+    public void setUp() throws Exception {
+        mockConnection = new MockHttpURLConnection();
+        hurlStack = new HurlStack();
     }
 
-    @Test public void connectionForGetRequest() throws Exception {
+    @Test
+    public void connectionForGetRequest() throws Exception {
         TestRequest.Get request = new TestRequest.Get();
         assertEquals(request.getMethod(), Method.GET);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("GET", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("GET", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForPostRequest() throws Exception {
+    @Test
+    public void connectionForPostRequest() throws Exception {
         TestRequest.Post request = new TestRequest.Post();
         assertEquals(request.getMethod(), Method.POST);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("POST", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("POST", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForPostWithBodyRequest() throws Exception {
+    @Test
+    public void connectionForPostWithBodyRequest() throws Exception {
         TestRequest.PostWithBody request = new TestRequest.PostWithBody();
         assertEquals(request.getMethod(), Method.POST);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("POST", mMockConnection.getRequestMethod());
-        assertTrue(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("POST", mockConnection.getRequestMethod());
+        assertTrue(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForPutRequest() throws Exception {
+    @Test
+    public void connectionForPutRequest() throws Exception {
         TestRequest.Put request = new TestRequest.Put();
         assertEquals(request.getMethod(), Method.PUT);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("PUT", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("PUT", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForPutWithBodyRequest() throws Exception {
+    @Test
+    public void connectionForPutWithBodyRequest() throws Exception {
         TestRequest.PutWithBody request = new TestRequest.PutWithBody();
         assertEquals(request.getMethod(), Method.PUT);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("PUT", mMockConnection.getRequestMethod());
-        assertTrue(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("PUT", mockConnection.getRequestMethod());
+        assertTrue(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForDeleteRequest() throws Exception {
+    @Test
+    public void connectionForDeleteRequest() throws Exception {
         TestRequest.Delete request = new TestRequest.Delete();
         assertEquals(request.getMethod(), Method.DELETE);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("DELETE", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("DELETE", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForHeadRequest() throws Exception {
+    @Test
+    public void connectionForHeadRequest() throws Exception {
         TestRequest.Head request = new TestRequest.Head();
         assertEquals(request.getMethod(), Method.HEAD);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("HEAD", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("HEAD", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForOptionsRequest() throws Exception {
+    @Test
+    public void connectionForOptionsRequest() throws Exception {
         TestRequest.Options request = new TestRequest.Options();
         assertEquals(request.getMethod(), Method.OPTIONS);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("OPTIONS", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("OPTIONS", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForTraceRequest() throws Exception {
+    @Test
+    public void connectionForTraceRequest() throws Exception {
         TestRequest.Trace request = new TestRequest.Trace();
         assertEquals(request.getMethod(), Method.TRACE);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("TRACE", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("TRACE", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForPatchRequest() throws Exception {
+    @Test
+    public void connectionForPatchRequest() throws Exception {
         TestRequest.Patch request = new TestRequest.Patch();
         assertEquals(request.getMethod(), Method.PATCH);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("PATCH", mMockConnection.getRequestMethod());
-        assertFalse(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("PATCH", mockConnection.getRequestMethod());
+        assertFalse(mockConnection.getDoOutput());
     }
 
-    @Test public void connectionForPatchWithBodyRequest() throws Exception {
+    @Test
+    public void connectionForPatchWithBodyRequest() throws Exception {
         TestRequest.PatchWithBody request = new TestRequest.PatchWithBody();
         assertEquals(request.getMethod(), Method.PATCH);
 
-        HurlStack.setConnectionParametersForRequest(mMockConnection, request);
-        assertEquals("PATCH", mMockConnection.getRequestMethod());
-        assertTrue(mMockConnection.getDoOutput());
+        hurlStack.setConnectionParametersForRequest(mockConnection, request);
+        assertEquals("PATCH", mockConnection.getRequestMethod());
+        assertTrue(mockConnection.getDoOutput());
     }
 }

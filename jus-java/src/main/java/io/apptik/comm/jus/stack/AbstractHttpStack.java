@@ -34,7 +34,7 @@ public abstract class AbstractHttpStack implements HttpStack {
     /**
      * Reads the contents of HttpEntity into a byte[].
      */
-    public static final byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool
+    public final byte[] getContentBytes(HttpURLConnection connection, ByteArrayPool
             byteArrayPool)
             throws IOException {
         InputStream inputStream;
@@ -42,18 +42,20 @@ public abstract class AbstractHttpStack implements HttpStack {
             inputStream = connection.getInputStream();
         } catch (IOException ioe) {
             inputStream = connection.getErrorStream();
+            if(inputStream==null) {
+                throw ioe;
+            }
         }
         return getContentBytes(inputStream, byteArrayPool, connection.getContentLength());
     }
 
-    public static final byte[] getContentBytes(InputStream inputStream, ByteArrayPool
+    public final static byte[] getContentBytes(InputStream inputStream, ByteArrayPool
             byteArrayPool, int contentLen) throws IOException {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(byteArrayPool, contentLen);
         byte[] buffer = null;
 
         try {
-
             if (inputStream == null) {
                 return new byte[0];
             }
@@ -74,7 +76,9 @@ public abstract class AbstractHttpStack implements HttpStack {
         } finally {
             try {
                 // Close the InputStream and release the resources
-                inputStream.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
             } catch (IOException e) {
                 // This can happen if there was an exception above that left the entity in
                 // an invalid state.
