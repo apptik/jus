@@ -103,14 +103,14 @@ public interface Cache {
         @Override
         public String toString() {
             return "Entry{" +
-                    "\n\tdata=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP
-                    .UTF_8))) +
-                    "\n\tetag='" + etag + '\'' +
+                   "\n\tetag='" + etag + '\'' +
                     "\n\tserverDate=" + serverDate +
                     "\n\tlastModified=" + lastModified +
                     "\n\tttl=" + ttl +
                     "\n\tsoftTtl=" + softTtl +
                     "\n\tresponseHeaders={" + responseHeaders.toString().replace("\n\t", "\n\t\t") +
+                    "\n\tdata=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP
+                    .UTF_8))) +
                     "}}";
         }
     }
