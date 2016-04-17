@@ -1,0 +1,36 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "io.apptik.jus.examples"
+        minSdkVersion 15
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+}
+
+dependencies {
+    compile rootProject.ext.jjsonCore
+    compile rootProject.ext.jjsonWrapper
+    compile rootProject.ext.supportRecyclerView
+    compile rootProject.ext.supportAppCompat
+    compile rootProject.ext.supportCardView
+    compile rootProject.ext.supportV4
+    compile rootProject.ext.supportDesign
+    compile rootProject.ext.supportAnnotations
+    compile project(':android:jus-android')
+    compile project(':rx-jus')
+    compile project(':retro-jus')
+    compile project(':converter:jus-gson')
+    compile rootProject.ext.rxjava
+}
