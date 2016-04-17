@@ -248,6 +248,7 @@ public class NetworkImageView extends ImageView {
         } else {
             setImageBitmap(null);
         }
+        ((BitmapDrawable)this.getDrawable()).getBitmap();
     }
 
     @Override

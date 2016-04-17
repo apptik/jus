@@ -141,7 +141,6 @@ public class ImageLoader {
         return mDefaultImageId;
     }
 
-
     /**
      * The default implementation of ImageListener which handles basic functionality
      * of showing a default image until the network response is received, at which point

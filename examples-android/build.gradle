@@ -26,6 +26,10 @@ android {
         targetSdkVersion rootProject.ext.compileSdkVersion
         versionCode 1
         versionName "1.0"
+
+        jackOptions {
+            enabled true
+        }
     }
     buildTypes {
         release {
@@ -40,6 +44,11 @@ android {
     lintOptions {
         abortOnError false
     }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
@@ -52,6 +61,8 @@ dependencies {
     compile rootProject.ext.supportAnnotations
     compile project(':android:jus-android')
     compile project(':rx-jus')
+    compile project(':retro-jus')
     compile rootProject.ext.rxjava
     compile rootProject.ext.gson
+
 }
