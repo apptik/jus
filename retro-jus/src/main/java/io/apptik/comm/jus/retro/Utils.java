@@ -30,10 +30,10 @@ import java.util.Arrays;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.Response;
 
-final class Utils {
+public final class Utils {
 
   /** Returns true if {@code annotations} contains an instance of {@code cls}. */
-  static boolean isAnnotationPresent(Annotation[] annotations,
+  public static boolean isAnnotationPresent(Annotation[] annotations,
       Class<? extends Annotation> cls) {
     for (Annotation annotation : annotations) {
       if (cls.isInstance(annotation)) {

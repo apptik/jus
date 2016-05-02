@@ -32,5 +32,7 @@ dependencies {
     compile project(':rx-jus')
     compile project(':retro-jus')
     compile project(':converter:jus-gson')
+    compile project(':converter:jus-jjson')
+
     compile rootProject.ext.rxjava
 }

@@ -24,9 +24,7 @@ import android.util.Log;
 import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.examples.ExampleLruPooledCache;
 import io.apptik.comm.jus.rx.event.ErrorEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
@@ -85,14 +83,6 @@ public class CustomJusHelper {
         }
     }
 
-    /**
-     * Returns instance of ImageLoader initialized with {@see FakeImageCache} which effectively
-     * means
-     * that no memory caching is used. This is useful for images that you know that will be show
-     * only once.
-     *
-     * @return
-     */
     public static ImageLoader getImageLoader() {
         if (imageLoader != null) {
             return imageLoader;
@@ -107,18 +97,8 @@ public class CustomJusHelper {
 
     public static void addDummyRequest(String key, String val) {
         addRequest(Requests.getDummyRequest(key, val,
-                new RequestListener.ResponseListener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Jus-Test", "jus response : " + response);
-                    }
-                },
-                new RequestListener.ErrorListener() {
-                    @Override
-                    public void onError(JusError error) {
-                        Log.d("Jus-Test", "jus error : " + error);
-                    }
-                }
+                response -> Log.d("Jus-Test", "jus response : " + response),
+                error -> Log.d("Jus-Test", "jus error : " + error)
         ));
     }
 
