@@ -24,6 +24,8 @@ import java.util.concurrent.BlockingQueue;
 // refreshing.
 public class AlwaysGetCacheDispatcher extends CacheDispatcher {
 
+    RequestQueue.RequestFilter filter = null;
+
     /**
      * Creates a new cache triage dispatcher threadId.  You must call {@link #start()}
      * in order to begin processing.
@@ -37,6 +39,16 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                                     BlockingQueue<Request<?>> networkQueue,
                                     Cache cache, ResponseDelivery delivery) {
         super(cacheQueue, networkQueue, cache, delivery);
+    }
+
+
+    public RequestQueue.RequestFilter getFilter() {
+        return filter;
+    }
+
+    public AlwaysGetCacheDispatcher setFilter(RequestQueue.RequestFilter filter) {
+        this.filter = filter;
+        return this;
     }
 
     @Override
@@ -69,27 +81,34 @@ public class AlwaysGetCacheDispatcher extends CacheDispatcher {
                     continue;
                 }
 
-                // If it is completely expired, just send it to the network.
+                // If it is completely expired, just send it to the network unless get cache always.
                 if (entry.isExpired()) {
-                    request.addMarker(Request.EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT);
-                    Response<?> response = request.parseNetworkResponse(
-                            new NetworkResponse(200, entry.data, entry.responseHeaders, 0));
                     request.setCacheEntry(entry);
-                    // Mark the response as intermediate.
-                    response.intermediate = true;
+                    if (filter != null && filter.apply(request)) {
+                        request.addMarker(Request.EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT);
+                        Response<?> response = request.parseNetworkResponse(
+                                new NetworkResponse(200, entry.data, entry.responseHeaders, 0));
+                        // Mark the response as intermediate.
+                        response.intermediate = true;
 
-                    // Post the intermediate response back to the user and have
-                    // the delivery then forward the request along to the network.
-                    mDelivery.postResponse(request, response, new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                mNetworkQueue.put(request);
-                            } catch (InterruptedException e) {
-                                // Not much we can do about this.
+
+                        // Post the intermediate response back to the user and have
+                        // the delivery then forward the request along to the network.
+                        mDelivery.postResponse(request, response, new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    mNetworkQueue.put(request);
+                                } catch (InterruptedException e) {
+                                    // Not much we can do about this.
+                                }
                             }
-                        }
-                    });
+                        });
+                    } else {
+                        request.addMarker(Request.EVENT_CACHE_HIT_EXPIRED);
+                        mNetworkQueue.put(request);
+                    }
+                    continue;
                 }
 
                 // We have a cache hit; parse its data for delivery back to the request.
