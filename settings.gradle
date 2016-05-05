@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-include ':android:jus-android',
+include ':android:jus-android', ':examples-android-volley-migration',
         ':stack:jus-okhttp3',
         ':stack:jus-netty',
         ':stack:jus-apachehttp',
