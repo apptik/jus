@@ -28,7 +28,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.1.0-beta1'
+        classpath 'com.android.tools.build:gradle:2.1.0'
     }
 }
 
@@ -47,14 +47,14 @@ allprojects {
 ext {
     minSdkVersion = 15
     compileSdkVersion = 23
-    buildToolsVersion = '23.0.2'
+    buildToolsVersion = '23.0.3'
 
-    supportAnnotations = 'com.android.support:support-annotations:23.2.1'
-    supportV4 = 'com.android.support:support-v4:23.2.1'
-    supportRecyclerView = 'com.android.support:recyclerview-v7:23.2.1'
-    supportCardView = 'com.android.support:cardview-v7:23.2.1'
-    supportAppCompat = 'com.android.support:appcompat-v7:23.2.1'
-    supportDesign = 'com.android.support:design:23.2.1'
+    supportAnnotations = 'com.android.support:support-annotations:23.3.0'
+    supportV4 = 'com.android.support:support-v4:23.3.0'
+    supportRecyclerView = 'com.android.support:recyclerview-v7:23.3.0'
+    supportCardView = 'com.android.support:cardview-v7:23.3.0'
+    supportAppCompat = 'com.android.support:appcompat-v7:23.3.0'
+    supportDesign = 'com.android.support:design:23.3.0'
 
     supportTestRunner = 'com.android.support.test:runner:0.5'
     supportTestRules = 'com.android.support.test:rules:0.5'
@@ -63,24 +63,24 @@ ext {
 
     assertjCore1 = 'org.assertj:assertj-core:1.7.1'
     assertjCore2 = 'org.assertj:assertj-core:2.3.0'
-    mockitoCore = 'org.mockito:mockito-core:2.0.43-beta'
+    mockitoCore = 'org.mockito:mockito-core:2.0.52-beta'
     robolectric = 'org.robolectric:robolectric:3.0'
 
     mockwebserver = 'com.squareup.okhttp:mockwebserver:2.7.5'
     mockwebserver3 = 'com.squareup.okhttp3:mockwebserver:3.2.0'
     okhttp = 'com.squareup.okhttp:okhttp:2.7.5'
     okhttp3 = 'com.squareup.okhttp3:okhttp:3.2.0'
-    okio = 'com.squareup.okio:okio:1.6.0'
+    okio = 'com.squareup.okio:okio:1.7.0'
 
     apacheHttp = 'org.apache.httpcomponents:httpclient:4.5.2'
 
-    rxjava = 'io.reactivex:rxjava:1.1.2'
+    rxjava = 'io.reactivex:rxjava:1.1.3'
 
     junit = 'junit:junit:4.12'
 
     gson = 'com.google.code.gson:gson:2.6.2'
     jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
-    wireRuntime = 'com.squareup.wire:wire-runtime:2.1.1'
+    wireRuntime = 'com.squareup.wire:wire-runtime:2.1.2'
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
     protobuf = 'com.google.protobuf:protobuf-java:3.0.0-beta-2'
     moshi = 'com.squareup.moshi:moshi:1.1.0'
