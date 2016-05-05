@@ -53,4 +53,5 @@ dependencies {
     compile project(':android:jus-android')
     compile project(':rx-jus')
     compile rootProject.ext.rxjava
+    compile rootProject.ext.gson
 }
