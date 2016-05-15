@@ -75,6 +75,8 @@ public class HttpNetwork implements Network {
     @Override
     public NetworkResponse performRequest(Request<?> request) throws JusError {
         long requestStart = System.nanoTime();
+        boolean serverAuthRequested = false;
+        boolean proxyAuthRequested = false;
         while (true) {
             if (request.isCanceled()) {
                 //it will be handled/ignored later
@@ -118,53 +120,6 @@ public class HttpNetwork implements Network {
                     request.addMarker(Request.EVENT_NETWORK_TRANSFORM_COMPLETE, httpResponse);
                 }
 
-                //Check for Auth
-                if (httpResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                    // thrown when available Authenticator is available
-                    request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR,
-                            httpResponse);
-                    if (request.getServerAuthenticator() != null) {
-                        request.getServerAuthenticator().clearAuthValue();
-                        try {
-                            //typical implementation would try to refresh the token
-                            //after being set to invalid
-                            request.getServerAuthenticator().getAuthValue();
-                        } catch (AuthError authError) {
-                            //finally we didn't succeed
-                            throw authError;
-                        }
-                        //retry the request
-                        request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR_RESEND,
-                                httpResponse);
-                        continue;
-                    } else {
-                        //or if another way of auth is used
-                        throw new AuthError(httpResponse);
-                    }
-                } else if (httpResponse.statusCode == HttpURLConnection.HTTP_PROXY_AUTH) {
-                    request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_PROXY_ERROR,
-                            httpResponse);
-                    // thrown when available Authenticator is available
-                    if (request.getProxyAuthenticator() != null) {
-                        request.getProxyAuthenticator().clearAuthValue();
-                        try {
-                            //typical implementation would try to refresh the token
-                            //after being set to invalid
-                            request.getProxyAuthenticator().getAuthValue();
-                        } catch (AuthError authError) {
-                            //finally we didn't succeed
-                            throw authError;
-                        }
-                        //retry the request
-                        request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR_RESEND,
-                                httpResponse);
-                        continue;
-                    } else {
-                        //or if another way of auth is used
-                        throw new AuthError(httpResponse);
-                    }
-                }
-
                 //Check for redirects
                 if (request.getRedirectPolicy() != null) {
                     Request newR = request.getRedirectPolicy().verifyRedirect(request,
@@ -190,6 +145,53 @@ public class HttpNetwork implements Network {
                             throw new NetworkError(httpResponse, "Response Body not completely " +
                                     "received");
                         }
+                    }
+                }
+
+                //Check for Auth
+                if (httpResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR,
+                            httpResponse);
+                    if (request.getServerAuthenticator() != null && !serverAuthRequested) {
+                        request.getServerAuthenticator().clearAuthValue();
+                        try {
+                            //typical implementation would try to refresh the token
+                            //after being set to invalid
+                            request.getServerAuthenticator().getAuthValue();
+                        } catch (AuthError authError) {
+                            //finally we didn't succeed
+                            throw authError;
+                        }
+                        //retry the request
+                        request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR_RESEND,
+                                httpResponse);
+                        serverAuthRequested = true;
+                        continue;
+                    } else {
+                        //or if another way of auth is used
+                        throw new AuthError(httpResponse);
+                    }
+                } else if (httpResponse.statusCode == HttpURLConnection.HTTP_PROXY_AUTH) {
+                    request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_PROXY_ERROR,
+                            httpResponse);
+                    if (request.getProxyAuthenticator() != null && !proxyAuthRequested) {
+                        request.getProxyAuthenticator().clearAuthValue();
+                        try {
+                            //typical implementation would try to refresh the token
+                            //after being set to invalid
+                            request.getProxyAuthenticator().getAuthValue();
+                        } catch (AuthError authError) {
+                            //finally we didn't succeed
+                            throw authError;
+                        }
+                        //retry the request
+                        request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR_RESEND,
+                                httpResponse);
+                        proxyAuthRequested = true;
+                        continue;
+                    } else {
+                        //or if another way of auth is used
+                        throw new AuthError(httpResponse);
                     }
                 }
 

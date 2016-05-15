@@ -11,11 +11,13 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import io.apptik.comm.jus.auth.Authenticator;
+import io.apptik.comm.jus.error.AuthError;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.mock.MockTokenAuth;
 import io.apptik.comm.jus.request.StringRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.fail;
 
 public class AuthTest {
 
@@ -67,6 +69,27 @@ public class AuthTest {
         assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
 
     }
+
+    @Test
+    public void authRetryOn401Fail() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(401)
+                .setBody("Invalid token"));
+        server.enqueue(new MockResponse().setResponseCode(401)
+                .setBody("Invalid token"));
+        try {
+            queue.add(new StringRequest("POST", server.url("/").toString())
+                    .setObjectRequest("try me!")).getFuture().get();
+            fail("Must not retry 2 times");
+        } catch (Exception ex) {
+            assertThat(ex).hasCauseExactlyInstanceOf(AuthError.class);
+        }
+        RecordedRequest request = server.takeRequest();
+
+        assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
+
+        server.shutdown();
+    }
+
     @Test
     public void authRetryOn407() throws Exception {
         server.enqueue(new MockResponse().setResponseCode(407)
@@ -87,4 +110,26 @@ public class AuthTest {
         request = server.takeRequest();
         assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
     }
+
+
+    @Test
+    public void authRetryOn407Fail() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(407)
+                .setBody("Invalid token"));
+        server.enqueue(new MockResponse().setResponseCode(407)
+                .setBody("Invalid token"));
+        try {
+            queue.add(new StringRequest("POST", server.url("/").toString())
+                    .setObjectRequest("try me!")).getFuture().get();
+            fail("Must not retry 2 times");
+        } catch (Exception ex) {
+            assertThat(ex).hasCauseExactlyInstanceOf(AuthError.class);
+        }
+        RecordedRequest request = server.takeRequest();
+
+        assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
+
+        server.shutdown();
+    }
+
 }
