@@ -36,6 +36,11 @@ public class AuthTest {
             public Authenticator forProxy(HttpUrl url, NetworkRequest networkRequest) {
                 return new MockTokenAuth();
             }
+        }).setRetryPolicyFactory(new RetryPolicy.Factory() {
+            @Override
+            public RetryPolicy get(Request request) {
+                return new DefaultRetryPolicy(1000, 0, 1);
+            }
         });
     }
 
