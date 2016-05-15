@@ -23,6 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.Cache.Entry;
@@ -156,9 +158,19 @@ public class HttpNetwork implements Network {
                         // have to use the header fields from the cache entry plus
                         // the new ones from the response.
                         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
+                        final Map<String, List<String>> responseHeaders = httpResponse.headers.toMultimap();
+                        final Map<String, List<String>> cacheHeaders = entry.responseHeaders.toMultimap();
                         Headers.Builder hBuilder = new Headers.Builder();
-                        hBuilder.addMMap(entry.responseHeaders.toMultimap())
-                                .addMMap(httpResponse.headers.toMultimap());
+                        hBuilder.addMMap(responseHeaders);
+                        if (cacheHeaders != null) {
+                            for (Map.Entry<String, List<String>> hentry : cacheHeaders.entrySet()) {
+                                //could be status line
+                                if (hentry.getKey() != null
+                                        && !responseHeaders.containsKey(hentry.getKey())) {
+                                    hBuilder.add(hentry.getKey(), hentry.getValue());
+                                }
+                            }
+                        }
 
                         httpResponse = new NetworkResponse(
                                 httpResponse.statusCode,
