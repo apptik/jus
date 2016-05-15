@@ -12,20 +12,18 @@ import android.widget.TextView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.error.JusError;
-import io.apptik.comm.jus.examples.TestObjectForGson;
 import io.apptik.comm.jus.examples.R;
-import io.apptik.comm.jus.examples.jus.CustomJusHelper;
+import io.apptik.comm.jus.examples.TestObjectForGson;
+import io.apptik.comm.jus.examples.jus.JusHelper;
 import io.apptik.comm.jus.request.GsonRequest;
 import io.apptik.comm.jus.request.ImageRequest;
 import io.apptik.comm.jus.request.JsonArrayRequest;
-import io.apptik.comm.jus.request.JsonObjectRequest;
 import io.apptik.comm.jus.request.StringRequest;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.ui.NetworkImageView;
@@ -48,7 +46,6 @@ public class JusFragment extends Fragment {
 	public static JusFragment newInstance() {
 		JusFragment fragment = new JusFragment();
 		Bundle args = new Bundle();
-
 		fragment.setArguments(args);
 		return fragment;
 	}
@@ -112,12 +109,9 @@ public class JusFragment extends Fragment {
 		String url = "http://i.imgur.com/7spzG.png";
 		mImageView = (ImageView) v.findViewById(R.id.iv_image_request);
 
-		// Instantiate the RequestQueue with a CustomHelper
-		CustomJusHelper.init(getContext());
-
 		ImageRequest request = new ImageRequest(url, 0, 0, ImageView.ScaleType.CENTER, null);
 
-		CustomJusHelper.getRequestQueue().add(request.addResponseListener(new RequestListener.ResponseListener<Bitmap>
+		JusHelper.getInstance(v.getContext()).addToRequestQueue(request.addResponseListener(new RequestListener.ResponseListener<Bitmap>
 				() {
 			@Override
 			public void onResponse(Bitmap response) {
@@ -143,7 +137,7 @@ public class JusFragment extends Fragment {
 		mNetworkImageView = (NetworkImageView) v.findViewById(R.id.networkImageView);
 
 		// Get the ImageLoader through your custom Helper.
-		mImageLoader = CustomJusHelper.getImageLoader();
+		mImageLoader = JusHelper.getInstance(v.getContext()).getImageLoader();
 
 		// Set the URL of the image that should be loaded into this view, and
 		// specify the ImageLoader that will be used to make the request.
@@ -160,7 +154,7 @@ public class JusFragment extends Fragment {
 		String url = "https://api.github.com/users/mralexgray/repos";
 
 		JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url);
-		CustomJusHelper.getRequestQueue().add(jsonArrayRequest.addResponseListener(
+		JusHelper.getInstance(v.getContext()).addToRequestQueue(jsonArrayRequest.addResponseListener(
 				new RequestListener.ResponseListener<JSONArray>() {
 					@Override
 					public void onResponse(JSONArray response) {
@@ -189,7 +183,7 @@ public class JusFragment extends Fragment {
 		GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, url, TestObjectForGson[]
 				.class);
 
-		CustomJusHelper.getRequestQueue().add(gsonRequest.addResponseListener(
+		JusHelper.getInstance(v.getContext()).addToRequestQueue(gsonRequest.addResponseListener(
 				new RequestListener.ResponseListener<TestObjectForGson[]>() {
 					@Override
 					public void onResponse(TestObjectForGson[] response) {

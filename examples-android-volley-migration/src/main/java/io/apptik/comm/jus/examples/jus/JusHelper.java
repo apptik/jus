@@ -26,50 +26,45 @@ import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.PooledBitmapLruCache;
 
-public class CustomJusHelper {
-    private static RequestQueue queue;
-    private static ImageLoader imageLoader;
-
-    private CustomJusHelper() {
-        // no instances
-    }
+public class JusHelper {
+    private static JusHelper mInstance;
+    private  RequestQueue queue;
+    private  ImageLoader imageLoader;
+    private static Context context;
 
 
-    public static void init(Context context) {
+    private JusHelper(Context context) {
+        JusHelper.context = context;
         JusLog.ErrorLog.on();
         JusLog.ResponseLog.on();
         JusLog.MarkerLog.on();
-        queue = AndroidJus.newRequestQueue(context);
         PooledBitmapLruCache bitmapLruCache = new PooledBitmapLruCache();
+        queue = AndroidJus.newRequestQueue(context);
         imageLoader = new ImageLoader(queue, bitmapLruCache, bitmapLruCache);
     }
 
-    public static RequestQueue getRequestQueue() {
-        if (queue != null) {
-            return queue;
-        } else {
-            throw new IllegalStateException("RequestQueue not initialized");
+    public static synchronized JusHelper getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new JusHelper(context);
         }
+        return mInstance;
     }
 
-    /**
-     * Returns instance of ImageLoader initialized with {@see FakeImageCache} which effectively
-     * means
-     * that no memory caching is used. This is useful for images that you know that will be show
-     * only once.
-     *
-     * @return
-     */
-    public static ImageLoader getImageLoader() {
-        if (imageLoader != null) {
-            return imageLoader;
-        } else {
-            throw new IllegalStateException("ImageLoader not initialized");
+    public RequestQueue getRequestQueue() {
+        if (queue == null) {
+            // getApplicationContext() is key, it keeps you from leaking the
+            // Activity or BroadcastReceiver if someone passes one in.
+            queue = AndroidJus.newRequestQueue(context.getApplicationContext());
         }
+        return queue;
     }
 
-    public static void addRequest(Request request) {
-        queue.add(request);
+    public ImageLoader getImageLoader() {
+        return imageLoader;
+    }
+
+    public <T> Request<T> addToRequestQueue(Request<T> request) {
+        return getRequestQueue().add(request);
     }
 
 

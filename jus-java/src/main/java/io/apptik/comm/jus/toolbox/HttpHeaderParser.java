@@ -65,7 +65,7 @@ public class HttpHeaderParser {
 
         //TODO check multiple cache and make stale if more than 1 value for given directive
         headerValues = headers.values("Cache-Control");
-        if (headerValues != null && headerValues.size()>0) {
+        if (headerValues != null && headerValues.size() > 0) {
             hasCacheControl = true;
             for (int i = 0; i < headerValues.size(); i++) {
                 String[] tokens = headerValues.get(i).trim().split(",");
@@ -101,13 +101,12 @@ public class HttpHeaderParser {
             lastModified = parseDateAsEpoch(headerValue);
         }
 
-
         serverEtag = headers.get("ETag");
 
         // Cache-Control takes precedence over an Expires header, even if both exist and Expires
         // is more restrictive.
         if (hasCacheControl) {
-            softExpire = lastModified>0?lastModified:now + maxAge * 1000;
+            softExpire = now + maxAge * 1000;
             finalExpire = mustRevalidate
                     ? softExpire
                     : softExpire + staleWhileRevalidate * 1000;
@@ -145,7 +144,7 @@ public class HttpHeaderParser {
     /**
      * Retrieve a charset from headers
      *
-     * @param headers An {@link java.util.Map} of headers
+     * @param headers        An {@link java.util.Map} of headers
      * @param defaultCharset Charset to return if none can be found
      * @return Returns the charset specified in the Content-Type of this header,
      * or the defaultCharset if none can be found.
