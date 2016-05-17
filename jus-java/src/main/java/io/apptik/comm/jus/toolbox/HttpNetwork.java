@@ -23,6 +23,8 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
 import io.apptik.comm.jus.Cache.Entry;
@@ -73,6 +75,8 @@ public class HttpNetwork implements Network {
     @Override
     public NetworkResponse performRequest(Request<?> request) throws JusError {
         long requestStart = System.nanoTime();
+        boolean serverAuthRequested = false;
+        boolean proxyAuthRequested = false;
         while (true) {
             if (request.isCanceled()) {
                 //it will be handled/ignored later
@@ -103,20 +107,7 @@ public class HttpNetwork implements Network {
                 if (httpResponse == null) {
                     throw new NetworkError("No Response");
                 }
-                if (request.getRedirectPolicy() != null) {
-                    Request newR = request.getRedirectPolicy().verifyRedirect(request,
-                            httpResponse);
-                    //NetworkResponse rHttpResponse = null;
-                    Headers rHeaders = new Headers.Builder().build();
-                    while (newR != null) {
-                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_SEND, newR);
-                        httpResponse = httpStack.performRequest(newR, rHeaders, pool);
-                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_COMPLETE,
-                                httpResponse);
-                        newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
-                    }
-                }
-                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
+
                 //currently all requests that came to here normally needs to be attached to the
                 // queue
                 //however due the complete decoupling of the components in Jus a Network may be set
@@ -128,6 +119,22 @@ public class HttpNetwork implements Network {
                             httpResponse);
                     request.addMarker(Request.EVENT_NETWORK_TRANSFORM_COMPLETE, httpResponse);
                 }
+
+                //Check for redirects
+                if (request.getRedirectPolicy() != null) {
+                    Request newR = request.getRedirectPolicy().verifyRedirect(request,
+                            httpResponse);
+                    Headers rHeaders = new Headers.Builder().build();
+                    while (newR != null) {
+                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_SEND, newR);
+                        httpResponse = httpStack.performRequest(newR, rHeaders, pool);
+                        request.addMarker(Request.EVENT_NETWORK_STACK_REDIRECT_COMPLETE,
+                                httpResponse);
+                        newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
+                    }
+                }
+                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
+
                 //check completeness of body
                 if (httpResponse != null && httpResponse.headers != null) {
                     String contentLen = httpResponse.headers.get(HTTP.CONTENT_LEN);
@@ -140,6 +147,54 @@ public class HttpNetwork implements Network {
                         }
                     }
                 }
+
+                //Check for Auth
+                if (httpResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                    request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR,
+                            httpResponse);
+                    if (request.getServerAuthenticator() != null && !serverAuthRequested) {
+                        request.getServerAuthenticator().clearAuthValue();
+                        try {
+                            //typical implementation would try to refresh the token
+                            //after being set to invalid
+                            request.getServerAuthenticator().getAuthValue();
+                        } catch (AuthError authError) {
+                            //finally we didn't succeed
+                            throw authError;
+                        }
+                        //retry the request
+                        request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR_RESEND,
+                                httpResponse);
+                        serverAuthRequested = true;
+                        continue;
+                    } else {
+                        //or if another way of auth is used
+                        throw new AuthError(httpResponse);
+                    }
+                } else if (httpResponse.statusCode == HttpURLConnection.HTTP_PROXY_AUTH) {
+                    request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_PROXY_ERROR,
+                            httpResponse);
+                    if (request.getProxyAuthenticator() != null && !proxyAuthRequested) {
+                        request.getProxyAuthenticator().clearAuthValue();
+                        try {
+                            //typical implementation would try to refresh the token
+                            //after being set to invalid
+                            request.getProxyAuthenticator().getAuthValue();
+                        } catch (AuthError authError) {
+                            //finally we didn't succeed
+                            throw authError;
+                        }
+                        //retry the request
+                        request.addMarker(Request.EVENT_NETWORK_STACK_AUTH_ERROR_RESEND,
+                                httpResponse);
+                        proxyAuthRequested = true;
+                        continue;
+                    } else {
+                        //or if another way of auth is used
+                        throw new AuthError(httpResponse);
+                    }
+                }
+
                 // if the request is slow, log it.
                 long requestLifetime = System.nanoTime() - requestStart;
                 logSlowRequests(requestLifetime, request, httpResponse.data, httpResponse
@@ -149,16 +204,25 @@ public class HttpNetwork implements Network {
                 if (httpResponse.statusCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
 
                     Entry entry = request.getCacheEntry();
-
                     if (entry != null) {
 
                         // A HTTP 304 response does not have all header fields. We
                         // have to use the header fields from the cache entry plus
                         // the new ones from the response.
                         // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.5
+                        final Map<String, List<String>> responseHeaders = httpResponse.headers.toMultimap();
+                        final Map<String, List<String>> cacheHeaders = entry.responseHeaders.toMultimap();
                         Headers.Builder hBuilder = new Headers.Builder();
-                        hBuilder.addMMap(entry.responseHeaders.toMultimap())
-                                .addMMap(httpResponse.headers.toMultimap());
+                        hBuilder.addMMap(responseHeaders);
+                        if (cacheHeaders != null) {
+                            for (Map.Entry<String, List<String>> hentry : cacheHeaders.entrySet()) {
+                                //could be status line
+                                if (hentry.getKey() != null
+                                        && !responseHeaders.containsKey(hentry.getKey())) {
+                                    hBuilder.add(hentry.getKey(), hentry.getValue());
+                                }
+                            }
+                        }
 
                         httpResponse = new NetworkResponse(
                                 httpResponse.statusCode,
@@ -193,45 +257,7 @@ public class HttpNetwork implements Network {
 //                JusLog.e("Unexpected response code %d for %s", networkResponse.statusCode,
 //                        request.getUrlString());
                 if (networkResponse != null) {
-                    if (networkResponse.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                        // thrown when available Authenticator is available
-                        if (request.getServerAuthenticator() != null) {
-                            request.getServerAuthenticator().clearAuthValue();
-                            try {
-                                //typical implementation would try to refresh the token
-                                //after being set to invalid
-                                request.getServerAuthenticator().getAuthValue();
-                            } catch (AuthError authError) {
-                                //finally we didn't succeed
-                                throw authError;
-                            }
-                            //retry the request
-                            attemptRetryOnException("auth", request,
-                                    new AuthError(networkResponse));
-                        } else {
-                            //or if another way of auth is used
-                            throw new AuthError(networkResponse);
-                        }
-                    } else if (networkResponse.statusCode == HttpURLConnection.HTTP_PROXY_AUTH) {
-                        // thrown when available Authenticator is available
-                        if (request.getProxyAuthenticator() != null) {
-                            request.getProxyAuthenticator().clearAuthValue();
-                            try {
-                                //typical implementation would try to refresh the token
-                                //after being set to invalid
-                                request.getProxyAuthenticator().getAuthValue();
-                            } catch (AuthError authError) {
-                                //finally we didn't succeed
-                                throw authError;
-                            }
-                            //retry the request
-                            attemptRetryOnException("proxy-auth", request,
-                                    new AuthError(networkResponse));
-                        } else {
-                            //or if another way of auth is used
-                            throw new AuthError(networkResponse);
-                        }
-                    } else if (networkResponse.statusCode == HttpURLConnection
+                    if (networkResponse.statusCode == HttpURLConnection
                             .HTTP_CLIENT_TIMEOUT) {
                         attemptRetryOnException("http-client", request, new RequestError
                                 (networkResponse, "HTTP_CLIENT_TIMEOUT"));

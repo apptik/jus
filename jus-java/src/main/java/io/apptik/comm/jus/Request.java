@@ -60,6 +60,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_DONE = "done";
     public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
     public static final String EVENT_NETWORK_STACK_SEND = "network-stack-send";
+    public static final String EVENT_NETWORK_STACK_AUTH_ERROR = "network-stack-auth-error";
+    public static final String EVENT_NETWORK_STACK_AUTH_PROXY_ERROR = "network-stack-auth-proxy-error";
+    public static final String EVENT_NETWORK_STACK_AUTH_ERROR_RESEND = "network-stack-auth-error-resend";
     public static final String EVENT_NETWORK_STACK_REDIRECT_SEND = "network-stack-redirect-send";
     public static final String EVENT_NETWORK_STACK_REDIRECT_COMPLETE = "network-stack-redirect-complete";
     public static final String EVENT_NETWORK_STACK_COMPLETE = "network-stack-complete";

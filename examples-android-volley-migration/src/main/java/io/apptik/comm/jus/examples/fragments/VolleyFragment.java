@@ -26,7 +26,7 @@ import org.json.JSONException;
 
 import io.apptik.comm.jus.examples.R;
 import io.apptik.comm.jus.examples.TestObjectForGson;
-import io.apptik.comm.jus.examples.volley.CustomRequestQueue;
+import io.apptik.comm.jus.examples.volley.VolleyHelper;
 import io.apptik.comm.jus.examples.volley.GsonRequest;
 
 
@@ -111,7 +111,6 @@ public class VolleyFragment extends Fragment {
 		String url = "http://i.imgur.com/7spzG.png";
 		mImageView = (ImageView) v.findViewById(R.id.iv_image_request);
 
-
 		// Retrieves an image specified by the URL, displays it in the UI.
 		ImageRequest request = new ImageRequest(url,
 				new Response.Listener<Bitmap>() {
@@ -119,7 +118,7 @@ public class VolleyFragment extends Fragment {
 					public void onResponse(Bitmap bitmap) {
 						mImageView.setImageBitmap(bitmap);
 					}
-				}, 0, 0, null,
+				}, 0, 0, ImageView.ScaleType.CENTER, null,
 				new Response.ErrorListener() {
 					public void onErrorResponse(VolleyError error) {
 						mImageView.setImageResource(R.drawable.ic_error);
@@ -127,7 +126,7 @@ public class VolleyFragment extends Fragment {
 				});
 
 		// Access the RequestQueue through your singleton class.
-		CustomRequestQueue.getInstance(v.getContext()).addToRequestQueue(request);
+		VolleyHelper.getInstance(v.getContext()).addToRequestQueue(request);
 	}
 
 
@@ -142,7 +141,7 @@ public class VolleyFragment extends Fragment {
 				.networkImageViewWithCustomLRUCache);
 
 		// Get the ImageLoader through your singleton class and make use of LRU Cache
-		mImageLoader = CustomRequestQueue.getInstance(v.getContext()).getImageLoader();
+		mImageLoader = VolleyHelper.getInstance(v.getContext()).getImageLoader();
 
 		// Set the URL of the image that should be loaded into this view, and
 		// specify the ImageLoader that will be used to make the request.
@@ -178,7 +177,7 @@ public class VolleyFragment extends Fragment {
 					}
 				});
 
-		CustomRequestQueue.getInstance(v.getContext()).addToRequestQueue(jsonArrayRequest);
+		VolleyHelper.getInstance(v.getContext()).addToRequestQueue(jsonArrayRequest);
 	}
 
 	private void gsonRequest(View v) {
@@ -200,7 +199,7 @@ public class VolleyFragment extends Fragment {
 			}
 		});
 
-		CustomRequestQueue.getInstance(v.getContext()).addToRequestQueue(gsObjRequest);
+		VolleyHelper.getInstance(v.getContext()).addToRequestQueue(gsObjRequest);
 	}
 
 	@Override
