@@ -29,7 +29,7 @@ public class Jus {
     /**
      * Default on-disk cache directory.
      */
-    private static final String DEFAULT_CACHE_DIR = "jus";
+    private static final String DEFAULT_CACHE_DIR = "jus_cache";
 
     /**
      * Creates a default instance of the worker pool and calls {@link RequestQueue#start()} on it.
