@@ -3,6 +3,7 @@ bin
 gen
 .gradle
 build
+captures
 .settings
 target
 *.iml
