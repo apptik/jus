@@ -69,12 +69,12 @@ ext {
     mockwebserver = 'com.squareup.okhttp:mockwebserver:2.7.5'
     mockwebserver3 = 'com.squareup.okhttp3:mockwebserver:3.2.0'
     okhttp = 'com.squareup.okhttp:okhttp:2.7.5'
-    okhttp3 = 'com.squareup.okhttp3:okhttp:3.2.0'
+    okhttp3 = 'com.squareup.okhttp3:okhttp:3.3.1'
     okio = 'com.squareup.okio:okio:1.8.0'
 
     apacheHttp = 'org.apache.httpcomponents:httpclient:4.5.2'
 
-    rxjava = 'io.reactivex:rxjava:1.1.3'
+    rxjava = 'io.reactivex:rxjava:1.1.5'
 
     junit = 'junit:junit:4.12'
 
@@ -83,7 +83,7 @@ ext {
     wireRuntime = 'com.squareup.wire:wire-runtime:2.1.2'
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
     protobuf = 'com.google.protobuf:protobuf-java:3.0.0-beta-2'
-    moshi = 'com.squareup.moshi:moshi:1.1.0'
+    moshi = 'com.squareup.moshi:moshi:1.2.0'
     jjsonCore = 'io.apptik.json:json-core:1.0.3'
     jjsonWrapper = 'io.apptik.json:json-wrapper:1.0.3'
 
