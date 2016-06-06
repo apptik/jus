@@ -7,6 +7,7 @@ captures
 .settings
 target
 *.iml
+*.hprof
 .idea
 .gradle
 local.properties
