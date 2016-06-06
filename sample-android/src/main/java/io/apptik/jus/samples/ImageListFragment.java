@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package io.apptik.comm.jus.examples;
+package io.apptik.jus.samples;
 
 
 import android.os.Bundle;
@@ -24,33 +24,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RadioButton;
 
-import io.apptik.comm.jus.examples.adapter.RecyclerAdapter;
-import io.apptik.comm.jus.examples.mock.MockData;
+import io.apptik.jus.samples.adapter.RecyclerAdapter;
+
+import static io.apptik.jus.samples.dummy.MockData.getMockJsonArray;
 
 
 public class ImageListFragment extends Fragment {
-
-    private static final String TAG = "ImageListFragment";
-    private static final String KEY_LAYOUT_MANAGER = "layoutManager";
-    private static final int SPAN_COUNT = 2;
-
-    private enum LayoutManagerType {
-        GRID_LAYOUT_MANAGER,
-        LINEAR_LAYOUT_MANAGER,
-        STAGG_GRID_LAYOUT_MANAGER
-    }
-
-    protected LayoutManagerType mCurrentLayoutManagerType;
-
-    protected RadioButton mLinearLayoutRadioButton;
-    protected RadioButton mGridLayoutRadioButton;
-
-    protected RecyclerView mRecyclerView;
-    protected RecyclerAdapter mAdapter;
-    protected RecyclerView.LayoutManager mLayoutManager;
-
     public static ImageListFragment newInstance() {
         ImageListFragment fragment = new ImageListFragment();
         Bundle args = new Bundle();
@@ -76,13 +56,8 @@ public class ImageListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v =  inflater.inflate(R.layout.fragment_imagelist, container, false);
         // Inflate the layout for this fragment
-        ListScrollListener listScrollListener = new ListScrollListener();
-        RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(
-                MockData.getMockJsonArray(500, 500)
-                //MockData.getAssetsMock(getActivity())
-                , getActivity(), listScrollListener);
+        RecyclerAdapter recyclerAdapter =  new RecyclerAdapter(getMockJsonArray(500, 500));
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
-        recyclerView.addOnScrollListener(listScrollListener);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerAdapter);
 

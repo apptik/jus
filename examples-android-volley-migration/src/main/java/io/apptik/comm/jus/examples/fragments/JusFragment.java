@@ -23,7 +23,7 @@ import io.apptik.comm.jus.examples.TestObjectForGson;
 import io.apptik.comm.jus.examples.jus.JusHelper;
 import io.apptik.comm.jus.request.GsonRequest;
 import io.apptik.comm.jus.request.ImageRequest;
-import io.apptik.comm.jus.request.JsonArrayRequest;
+import io.apptik.comm.jus.request.JSONArrayRequest;
 import io.apptik.comm.jus.request.StringRequest;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.ui.NetworkImageView;
@@ -153,7 +153,7 @@ public class JusFragment extends Fragment {
 		mTxtDisplay = (TextView) v.findViewById(R.id.tv_jsonRequest);
 		String url = "https://api.github.com/users/mralexgray/repos";
 
-		JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url);
+		JSONArrayRequest jsonArrayRequest = new JSONArrayRequest(Request.Method.GET, url);
 		JusHelper.getInstance(v.getContext()).addToRequestQueue(jsonArrayRequest.addResponseListener(
 				new RequestListener.ResponseListener<JSONArray>() {
 					@Override

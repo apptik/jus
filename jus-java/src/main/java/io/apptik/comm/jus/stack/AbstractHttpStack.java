@@ -49,7 +49,7 @@ public abstract class AbstractHttpStack implements HttpStack {
         return getContentBytes(inputStream, byteArrayPool, connection.getContentLength());
     }
 
-    public final static byte[] getContentBytes(InputStream inputStream, ByteArrayPool
+    public static byte[] getContentBytes(InputStream inputStream, ByteArrayPool
             byteArrayPool, int contentLen) throws IOException {
         PoolingByteArrayOutputStream bytes =
                 new PoolingByteArrayOutputStream(byteArrayPool, contentLen);

@@ -52,8 +52,6 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     protected SparseBooleanArray positionsMapper;
     protected int lastPosition;
     protected int height;
-    // protected EstateResultScrollListener scrollListener;
-
     protected double speed;
     protected long animDuration;
     //

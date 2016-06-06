@@ -30,18 +30,18 @@ import io.apptik.comm.jus.converter.JSONConverter;
  * A request for retrieving a {@link JSONObject} response body at a given URL, allowing for an
  * optional {@link JSONObject} to be passed in as part of the request body.
  */
-public class JsonObjectRequest extends Request<JSONObject> {
+public class JSONObjectRequest extends Request<JSONObject> {
 
     /**
      * Creates a new request.
      * @param method the HTTP method to use
      * @param url URL to fetch the JSON from
      */
-    public JsonObjectRequest(String method, String url) {
+    public JSONObjectRequest(String method, String url) {
         super(method, url, new JSONConverter.JSONObjectResponseConverter());
     }
 
-    public JsonObjectRequest setRequestData(JSONObject requestData) {
+    public JSONObjectRequest setRequestData(JSONObject requestData) {
         try {
             super.setRequestData(requestData, new JSONConverter.JSONObjectRequestConverter());
         } catch (IOException e) {

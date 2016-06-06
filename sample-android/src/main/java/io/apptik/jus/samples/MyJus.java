@@ -13,20 +13,18 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
-import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Tag;
-import io.apptik.comm.jus.rx.event.ErrorEvent;
-import io.apptik.comm.jus.rx.event.ResultEvent;
 import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.PooledBitmapLruCache;
 import io.apptik.json.JsonArray;
+import io.apptik.jus.samples.api.ApiHub;
 import io.apptik.jus.samples.api.Instructables;
-import rx.functions.Action1;
+
+import static io.apptik.jus.samples.Requests.getDummyRequest;
 
 public class MyJus {
 
@@ -34,9 +32,12 @@ public class MyJus {
     private Instructables instructables;
     private RequestQueue queue;
     private ImageLoader imageLoader;
+    private ApiHub hub;
 
     private MyJus(Context ctx) {
         queue = AndroidJus.newRequestQueue(ctx);
+        hub = new ApiHub(queue);
+
         instructables = new RetroProxy.Builder()
                 .baseUrl(Instructables.baseUrl)
                 .requestQueue(queue)
@@ -44,10 +45,11 @@ public class MyJus {
                     @Override
                     public Converter<NetworkResponse, ?> fromResponse(Type type, Annotation[]
                             annotations) {
-                        if(hasAnnotatedTag(annotations, Instructables.REQ_LIST))
-                        {
+                        if (hasAnnotatedTag(annotations, Instructables.REQ_LIST)) {
                             return new Converter<NetworkResponse, Object>() {
-                                JJsonObjectResponseConverter baseConv = new JJsonObjectResponseConverter();
+                                JJsonObjectResponseConverter baseConv = new
+                                        JJsonObjectResponseConverter();
+
                                 @Override
                                 public JsonArray convert(NetworkResponse value) throws IOException {
                                     return baseConv.convert(value).getJsonArray("items");
@@ -56,8 +58,10 @@ public class MyJus {
                         }
                         return null;
                     }
+
                     @Override
-                    public Converter<?, NetworkRequest> toRequest(Type type, Annotation[] annotations) {
+                    public Converter<?, NetworkRequest> toRequest(Type type, Annotation[]
+                            annotations) {
                         return null;
                     }
                 })
@@ -68,25 +72,21 @@ public class MyJus {
                 defaultBitmapLruCache, defaultBitmapLruCache
         );
 
-        RxRequestQueue.resultObservable(queue, null).subscribe(new Action1<ResultEvent>() {
-            @Override
-            public void call(ResultEvent resultEvent) {
-                Log.d("Jus-Test", "jus received response for: " + resultEvent.request);
-                if (!(resultEvent.response instanceof Bitmap)) {
-                    Log.d("Jus-Test", "jus response : " + resultEvent.response);
-                }
-            }
-        });
+        RxRequestQueue.resultObservable(queue, null)
+                .subscribe(resultEvent -> {
+                    Log.d("Jus-Test", "jus received response for: " + resultEvent.request);
+                    if (!(resultEvent.response instanceof Bitmap)) {
+                        Log.d("Jus-Test", "jus response : " + resultEvent.response);
+                    }
+                });
 
-        RxRequestQueue.errorObservable(queue, null).subscribe(new Action1<ErrorEvent>() {
-            @Override
-            public void call(ErrorEvent errorEvent) {
-                Log.e("Jus-Test", "jus received ERROR for: " + errorEvent.request);
-                if (errorEvent.error != null) {
-                    Log.e("Jus-Test", "jus ERROR : " + errorEvent.error);
-                }
-            }
-        });
+        RxRequestQueue.errorObservable(queue, null)
+                .subscribe(errorEvent -> {
+                    Log.e("Jus-Test", "jus received ERROR for: " + errorEvent.request);
+                    if (errorEvent.error != null) {
+                        Log.e("Jus-Test", "jus ERROR : " + errorEvent.error);
+                    }
+                });
     }
 
     public static void init(Context ctx) {
@@ -99,38 +99,33 @@ public class MyJus {
     }
 
     public static Instructables intructablesApi() {
-        if(inst==null) throw new IllegalStateException("Not Initialized");
+        if (inst == null) throw new IllegalStateException("Not Initialized");
         return inst.instructables;
     }
 
     public static RequestQueue queue() {
-        if(inst==null) throw new IllegalStateException("Not Initialized");
+        if (inst == null) throw new IllegalStateException("Not Initialized");
         return inst.queue;
     }
 
+    public static ApiHub hub() {
+        if (inst == null) throw new IllegalStateException("Not Initialized");
+        return inst.hub;
+    }
+
     public static ImageLoader imageLoader() {
-        if(inst==null) throw new IllegalStateException("Not Initialized");
+        if (inst == null) throw new IllegalStateException("Not Initialized");
         return inst.imageLoader;
     }
 
-    public void addRequest(Request request) {
+    private void addRequest(Request request) {
         queue.add(request);
     }
 
     public void addDummyRequest(String key, String val) {
-        addRequest(Requests.getDummyRequest(key, val,
-                new RequestListener.ResponseListener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        Log.d("Jus-Test", "jus response : " + response);
-                    }
-                },
-                new RequestListener.ErrorListener() {
-                    @Override
-                    public void onError(JusError error) {
-                        Log.d("Jus-Test", "jus error : " + error);
-                    }
-                }
+        addRequest(getDummyRequest(key, val,
+                response -> Log.d("Jus-Test", "jus response : " + response),
+                error -> Log.d("Jus-Test", "jus error : " + error)
         ));
     }
 

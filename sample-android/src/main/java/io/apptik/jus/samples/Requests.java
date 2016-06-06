@@ -19,7 +19,7 @@ package io.apptik.jus.samples;
 
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestListener;
-import io.apptik.comm.jus.request.JsonObjectRequest;
+import io.apptik.comm.jus.request.JJsonObjectRequest;
 import io.apptik.comm.jus.request.StringRequest;
 
 
@@ -32,8 +32,8 @@ public class Requests {
     // http://validate.jsontest.com/?json={'key':'value'}
     // http://echo.jsontest.com/key/value/one/two
 
-    public static JsonObjectRequest getStationsRequest() {
-        return new JsonObjectRequest(Request.Method.GET, "https://irail.be/stations/NMBS?q=Brussels");
+    public static JJsonObjectRequest getStationsRequest() {
+        return new JJsonObjectRequest(Request.Method.GET, "https://irail.be/stations/NMBS?q=Brussels");
     }
 
 

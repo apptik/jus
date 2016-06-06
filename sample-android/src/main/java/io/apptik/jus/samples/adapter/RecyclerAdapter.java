@@ -16,43 +16,24 @@
 
 package io.apptik.jus.samples.adapter;
 
-import android.app.Activity;
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewPropertyAnimator;
-import android.view.WindowManager;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.Interpolator;
 import android.widget.TextView;
 
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.ui.NetworkImageView;
 import io.apptik.json.JsonArray;
-import io.apptik.jus.examples.R;
 import io.apptik.jus.samples.MyJus;
-import io.apptik.jus.samples.extra.ListScrollListener;
+import io.apptik.jus.samples.R;
 
 /**
  * Provide views to RecyclerView with data from mDataSet.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
     private static final String TAG = "RecyclerAdapter";
-
-    //view anim
-    protected static final long ANIM_DEFAULT_SPEED = 1000L;
-
-    protected Interpolator interpolator;
-    protected ListScrollListener scrollListener;
-    protected SparseBooleanArray positionsMapper;
-    protected int lastPosition;
-    protected int height;
-    // protected EstateResultScrollListener scrollListener;
-
     protected double speed;
     protected long animDuration;
     //
@@ -100,22 +81,14 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     /**
      * Initialize the dataset of the Adapter.
      */
-    public RecyclerAdapter(JsonArray jsonArray, Activity activity,
-                           ListScrollListener scrollListener) {
+    public RecyclerAdapter(JsonArray jsonArray) {
         jarr = jsonArray;
         this.imageLoader = MyJus.imageLoader();
+    }
 
-
-        this.scrollListener = scrollListener;
-        animDuration = ANIM_DEFAULT_SPEED;
-        lastPosition = -1;
-        positionsMapper = new SparseBooleanArray(jarr.size());
-
-        interpolator = new DecelerateInterpolator();
-
-        WindowManager windowManager = (WindowManager) activity.getSystemService(Context
-                .WINDOW_SERVICE);
-        height = windowManager.getDefaultDisplay().getHeight();
+    protected void updateData(JsonArray jsonArray) {
+        jarr = jsonArray;
+        notifyDataSetChanged();
     }
 
     // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
@@ -134,6 +107,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        if(jarr==null) return;
         Log.d(TAG, "Element " + position + " set.");
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
@@ -141,47 +115,19 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("pic"), imageLoader);
         viewHolder.txt1.setText(position + " : " + jarr.get(position).asJsonObject().getString
                 ("txt1"));
-        viewHolder.txt2.setText(position + " : " + jarr.get(position).asJsonObject().getString
+        viewHolder.txt2.setText(position + " : " + jarr.get(position).asJsonObject().optString
                 ("txt2"));
-        viewHolder.txt3.setText(position + " : " + jarr.get(position).asJsonObject().getString
+        viewHolder.txt3.setText(position + " : " + jarr.get(position).asJsonObject().optString
                 ("txt3"));
-        viewHolder.txt4.setText(position + " : " + jarr.get(position).asJsonObject().getString
+        viewHolder.txt4.setText(position + " : " + jarr.get(position).asJsonObject().optString
                 ("txt4"));
-
-        /// COOL ANIM
-        View v = (View) viewHolder.niv.getParent().getParent();
-        if (v != null && !positionsMapper.get(position) && position > lastPosition) {
-            speed = scrollListener.getSpeed();
-            animDuration = (((int) speed) == 0) ? ANIM_DEFAULT_SPEED : (long) ((1 / speed) * 3000);
-            Log.d(TAG, "scroll speed/dur : " + speed + " / " + animDuration);
-            //animDuration = ANIM_DEFAULT_SPEED;
-
-            if (animDuration > ANIM_DEFAULT_SPEED)
-                animDuration = ANIM_DEFAULT_SPEED;
-
-            lastPosition = position;
-
-            v.setTranslationX(0.0F);
-            v.setTranslationY(height);
-            v.setRotationX(35.0F);
-            v.setScaleX(0.7F);
-            v.setScaleY(0.55F);
-
-            ViewPropertyAnimator localViewPropertyAnimator =
-                    v.animate().rotationX(0.0F).rotationY(0.0F).translationX(0).translationY(0)
-                            .setDuration(animDuration).scaleX(
-                            1.0F).scaleY(1.0F).setInterpolator(interpolator);
-
-            localViewPropertyAnimator.setStartDelay(0).start();
-            positionsMapper.put(position, true);
-        }
-
     }
     // END_INCLUDE(recyclerViewOnBindViewHolder)
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
     public int getItemCount() {
+        if(jarr==null) return 0;
         return jarr.size();
     }
 

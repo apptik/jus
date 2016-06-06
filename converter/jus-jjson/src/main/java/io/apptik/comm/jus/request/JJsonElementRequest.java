@@ -21,29 +21,29 @@ import java.io.IOException;
 
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
 import io.apptik.comm.jus.converter.JJsonRequestConverter;
+import io.apptik.comm.jus.converter.JJsonResponseConverter;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.json.JsonElement;
-import io.apptik.json.JsonObject;
 
-public class JsonObjectRequest extends Request<JsonObject> {
+public class JJsonElementRequest extends Request<JsonElement> {
 
-    public JsonObjectRequest(String method, HttpUrl url) {
-        super(method, url, new JJsonObjectResponseConverter());
+    public JJsonElementRequest(String method, HttpUrl url) {
+        super(method, url, new JJsonResponseConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json")
                 .build());
     }
 
-    public JsonObjectRequest(String method, String url) {
-        super(method, url, new JJsonObjectResponseConverter());
+    public JJsonElementRequest(String method, String url) {
+        super(method, url, new JJsonResponseConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json")
                 .build());
     }
 
-    public JsonObjectRequest setRequestData(JsonElement requestData) {
+
+    public JJsonElementRequest setRequestData(JsonElement requestData) {
         try {
             super.setRequestData(requestData, new JJsonRequestConverter());
         } catch (IOException e) {

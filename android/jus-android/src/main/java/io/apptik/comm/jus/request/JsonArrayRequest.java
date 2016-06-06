@@ -29,17 +29,17 @@ import io.apptik.comm.jus.converter.JSONConverter;
 /**
  * A request for retrieving a {@link JSONArray} response body at a given URL.
  */
-public class JsonArrayRequest extends Request<JSONArray> {
+public class JSONArrayRequest extends Request<JSONArray> {
 
     /**
      * Creates a new request.
      * @param url URL to fetch the JSON from
      */
-    public JsonArrayRequest(String method, String url) {
+    public JSONArrayRequest(String method, String url) {
         super(method, url, new JSONConverter.JSONArrayResponseConverter());
     }
 
-    public JsonArrayRequest setRequestData(JSONArray requestData) {
+    public JSONArrayRequest setRequestData(JSONArray requestData) {
         try {
             super.setRequestData(requestData, new JSONConverter.JSONArrayRequestConverter());
         } catch (IOException e) {

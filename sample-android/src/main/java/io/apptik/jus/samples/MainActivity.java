@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -83,11 +85,27 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_ex0) {
-            MyJus.intructablesApi().getCategories();
-        } else if (id == R.id.nav_ex1) {
-            MyJus.intructablesApi().list(20,0, Instructables.SORT_RECENT,null);
+//        if (id == R.id.nav_ex0) {
+//            MyJus.intructablesApi().getCategories();
+//        } else if (id == R.id.nav_ex1) {
+//            MyJus.intructablesApi().list(20,0, Instructables.SORT_RECENT,null);
+//        }
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        Fragment frag;
+        switch (id) {
+            case R.id.nav_ex0: frag = ImageListFragment.newInstance(); break;
+            case R.id.nav_ex1: {
+                MyJus.intructablesApi().list(20,0, Instructables.SORT_RECENT,null);
+                frag = InstructablesListFragment.newInstance();
+            } break;
+
+            default: frag = BlankFragment.newInstance(); break;
         }
+
+        fragmentManager.beginTransaction()
+                .replace(R.id.container, frag)
+                .commit();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

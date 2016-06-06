@@ -32,8 +32,8 @@ import java.util.concurrent.ExecutionException;
 import io.apptik.comm.jus.Jus;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
-import io.apptik.comm.jus.request.JsonArrayRequest;
-import io.apptik.comm.jus.request.JsonObjectRequest;
+import io.apptik.comm.jus.request.JJsonArrayRequest;
+import io.apptik.comm.jus.request.JJsonObjectRequest;
 import io.apptik.json.JsonArray;
 import io.apptik.json.JsonObject;
 
@@ -43,21 +43,21 @@ public class JsonElementRequestTest {
     class Service {
 
         Request<JsonObject> aJsonObject(JsonObject jsonObject) throws IOException {
-            return queue.add(new JsonObjectRequest("POST", server.url("/").toString())
+            return queue.add(new JJsonObjectRequest("POST", server.url("/").toString())
                     .setRequestData(jsonObject));
         }
 
         Request<JsonArray> aJsonArray(JsonArray jsonArray) throws IOException {
-            return queue.add(new JsonArrayRequest("POST", server.url("/").toString())
+            return queue.add(new JJsonArrayRequest("POST", server.url("/").toString())
                     .setRequestData(jsonArray));
         }
 
         Request<JsonObject> aJsonObjectGET() throws IOException {
-            return queue.add(new JsonObjectRequest("GET", server.url("/").toString()));
+            return queue.add(new JJsonObjectRequest("GET", server.url("/").toString()));
         }
 
         Request<JsonArray> aJsonArrayGET() throws IOException {
-            return queue.add(new JsonArrayRequest("GET", server.url("/").toString()));
+            return queue.add(new JJsonArrayRequest("GET", server.url("/").toString()));
         }
     }
 

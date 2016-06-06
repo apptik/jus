@@ -16,33 +16,34 @@
 
 package io.apptik.comm.jus.request;
 
+
 import java.io.IOException;
 
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.Request;
-import io.apptik.comm.jus.converter.JJsonArrayResponseConverter;
+import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
 import io.apptik.comm.jus.converter.JJsonRequestConverter;
 import io.apptik.comm.jus.http.HttpUrl;
-import io.apptik.json.JsonArray;
 import io.apptik.json.JsonElement;
+import io.apptik.json.JsonObject;
 
-public class JsonArrayRequest extends Request<JsonArray> {
+public class JJsonObjectRequest extends Request<JsonObject> {
 
-    public JsonArrayRequest(String method, HttpUrl url) {
-        super(method, url, new JJsonArrayResponseConverter());
+    public JJsonObjectRequest(String method, HttpUrl url) {
+        super(method, url, new JJsonObjectResponseConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json")
                 .build());
     }
 
-    public JsonArrayRequest(String method, String url) {
-        super(method, url, new JJsonArrayResponseConverter());
+    public JJsonObjectRequest(String method, String url) {
+        super(method, url, new JJsonObjectResponseConverter());
         setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
                 .setHeader("Accept", "application/json")
                 .build());
     }
-    
-    public JsonArrayRequest setRequestData(JsonElement requestData) {
+
+    public JJsonObjectRequest setRequestData(JsonElement requestData) {
         try {
             super.setRequestData(requestData, new JJsonRequestConverter());
         } catch (IOException e) {

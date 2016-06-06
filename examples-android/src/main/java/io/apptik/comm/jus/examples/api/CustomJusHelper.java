@@ -24,7 +24,9 @@ import android.util.Log;
 import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Request;
+import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
+import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.examples.ExampleLruPooledCache;
 import io.apptik.comm.jus.rx.event.ErrorEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
@@ -97,8 +99,18 @@ public class CustomJusHelper {
 
     public static void addDummyRequest(String key, String val) {
         addRequest(Requests.getDummyRequest(key, val,
-                response -> Log.d("Jus-Test", "jus response : " + response),
-                error -> Log.d("Jus-Test", "jus error : " + error)
+                new RequestListener.ResponseListener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("Jus-Test", "jus response : " + response);
+                    }
+                },
+                new RequestListener.ErrorListener() {
+                    @Override
+                    public void onError(JusError error) {
+                        Log.d("Jus-Test", "jus error : " + error);
+                    }
+                }
         ));
     }
 
