@@ -1,10 +1,19 @@
 Change Log
 ==========
 
-NEXT Version 0.6.6 *(FUTURE-2016)*
+NEXT Version 0.7.0 *(FUTURE-2016)*
+----------------------------------
+
+Version 0.6.6 *(06-Jun-2016)*
 ----------------------------------
 
 * New: handle Redirects (300,301,302,303,307,308)
+* Fix: duplicate jsonRequests #57
+* Upd: add request filter to AlwaysGetCacheDispatcher
+* Upd: server proxy auth errors happens before retry policy triggers #53
+* Fix: bug on on 304 response #56
+* Fix: use setFixedLengthStreamingMode where possible #50 
+
 
 Version 0.6.5 *(21-Mar-2016)*
 ----------------------------------

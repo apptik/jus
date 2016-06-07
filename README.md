@@ -18,12 +18,12 @@ Find [the latest JARs][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-XXX</artifactId>
-  <version>0.6.5</version>
+  <version>0.6.6</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-XXX:0.6.5'
+compile 'io.apptik.comm:jus-XXX:0.6.6'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].
@@ -34,7 +34,10 @@ Jus requires at minimum Java 7 or Android SDK 15.
 
 ## Examples
 
-
+* [java examples]
+* [android examples]
+* [android examples(java 8)]
+* [volley to jus migration examples]
 
 ## Questions
 
@@ -43,50 +46,50 @@ Jus requires at minimum Java 7 or Android SDK 15.
 ## Modules
 * [jus for Java][jus-java] - main jus library for java
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-java.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-java)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-java/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-java/0.6.5)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-java/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-java/0.6.6)
 * [Reactive jus][rx-jus] - RxJava support for jus
 [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/rx-jus.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/rx-jus)
-[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:rx-jus/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:rx-jus/0.6.5)
+[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:rx-jus/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:rx-jus/0.6.6)
 * HTTP Stacks
     * [OkHttp][jus-okhttp] = OkHttp Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp/0.6.6)
     * [OkHttp3][jus-okhttp3] = OkHttp3 Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-okhttp3.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-okhttp3)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp3/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp3/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp3/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-okhttp3/0.6.6)
     * [ApacheHttp][jus-apachehttp] = ApacheHttp Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-apachehttp.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-apachehttp)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-apachehttp/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-apachehttp/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-apachehttp/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-apachehttp/0.6.6)
     * [Netty][jus-netty] = Netty Client Stack for jus
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-netty.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-netty)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-netty/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-netty/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-netty/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-netty/0.6.6)
 
 * Jus for Android
     * [Android jus][jus-android] - jus optimized for Android
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-android.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-android)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-android/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-android/0.6.5)
-* Data Serializers Support for jus
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-android/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-android/0.6.6)
+* Data serializers support and custom requests for jus
     * [Gson][jus-gson] - support for Gson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-gson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-gson)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-gson/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-gson/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-gson/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-gson/0.6.6)
     * [Jackson][jus-jackson] - support for Jackson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jackson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jackson)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-jackson/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-jackson/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-jackson/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-jackson/0.6.6)
     * [JJson][jus-jjson] - support for JustJson
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-jjson.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-jjson)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-jjson/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-jjson/0.6.5)       
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-jjson/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-jjson/0.6.6)       
     * [Moshi][jus-moshi] - support for Moshi
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-moshi.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-moshi)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-moshi/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-moshi/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-moshi/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-moshi/0.6.6)
     * [Protobuf][jus-protobuf] - support for Google Protobuf
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-protobuf.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-protobuf)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-protobuf/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-protobuf/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-protobuf/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-protobuf/0.6.6)
     * [SimpleXML][jus-simplexml] - support for Simple
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-simplexml.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-simplexml)
-    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-simplexml/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-simplexml/0.6.5)
+    [![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-simplexml/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-simplexml/0.6.6)
     * [Wire][jus-wire] - support for wire
     [![Maven Central](https://img.shields.io/maven-central/v/io.apptik.comm/jus-wire.svg?style=flat)](https://maven-badges.herokuapp.com/maven-central/io.apptik.comm/jus-wire)
-	[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-wire/0.6.5/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-wire/0.6.5)
+	[![VersionEye](https://www.versioneye.com/java/io.apptik.comm:jus-wire/0.6.6/badge.svg)](https://www.versioneye.com/java/io.apptik.comm:jus-wire/0.6.6)
     
 ## Licence
 
@@ -123,3 +126,8 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [jus-okhttp3]: https://github.com/apptik/jus/tree/master/stack/jus-okhttp3
  [jus-apachehttp]: https://github.com/apptik/jus/tree/master/stack/jus-apachehttp
  [jus-netty]: https://github.com/apptik/jus/tree/master/stack/jus-netty
+
+[java examples]: https://github.com/apptik/jus/tree/master/examples-java
+[android examples]: https://github.com/apptik/jus/tree/master/examples-android
+[android examples(java 8)]: https://github.com/apptik/jus/tree/master/sample-android
+[volley to jus migration examples]: https://github.com/apptik/jus/tree/master/examples-android-volley-migration
