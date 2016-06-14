@@ -24,6 +24,7 @@ import android.graphics.BitmapFactory;
 import android.widget.ImageView.ScaleType;
 
 import io.apptik.comm.jus.DefaultRetryPolicy;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.ParseError;
 import io.apptik.comm.jus.Request;
@@ -174,6 +175,8 @@ public class ImageRequest extends Request<Bitmap> {
             try {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
+                JusLog.log.error("Caught OOM for " + response.data.length + " byte image, url=" +
+                        getUrl());
                 return Response.error(new ParseError(e));
             }
         }
@@ -188,8 +191,12 @@ public class ImageRequest extends Request<Bitmap> {
         Bitmap bitmap = null;
         if (mMaxWidth == 0 && mMaxHeight == 0) {
             decodeOptions.inPreferredConfig = mDecodeConfig;
-            addInBitmapOptions(decodeOptions);
-            bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            //we don't have specific size to find a reusable bitmap so lets instead create a new
+            // one
+            try {
+                bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            } catch (IllegalArgumentException ex) {
+            }
         } else {
             // If we have to resize this image, first get the natural bounds.
             decodeOptions.inJustDecodeBounds = true;
@@ -211,43 +218,7 @@ public class ImageRequest extends Request<Bitmap> {
                     findBestSampleSize(actualWidth, actualHeight, desiredWidth, desiredHeight);
 
 
-            Bitmap tempBitmap = null;
-            addInBitmapOptions(decodeOptions);
-            try {
-                tempBitmap =
-                        BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
-            } catch(IllegalArgumentException ex) {}
-
-            //try to catch java.lang.IllegalArgumentException: Problem decoding into existing bitmap
-            if(tempBitmap==null) {
-                if(decodeOptions.inBitmap != null && !decodeOptions.inBitmap.isRecycled()) {
-                    if (bitmapPool != null) {
-                        bitmapPool.addToPool(decodeOptions.inBitmap);
-                    } else {
-                    }
-                    decodeOptions.inBitmap = null;
-                }
-                //try again
-                addInBitmapOptions(decodeOptions);
-                try {
-                    tempBitmap =
-                            BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
-                } catch(IllegalArgumentException ex) {}
-            }
-
-            //giveup
-            if(tempBitmap==null) {
-                if(decodeOptions.inBitmap != null && !decodeOptions.inBitmap.isRecycled()) {
-                    if (bitmapPool != null) {
-                        bitmapPool.addToPool(decodeOptions.inBitmap);
-                    } else {
-                    }
-                    decodeOptions.inBitmap = null;
-                }
-                tempBitmap =
-                        BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
-            }
-
+            Bitmap tempBitmap = try2decodeByteArray(data, 0, data.length, decodeOptions);
 
 
             //TODO shall we optimise this with BitmapDrawable?
@@ -272,17 +243,45 @@ public class ImageRequest extends Request<Bitmap> {
         }
     }
 
+    public Bitmap try2decodeByteArray(byte[] data, int offset, int length, BitmapFactory
+            .Options decodeOptions) {
+        Bitmap tempBitmap = null;
+        addInBitmapOptions(decodeOptions);
+        try {
+            tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+        } catch (IllegalArgumentException ex) {
+            decodeOptions.inBitmap = null;
+        }
+
+        //try to catch java.lang.IllegalArgumentException: Problem decoding into existing bitmap
+        if (tempBitmap == null) {
+            //try again
+            addInBitmapOptions(decodeOptions);
+            try {
+                tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            } catch (IllegalArgumentException ex) {
+                decodeOptions.inBitmap = null;
+            }
+        }
+
+        //giveup and do it without inBitmap
+        if (tempBitmap == null) {
+            try {
+                tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
+            } catch (IllegalArgumentException ex) {
+            }
+        }
+        return tempBitmap;
+    }
+
+
     private void addInBitmapOptions(BitmapFactory.Options options) {
         // inBitmap only works with mutable bitmaps so force the decoder to
         // return mutable bitmaps.
         options.inMutable = true;
         if (bitmapPool != null) {
             // Try and find a bitmap to use for inBitmap
-            Bitmap inBitmap = bitmapPool.getReusableBitmap(options);
-
-            if (inBitmap != null) {
-                options.inBitmap = inBitmap;
-            }
+            options.inBitmap = bitmapPool.getReusableBitmap(options);
         }
     }
 
