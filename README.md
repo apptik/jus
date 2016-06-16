@@ -35,8 +35,8 @@ Jus requires at minimum Java 7 or Android SDK 15.
 ## Examples
 
 * [java examples]
-* [android examples]
-* [android examples(java 8)]
+* [NEW android examples(java 8)]
+* [android examples (old)]
 * [volley to jus migration examples]
 
 ## Questions
@@ -128,6 +128,6 @@ Jus requires at minimum Java 7 or Android SDK 15.
  [jus-netty]: https://github.com/apptik/jus/tree/master/stack/jus-netty
 
 [java examples]: https://github.com/apptik/jus/tree/master/examples-java
-[android examples]: https://github.com/apptik/jus/tree/master/examples-android
-[android examples(java 8)]: https://github.com/apptik/jus/tree/master/sample-android
+[android examples (old)]: https://github.com/apptik/jus/tree/master/examples-android
+[NEW android examples(java 8)]: https://github.com/apptik/jus/tree/master/sample-android
 [volley to jus migration examples]: https://github.com/apptik/jus/tree/master/examples-android-volley-migration
