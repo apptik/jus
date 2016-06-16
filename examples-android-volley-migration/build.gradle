@@ -2,13 +2,13 @@ apply plugin: 'com.android.application'
 
 
 android {
-    compileSdkVersion 23
-    buildToolsVersion "23.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "io.apptik.comm.jus.examples"
-        minSdkVersion 18
-        targetSdkVersion 23
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.compileSdkVersion
         versionCode 1
         versionName "1.0"
     }
@@ -28,15 +28,12 @@ dependencies {
 
     // Volley
     compile 'com.android.volley:volley:1.0.0'
-    // Jus
-    //compile 'io.apptik.comm:jus-android:0.6.5'
-    //compile 'io.apptik.comm:jus-gson:0.6.5'
 
     compile project(':android:jus-android')
     compile project(':converter:jus-gson')
 
-    compile 'com.android.support:appcompat-v7:23.3.0'
-    compile 'com.android.support:design:23.3.0'
-    compile 'com.android.support:support-v4:23.3.0'
-    compile 'com.google.code.gson:gson:2.6.2'
+    compile rootProject.ext.supportAppCompat
+    compile rootProject.ext.supportV4
+    compile rootProject.ext.supportDesign
+    compile rootProject.ext.gson
 }
