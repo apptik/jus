@@ -4,6 +4,11 @@ Change Log
 NEXT Version 0.7.0 *(FUTURE-2016)*
 ----------------------------------
 
+Version 0.6.7 *(15-Jun-2016)*
+----------------------------------
+
+* Fix: bug where ImageRequest tries to reuse incompatible dirty bitmap from the BitmapPool
+
 Version 0.6.6 *(06-Jun-2016)*
 ----------------------------------
 
