@@ -25,10 +25,10 @@
         android:id="@+id/list_images"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp">
+        android:paddingTop="8dp"
+        android:clipToPadding="false"
+
+        >
 
 
     </android.support.v7.widget.RecyclerView>
