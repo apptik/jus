@@ -38,8 +38,8 @@ public interface Instructables {
     Request<JsonObject> info(@Query("id") String id);
 
     @Tag(REQ_LIST)
-    @Headers({"X-Mashape-Key: " + userString,
-    "Accept: application/json"})
+    @Headers({"X-Mashape-Key:" + userString,
+    "Accept:application/json"})
     @GET("list")
     Request<JsonArray> list(@Query("limit") int limit, @Query("offset") int offset,
                             @Query("sort") String sort, @Query("type") String type);

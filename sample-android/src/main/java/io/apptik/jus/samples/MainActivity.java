@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity
         switch (id) {
             case R.id.nav_ex0: frag = ImageListFragment.newInstance(); break;
             case R.id.nav_ex1: {
-                MyJus.intructablesApi().list(20,0, Instructables.SORT_RECENT,null);
+                MyJus.intructablesApi().list(20,0, Instructables.SORT_RECENT,"id");
                 frag = InstructablesListFragment.newInstance();
             } break;
 

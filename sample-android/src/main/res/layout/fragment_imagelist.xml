@@ -13,25 +13,22 @@
   ~ See the License for the specific language governing permissions and
   ~ limitations under the License.
   -->
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-            >
-
+<android.support.v4.widget.SwipeRefreshLayout
+    android:id="@+id/swiperefresh"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:enabled="true"
+>
     <android.support.v7.widget.RecyclerView
 
         android:id="@+id/list_images"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingTop="8dp"
         android:clipToPadding="false"
+        android:paddingTop="8dp"
 
-        >
-
-
+    >
     </android.support.v7.widget.RecyclerView>
+</android.support.v4.widget.SwipeRefreshLayout>
 
-
-</FrameLayout>

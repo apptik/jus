@@ -87,7 +87,16 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
 	}
 
 	protected void updateData(JsonArray jsonArray) {
-		jarr = jsonArray;
+		if(jarr!=null && !jarr.contains(jsonArray.get(0))) {
+			appendData(jsonArray);
+		} else {
+			jarr = jsonArray;
+			notifyDataSetChanged();
+		}
+	}
+
+	protected void appendData(JsonArray jsonArray) {
+		jarr.addAll(jsonArray);
 		notifyDataSetChanged();
 	}
 
