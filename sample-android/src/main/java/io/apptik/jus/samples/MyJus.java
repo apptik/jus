@@ -10,11 +10,13 @@ import java.lang.reflect.Type;
 
 import io.apptik.comm.jus.AndroidJus;
 import io.apptik.comm.jus.Converter;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
+import io.apptik.comm.jus.okhttp3.OkHttpStack;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Tag;
 import io.apptik.comm.jus.rx.queue.RxRequestQueue;
@@ -35,7 +37,8 @@ public class MyJus {
     private ApiHub hub;
 
     private MyJus(Context ctx) {
-        queue = AndroidJus.newRequestQueue(ctx);
+        JusLog.MarkerLog.on();
+        queue = AndroidJus.newRequestQueue(ctx, new OkHttpStack());
         hub = new ApiHub(queue);
 
         instructables = new RetroProxy.Builder()

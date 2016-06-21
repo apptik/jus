@@ -25,6 +25,13 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    packagingOptions {
+        exclude 'LICENSE.txt'
+        exclude 'NOTICE.txt'
+        exclude 'META-INF/INDEX.LIST'
+        exclude 'META-INF/io.netty.versions.properties'
+    }
 }
 
 dependencies {
@@ -41,6 +48,11 @@ dependencies {
     compile project(':retro-jus')
     compile project(':converter:jus-gson')
     compile project(':converter:jus-jjson')
+    //compile project(':stack:jus-apachehttp')
+    //compile project(':stack:jus-okhttp')
+    compile project(':stack:jus-okhttp3')
+    //compile project(':stack:jus-netty')
+
 
     compile rootProject.ext.rxjava
 }
