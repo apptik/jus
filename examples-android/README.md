@@ -1,6 +1,6 @@
-#Examples Java
+#Examples (Old)
 
-Simple pure java examples of various features of Jus using mock data and real apis.
+Please checkout the [NEW android examples]
 
 ## Licence
 

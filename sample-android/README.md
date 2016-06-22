@@ -1,6 +1,6 @@
 #Examples 
 
-This is a simple app which shows exmples of various features of Jus.
+This is a simple app which shows examples of various features of Jus.
 It also uses real API - the unofficial instructables API
 
 ## Licence
