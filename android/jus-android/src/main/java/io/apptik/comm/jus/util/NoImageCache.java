@@ -23,7 +23,7 @@ import android.graphics.BitmapFactory;
 import io.apptik.comm.jus.ui.ImageLoader;
 
 
-public class NoLruCache
+public class NoImageCache
         implements ImageLoader.ImageCache, BitmapPool {
 
     @Override
