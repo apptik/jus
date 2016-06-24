@@ -134,7 +134,7 @@ public class VolleyFragment extends Fragment {
 
 		ImageLoader mImageLoader;
 		NetworkImageView mNetworkImageView;
-		String url = "http://developer.android.com/images/training/system-ui.png";
+		String url = "https://developer.android.com/images/training/system-ui.png";
 
 		// Get the NetworkImageView that will display the image.
 		mNetworkImageView = (NetworkImageView) v.findViewById(R.id

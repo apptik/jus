@@ -16,6 +16,7 @@
 package io.apptik.comm.jus.ui;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.BitmapDrawable;
@@ -26,6 +27,7 @@ import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
+import io.apptik.comm.jus.R;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.ui.ImageLoader.ImageContainer;
 import io.apptik.comm.jus.ui.ImageLoader.ImageListener;
@@ -38,27 +40,32 @@ public class NetworkImageView extends ImageView {
     /**
      * The URL of the network image to load
      */
-    private String mUrl;
+    private String url;
+
+    /**
+     * The tag of the network image request so you can perform operaions on the actual request
+     */
+    private Object tag;
 
     /**
      * Resource ID of the image to be used as a placeholder until the network image is loaded.
      */
-    private int mDefaultImageId;
+    private int defaultImageId;
 
     /**
      * Resource ID of the image to be used if the network response fails.
      */
-    private int mErrorImageId;
+    private int errorImageId;
 
     /**
      * Local copy of the ImageLoader.
      */
-    private ImageLoader mImageLoader;
+    private ImageLoader imageLoader;
 
     /**
      * Current ImageContainer. (either in-flight or finished)
      */
-    private ImageContainer mImageContainer;
+    private ImageContainer imageContainer;
 
     public NetworkImageView(Context context) {
         this(context, null);
@@ -69,7 +76,24 @@ public class NetworkImageView extends ImageView {
     }
 
     public NetworkImageView(Context context, AttributeSet attrs, int defStyle) {
+        this(context, attrs, defStyle, 0);
+    }
+
+    public NetworkImageView(Context context, AttributeSet attrs, int defStyle, int styleRes) {
         super(context, attrs, defStyle);
+        final TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.jus, defStyle,
+                styleRes);
+        tag = a.getString(R.styleable.jus_requestTag);
+        a.recycle();
+    }
+
+    public Object getRequestTag() {
+        return tag;
+    }
+
+    public NetworkImageView setRequestTag(Object tag) {
+        this.tag = tag;
+        return this;
     }
 
     /**
@@ -85,23 +109,23 @@ public class NetworkImageView extends ImageView {
      * @param imageLoader ImageLoader that will be used to make the request.
      */
     public void setImageUrl(String url, ImageLoader imageLoader) {
-        mUrl = url;
-        mImageLoader = imageLoader;
-        if (mImageLoader.getDefaultImageId() != 0) {
-            mDefaultImageId = mImageLoader.getDefaultImageId();
+        this.url = url;
+        this.imageLoader = imageLoader;
+        if (this.imageLoader.getDefaultImageId() != 0) {
+            defaultImageId = this.imageLoader.getDefaultImageId();
         }
-        if (mImageLoader.getErrorImageId() != 0) {
-            mErrorImageId = mImageLoader.getErrorImageId();
+        if (this.imageLoader.getErrorImageId() != 0) {
+            errorImageId = this.imageLoader.getErrorImageId();
         }
         // The URL has potentially changed. See if we need to load it.
         loadImageIfNecessary(false);
     }
 
     public void resetImage() {
-        mUrl = null;
-        if (mImageContainer != null) {
-            mImageContainer.cancelRequest();
-            mImageContainer = null;
+        url = null;
+        if (imageContainer != null) {
+            imageContainer.cancelRequest();
+            imageContainer = null;
         }
         setDefaultImageOrNull();
     }
@@ -111,7 +135,7 @@ public class NetworkImageView extends ImageView {
      * completes.
      */
     public void setDefaultImageResId(int defaultImage) {
-        mDefaultImageId = defaultImage;
+        defaultImageId = defaultImage;
     }
 
     /**
@@ -119,7 +143,7 @@ public class NetworkImageView extends ImageView {
      * requested fails to load.
      */
     public void setErrorImageResId(int errorImage) {
-        mErrorImageId = errorImage;
+        errorImageId = errorImage;
     }
 
     /**
@@ -146,23 +170,23 @@ public class NetworkImageView extends ImageView {
 
         // if the URL to be loaded in this view is empty, cancel any old requests and clear the
         // currently loaded image.
-        if (TextUtils.isEmpty(mUrl)) {
-            if (mImageContainer != null) {
-                mImageContainer.cancelRequest();
-                mImageContainer = null;
+        if (TextUtils.isEmpty(url)) {
+            if (imageContainer != null) {
+                imageContainer.cancelRequest();
+                imageContainer = null;
             }
             setDefaultImageOrNull();
             return;
         }
 
         // if there was an old request in this view, check if it needs to be canceled.
-        if (mImageContainer != null && mImageContainer.getRequestUrl() != null) {
-            if (mImageContainer.getRequestUrl().equals(mUrl)) {
+        if (imageContainer != null && imageContainer.getRequestUrl() != null) {
+            if (imageContainer.getRequestUrl().equals(url)) {
                 // if the request is from the same URL, return.
                 return;
             } else {
                 // if there is a pre-existing request, cancel it if it's fetching a different URL.
-                mImageContainer.cancelRequest();
+                imageContainer.cancelRequest();
                 setDefaultImageOrNull();
             }
         }
@@ -173,22 +197,22 @@ public class NetworkImageView extends ImageView {
 
         // The pre-existing content of this view didn't match the current URL. Load the new image
         // from the network.
-        ImageContainer newContainer = mImageLoader.get(mUrl,
+        ImageContainer newContainer = imageLoader.get(url,
                 new ImageListener() {
                     @Override
                     public void onError(JusError error) {
-                        if (mErrorImageId != 0) {
-                            setImageResource(mErrorImageId);
+                        if (errorImageId != 0) {
+                            setImageResource(errorImageId);
                         }
                     }
 
                     @Override
                     public void onResponse(final ImageContainer response, boolean isImmediate) {
                         //verify if we expect the same url
-                        if (NetworkImageView.this.mUrl == null ||
-                                !NetworkImageView.this.mUrl.equals(response.getRequestUrl())) {
+                        if (NetworkImageView.this.url == null ||
+                                !NetworkImageView.this.url.equals(response.getRequestUrl())) {
                             Log.w("NetworkImageView", "received: " + response.getRequestUrl()
-                                    + ", expected: " + NetworkImageView.this.mUrl);
+                                    + ", expected: " + NetworkImageView.this.url);
                             return;
                         }
 
@@ -208,16 +232,16 @@ public class NetworkImageView extends ImageView {
 
                         if (response.getBitmap() != null && isOk2Draw(response.getBitmap())) {
                             setImageBitmap(response.getBitmap());
-                        } else if (mDefaultImageId != 0) {
+                        } else if (defaultImageId != 0) {
                             Log.w("NetworkImageView", "received null for: " + response
                                     .getRequestUrl());
-                            setImageResource(mDefaultImageId);
+                            setImageResource(defaultImageId);
                         }
                     }
-                }, maxWidth, maxHeight);
+                }, maxWidth, maxHeight, tag);
 
         // update the ImageContainer to be the new bitmap container.
-        mImageContainer = newContainer;
+        imageContainer = newContainer;
     }
 
     /**
@@ -243,12 +267,12 @@ public class NetworkImageView extends ImageView {
     }
 
     protected void setDefaultImageOrNull() {
-        if (mDefaultImageId != 0) {
-            setImageResource(mDefaultImageId);
+        if (defaultImageId != 0) {
+            setImageResource(defaultImageId);
         } else {
             setImageBitmap(null);
         }
-        ((BitmapDrawable)this.getDrawable()).getBitmap();
+        ((BitmapDrawable) this.getDrawable()).getBitmap();
     }
 
     @Override
@@ -263,9 +287,9 @@ public class NetworkImageView extends ImageView {
                 && BitmapDrawable.class.isAssignableFrom(getDrawable().getClass())) {
             if (!isOk2Draw(((BitmapDrawable) getDrawable()).getBitmap())) {
                 //we have a problem and we retry
-                if (mImageContainer != null) {
-                    mImageContainer.cancelRequest();
-                    mImageContainer = null;
+                if (imageContainer != null) {
+                    imageContainer.cancelRequest();
+                    imageContainer = null;
                 }
                 setDefaultImageOrNull();
                 loadImageIfNecessary(true);
@@ -277,13 +301,13 @@ public class NetworkImageView extends ImageView {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (mImageContainer != null) {
+        if (imageContainer != null) {
             // If the view was bound to an image request, cancel it and clear
             // out the image from the view.
-            mImageContainer.cancelRequest();
+            imageContainer.cancelRequest();
             setImageBitmap(null);
             // also clear out the container so we can reload the image if necessary.
-            mImageContainer = null;
+            imageContainer = null;
         }
         super.onDetachedFromWindow();
     }

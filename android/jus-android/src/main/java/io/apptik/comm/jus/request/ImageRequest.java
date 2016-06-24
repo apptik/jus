@@ -55,16 +55,16 @@ public class ImageRequest extends Request<Bitmap> {
      */
     private static final float IMAGE_BACKOFF_MULT = 2f;
 
-    private final Config mDecodeConfig;
-    private final int mMaxWidth;
-    private final int mMaxHeight;
-    private ScaleType mScaleType;
+    private final Config decodeConfig;
+    private final int maxWidth;
+    private final int maxHeight;
+    private ScaleType scaleType;
     private BitmapPool bitmapPool;
 
     /**
      * Decoding lock so that we don't decode more than one image at a time (to avoid OOM's)
      */
-    private static final Object sDecodeLock = new Object();
+    private static final Object DECODE_LOCK = new Object();
 
     /**
      * Creates a new image request, decoding to a maximum specified width and
@@ -87,16 +87,16 @@ public class ImageRequest extends Request<Bitmap> {
         super(Method.GET, url);
         setRetryPolicy(
                 new DefaultRetryPolicy(IMAGE_TIMEOUT_MS, IMAGE_MAX_RETRIES, IMAGE_BACKOFF_MULT));
-        mDecodeConfig = decodeConfig;
-        mMaxWidth = maxWidth;
-        mMaxHeight = maxHeight;
-        mScaleType = scaleType;
+        this.decodeConfig = decodeConfig;
+        this.maxWidth = maxWidth;
+        this.maxHeight = maxHeight;
+        this.scaleType = scaleType;
     }
 
     @Override
     public ImageRequest clone() {
-        return new ImageRequest(getUrlString(), mMaxWidth, mMaxHeight,
-                mScaleType, mDecodeConfig).setBitmapPool(bitmapPool);
+        return new ImageRequest(getUrlString(), maxWidth, maxHeight,
+                scaleType, decodeConfig).setBitmapPool(bitmapPool);
     }
 
     public BitmapPool getBitmapPool() {
@@ -171,7 +171,7 @@ public class ImageRequest extends Request<Bitmap> {
     @Override
     public Response<Bitmap> parseNetworkResponse(NetworkResponse response) {
         // Serialize all decode on a global lock to reduce concurrent heap usage.
-        synchronized (sDecodeLock) {
+        synchronized (DECODE_LOCK) {
             try {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
@@ -189,8 +189,8 @@ public class ImageRequest extends Request<Bitmap> {
         byte[] data = response.data;
         BitmapFactory.Options decodeOptions = new BitmapFactory.Options();
         Bitmap bitmap = null;
-        if (mMaxWidth == 0 && mMaxHeight == 0) {
-            decodeOptions.inPreferredConfig = mDecodeConfig;
+        if (maxWidth == 0 && maxHeight == 0) {
+            decodeOptions.inPreferredConfig = decodeConfig;
             //we don't have specific size to find a reusable bitmap so lets instead create a new
             // one
             try {
@@ -205,10 +205,10 @@ public class ImageRequest extends Request<Bitmap> {
             int actualHeight = decodeOptions.outHeight;
 
             // Then compute the dimensions we would ideally like to decode to.
-            int desiredWidth = getResizedDimension(mMaxWidth, mMaxHeight,
-                    actualWidth, actualHeight, mScaleType);
-            int desiredHeight = getResizedDimension(mMaxHeight, mMaxWidth,
-                    actualHeight, actualWidth, mScaleType);
+            int desiredWidth = getResizedDimension(maxWidth, maxHeight,
+                    actualWidth, actualHeight, scaleType);
+            int desiredHeight = getResizedDimension(maxHeight, maxWidth,
+                    actualHeight, actualWidth, scaleType);
 
             // Decode to the nearest power of two scaling factor.
             decodeOptions.inJustDecodeBounds = false;
@@ -312,10 +312,10 @@ public class ImageRequest extends Request<Bitmap> {
     public String toString() {
         return "ImageRequest{" +
                 "bitmapPool=" + bitmapPool +
-                ", mDecodeConfig=" + mDecodeConfig +
-                ", mMaxWidth=" + mMaxWidth +
-                ", mMaxHeight=" + mMaxHeight +
-                ", mScaleType=" + mScaleType +
+                ", decodeConfig=" + decodeConfig +
+                ", maxWidth=" + maxWidth +
+                ", maxHeight=" + maxHeight +
+                ", scaleType=" + scaleType +
                 "} " + super.toString();
     }
 }

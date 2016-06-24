@@ -13,7 +13,9 @@ import android.widget.TextView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import io.apptik.comm.jus.ALog;
 import io.apptik.comm.jus.AndroidJus;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
@@ -63,6 +65,7 @@ public class JusFragment extends Fragment {
 							 Bundle savedInstanceState) {
 		View v = inflater.inflate(R.layout.fragment_jus, container, false);
 
+		JusLog.MarkerLog.on();
 		standardQueueStringRequest(v);
 		customQueueImageRequest(v);
 		networkImageViewRequest(v);
@@ -105,9 +108,9 @@ public class JusFragment extends Fragment {
 
 	private void customQueueImageRequest(View v) {
 		// ImageRequest with JUS for Android
-		final ImageView mImageView;
+		final ImageView imageView;
 		String url = "http://i.imgur.com/7spzG.png";
-		mImageView = (ImageView) v.findViewById(R.id.iv_image_request);
+		imageView = (ImageView) v.findViewById(R.id.iv_image_request);
 
 		ImageRequest request = new ImageRequest(url, 0, 0, ImageView.ScaleType.CENTER, null);
 
@@ -115,13 +118,13 @@ public class JusFragment extends Fragment {
 				() {
 			@Override
 			public void onResponse(Bitmap response) {
-				mImageView.setImageBitmap(response);
+				imageView.setImageBitmap(response);
 
 			}
 		}).addErrorListener(new RequestListener.ErrorListener() {
 			@Override
 			public void onError(JusError error) {
-				mImageView.setImageResource(R.drawable.ic_error);
+				imageView.setImageResource(R.drawable.ic_error);
 
 			}
 		}));
@@ -129,28 +132,31 @@ public class JusFragment extends Fragment {
 	}
 
 	private void networkImageViewRequest(View v) {
-		ImageLoader mImageLoader;
-		NetworkImageView mNetworkImageView;
-		String url = "http://developer.android.com/images/training/system-ui.png";
-
+		ImageLoader imageLoader;
+		NetworkImageView networkImageView;
+		String url = "https://developer.android.com/images/training/system-ui.png";
 		// Get the NetworkImageView that will display the image.
-		mNetworkImageView = (NetworkImageView) v.findViewById(R.id.networkImageView);
+		networkImageView = (NetworkImageView) v.findViewById(R.id.networkImageView);
+
+
+		//set option request tag
+		networkImageView.setRequestTag("ImageTag2");
 
 		// Get the ImageLoader through your custom Helper.
-		mImageLoader = JusHelper.getInstance(v.getContext()).getImageLoader();
+		imageLoader = JusHelper.getInstance(v.getContext()).getImageLoader();
+
+		// Set error image
+		networkImageView.setErrorImageResId(R.drawable.ic_error);
 
 		// Set the URL of the image that should be loaded into this view, and
 		// specify the ImageLoader that will be used to make the request.
-		mNetworkImageView.setImageUrl(url, mImageLoader);
-
-		// Set error image
-		mNetworkImageView.setErrorImageResId(R.drawable.ic_error);
+		networkImageView.setImageUrl(url, imageLoader);
 	}
 
 
 	private void jsonRequest(View v) {
-		final TextView mTxtDisplay;
-		mTxtDisplay = (TextView) v.findViewById(R.id.tv_jsonRequest);
+		final TextView txtDisplay;
+		txtDisplay = (TextView) v.findViewById(R.id.tv_jsonRequest);
 		String url = "https://api.github.com/users/mralexgray/repos";
 
 		JSONArrayRequest jsonArrayRequest = new JSONArrayRequest(Request.Method.GET, url);
@@ -159,7 +165,7 @@ public class JusFragment extends Fragment {
 					@Override
 					public void onResponse(JSONArray response) {
 						try {
-							mTxtDisplay.setText("Response: " + response.getJSONObject(0).toString()
+							txtDisplay.setText("Response: " + response.getJSONObject(0).toString()
 									.substring(0, 50));
 						} catch (JSONException e) {
 							e.printStackTrace();
@@ -169,15 +175,15 @@ public class JusFragment extends Fragment {
 		)).addErrorListener(new RequestListener.ErrorListener() {
 			@Override
 			public void onError(JusError error) {
-				mTxtDisplay.setText("Error while loading Json: " + error.toString());
+				txtDisplay.setText("Error while loading Json: " + error.toString());
 
 			}
 		});
 	}
 
 	private void gsonRequest(View v) {
-		final TextView mTxtDisplay;
-		mTxtDisplay = (TextView) v.findViewById(R.id.tv_gsonRequest);
+		final TextView txtDisplay;
+		txtDisplay = (TextView) v.findViewById(R.id.tv_gsonRequest);
 
 		String url = "https://api.github.com/users/mralexgray/repos";
 		GsonRequest gsonRequest = new GsonRequest(Request.Method.GET, url, TestObjectForGson[]
@@ -187,14 +193,14 @@ public class JusFragment extends Fragment {
 				new RequestListener.ResponseListener<TestObjectForGson[]>() {
 					@Override
 					public void onResponse(TestObjectForGson[] response) {
-						mTxtDisplay.setText("Response: " + response[0].getId());
+						txtDisplay.setText("Response: " + response[0].getId());
 
 					}
 				}
 		)).addErrorListener(new RequestListener.ErrorListener() {
 			@Override
 			public void onError(JusError error) {
-				mTxtDisplay.setText("Error while loading Gson: " + error.toString());
+				txtDisplay.setText("Error while loading Gson: " + error.toString());
 
 			}
 		});

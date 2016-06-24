@@ -61,10 +61,13 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
     public static final String EVENT_NETWORK_STACK_SEND = "network-stack-send";
     public static final String EVENT_NETWORK_STACK_AUTH_ERROR = "network-stack-auth-error";
-    public static final String EVENT_NETWORK_STACK_AUTH_PROXY_ERROR = "network-stack-auth-proxy-error";
-    public static final String EVENT_NETWORK_STACK_AUTH_ERROR_RESEND = "network-stack-auth-error-resend";
+    public static final String EVENT_NETWORK_STACK_AUTH_PROXY_ERROR =
+            "network-stack-auth-proxy-error";
+    public static final String EVENT_NETWORK_STACK_AUTH_ERROR_RESEND =
+            "network-stack-auth-error-resend";
     public static final String EVENT_NETWORK_STACK_REDIRECT_SEND = "network-stack-redirect-send";
-    public static final String EVENT_NETWORK_STACK_REDIRECT_COMPLETE = "network-stack-redirect-complete";
+    public static final String EVENT_NETWORK_STACK_REDIRECT_COMPLETE =
+            "network-stack-redirect-complete";
     public static final String EVENT_NETWORK_STACK_COMPLETE = "network-stack-complete";
     public static final String EVENT_NETWORK_TRANSFORM_COMPLETE = "network-transform-complete";
     public static final String EVENT_NETWORK_DISCARD_CANCELED = "network-discard-canceled";
@@ -412,7 +415,8 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         return connectivityManager;
     }
 
-    public <R extends Request<T>> R setConnectivityManager(ConnectivityManager connectivityManager) {
+    public <R extends Request<T>> R setConnectivityManager(ConnectivityManager
+                                                                   connectivityManager) {
         this.connectivityManager = connectivityManager;
         return (R) this;
     }
@@ -546,7 +550,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Adds an event to this request's event log; for debugging.
      */
     public <R extends Request<T>> R addMarker(String tag, Object... args) {
-        Marker marker =  new Marker(tag,
+        Marker marker = new Marker(tag,
                 Thread.currentThread().getId(),
                 Thread.currentThread().getName(),
                 System.nanoTime());
@@ -583,7 +587,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 //todo add queue markers
                 //JusLog.d("%d ns: %s", requestTime, this.toString());
             }
-         }
+        }
         synchronized (markerListeners) {
             markerListeners.clear();
         }
@@ -634,7 +638,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
 
         }
-        if(retryPolicy==null) {
+        if (retryPolicy == null) {
             setRetryPolicy(new DefaultRetryPolicy());
         }
         this.requestQueue = requestQueue;
@@ -894,12 +898,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
             mark = "[O]";
         }
         return "Request " + mark + " {" +
-                "\n\tnetworkRequest=" + networkRequest +
-                "\n\tmethod='" + method + '\'' +
                 "\n\turl=" + url +
-                "\n\tresponse=" + response +
-                "\n(tag=" + tag +
-                ", responseDelivered=" + responseDelivered +
+                "\n\tmethod='" + method + '\'' +
+                "\n\ttag=" + tag +
+                "\n\t(responseDelivered=" + responseDelivered +
                 ", trafficStatsTag=" + trafficStatsTag +
                 ", priority=" + getPriority() +
                 ", requestBirthTime=" + requestBirthTime +
@@ -908,7 +910,12 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 ", shouldCache=" + shouldCache +
                 ", logSlowRequests=" + logSlowRequests +
                 ", canceled=" + canceled +
-                ")}";
+                ")" +
+                "\nnetworkRequest=" + (networkRequest == null ? "null" :
+                        networkRequest.toString().replace("\n", "\n\t")) +
+                "\nresponse=" + (response == null ? "null" :
+                        response.toString().replace("\n", "\n\t")) +
+                "\n}";
     }
 
     /**

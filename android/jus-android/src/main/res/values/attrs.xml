@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    <declare-styleable name="jus">
+        <attr name="requestTag" format="string"/>
+    </declare-styleable>
+    <!-- style reference -->
+    <declare-styleable name="JusTheme">
+        <attr name="jusStyle" format="reference"/>
+    </declare-styleable>
+</resources>

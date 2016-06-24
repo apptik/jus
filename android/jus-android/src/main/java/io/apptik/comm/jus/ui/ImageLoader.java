@@ -37,7 +37,8 @@ import io.apptik.comm.jus.util.DefaultBitmapLruCache;
 /**
  * Helper that handles loading and caching images from remote URLs.
  *
- * The simple way to use this class is to call {@link ImageLoader#get(String, ImageListener)}
+ * The simple way to use this class is to call
+ * {@link ImageLoader#get(String, ImageListener, Object)}
  * and to pass in the default image listener provided by
  * {@link ImageLoader#getImageListener(ImageView, int, int)}. Note that all function calls to
  * this class must be made from the main thead, and all responses will be delivered to the main
@@ -48,7 +49,7 @@ public class ImageLoader {
     private final RequestQueue requestQueue;
 
     /** Amount of time to wait after first response arrives before delivering all responses. */
-    private int mBatchResponseDelayMs = 100;
+    private int batchResponseDelayMs = 100;
 
     /** The cache implementation to be used as an L1 cache before calling into jus. */
     private final ImageCache imageCache;
@@ -59,29 +60,29 @@ public class ImageLoader {
      * HashMap of Cache keys -> BatchedImageRequest used to track in-flight requests so
      * that we can coalesce multiple requests to the same URL into a single network request.
      */
-    private final HashMap<String, BatchedImageRequest> mInFlightRequests =
+    private final HashMap<String, BatchedImageRequest> inFlightRequests =
             new HashMap<String, BatchedImageRequest>();
 
     /** HashMap of the currently pending responses (waiting to be delivered). */
-    private final HashMap<String, BatchedImageRequest> mBatchedResponses =
+    private final HashMap<String, BatchedImageRequest> batchedResponses =
             new HashMap<String, BatchedImageRequest>();
 
     /** Handler to the main threadId. */
-    private final Handler mHandler = new Handler(Looper.getMainLooper());
+    private final Handler handler = new Handler(Looper.getMainLooper());
 
     /** Runnable for in-flight response delivery. */
-    private Runnable mRunnable;
+    private Runnable runnable;
 
     /**
      * Resource ID of the image to be used as a placeholder until network image using this loader
      * is loaded.
      */
-    private int mDefaultImageId;
+    private int defaultImageId;
 
     /**
      * Resource ID of the image to be used if the network response fails using this loader.
      */
-    private int mErrorImageId;
+    private int errorImageId;
 
     /**
      * Simple cache adapter interface. If provided to the ImageLoader, it
@@ -120,7 +121,7 @@ public class ImageLoader {
      * completes.
      */
     public ImageLoader setDefaultImageResId(int defaultImage) {
-        mDefaultImageId = defaultImage;
+        defaultImageId = defaultImage;
         return this;
     }
 
@@ -129,16 +130,16 @@ public class ImageLoader {
      * requested fails to load.
      */
     public ImageLoader setErrorImageResId(int errorImage) {
-        mErrorImageId = errorImage;
+        errorImageId = errorImage;
         return this;
     }
 
     public int getErrorImageId() {
-        return mErrorImageId;
+        return errorImageId;
     }
 
     public int getDefaultImageId() {
-        return mDefaultImageId;
+        return defaultImageId;
     }
 
     /**
@@ -234,17 +235,17 @@ public class ImageLoader {
      *
      * @param requestUrl The URL of the image to be loaded.
      */
-    public ImageContainer get(String requestUrl, final ImageListener listener) {
-        return get(requestUrl, listener, 0, 0);
+    public ImageContainer get(String requestUrl, final ImageListener listener, final Object tag) {
+        return get(requestUrl, listener, 0, 0, tag);
     }
 
     /**
-     * Equivalent to calling {@link #get(String, ImageListener, int, int, ScaleType)} with
+     * Equivalent to calling {@link #get(String, ImageListener, int, int, ScaleType, Object)} with
      * {@code Scaletype == ScaleType.CENTER_INSIDE}.
      */
     public ImageContainer get(String requestUrl, ImageListener imageListener,
-                              int maxWidth, int maxHeight) {
-        return get(requestUrl, imageListener, maxWidth, maxHeight, ScaleType.CENTER_INSIDE);
+                              int maxWidth, int maxHeight, final Object tag) {
+        return get(requestUrl, imageListener, maxWidth, maxHeight, ScaleType.CENTER_INSIDE, tag);
     }
 
     /**
@@ -261,7 +262,7 @@ public class ImageLoader {
      *     the currently available image (default if remote is not loaded).
      */
     public ImageContainer get(String requestUrl, ImageListener imageListener,
-                              int maxWidth, int maxHeight, ScaleType scaleType) {
+                              int maxWidth, int maxHeight, ScaleType scaleType, final Object tag) {
         // only fulfill requests that were initiated from the main threadId.
         throwIfNotOnMainThread();
 
@@ -286,7 +287,7 @@ public class ImageLoader {
         imageListener.onResponse(imageContainer, true);
 
         // Check to see if a request is already in-flight.
-        BatchedImageRequest request = mInFlightRequests.get(cacheKey);
+        BatchedImageRequest request = inFlightRequests.get(cacheKey);
         if (request != null) {
             // If it is, add this request to the list of listeners.
             request.addContainer(imageContainer);
@@ -296,16 +297,17 @@ public class ImageLoader {
         // The request is not already in flight. Send the new request to the network and
         // track it.
         ImageRequest newRequest = makeImageRequest(requestUrl, maxWidth, maxHeight, scaleType,
-                cacheKey);
+                cacheKey, tag);
 
         requestQueue.add(newRequest);
-        mInFlightRequests.put(cacheKey,
+        inFlightRequests.put(cacheKey,
                 new BatchedImageRequest(newRequest, imageContainer));
         return imageContainer;
     }
 
     protected ImageRequest makeImageRequest(String requestUrl, int maxWidth, int maxHeight,
-                                            ScaleType scaleType, final String cacheKey) {
+                                            ScaleType scaleType, final String cacheKey, final
+                                            Object tag) {
         return (ImageRequest) new ImageRequest(requestUrl, maxWidth, maxHeight, scaleType, Config.RGB_565)
                 .setBitmapPool(bitmapPool)
                 .addResponseListener(new ResponseListener<Bitmap>() {
@@ -320,6 +322,7 @@ public class ImageLoader {
                         onGetImageError(cacheKey, error);
                     }
                 })
+                .setTag(tag)
                 ;
     }
 
@@ -329,7 +332,7 @@ public class ImageLoader {
      * @param newBatchedResponseDelayMs The time in milliseconds to wait.
      */
     public void setBatchedResponseDelay(int newBatchedResponseDelayMs) {
-        mBatchResponseDelayMs = newBatchedResponseDelayMs;
+        batchResponseDelayMs = newBatchedResponseDelayMs;
     }
 
     /**
@@ -342,7 +345,7 @@ public class ImageLoader {
         imageCache.putBitmap(cacheKey, response);
 
         // remove the request from the list of in-flight requests.
-        BatchedImageRequest request = mInFlightRequests.remove(cacheKey);
+        BatchedImageRequest request = inFlightRequests.remove(cacheKey);
 
         if (request != null) {
             // Update the response bitmap.
@@ -360,7 +363,7 @@ public class ImageLoader {
     protected void onGetImageError(String cacheKey, JusError error) {
         // Notify the requesters that something failed via a null result.
         // Remove this request from the list of in-flight requests.
-        BatchedImageRequest request = mInFlightRequests.remove(cacheKey);
+        BatchedImageRequest request = inFlightRequests.remove(cacheKey);
 
         if (request != null) {
             // Set the error for this request
@@ -411,19 +414,19 @@ public class ImageLoader {
                 return;
             }
 
-            BatchedImageRequest request = mInFlightRequests.get(mCacheKey);
+            BatchedImageRequest request = inFlightRequests.get(mCacheKey);
             if (request != null) {
                 boolean canceled = request.removeContainerAndCancelIfNecessary(this);
                 if (canceled) {
-                    mInFlightRequests.remove(mCacheKey);
+                    inFlightRequests.remove(mCacheKey);
                 }
             } else {
                 // check to see if it is already batched for delivery.
-                request = mBatchedResponses.get(mCacheKey);
+                request = batchedResponses.get(mCacheKey);
                 if (request != null) {
                     request.removeContainerAndCancelIfNecessary(this);
                     if (request.mContainers.size() == 0) {
-                        mBatchedResponses.remove(mCacheKey);
+                        batchedResponses.remove(mCacheKey);
                     }
                 }
             }
@@ -515,14 +518,14 @@ public class ImageLoader {
      * @param request The BatchedImageRequest to be delivered.
      */
     private void batchResponse(String cacheKey, BatchedImageRequest request) {
-        mBatchedResponses.put(cacheKey, request);
+        batchedResponses.put(cacheKey, request);
         // If we don't already have a batch delivery runnable in flight, make a new one.
-        // Note that this will be used to deliver responses to all callers in mBatchedResponses.
-        if (mRunnable == null) {
-            mRunnable = new Runnable() {
+        // Note that this will be used to deliver responses to all callers in batchedResponses.
+        if (runnable == null) {
+            runnable = new Runnable() {
                 @Override
                 public void run() {
-                    for (BatchedImageRequest bir : mBatchedResponses.values()) {
+                    for (BatchedImageRequest bir : batchedResponses.values()) {
                         for (ImageContainer container : bir.mContainers) {
                             // If one of the callers in the batched request canceled the request
                             // after the response was received but before it was delivered,
@@ -538,13 +541,13 @@ public class ImageLoader {
                             }
                         }
                     }
-                    mBatchedResponses.clear();
-                    mRunnable = null;
+                    batchedResponses.clear();
+                    runnable = null;
                 }
 
             };
             // Post the runnable.
-            mHandler.postDelayed(mRunnable, mBatchResponseDelayMs);
+            handler.postDelayed(runnable, batchResponseDelayMs);
         }
     }
 
