@@ -32,6 +32,19 @@ public class JusLog {
     private static boolean errorLogOn = false;
 
 
+    public static void log(String msg) {
+        if(log!=null) {
+            log.log(msg);
+        }
+    }
+
+    public static void error(String msg) {
+        if(log!=null) {
+            log.error(msg);
+        }
+    }
+
+
     public static class ErrorLog {
         public static void on() {
             errorLogOn = true;
