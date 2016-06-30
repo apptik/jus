@@ -175,7 +175,7 @@ public class ImageRequest extends Request<Bitmap> {
             try {
                 return doParse(response);
             } catch (OutOfMemoryError e) {
-                JusLog.log.error("Caught OOM for " + response.data.length + " byte image, url=" +
+                JusLog.error("Caught OOM for " + response.data.length + " byte image, url=" +
                         getUrl());
                 return Response.error(new ParseError(e));
             }
@@ -196,6 +196,7 @@ public class ImageRequest extends Request<Bitmap> {
             try {
                 bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
             } catch (IllegalArgumentException ex) {
+                JusLog.error("Unbounded decode failed: " + ex.getMessage());
             }
         } else {
             // If we have to resize this image, first get the natural bounds.
@@ -250,6 +251,7 @@ public class ImageRequest extends Request<Bitmap> {
         try {
             tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
         } catch (IllegalArgumentException ex) {
+            JusLog.error("1st decode failed: " + ex.getMessage());
             decodeOptions.inBitmap = null;
         }
 
@@ -260,6 +262,7 @@ public class ImageRequest extends Request<Bitmap> {
             try {
                 tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
             } catch (IllegalArgumentException ex) {
+                JusLog.error("2nd decode failed: " + ex.getMessage());
                 decodeOptions.inBitmap = null;
             }
         }
@@ -267,8 +270,11 @@ public class ImageRequest extends Request<Bitmap> {
         //giveup and do it without inBitmap
         if (tempBitmap == null) {
             try {
+                //just in case
+                decodeOptions.inBitmap = null;
                 tempBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, decodeOptions);
             } catch (IllegalArgumentException ex) {
+                JusLog.error("3rd decode failed: " + ex.getMessage());
             }
         }
         return tempBitmap;
