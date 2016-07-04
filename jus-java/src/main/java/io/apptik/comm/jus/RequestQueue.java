@@ -382,6 +382,25 @@ public class RequestQueue {
      * @return The passed-in request
      */
     public <R extends Request<T>, T> R add(R request) {
+        //Listener factories should be first so client can listen to events
+        for (ListenerFactory listenerFactory : listenerFactories) {
+            RequestListener.ResponseListener qResponseListener = listenerFactory
+                    .getResponseListener(request);
+            RequestListener.ErrorListener qErrorListener = listenerFactory.getErrorListener
+                    (request);
+            RequestListener.MarkerListener qMarkerListener = listenerFactory.getMarkerListener
+                    (request);
+
+            if (qMarkerListener != null) {
+                request.addMarkerListener(qMarkerListener);
+            }
+            if (qResponseListener != null) {
+                request.addResponseListener(qResponseListener);
+            }
+            if (qErrorListener != null) {
+                request.addErrorListener(qErrorListener);
+            }
+        }
         request.addMarker(Request.EVENT_PRE_ADD_TO_QUEUE);
         Authenticator serverAuthenticator = null;
         Authenticator proxyAuthenticator = null;
@@ -410,25 +429,6 @@ public class RequestQueue {
         for (Transformer.RequestTransformer transformer : requestTransformers) {
             if (transformer.filter == null || transformer.filter.apply(request)) {
                 request.setNetworkRequest(transformer.transform(request.getNetworkRequest()));
-            }
-        }
-
-        for (ListenerFactory listenerFactory : listenerFactories) {
-            RequestListener.ResponseListener qResponseListener = listenerFactory
-                    .getResponseListener(request);
-            RequestListener.ErrorListener qErrorListener = listenerFactory.getErrorListener
-                    (request);
-            RequestListener.MarkerListener qMarkerListener = listenerFactory.getMarkerListener
-                    (request);
-
-            if (qResponseListener != null) {
-                request.addResponseListener(qResponseListener);
-            }
-            if (qErrorListener != null) {
-                request.addErrorListener(qErrorListener);
-            }
-            if (qMarkerListener != null) {
-                request.addMarkerListener(qMarkerListener);
             }
         }
 

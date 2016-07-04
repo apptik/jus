@@ -19,11 +19,11 @@ import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
 import io.apptik.comm.jus.okhttp3.OkHttpStack;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Tag;
+import io.apptik.comm.jus.rx.RxQueueHub;
 import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.PooledBitmapLruCache;
 import io.apptik.json.JsonArray;
-import io.apptik.jus.samples.api.ApiHub;
 import io.apptik.jus.samples.api.Instructables;
 
 import static io.apptik.jus.samples.Requests.getDummyRequest;
@@ -34,12 +34,12 @@ public class MyJus {
     private Instructables instructables;
     private RequestQueue queue;
     private ImageLoader imageLoader;
-    private ApiHub hub;
+    private RxQueueHub hub;
 
     private MyJus(Context ctx) {
         JusLog.MarkerLog.on();
         queue = AndroidJus.newRequestQueue(ctx, new OkHttpStack());
-        hub = new ApiHub(queue);
+        hub = new RxQueueHub(queue);
 
         instructables = new RetroProxy.Builder()
                 .baseUrl(Instructables.baseUrl)
@@ -111,7 +111,7 @@ public class MyJus {
         return inst.queue;
     }
 
-    public static ApiHub hub() {
+    public static RxQueueHub hub() {
         if (inst == null) throw new IllegalStateException("Not Initialized");
         return inst.hub;
     }

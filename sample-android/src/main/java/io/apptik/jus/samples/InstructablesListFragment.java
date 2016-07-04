@@ -66,7 +66,7 @@ public class InstructablesListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_imagelist, container, false);
         // Inflate the layout for this fragment
         RecyclerAdapter recyclerAdapter = new RxAdapter(
-                MyJus.hub().get(REQ_LIST).map(o -> ((ResultEvent) o).response));
+                MyJus.hub().getResults(REQ_LIST).map(o -> ((ResultEvent) o).response));
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerAdapter);
