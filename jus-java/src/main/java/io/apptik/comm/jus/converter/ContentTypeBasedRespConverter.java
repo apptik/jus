@@ -24,6 +24,15 @@ import io.apptik.comm.jus.Converter;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.http.MediaType;
 
+
+/**
+ *
+ * Converter Map which uses different Converter depending on the media type. This is particularly
+ * useful when we expect the the same java Type that can be received in different formats for
+ * example JSON, XML, protobuf etc.
+ *
+ * @param <T> expected Type to convert to
+ */
 public class ContentTypeBasedRespConverter<T> extends AbstractSmartResponseConverter<T>{
 
     Map<MediaType, Converter<NetworkResponse, T>> converters = new HashMap<>();

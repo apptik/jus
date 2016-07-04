@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
+apply plugin: 'java'
 
-include ':android:jus-android', ':examples-android-volley-migration',
-        ':sample-android',
-        ':stack:jus-okhttp3',
-        ':stack:jus-netty',
-        ':stack:jus-apachehttp',
-        ':stack:jus-okhttp',
-        ':examples-android',
-        ':rx-jus', ':retro-jus', ':jus-java',
-        ':examples-java',
-        ':converter:jus-gson',
-        ':converter:jus-jjson',
-        ':converter:jus-jjson-wrapper',
-        ':converter:jus-wire',
-        ':converter:jus-simplexml',
-        ':converter:jus-protobuf',
-        ':converter:jus-moshi',
-        ':converter:jus-jackson'
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+}
+
+
+dependencies {
+    compile project(':jus-java')
+    compile rootProject.ext.jjsonCore
+    compile rootProject.ext.jjsonWrapper
+
+    testCompile project (':retro-jus')
+    testCompile 'junit:junit:[4,)'
+    testCompile rootProject.ext.assertjCore2
+    testCompile rootProject.ext.mockitoCore
+    testCompile rootProject.ext.mockwebserver
+}
+
+apply from: 'https://raw.githubusercontent.com/djodjoni/gradle-mvn-push/master/gradle-mvn-push.gradle'
