@@ -48,7 +48,7 @@ public class TransformersTests {
     }
 
     @Test
-    public void requestConverterTest() {
+    public void requestTransformerTest() {
         //server.enqueue(new MockResponse().setBody("Hi"));
         Transformer.RequestTransformer inactiveTransformer =
                 new Transformer.RequestTransformer(new RequestQueue.RequestFilter() {
@@ -93,7 +93,7 @@ public class TransformersTests {
     }
 
     @Test
-    public void responseConverterTest() throws ExecutionException, InterruptedException {
+    public void responseTransformerTest() throws ExecutionException, InterruptedException {
         Transformer.ResponseTransformer inactiveTransformer =
                 new Transformer.ResponseTransformer(new RequestQueue.RequestFilter() {
                     @Override
