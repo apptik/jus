@@ -1,5 +1,8 @@
 apply plugin: 'java'
 
+apply plugin: 'jacoco'
+
+
 /*
  * Copyright (C) 2015 AppTik Project
  *
