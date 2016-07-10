@@ -21,6 +21,7 @@ import rx.subjects.Subject;
 public class RxQueueHub extends RxHub {
 
     public RxQueueHub(RequestQueue queue) {
+        super(true);
         queue.addListenerFactory(new RequestListener.SimpleListenerFactory() {
             @Override
             public RequestListener.MarkerListener getMarkerListener(Request<?> request) {

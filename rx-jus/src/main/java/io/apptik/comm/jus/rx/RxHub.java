@@ -6,6 +6,7 @@ import java.util.Map;
 import io.apptik.comm.jus.rx.event.JusEvent;
 import rx.Observable;
 import rx.subjects.BehaviorSubject;
+import rx.subjects.SerializedSubject;
 import rx.subjects.Subject;
 
 /**
@@ -15,16 +16,28 @@ import rx.subjects.Subject;
  * for example:
  * rxHub.put(REQ_TAG, RxRequestQueue
  * .resultObservable(queue, request -> REQ_TAG.equals(request.getTag())));
- *
+ * <p>
  * This Hub can be used for any other purpose.
- *
  */
 public class RxHub {
 
     private Map<Object, Subject> observableMap = new HashMap<>();
+    private boolean threadsafe = false;
+
+    public RxHub() {
+    }
+
+    public RxHub(boolean threadsafe) {
+        this.threadsafe = threadsafe;
+    }
 
     public void put(Object tag, Observable<JusEvent> observable) {
-        Subject s = BehaviorSubject.create();
+        Subject s;
+        if (threadsafe) {
+            s = new SerializedSubject(BehaviorSubject.create());
+        } else {
+            s = BehaviorSubject.create();
+        }
         observable.subscribe(s);
         observableMap.put(tag, s);
     }
