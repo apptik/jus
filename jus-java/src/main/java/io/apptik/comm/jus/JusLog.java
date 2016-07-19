@@ -58,7 +58,7 @@ public class JusLog {
             errorLogOn = false;
         }
 
-        public static RequestListener.ErrorListener getLogger(final Request request) {
+        static RequestListener.ErrorListener getLogger(final Request request) {
             return new RequestListener.ErrorListener() {
                 @Override
                 public void onError(JusError error) {
@@ -82,7 +82,7 @@ public class JusLog {
             return reponseLogOn;
         }
 
-        public static RequestListener.ResponseListener getLogger(final Request request) {
+        static RequestListener.ResponseListener getLogger(final Request request) {
             return new RequestListener.ResponseListener() {
                 @Override
                 public void onResponse(Object response) {
@@ -114,7 +114,7 @@ public class JusLog {
          */
         private static final long MIN_DURATION_FOR_LOGGING_MS = 0;
 
-        public static RequestListener.MarkerListener getLogger(final Request request) {
+        static RequestListener.MarkerListener getLogger(final Request request) {
             return new RequestListener.MarkerListener() {
                 final MarkerLog markerLog = new MarkerLog(request);
 
@@ -141,11 +141,12 @@ public class JusLog {
             if (mFinished) {
                 throw new IllegalStateException("Marker added to finished request");
             }
-            log.log(buildMessage(request, "%s\n\t\targs=%s", marker.toString(), Arrays.toString
-                    (args)));
+            log.log(buildMarkerMessage(request, "\n\t\targs=%s", marker,
+                    Arrays.toString(args)));
             mMarkers.add(marker);
             if (Request.EVENT_DONE.equals(marker.name)) {
-                finish("[" + request.getMethod() + "]" + request.getUrlString());
+                finish("[" + request.getMethod() + "][" + request.getTag() + "]" +
+                        request.getUrlString());
             }
         }
 
@@ -164,7 +165,7 @@ public class JusLog {
             }
 
             long prevTime = mMarkers.get(0).time;
-            log.log(buildMessage(request, "(%-10d ns) %s", duration, header));
+            log.log(buildFinishMessage("(%-10d ns) %s", duration, header));
             for (Marker marker : mMarkers) {
                 long thisTime = marker.time;
                 log.log(String.format("(+%-10d) [%2d/%s] %s", (thisTime - prevTime)
@@ -200,6 +201,20 @@ public class JusLog {
         }
     }
 
+
+    private static String buildMarkerMessage(Request request, String format, Marker marker,
+                                             Object... args) {
+        String msg = (args == null) ? format : String.format(Locale.US, format, args);
+        return String.format(Locale.US, "[%d]: %s:\n\t%s\n\t\t%s",
+                Thread.currentThread().getId(), marker.toString(), request.toString(), msg);
+    }
+
+    private static String buildFinishMessage(String format, Object... args) {
+        String msg = (args == null) ? format : String.format(Locale.US, format, args);
+
+        return String.format(Locale.US, "[%d]: %s",
+                Thread.currentThread().getId(), msg);
+    }
 
     private static String buildMessage(Request request, String format, Object... args) {
         String msg = (args == null) ? format : String.format(Locale.US, format, args);

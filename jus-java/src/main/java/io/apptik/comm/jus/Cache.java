@@ -108,7 +108,8 @@ public interface Cache {
                     "\n\tlastModified=" + lastModified +
                     "\n\tttl=" + ttl +
                     "\n\tsoftTtl=" + softTtl +
-                    "\n\tresponseHeaders={" + responseHeaders.toString().replace("\n\t", "\n\t\t") +
+                    "\n\tresponseHeaders={\n\t\t" + responseHeaders.toString()
+                    .replace("\n", "\n\t\t") +
                     "\n\tdata=" + ((data == null) ? "null" : new String(data, Charset.forName(HTTP
                     .UTF_8))) +
                     "}}";

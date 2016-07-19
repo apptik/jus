@@ -17,14 +17,14 @@ public class ExampleLruPooledCache extends PooledBitmapLruCache {
     @Override
     public synchronized Bitmap getReusableBitmap(BitmapFactory.Options options) {
         Bitmap bitmap = super.getReusableBitmap(options);
-        Log.e("Jus-Example", "getReusableBitmap: " + bitmap + " :: " + size() + "/" +
+        Log.v("Jus-Example", "getReusableBitmap: " + bitmap + " :: " + size() + "/" +
                 maxSize() + " :: " + "" + pool().size() + "/" + pool().maxSize());
         return bitmap;
     }
 
     @Override
     public synchronized void addToPool(Bitmap bitmap) {
-        Log.e("Jus-Example", "addToPool: " + bitmap + " :: " + size() + "/" +
+        Log.v("Jus-Example", "addToPool: " + bitmap + " :: " + size() + "/" +
                 maxSize() + " :: " + "" + pool().size() + "/" + pool().maxSize());
         super.addToPool(bitmap);
     }
@@ -32,14 +32,14 @@ public class ExampleLruPooledCache extends PooledBitmapLruCache {
     @Override
     public Bitmap getBitmap(String url) {
         Bitmap bitmap = super.getBitmap(url);
-        Log.e("Jus-Example", "getBitmap: " + bitmap + " :: " + size() + "/" +
+        Log.v("Jus-Example", "getBitmap: " + bitmap + " :: " + size() + "/" +
                 maxSize() + " :: " + "" + pool().size() + "/" + pool().maxSize());
         return bitmap;
     }
 
     @Override
     public void putBitmap(String url, Bitmap bitmap) {
-        Log.e("Jus-Example", "putBitmap: " + bitmap + " :: " + size() + "/" +
+        Log.v("Jus-Example", "putBitmap: " + bitmap + " :: " + size() + "/" +
                 maxSize() + " :: " + "" + pool().size() + "/" + pool().maxSize());
         super.putBitmap(url, bitmap);
     }

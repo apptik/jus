@@ -118,6 +118,7 @@ public final class NetworkResponse {
                 '}';
     }
 
+    //TODO may be do not log media ??
     private boolean isDataLoggable() {
         return data != null;
     }

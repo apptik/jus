@@ -74,22 +74,21 @@ public class MyJus {
                 // new NoCache()
                 defaultBitmapLruCache, defaultBitmapLruCache
         );
-
-        RxRequestQueue.resultObservable(queue, null)
-                .subscribe(resultEvent -> {
-                    Log.d("Jus-Test", "jus received response for: " + resultEvent.request);
-                    if (!(resultEvent.response instanceof Bitmap)) {
-                        Log.d("Jus-Test", "jus response : " + resultEvent.response);
-                    }
-                });
-
-        RxRequestQueue.errorObservable(queue, null)
-                .subscribe(errorEvent -> {
-                    Log.e("Jus-Test", "jus received ERROR for: " + errorEvent.request);
-                    if (errorEvent.error != null) {
-                        Log.e("Jus-Test", "jus ERROR : " + errorEvent.error);
-                    }
-                });
+//        RxRequestQueue.resultObservable(queue, null)
+//                .subscribe(resultEvent -> {
+//                    Log.d("Jus-Test", "jus received response for: " + resultEvent.request);
+//                    if (!(resultEvent.response instanceof Bitmap)) {
+//                        Log.d("Jus-Test", "jus response : " + resultEvent.response);
+//                    }
+//                });
+//
+//        RxRequestQueue.errorObservable(queue, null)
+//                .subscribe(errorEvent -> {
+//                    Log.e("Jus-Test", "jus received ERROR for: " + errorEvent.request);
+//                    if (errorEvent.error != null) {
+//                        Log.e("Jus-Test", "jus ERROR : " + errorEvent.error);
+//                    }
+//                });
     }
 
     public static void init(Context ctx) {
