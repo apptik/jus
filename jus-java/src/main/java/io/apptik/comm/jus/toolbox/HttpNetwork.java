@@ -290,7 +290,7 @@ public class HttpNetwork implements Network {
      */
     private void logSlowRequests(long requestLifetime, Request<?> request,
                                  byte[] responseContents, int statusCode) {
-        long SLOW_REQUEST_THRESHOLD_MS = 3000000000l;
+        long SLOW_REQUEST_THRESHOLD_MS = 3000000000L;
         if (requestLifetime > SLOW_REQUEST_THRESHOLD_MS) {
             //todo add queue markers
 //            JusLog.d("HTTP response for request=<%s> [lifetime=%d], [size=%s], " +

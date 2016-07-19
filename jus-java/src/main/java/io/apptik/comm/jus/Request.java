@@ -180,7 +180,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * Threshold at which we should log the request (even when debug logging is not enabled).
      */
-    private static final long SLOW_REQUEST_THRESHOLD_NS = 3000000000l;
+    private static final long SLOW_REQUEST_THRESHOLD_NS = 3000000000L;
 
     /**
      * The retry policy for this request.

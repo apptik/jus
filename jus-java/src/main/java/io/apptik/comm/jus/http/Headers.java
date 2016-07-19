@@ -260,7 +260,7 @@ public final class Headers {
             String name = header.getKey().trim();
             StringBuilder valueBuilder = new StringBuilder();
             for(String sVal:header.getValue()) {
-                valueBuilder.append(sVal.trim() + ",");
+                valueBuilder.append(sVal.trim()).append(",");
             }
             valueBuilder.deleteCharAt(valueBuilder.length()-1);
             String value = valueBuilder.toString();

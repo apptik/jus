@@ -533,16 +533,15 @@ public abstract class ConnectivityManager {
         @Override
         public String toString() {
             synchronized (this) {
-                StringBuilder builder = new StringBuilder("[");
-                builder.append("type: ").append(getType()).append("[").append(getSubtype()).
-                        append("], state: ").append(mState).append("/").append(mDetailedState).
-                        append(", reason: ").append(mReason == null ? "(unspecified)" : mReason).
-                        append(", extra: ").append(mExtraInfo == null ? "(none)" : mExtraInfo).
-                        append(", roaming: ").append(mIsRoaming).
-                        append(", failover: ").append(mIsFailover).
-                        append(", isAvailable: ").append(mIsAvailable).
-                        append("]");
-                return builder.toString();
+                String builder = "[" + "type: " + getType() + "[" + getSubtype() +
+                        "], state: " + mState + "/" + mDetailedState +
+                        ", reason: " + (mReason == null ? "(unspecified)" : mReason) +
+                        ", extra: " + (mExtraInfo == null ? "(none)" : mExtraInfo) +
+                        ", roaming: " + mIsRoaming +
+                        ", failover: " + mIsFailover +
+                        ", isAvailable: " + mIsAvailable +
+                        "]";
+                return builder;
             }
         }
     }
