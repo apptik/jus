@@ -38,16 +38,22 @@ import okio.BufferedSource;
 
 public class OkHttpStack extends AbstractHttpStack {
     private final OkHttpClient client;
+    private MarkerInterceptorFactory markerInterceptorFactory;
 
     public OkHttpStack() {
-        this(new OkHttpClient());
+        this(new OkHttpClient(), null);
     }
 
-    public OkHttpStack(OkHttpClient client) {
+    public OkHttpStack(MarkerInterceptorFactory markerInterceptorFactory) {
+        this(new OkHttpClient(), markerInterceptorFactory);
+    }
+
+    public OkHttpStack(OkHttpClient client, MarkerInterceptorFactory markerInterceptorFactory) {
         if (client == null) {
             throw new NullPointerException("Client must not be null.");
         }
         this.client = client;
+        this.markerInterceptorFactory = markerInterceptorFactory;
     }
 
     @Override
@@ -55,12 +61,19 @@ public class OkHttpStack extends AbstractHttpStack {
             additionalHeaders, ByteArrayPool byteArrayPool) throws IOException {
 
         //clone to be able to set timeouts per call
-        OkHttpClient client = this.client.newBuilder()
-        .connectTimeout(request.getRetryPolicy().getCurrentConnectTimeout(), TimeUnit
-                .MILLISECONDS)
-        .readTimeout(request.getRetryPolicy().getCurrentReadTimeout(), TimeUnit
-                .MILLISECONDS).build();
+        OkHttpClient.Builder clientBuilder = this.client.newBuilder();
+        if (request.getRetryPolicy() != null) {
+            clientBuilder
+                    .connectTimeout(request.getRetryPolicy().getCurrentConnectTimeout(),
+                            TimeUnit.MILLISECONDS)
+                    .readTimeout(request.getRetryPolicy().getCurrentReadTimeout(),
+                            TimeUnit.MILLISECONDS);
+        }
+        if (markerInterceptorFactory != null) {
+            clientBuilder.addNetworkInterceptor(markerInterceptorFactory.create(request));
+        }
 
+        OkHttpClient client = clientBuilder.build();
         okhttp3.Request okRequest = new okhttp3.Request.Builder()
                 .url(request.getUrlString())
                 .headers(JusOk.okHeaders(request.getHeaders(), additionalHeaders))
@@ -108,7 +121,7 @@ public class OkHttpStack extends AbstractHttpStack {
             } catch (IOException ex) {
                 //we will get this anyway keep on so we can have whatever we got from the body
                 //except timeout error
-                if(ex instanceof SocketTimeoutException) {
+                if (ex instanceof SocketTimeoutException) {
                     throw ex;
                 }
             }

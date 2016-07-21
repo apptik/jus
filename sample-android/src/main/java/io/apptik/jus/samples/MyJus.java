@@ -1,7 +1,6 @@
 package io.apptik.jus.samples;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.io.IOException;
@@ -16,11 +15,11 @@ import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
+import io.apptik.comm.jus.okhttp3.MarkerInterceptorFactory;
 import io.apptik.comm.jus.okhttp3.OkHttpStack;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Tag;
 import io.apptik.comm.jus.rx.RxQueueHub;
-import io.apptik.comm.jus.rx.queue.RxRequestQueue;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.PooledBitmapLruCache;
 import io.apptik.json.JsonArray;
@@ -38,7 +37,8 @@ public class MyJus {
 
     private MyJus(Context ctx) {
         JusLog.MarkerLog.on();
-        queue = AndroidJus.newRequestQueue(ctx, new OkHttpStack());
+        queue = AndroidJus.newRequestQueue(ctx,
+                new OkHttpStack(new MarkerInterceptorFactory.DefaultMIF()));
         hub = new RxQueueHub(queue);
 
         instructables = new RetroProxy.Builder()
