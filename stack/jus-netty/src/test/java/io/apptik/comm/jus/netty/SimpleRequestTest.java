@@ -227,7 +227,8 @@ public final class SimpleRequestTest {
                         fail();
                     }
                 }).enqueue();
-        assertTrue(latch.await(2, SECONDS));
+
+        assertTrue(latch.await(4, SECONDS));
 
         String response1 = responseRef.get();
         Response<String> response = request.getRawResponse();
