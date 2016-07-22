@@ -15,14 +15,13 @@
  * limitations under the License.
  */
 
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.http;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.Map;
 
-import io.apptik.comm.jus.http.HttpUrl;
-import io.apptik.comm.jus.http.MediaType;
+import io.apptik.comm.jus.NetworkRequest;
 import okio.Buffer;
 
 /**
@@ -65,10 +64,10 @@ public final class FormEncodingBuilder {
             content.writeByte('&');
         }
         HttpUrl.canonicalize(content, name, 0, name.length(),
-                HttpUrl.FORM_ENCODE_SET, false, true);
+                HttpUrl.FORM_ENCODE_SET, false, false, true, true);
         content.writeByte('=');
         HttpUrl.canonicalize(content, value, 0, value.length(),
-                HttpUrl.FORM_ENCODE_SET, false, true);
+                HttpUrl.FORM_ENCODE_SET, false, false, true, true);
         return this;
     }
 
@@ -80,10 +79,10 @@ public final class FormEncodingBuilder {
             content.writeByte('&');
         }
         HttpUrl.canonicalize(content, name, 0, name.length(),
-                HttpUrl.FORM_ENCODE_SET, true, true);
+                HttpUrl.FORM_ENCODE_SET, true, false, true, true);
         content.writeByte('=');
         HttpUrl.canonicalize(content, value, 0, value.length(),
-                HttpUrl.FORM_ENCODE_SET, true, true);
+                HttpUrl.FORM_ENCODE_SET, true, false, true, true);
         return this;
     }
 

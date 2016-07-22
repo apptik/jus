@@ -16,7 +16,7 @@
 
 package io.apptik.comm.jus.request;
 
-import io.apptik.comm.jus.FormEncodingBuilder;
+import io.apptik.comm.jus.http.FormEncodingBuilder;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.toolbox.Base64;
 

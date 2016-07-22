@@ -1543,12 +1543,12 @@ public final class RequestBuilderTest {
         String bodyString = request.getNetworkRequest().getBodyAsString();
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"ping\"\r\n")
                 .contains("\r\npong\r\n--");
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"kit\"")
                 .contains("\r\nkat\r\n--");
     }
@@ -1574,15 +1574,15 @@ public final class RequestBuilderTest {
         String bodyString = request.getNetworkRequest().getBodyAsString();
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"ping\"\r\n")
-                .contains("Content-Transfer-Encoding: 8-bit")
+                .contains("content-transfer-encoding: 8-bit")
                 .contains("\r\npong\r\n--");
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"kit\"")
-                .contains("Content-Transfer-Encoding: 7-bit")
+                .contains("content-transfer-encoding: 7-bit")
                 .contains("\r\nkat\r\n--");
     }
 
@@ -1610,12 +1610,12 @@ public final class RequestBuilderTest {
         String bodyString = request.getNetworkRequest().getBodyAsString();
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"ping\"\r\n")
                 .contains("\r\npong\r\n--");
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"kit\"")
                 .contains("\r\nkat\r\n--");
 
@@ -1646,15 +1646,15 @@ public final class RequestBuilderTest {
         String bodyString = request.getNetworkRequest().getBodyAsString();
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"ping\"\r\n")
-                .contains("Content-Transfer-Encoding: 8-bit")
+                .contains("content-transfer-encoding: 8-bit")
                 .contains("\r\npong\r\n--");
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"kit\"")
-                .contains("Content-Transfer-Encoding: 8-bit")
+                .contains("content-transfer-encoding: 8-bit")
                 .contains("\r\nkat\r\n--");
 
         assertThat(bodyString).doesNotContain("name=\"foo\"\r\n");
@@ -1721,7 +1721,7 @@ public final class RequestBuilderTest {
         String bodyString = request.getNetworkRequest().getBodyAsString();
 
         assertThat(bodyString)
-                .contains("Content-Disposition: form-data;")
+                .contains("content-disposition: form-data;")
                 .contains("name=\"ping\"")
                 .contains("\r\npong\r\n--");
     }

@@ -16,7 +16,7 @@
 
 package io.apptik.comm.jus.mock;
 
-import io.apptik.comm.jus.FormEncodingBuilder;
+import io.apptik.comm.jus.http.FormEncodingBuilder;
 import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;

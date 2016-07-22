@@ -16,9 +16,8 @@
  */
 package io.apptik.comm.jus;
 
-import io.apptik.comm.jus.http.Headers;
-import io.apptik.comm.jus.http.HttpUrl;
-import io.apptik.comm.jus.http.MediaType;
+import io.apptik.comm.jus.http.*;
+import io.apptik.comm.jus.http.MultipartBuilder;
 import okio.Buffer;
 
 public final class RequestBuilder {
@@ -35,8 +34,8 @@ public final class RequestBuilder {
     private HttpUrl.Builder urlBuilder;
     Converter<NetworkResponse, ?> responseConverter;
     private final boolean hasBody;
-    private MultipartBuilder multipartBuilder;
-    private FormEncodingBuilder formEncodingBuilder;
+    private io.apptik.comm.jus.http.MultipartBuilder multipartBuilder;
+    private io.apptik.comm.jus.http.FormEncodingBuilder formEncodingBuilder;
     private NetworkRequest.Builder networkRequestBuilder;
     private Request.Priority priority;
     private Object tag;
@@ -68,10 +67,10 @@ public final class RequestBuilder {
 
         if (isFormEncoded) {
             // Will be set to 'body' in 'build'.
-            formEncodingBuilder = new FormEncodingBuilder();
+            formEncodingBuilder = new io.apptik.comm.jus.http.FormEncodingBuilder();
         } else if (isMultipart) {
             // Will be set to 'body' in 'build'.
-            multipartBuilder = new MultipartBuilder();
+            multipartBuilder = new io.apptik.comm.jus.http.MultipartBuilder();
             multipartBuilder.type(MultipartBuilder.FORM);
         }
     }

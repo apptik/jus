@@ -21,7 +21,7 @@ package io.apptik.comm.jus.toolbox;
 import org.junit.Test;
 
 import io.apptik.comm.jus.Cache;
-import io.apptik.comm.jus.FormEncodingBuilder;
+import io.apptik.comm.jus.http.FormEncodingBuilder;
 import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;

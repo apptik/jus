@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package io.apptik.comm.jus;
+package io.apptik.comm.jus.http;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -24,8 +24,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import io.apptik.comm.jus.http.HTTP;
-import io.apptik.comm.jus.http.MediaType;
+import io.apptik.comm.jus.NetworkRequest;
 import okio.Buffer;
 import okio.BufferedSink;
 import okio.ByteString;
