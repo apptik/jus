@@ -107,6 +107,7 @@ public class HttpNetwork implements Network {
                 if (httpResponse == null) {
                     throw new NetworkError("No Response");
                 }
+                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
 
                 //currently all requests that came to here normally needs to be attached to the
                 // queue
@@ -133,7 +134,6 @@ public class HttpNetwork implements Network {
                         newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
                     }
                 }
-                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
 
                 //check completeness of body
                 if (httpResponse != null && httpResponse.headers != null) {
