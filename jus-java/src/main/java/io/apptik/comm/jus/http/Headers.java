@@ -56,10 +56,6 @@ public final class Headers {
         this.namesAndValues = namesAndValues;
     }
 
-    public String[] getNamesAndValues() {
-        return namesAndValues;
-    }
-
     /**
      * Returns the last value corresponding to the specified field, or null.
      */
