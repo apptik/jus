@@ -38,56 +38,255 @@ import static io.apptik.comm.jus.toolbox.Utils.tryIdentifyResultType;
 
 /**
  * Base class for all network requests.
- * {@link Converter} can be used to transform to {@link NetworkRequest}
- * and from {@link NetworkResponse}.
- * <p/>
+ * <br>
+ * This class can be used directly for all standard requests.
+ * Use {@link Request#setNetworkRequest(NetworkRequest)} to provide the http entity to be sent.
+ * For complex requests you can use {@link io.apptik.comm.jus.http.MultipartBuilder} and
+ * {@link io.apptik.comm.jus.http.FormEncodingBuilder}
+ * to generate the {@link Request#setNetworkRequest(NetworkRequest)}
+ * <br>
+ * Use {@link Converter} or {@link Converter.Factory} to
+ * transform data to {@link NetworkRequest} and Response
+ * from {@link NetworkResponse}.
+ * <p>
  * If more complex logic is required and request is extended then
  * one should implement:
  * {@link #getBody()} in case of Post or Put
  * {@link #getHeadersMap()} in case of specific headers
  * {@link #getBodyContentType()} in case of specific content type
  * Note that if {@link #getBodyContentType() != null} it will be added to the headers of the request
+ * </p>
  *
  * @param <T> The type of parsed response this request expects.
  */
 public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
+    /**
+     * when Cache is expired
+     */
     public static final String EVENT_CACHE_HIT_EXPIRED = "cache-hit-expired";
+    /**
+     * when error occurs and response is being prepared for delivery
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link JusError}</li>
+     * </ol>
+     */
     public static final String EVENT_POST_ERROR = "post-error";
+    /**
+     * when network call is OK and response is being prepared for delivery
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link Response}</li>
+     * </ol>
+     */
     public static final String EVENT_POST_RESPONSE = "post-response";
+    /**
+     * when the response is delivered but the request hasn't finished yet and more responses could
+     * arrive
+     */
     public static final String EVENT_INTERMEDIATE_RESPONSE = "intermediate-response";
+    /**
+     * when response is prepared for delivery but is the request is already cancelled so that
+     * response will be ignored and Request#onResponse or Request#onError will not be called. Also
+     * the request will be finalized.
+     * <p>Although no response callback will be sent the Request response
+     * from {@link #getRawResponse()} should available if needed for logging purposes for
+     * example.</p>
+     */
     public static final String EVENT_CANCELED_AT_DELIVERY = "canceled-at-delivery";
+    /**
+     * when request is completely finished and no more events will be received
+     */
     public static final String EVENT_DONE = "done";
+    /**
+     * when request is being taken from the network queue by the
+     * {@link NetworkDispatcher}
+     */
     public static final String EVENT_NETWORK_QUEUE_TAKE = "network-queue-take";
+    /**
+     * when request is being send to the network stack
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link NetworkRequest}</li>
+     * <li> Extra {@link Headers} that will be passed to the HttpStack</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_SEND = "network-stack-send";
+    /**
+     * when we have HTTP_UNAUTHORIZED = 401; from the network stack
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link NetworkResponse}</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_AUTH_ERROR = "network-stack-auth-error";
+    /**
+     * when we have HTTP_PROXY_AUTH = 407; from the network stack
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link NetworkResponse}</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_AUTH_PROXY_ERROR =
             "network-stack-auth-proxy-error";
+    /**
+     * when we have had 401 or 407 and we have proper Authenticator available we resend the request
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link NetworkResponse}</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_AUTH_ERROR_RESEND =
             "network-stack-auth-error-resend";
+    /**
+     * when a new call is made because of a redirect
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>the new {@link Request} that will be sent to the Stack</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_REDIRECT_SEND = "network-stack-redirect-send";
+    /**
+     * when a new call(made because of a redirect) completes
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link NetworkResponse}</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_REDIRECT_COMPLETE =
             "network-stack-redirect-complete";
+    /**
+     * when Network Stack returns Network Response
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>NetworkResponse as received form the Stack {@link NetworkResponse}</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_STACK_COMPLETE = "network-stack-complete";
+    /**
+     * when Original NetworkResponse is transformed in case of a Transformer available
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>the transformed {@link NetworkResponse}</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_TRANSFORM_COMPLETE = "network-transform-complete";
+    /**
+     * When request is found to be Cancelled just before being processed by the
+     * {@link NetworkDispatcher}
+     */
     public static final String EVENT_NETWORK_DISCARD_CANCELED = "network-discard-canceled";
+    /**
+     * when request was not successful and after validation from the {@link RetryPolicy}
+     * is being resend to the Stack
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>retry info {@link String} of Format "%s-retry [conn-timeout=%s] [read-timeout=%s]"</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_RETRY = "network-retry";
+    /**
+     * when request was not successful and validation from the {@link RetryPolicy} does not pass
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>retry info {@link String}
+     * of Format "%s-timeout-giveup [conn-timeout=%s] [read-timeout=%s]"</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_RETRY_FAILED = "network-retry-failed";
+    /**
+     * when a Response is returned from {@link Network} and is ging to be processed by the
+     * {@link NetworkDispatcher}
+     * <p>
+     * the params attached are:</p>
+     * <ol>
+     * <li>{@link NetworkResponse}
+     * of Format "%s-timeout-giveup [conn-timeout=%s] [read-timeout=%s]"</li>
+     * </ol>
+     */
     public static final String EVENT_NETWORK_HTTP_COMPLETE = "network-http-complete";
+    /**
+     * when cache response is delivered and the network response is "not-modified" i.e. not
+     * diffeent from the cache. In that case no extra callback will be made.
+     */
     public static final String EVENT_NOT_MODIFIED = "not-modified";
+    /**
+     * when parsing of the {@link NetworkResponse} completed in the
+     * {@link NetworkDispatcher} using Request's
+     * {@link Request#parseNetworkResponse(NetworkResponse)} method.
+     */
     public static final String EVENT_NETWORK_PARSE_COMPLETE = "network-parse-complete";
+    /**
+     * when the Response is being cached an saved in your registered {@link Cache}
+     */
     public static final String EVENT_NETWORK_CACHE_WRITTEN = "network-cache-written";
+    /**
+     * this is the very first event before the request is added to the
+     * {@link RequestQueue}
+     */
     public static final String EVENT_PRE_ADD_TO_QUEUE = "pre-add-to-queue";
+    /**
+     * when the Request was just added to the {@link RequestQueue}
+     */
     public static final String EVENT_ADD_TO_QUEUE = "add-to-queue";
+    /**
+     * when request is being taken from the cache queue by the
+     * {@link CacheDispatcher}
+     */
     public static final String EVENT_CACHE_QUEUE_TAKE = "cache-queue-take";
+    /**
+     * when the Request appears to be cancelled just after taken by the
+     * {@link CacheDispatcher} for processing
+     */
     public static final String EVENT_CACHE_DISCARD_CANCELED = "cache-discard-canceled";
+    /**
+     * when the Request is cancelled event before even added to the
+     * {@link RequestQueue}
+     */
+    public static final String EVENT_ADD_DISCARD_CANCELED = "cache-discard-canceled";
+    /**
+     * when {@link CacheDispatcher} cannot find Request cashe in {@link Cache}
+     */
     public static final String EVENT_CACHE_MISS = "cache-miss";
-    public static final String EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT = "cache-hit-expired, " +
-            "but will deliver it";
+    /**
+     * when Cache is expired but we will deliver it as a response anyway ignoring http rules
+     */
+    public static final String EVENT_CACHE_HIT_EXPIRED_BUT_WILL_DELIVER_IT =
+            "cache-hit-expired, but will deliver it";
+    /**
+     * when Cache record is found, no NetworkRequest will be needed
+     */
     public static final String EVENT_CACHE_HIT = "cache-hit";
+    /**
+     * when cache record is parsed to {@link Response}
+     */
     public static final String EVENT_CACHE_HIT_PARSED = "cache-hit-parsed";
+    /**
+     * when Cache record is found, but another NetworkRequest will be needed
+     */
     public static final String EVENT_CACHE_HIT_REFRESH_NEEDED = "cache-hit-refresh-needed";
+    /**
+     * just before the response is delivered i.e.
+     * {@link RequestListener.ResponseListener#onResponse(Object)} will be called
+     */
     public static final String EVENT_DELIVER_RESPONSE = "deliver response";
+    /**
+     *just before the error is delivered i.e.
+     * {@link RequestListener.ErrorListener#onError(JusError)} will be called
+     */
     public static final String EVENT_DELIVER_ERROR = "deliver error";
 
 
@@ -490,7 +689,6 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     /**
      * @return A tag for use with {@link NetworkDispatcher#addTrafficStatsTag}
-     * currently active only in {@see io.apptik.comm.jus.AndroidNetworkDispatcher}
      */
     public int getTrafficStatsTag() {
         return mDefaultTrafficStatsTag;
@@ -743,11 +941,10 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * Returns the content type of the POST or PUT body.
      */
     public String getBodyContentType() {
-        if (networkRequest != null) {
+        if (networkRequest != null && networkRequest.contentType != null) {
             return networkRequest.contentType.toString();
         }
         return null;
-        //return "application/x-www-form-urlencoded; charset=" + getParamsEncoding();
     }
 
     /**
@@ -815,7 +1012,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
     /**
      * Subclasses can override this method to parse 'networkError' and return a more specific error.
-     * <p/>
+     * <p>
      * <p>The default implementation just returns the passed 'networkError'.</p>
      *
      * @param jusError the error retrieved from the network
@@ -912,9 +1109,9 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
                 ", canceled=" + canceled +
                 ")" +
                 "\nnetworkRequest=" + (networkRequest == null ? "null" :
-                        networkRequest.toString().replace("\n", "\n\t")) +
+                networkRequest.toString().replace("\n", "\n\t")) +
                 "\nresponse=" + (response == null ? "null" :
-                        response.toString().replace("\n", "\n\t")) +
+                response.toString().replace("\n", "\n\t")) +
                 "\n}";
     }
 

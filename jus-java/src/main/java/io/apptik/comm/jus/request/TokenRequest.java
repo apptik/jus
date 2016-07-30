@@ -16,9 +16,9 @@
 
 package io.apptik.comm.jus.request;
 
-import io.apptik.comm.jus.http.FormEncodingBuilder;
 import io.apptik.comm.jus.NetworkRequest;
-import io.apptik.comm.jus.toolbox.Base64;
+import io.apptik.comm.jus.http.FormEncodingBuilder;
+import okio.ByteString;
 
 public class TokenRequest extends StringRequest {
 
@@ -32,12 +32,10 @@ public class TokenRequest extends StringRequest {
         this.setNetworkRequest(
                 new FormEncodingBuilder().add("grant_type", "client_credentials").build());
 
-        if(key!=null && secret!=null) {
+        if (key != null && secret != null) {
             this.setNetworkRequest(NetworkRequest.Builder.from(getNetworkRequest())
-                    .setHeader("Authorization", "Basic "
-                            + Base64.encodeToString((key + ":" + secret).getBytes(),
-                            Base64.NO_WRAP))
-                    .build());
+                    .setHeader("Authorization", "Basic " +
+                            ByteString.encodeUtf8(key + ":" + secret).base64()).build());
         }
     }
 

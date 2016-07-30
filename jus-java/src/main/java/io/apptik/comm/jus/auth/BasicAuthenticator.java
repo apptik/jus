@@ -18,7 +18,7 @@
 
 package io.apptik.comm.jus.auth;
 
-import io.apptik.comm.jus.toolbox.Base64;
+import okio.ByteString;
 
 /**
  * An interface for interacting with basic auth.
@@ -27,8 +27,7 @@ public abstract class BasicAuthenticator implements Authenticator {
 
     @Override
     public String getAuthValue() {
-        return "Basic " + Base64.encodeToString((getKey() + ":" + getSecret()).getBytes(),
-                Base64.NO_WRAP);
+        return "Basic " + ByteString.encodeUtf8(getKey() + ":" + getSecret()).base64();
     }
 
     abstract public String getKey();

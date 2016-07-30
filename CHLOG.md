@@ -1,7 +1,7 @@
 Change Log
 ==========
 
-NEXT Version 0.7.0 *(FUTURE-2016)*
+NEXT Version 0.6.8 *(FUTURE-2016)*
 ----------------------------------
 
 Version 0.6.7 *(15-Jun-2016)*

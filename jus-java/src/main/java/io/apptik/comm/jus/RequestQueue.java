@@ -42,10 +42,11 @@ import static io.apptik.comm.jus.toolbox.Utils.checkNotNull;
 
 /**
  * A request dispatch queue with a threadId pool of dispatchers.
- * <p/>
+ * <p>
  * Calling {@link #add(Request)} will enqueue the given Request for dispatch,
  * resolving from either cache or network on a worker threadId, and then delivering
  * a parsed response on the main threadId.
+ * </p>
  */
 public class RequestQueue {
     public static final String EVENT_CACHE_DISPATCHER_START = "cache_dispatcher_start";
@@ -401,6 +402,17 @@ public class RequestQueue {
                 request.addErrorListener(qErrorListener);
             }
         }
+        if (JusLog.ErrorLog.isOn()) {
+            request.addErrorListener(JusLog.ErrorLog.getLogger(request));
+        }
+
+        if (JusLog.ResponseLog.isOn()) {
+            request.addResponseListener(JusLog.ResponseLog.getLogger(request));
+        }
+
+        if (JusLog.MarkerLog.isOn()) {
+            request.addMarkerListener(JusLog.MarkerLog.getLogger(request));
+        }
         request.addMarker(Request.EVENT_PRE_ADD_TO_QUEUE);
         Authenticator serverAuthenticator = null;
         Authenticator proxyAuthenticator = null;
@@ -432,18 +444,6 @@ public class RequestQueue {
             }
         }
 
-        if (JusLog.ErrorLog.isOn()) {
-            request.addErrorListener(JusLog.ErrorLog.getLogger(request));
-        }
-
-        if (JusLog.ResponseLog.isOn()) {
-            request.addResponseListener(JusLog.ResponseLog.getLogger(request));
-        }
-
-        if (JusLog.MarkerLog.isOn()) {
-            request.addMarkerListener(JusLog.MarkerLog.getLogger(request));
-        }
-
         if (retryPolicyFactory != null) {
             request.setRetryPolicy(retryPolicyFactory.get(request));
         }
@@ -461,7 +461,7 @@ public class RequestQueue {
         synchronized (currentRequests) {
             //check if not already cancelled
             if (request.isCanceled()) {
-                request.finish(Request.EVENT_CACHE_DISCARD_CANCELED);
+                request.finish(Request.EVENT_ADD_DISCARD_CANCELED);
             }
             // Process requests in the order they are added.
             request.setSequence(getSequenceNumber());

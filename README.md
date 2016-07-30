@@ -4,11 +4,53 @@
 [![Join the chat at https://gitter.im/apptik/jus](https://badges.gitter.im/apptik/jus.svg)](https://gitter.im/apptik/jus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/jus.svg)](http://stackoverflow.com/questions/tagged/jus)
 
-Flexible and Easy HTTP/REST Communication library for Java and Android
-Based on Volley, inspired by many.
+Jus is a flexible and easy HTTP/REST client library for Java and Android.
 
 * it is like Volley but much easier
 * it is like Retrofit but infinitely more flexible
+
+Jus is inspired by the flexibility, modularity and transparency of Google's [Volley Library][1] 
+and the extreme simplicity of declarative API mapping of [Retrofit][2].
+
+Like Volley the main thing where Requests are executed is the RequestQueue.
+
+    RequestQueue queue = Jus.newRequestQueue();
+
+and then Requests can be added to the Queue:
+
+    queue.add(new Request<String>(
+                            Request.Method.GET,
+                            HttpUrl.parse(BeerService.fullUrl),
+                            new Converters.StringResponseConverter())
+                            .addResponseListener((r) -> out.println("RESPONSE: " + r))
+                            .addErrorListener((e) -> out.println("ERROR: " + e))
+            );
+
+
+Anther option similarly to Retrofit is to map Java Interface to an API.
+
+    public interface BeerService {
+        @GET("locquery/{user}/{q}")
+        Request<String> getBeer(
+                @Path("user") String user,
+                @Path("q") String q);
+    }
+
+Then create the Service Instance:
+
+    RetroProxy retroJus = new RetroProxy.Builder()
+                .baseUrl(BeerService.baseUrl)
+                .requestQueue(queue)
+                .addConverterFactory(new BasicConverterFactory())
+                .build();
+
+        BeerService beerService = retroJus.create(BeerService.class);
+
+And execute a request:
+
+    beerService.getBeer(BeerService.userString, "777")
+                    .addResponseListener((r) -> out.println("RESPONSE: " + r))
+                    .addErrorListener((e) -> out.println("ERROR: " + e.networkResponse));
 
 
 ## Download
@@ -38,6 +80,7 @@ Jus requires at minimum Java 7 or Android SDK 15.
 * [NEW android examples(java 8)]
 * [android examples (old)]
 * [volley to jus migration examples]
+
 
 ## Questions
 
@@ -106,6 +149,9 @@ Jus requires at minimum Java 7 or Android SDK 15.
     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
     See the License for the specific language governing permissions and
     limitations under the License.
+
+  [1]: https://developer.android.com/training/volley/index.html
+  [2]: http://square.github.io/retrofit/
 
  [mvn]: http://search.maven.org/#search|ga|1|io.apptik.comm.jus
  [release]: https://oss.sonatype.org/content/repositories/releases/io/apptik/comm/

@@ -107,19 +107,6 @@ public class HttpNetwork implements Network {
                 if (httpResponse == null) {
                     throw new NetworkError("No Response");
                 }
-                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
-
-                //currently all requests that came to here normally needs to be attached to the
-                // queue
-                //however due the complete decoupling of the components in Jus a Network may be set
-                //to perform internal requests, i.e. which was not passed to the queue, possibly
-                // auth
-                //requests. So we shall check
-                if (request.getRequestQueue() != null) {
-                    httpResponse = request.getRequestQueue().transformResponse(request,
-                            httpResponse);
-                    request.addMarker(Request.EVENT_NETWORK_TRANSFORM_COMPLETE, httpResponse);
-                }
 
                 //Check for redirects
                 if (request.getRedirectPolicy() != null) {
@@ -133,6 +120,20 @@ public class HttpNetwork implements Network {
                                 httpResponse);
                         newR = request.getRedirectPolicy().verifyRedirect(request, httpResponse);
                     }
+                }
+
+                request.addMarker(Request.EVENT_NETWORK_STACK_COMPLETE, httpResponse);
+
+                //currently all requests that came to here normally needs to be attached to the
+                // queue
+                //however due the complete decoupling of the components in Jus a Network may be set
+                //to perform internal requests, i.e. which was not passed to the queue, possibly
+                // auth
+                //requests. So we shall check
+                if (request.getRequestQueue() != null) {
+                    httpResponse = request.getRequestQueue().transformResponse(request,
+                            httpResponse);
+                    request.addMarker(Request.EVENT_NETWORK_TRANSFORM_COMPLETE, httpResponse);
                 }
 
                 //check completeness of body

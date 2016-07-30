@@ -25,11 +25,12 @@ import io.apptik.comm.jus.error.JusError;
 
 /**
  * Provides a threadId for performing network dispatch from a queue of requests.
- * <p/>
+ * <p>
  * Requests added to the specified queue are processed from the network via a
  * specified {@link Network} interface. Responses are committed to cache, if
  * eligible, using a specified {@link Cache} interface. Valid responses and
  * errors are posted back to the caller via a {@link ResponseDelivery}.
+ * </p>
  */
 public class NetworkDispatcher extends Thread {
     /**

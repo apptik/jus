@@ -11,10 +11,15 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
+import io.apptik.comm.jus.mock.CustomHttpStack;
 import io.apptik.comm.jus.request.StringRequest;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertTrue;
 
 public class RedirectTest {
 
@@ -26,7 +31,7 @@ public class RedirectTest {
     @Before
     public void setup() {
         HttpURLConnection.setFollowRedirects(false);
-        queue = Jus.newRequestQueue();
+        queue = Jus.newRequestQueue(null, new CustomHttpStack());
         JusLog.MarkerLog.on();
     }
 
@@ -209,6 +214,42 @@ public class RedirectTest {
         assertThat(request.getBody().readByteString().utf8()).isEqualTo("try me!");
         assertThat(request.getMethod()).isEqualTo("POST");
         assertThat(request.getPath()).endsWith("/page2");
+
+    }
+
+    @Test
+    public void allMarkersAreSentToOrigRequest() throws Exception {
+        server.enqueue(new MockResponse().setResponseCode(308)
+                .addHeader("Location: /page2")
+                .setBody("moved to Page 2"));
+        server.enqueue(new MockResponse().setResponseCode(200)
+                .setBody("Page 2"));
+
+        final AtomicReference<Marker> markerRef = new AtomicReference<>();
+        final CountDownLatch latch = new CountDownLatch(2);
+        String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
+                .setObjectRequest("try me!")
+                .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
+                .addMarkerListener(new RequestListener.MarkerListener() {
+                    @Override
+                    public void onMarker(Marker marker, Object... args) {
+
+                        if (CustomHttpStack.MY_CUSTOM_MARKER.equals(marker.name)) {
+                            markerRef.set(marker);
+                            latch.countDown();
+                        }
+                    }
+                })
+                .getFuture().get();
+
+
+        assertTrue(latch.await(2, SECONDS));
+        assertThat(markerRef.get().name).isEqualTo(CustomHttpStack.MY_CUSTOM_MARKER);
+
+        assertThat(result).isNotNull();
+        assertThat(result).isEqualTo("Page 2");
+
+
 
     }
 

@@ -37,7 +37,7 @@ public class Response<T> {
      * localized message displayed to the user.
      */
     public static <T> Response<T> error(JusError error) {
-        return new Response<T>(error);
+        return new Response(error);
     }
 
     /** Parsed response, or null in the case of error. */

@@ -20,7 +20,7 @@ public interface RedirectPolicy {
 
     class DefaultRedirectPolicy implements RedirectPolicy {
         @Override
-        public Request verifyRedirect(Request request, NetworkResponse networkResponse) {
+        public Request verifyRedirect(final Request request, NetworkResponse networkResponse) {
             Request res = null;
             if (networkResponse != null && networkResponse.headers != null
                     && networkResponse.headers.get("location") != null && (
@@ -42,7 +42,13 @@ public interface RedirectPolicy {
                             .setNetworkRequest(request.getNetworkRequest());
                 }
                 res.setRetryPolicy(request.getRetryPolicy())
-                        .setRedirectPolicy(request.getRedirectPolicy());
+                        .setRedirectPolicy(request.getRedirectPolicy())
+                        .addMarkerListener(new RequestListener.MarkerListener() {
+                            @Override
+                            public void onMarker(Marker marker, Object... args) {
+                                request.addMarker(marker.name, args);
+                            }
+                        });
             }
             return res;
         }

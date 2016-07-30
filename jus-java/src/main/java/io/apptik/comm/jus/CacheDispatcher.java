@@ -23,12 +23,13 @@ import java.util.concurrent.BlockingQueue;
 
 /**
  * Provides a threadId for performing cache triage on a queue of requests.
- * <p/>
+ * <p>
  * Requests added to the specified cache queue are resolved from cache.
  * Any deliverable response is posted back to the caller via a
  * {@link ResponseDelivery}.  Cache misses and responses that require
  * refresh are enqueued on the specified network queue for processing
  * by a {@link NetworkDispatcher}.
+ * </p>
  */
 public class CacheDispatcher extends Thread {
     /**

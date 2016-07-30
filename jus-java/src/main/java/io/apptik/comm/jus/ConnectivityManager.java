@@ -76,7 +76,7 @@ public abstract class ConnectivityManager {
     public static class NetworkInfo {
         /**
          * The absence of a connection type.
-         * @hide
+         * 
          */
         public static final String TYPE_NONE = "TYPE_NONE";
 
@@ -145,45 +145,45 @@ public abstract class ConnectivityManager {
 
         /**
          * Over the air Administration.
-         * {@hide}
+         * {}
          */
         public static final String TYPE_MOBILE_FOTA = "TYPE_MOBILE_FOTA";
 
         /**
          * IP Multimedia Subsystem.
-         * {@hide}
+         * {}
          */
         public static final String TYPE_MOBILE_IMS = "TYPE_MOBILE_IMS";
 
         /**
          * Carrier Branded Services.
-         * {@hide}
+         * {}
          */
         public static final String TYPE_MOBILE_CBS = "TYPE_MOBILE_CBS";
 
         /**
          * A Wi-Fi p2p connection. Only requesting processes will have access to
          * the peers connected.
-         * {@hide}
+         * {}
          */
         public static final String TYPE_WIFI_P2P = "TYPE_WIFI_P2P";
 
         /**
          * The network to use for initially attaching to the network
-         * {@hide}
+         * {}
          */
         public static final String TYPE_MOBILE_IA = "TYPE_MOBILE_IA";
 
         /**
          * Emergency PDN connection for emergency services.  This
          * may include IMS and MMS in emergency situations.
-         * {@hide}
+         * {}
          */
         public static final String TYPE_MOBILE_EMERGENCY = "TYPE_MOBILE_EMERGENCY";
 
         /**
          * The network that uses proxy to achieve connectivity.
-         * {@hide}
+         * {}
          */
         public static final String TYPE_PROXY = "TYPE_PROXY";
 
@@ -198,8 +198,8 @@ public abstract class ConnectivityManager {
          * Coarse-grained network state. This is probably what most applications should
          * use, rather than {@link NetworkInfo.DetailedState DetailedState}.
          * The mapping between the two is as follows:
-         * <br/><br/>
-         * <table>
+         * <br><br>
+         * <table summary="Detailed state - Coarse-grained state">
          * <tr><td><b>Detailed state</b></td><td><b>Coarse-grained state</b></td></tr>
          * <tr><td><code>IDLE</code></td><td><code>DISCONNECTED</code></td></tr>
          * <tr><td><code>SCANNING</code></td><td><code>CONNECTING</code></td></tr>
@@ -289,7 +289,7 @@ public abstract class ConnectivityManager {
         private boolean mIsAvailable;
 
         /**
-         * @hide
+         * 
          */
         public NetworkInfo(String type, String subtype) {
             mNetworkType = type;
@@ -300,7 +300,7 @@ public abstract class ConnectivityManager {
             mIsRoaming = false;
         }
 
-        /** {@hide} */
+        /** {} */
         public NetworkInfo(NetworkInfo source) {
             if (source != null) {
                 synchronized (source) {
@@ -349,7 +349,7 @@ public abstract class ConnectivityManager {
         }
 
         /**
-         * @hide
+         * 
          */
         public void setSubtype(String subtype) {
             synchronized (this) {
@@ -407,7 +407,7 @@ public abstract class ConnectivityManager {
          * Sets if the network is available, ie, if the connectivity is possible.
          * @param isAvailable the new availability value.
          *
-         * @hide
+         * 
          */
         public void setIsAvailable(boolean isAvailable) {
             synchronized (this) {
@@ -432,7 +432,7 @@ public abstract class ConnectivityManager {
          * Set the failover boolean.
          * @param isFailover {@code true} to mark the current connection attempt
          * as a failover.
-         * @hide
+         * 
          */
         public void setFailover(boolean isFailover) {
             synchronized (this) {
@@ -485,7 +485,7 @@ public abstract class ConnectivityManager {
          * if one was supplied. May be {@code null}.
          * @param extraInfo an optional {@code String} providing addditional network state
          * information passed up from the lower networking layers.
-         * @hide
+         * 
          */
         public void setDetailedState(DetailedState detailedState, String reason, String extraInfo) {
             synchronized (this) {
@@ -500,7 +500,7 @@ public abstract class ConnectivityManager {
          * Set the extraInfo field.
          * @param extraInfo an optional {@code String} providing addditional network state
          * information passed up from the lower networking layers.
-         * @hide
+         * 
          */
         public void setExtraInfo(String extraInfo) {
             synchronized (this) {
