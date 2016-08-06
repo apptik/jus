@@ -1,8 +1,18 @@
 Change Log
 ==========
 
-NEXT Version 0.6.8 *(FUTURE-2016)*
+NEXT Version 0.7.0 *(FUTURE-2016)*
 ----------------------------------
+
+Version 0.6.8 *(01-08-2016)*
+----------------------------------
+
+* Bug: redirected temp requests will not send stack markers #66 
+* Upd: use okio for Base64 encoding #64
+* New: add jus markers for okhttp3 stack #63
+* New: add Request RxHub to rx-jus package #62 
+* New: add jsonwrapper converters #61
+* New: Make loader add tag parameter to imageRequest #60
 
 Version 0.6.7 *(15-Jun-2016)*
 ----------------------------------
