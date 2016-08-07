@@ -59,7 +59,7 @@ public class AuthTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("nice :)"));
         String result = queue.add(new StringRequest("POST", server.url("/").toString())
-                .setObjectRequest("try me!")).getFuture().get();
+                .setRequestBody("try me!")).getFuture().get();
 
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo("nice :)");
@@ -78,7 +78,7 @@ public class AuthTest {
                 .setBody("Invalid token"));
         try {
             queue.add(new StringRequest("POST", server.url("/").toString())
-                    .setObjectRequest("try me!")).getFuture().get();
+                    .setRequestBody("try me!")).getFuture().get();
             fail("Must not retry 2 times");
         } catch (Exception ex) {
             assertThat(ex).hasCauseExactlyInstanceOf(AuthError.class);
@@ -98,7 +98,7 @@ public class AuthTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("nice :)"));
         String result = queue.add(new StringRequest("POST", server.url("/").toString())
-                .setObjectRequest("try me!")).getFuture().get();
+                .setRequestBody("try me!")).getFuture().get();
 
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo("nice :)");
@@ -120,7 +120,7 @@ public class AuthTest {
                 .setBody("Invalid token"));
         try {
             queue.add(new StringRequest("POST", server.url("/").toString())
-                    .setObjectRequest("try me!")).getFuture().get();
+                    .setRequestBody("try me!")).getFuture().get();
             fail("Must not retry 2 times");
         } catch (Exception ex) {
             assertThat(ex).hasCauseExactlyInstanceOf(AuthError.class);

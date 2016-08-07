@@ -41,7 +41,7 @@ public class MarkerInterceptorTest {
                 .addHeader("Host", server.getHostName() + ":" + server.getPort())
                 .addHeader("Connection", "Keep-Alive")
                 .addHeader("Accept-Encoding", "gzip")
-                .addHeader("User-Agent", "okhttp/3.3.1")
+                .addHeader("User-Agent", "okhttp/3.4.1")
                 .build();
 
         ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);

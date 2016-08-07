@@ -11,15 +11,12 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import java.net.HttpURLConnection;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import io.apptik.comm.jus.mock.CustomHttpStack;
 import io.apptik.comm.jus.request.StringRequest;
 
-import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertTrue;
 
 public class RedirectTest {
 
@@ -49,7 +46,7 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
+                .setRequestBody("try me!")
                 .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
                 .getFuture().get();
 
@@ -79,7 +76,7 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
+                .setRequestBody("try me!")
                 .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
                 .getFuture().get();
 
@@ -99,6 +96,7 @@ public class RedirectTest {
         assertThat(request.getPath()).endsWith("/page2");
 
     }
+
     //10.3.3 302 Found
     @Test
     public void redirectOn302() throws Exception {
@@ -108,7 +106,7 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
+                .setRequestBody("try me!")
                 .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
                 .getFuture().get();
 
@@ -128,6 +126,7 @@ public class RedirectTest {
         assertThat(request.getPath()).endsWith("/page2");
 
     }
+
     //10.3.4 303 See Other
     @Test
     public void redirectOn303() throws Exception {
@@ -137,7 +136,7 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
+                .setRequestBody("try me!")
                 .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
                 .getFuture().get();
 
@@ -157,6 +156,7 @@ public class RedirectTest {
         assertThat(request.getPath()).endsWith("/page2");
 
     }
+
     //10.3.8 307 Temporary Redirect
     @Test
     public void redirectOn307() throws Exception {
@@ -166,7 +166,7 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
+                .setRequestBody("try me!")
                 .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
                 .getFuture().get();
 
@@ -196,7 +196,7 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
+                .setRequestBody("try me!")
                 .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
                 .getFuture().get();
 
@@ -225,30 +225,24 @@ public class RedirectTest {
         server.enqueue(new MockResponse().setResponseCode(200)
                 .setBody("Page 2"));
 
-        final AtomicReference<Marker> markerRef = new AtomicReference<>();
-        final CountDownLatch latch = new CountDownLatch(2);
+        final AtomicInteger customMarkerCall = new AtomicInteger(0);
         String result = queue.add(new StringRequest("POST", server.url("/page1").toString())
-                .setObjectRequest("try me!")
-                .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy()))
+                .setRequestBody("try me!")
+                .setRedirectPolicy(new RedirectPolicy.DefaultRedirectPolicy())
                 .addMarkerListener(new RequestListener.MarkerListener() {
                     @Override
                     public void onMarker(Marker marker, Object... args) {
-
                         if (CustomHttpStack.MY_CUSTOM_MARKER.equals(marker.name)) {
-                            markerRef.set(marker);
-                            latch.countDown();
+                            customMarkerCall.getAndIncrement();
                         }
                     }
-                })
+                }))
                 .getFuture().get();
 
 
-        assertTrue(latch.await(2, SECONDS));
-        assertThat(markerRef.get().name).isEqualTo(CustomHttpStack.MY_CUSTOM_MARKER);
-
+        assertThat(customMarkerCall.get()).isEqualTo(2);
         assertThat(result).isNotNull();
         assertThat(result).isEqualTo("Page 2");
-
 
 
     }

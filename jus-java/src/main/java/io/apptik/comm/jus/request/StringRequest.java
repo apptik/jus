@@ -38,11 +38,11 @@ public class StringRequest extends Request<String> {
         super(method, url, new Converters.StringResponseConverter());
     }
 
-    public Request<String> setObjectRequest(String objectRequest)  {
+    public Request<String> setRequestBody(String requestBody)  {
         try {
-            return super.setRequestData(objectRequest, new Converters.StringRequestConverter());
+            return super.setRequestData(requestBody, new Converters.StringRequestConverter());
         } catch (IOException e) {
-            throw new RuntimeException("Unable to convert " + objectRequest + " to NetworkRequest", e);
+            throw new RuntimeException("Unable to convert " + requestBody + " to NetworkRequest", e);
         }
     }
 }
