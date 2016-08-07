@@ -6,7 +6,7 @@ jdk:
 android:
   components:
     - tools
-    - build-tools-24.0.0
+    - build-tools-24.0.1
     - android-24
     - extra-android-m2repository
     - sys-img-armeabi-v7a-android-18
@@ -20,6 +20,7 @@ env:
      - MODULE=converter:jus-gson
      - MODULE=converter:jus-jackson
      - MODULE=converter:jus-jjson
+     - MODULE=converter:jjus-jjson-wrapper
      - MODULE=converter:jus-moshi
      - MODULE=converter:jus-protobuf
      - MODULE=converter:jus-simplexml
