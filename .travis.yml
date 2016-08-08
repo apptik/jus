@@ -20,7 +20,7 @@ env:
      - MODULE=converter:jus-gson
      - MODULE=converter:jus-jackson
      - MODULE=converter:jus-jjson
-     - MODULE=converter:jjus-jjson-wrapper
+     - MODULE=converter:jus-jjson-wrapper
      - MODULE=converter:jus-moshi
      - MODULE=converter:jus-protobuf
      - MODULE=converter:jus-simplexml
