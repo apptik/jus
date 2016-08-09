@@ -20,9 +20,7 @@ public class RxAdapter extends RecyclerAdapter {
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
         if(source!=null) {
-            subscription = source.subscribe(jsonElements -> {
-                updateData(jsonElements);
-            });
+            subscription = source.subscribe(this::updateData);
         }
     }
 

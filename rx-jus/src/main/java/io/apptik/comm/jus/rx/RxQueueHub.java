@@ -37,31 +37,27 @@ public class RxQueueHub extends AbstractRxHub {
         );
     }
 
-    public Observable getMarkers(Object tag) {
+    public Observable<MarkerEvent> getMarkers(Object tag) {
+        return getNodeFiltered(tag, MarkerEvent.class);
+    }
+
+
+    public Observable<ResultEvent> getResults(Object tag) {
+        return getNodeFiltered(tag, ResultEvent.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> Observable<T> getNodeFiltered(Object tag, final Class<T> cls) {
         return super.getNode(tag).filter(new Func1<JusEvent, Boolean>() {
             @Override
             public Boolean call(JusEvent jusEvent) {
-                return jusEvent instanceof MarkerEvent;
+                return cls.isAssignableFrom(jusEvent.getClass());
             }
         });
     }
 
-    public Observable getResults(Object tag) {
-        return super.getNode(tag).filter(new Func1<JusEvent, Boolean>() {
-            @Override
-            public Boolean call(JusEvent jusEvent) {
-                return jusEvent instanceof ResultEvent;
-            }
-        });
-    }
-
-    public Observable getErrors(Object tag) {
-        return super.getNode(tag).filter(new Func1<JusEvent, Boolean>() {
-            @Override
-            public Boolean call(JusEvent jusEvent) {
-                return jusEvent instanceof ErrorEvent;
-            }
-        });
+    public Observable<ErrorEvent> getErrors(Object tag) {
+        return getNodeFiltered(tag, ErrorEvent.class);
     }
 
     @Override

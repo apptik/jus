@@ -19,7 +19,6 @@ import io.apptik.comm.jus.okhttp3.MarkerInterceptorFactory;
 import io.apptik.comm.jus.okhttp3.OkHttpStack;
 import io.apptik.comm.jus.retro.RetroProxy;
 import io.apptik.comm.jus.retro.http.Tag;
-import io.apptik.comm.jus.rx.RxQueueHub;
 import io.apptik.comm.jus.ui.ImageLoader;
 import io.apptik.comm.jus.util.PooledBitmapLruCache;
 import io.apptik.json.JsonArray;
@@ -33,13 +32,13 @@ public class MyJus {
     private Instructables instructables;
     private RequestQueue queue;
     private ImageLoader imageLoader;
-    private RxQueueHub hub;
+    private SampleHubShield hub;
 
     private MyJus(Context ctx) {
         JusLog.MarkerLog.on();
         queue = AndroidJus.newRequestQueue(ctx,
                 new OkHttpStack(new MarkerInterceptorFactory.DefaultMIF()));
-        hub = new RxQueueHub(queue);
+        hub = new SampleHubShield(queue);
 
         instructables = new RetroProxy.Builder()
                 .baseUrl(Instructables.baseUrl)
@@ -110,7 +109,7 @@ public class MyJus {
         return inst.queue;
     }
 
-    public static RxQueueHub hub() {
+    public static SampleHubShield hub() {
         if (inst == null) throw new IllegalStateException("Not Initialized");
         return inst.hub;
     }

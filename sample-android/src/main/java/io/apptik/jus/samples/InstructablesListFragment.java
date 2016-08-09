@@ -26,12 +26,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import io.apptik.comm.jus.rx.event.ResultEvent;
 import io.apptik.jus.samples.adapter.RecyclerAdapter;
 import io.apptik.jus.samples.adapter.RxAdapter;
 import io.apptik.jus.samples.api.Instructables;
-
-import static io.apptik.jus.samples.api.Instructables.REQ_LIST;
 
 
 public class InstructablesListFragment extends Fragment {
@@ -65,8 +62,7 @@ public class InstructablesListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_imagelist, container, false);
         // Inflate the layout for this fragment
-        RecyclerAdapter recyclerAdapter = new RxAdapter(
-                MyJus.hub().getResults(REQ_LIST).map(o -> ((ResultEvent) o).response));
+        RecyclerAdapter recyclerAdapter = new RxAdapter(MyJus.hub().getList());
         RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(recyclerAdapter);
@@ -78,7 +74,7 @@ public class InstructablesListFragment extends Fragment {
                             .getLayoutManager()).findFirstCompletelyVisibleItemPosition() == 0);
                 }
                 if((((LinearLayoutManager) recyclerView.getLayoutManager())
-                        .findFirstCompletelyVisibleItemPosition() == offset+18)) {
+                        .findFirstCompletelyVisibleItemPosition() > offset+15)) {
                     offset+=20;
                     MyJus.intructablesApi().list(20, offset, Instructables.SORT_RECENT, "id");
                 }

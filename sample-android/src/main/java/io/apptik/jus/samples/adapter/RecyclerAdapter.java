@@ -33,116 +33,110 @@ import io.apptik.jus.samples.R;
  * Provide views to RecyclerView with data from mDataSet.
  */
 public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHolder> {
-	private static final String TAG = "RecyclerAdapter";
-	protected double speed;
-	protected long animDuration;
-	//
+    private static final String TAG = "RecyclerAdapter";
+    private JsonArray jarr;
+    private final ImageLoader imageLoader;
 
-	private static final int ITEM_PLACE = 0;
-	private static final int ITEM_TOWN = 1;
-	private static final int ITEM_MUSEUM = 2;
+    // BEGIN_INCLUDE(recyclerViewSampleViewHolder)
 
-	private JsonArray jarr;
-	private final ImageLoader imageLoader;
+    /**
+     * Provide a reference to the type of views that you are using (custom ViewHolder)
+     */
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        private final TextView title;
+        private final TextView author;
+        private final TextView views;
+        private final TextView favorites;
 
-	// BEGIN_INCLUDE(recyclerViewSampleViewHolder)
+        public final NetworkImageView niv;
 
-	/**
-	 * Provide a reference to the type of views that you are using (custom ViewHolder)
-	 */
-	public static class ViewHolder extends RecyclerView.ViewHolder {
-		private final TextView title;
-		private final TextView author;
-		private final TextView views;
-		private final TextView favorites;
+        public ViewHolder(View v) {
+            super(v);
+            // Define click listener for the ViewHolder's View.
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
+                    MyJus.get().addDummyRequest("the key : " + getItemId(),
+                            "the value : " + getAdapterPosition() + " / " + getOldPosition());
+                }
+            });
+            niv = (NetworkImageView) v.findViewById(R.id.niv_mainImage);
+            title = (TextView) v.findViewById(R.id.tv_title);
+            author = (TextView) v.findViewById(R.id.tv_author);
+            views = (TextView) v.findViewById(R.id.tv_views);
+            favorites = (TextView) v.findViewById(R.id.tv_favorites);
+        }
+    }
+    // END_INCLUDE(recyclerViewSampleViewHolder)
 
-		public final NetworkImageView niv;
+    /**
+     * Initialize the dataset of the Adapter.
+     */
+    public RecyclerAdapter(JsonArray jsonArray) {
+        jarr = jsonArray;
+        this.imageLoader = MyJus.imageLoader();
+    }
 
-		public ViewHolder(View v) {
-			super(v);
-			// Define click listener for the ViewHolder's View.
-			v.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					Log.d(TAG, "Element " + getAdapterPosition() + " clicked.");
-					MyJus.get().addDummyRequest("the key : " + getItemId(),
-							"the value : " + getAdapterPosition() + " / " + getOldPosition());
-				}
-			});
-			niv = (NetworkImageView) v.findViewById(R.id.niv_mainImage);
-			title = (TextView) v.findViewById(R.id.tv_title);
-			author = (TextView) v.findViewById(R.id.tv_author);
-			views = (TextView) v.findViewById(R.id.tv_views);
-			favorites = (TextView) v.findViewById(R.id.tv_favorites);
-		}
-	}
-	// END_INCLUDE(recyclerViewSampleViewHolder)
+    protected void updateData(JsonArray jsonArray) {
+        if (jarr != null && !jarr.contains(jsonArray.get(0))) {
+            appendData(jsonArray);
+        } else {
+            jarr = jsonArray;
+            notifyDataSetChanged();
+        }
+    }
 
-	/**
-	 * Initialize the dataset of the Adapter.
-	 */
-	public RecyclerAdapter(JsonArray jsonArray) {
-		jarr = jsonArray;
-		this.imageLoader = MyJus.imageLoader();
-	}
+    protected void appendData(JsonArray jsonArray) {
+        jarr.addAll(jsonArray);
+        notifyDataSetChanged();
+    }
 
-	protected void updateData(JsonArray jsonArray) {
-		if(jarr!=null && !jarr.contains(jsonArray.get(0))) {
-			appendData(jsonArray);
-		} else {
-			jarr = jsonArray;
-			notifyDataSetChanged();
-		}
-	}
+    // BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
+    // Create new views (invoked by the layout manager)
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        // Create a new view.
+        View v = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.rv_card, viewGroup, false);
 
-	protected void appendData(JsonArray jsonArray) {
-		jarr.addAll(jsonArray);
-		notifyDataSetChanged();
-	}
+        return new ViewHolder(v);
+    }
+    // END_INCLUDE(recyclerViewOnCreateViewHolder)
 
-	// BEGIN_INCLUDE(recyclerViewOnCreateViewHolder)
-	// Create new views (invoked by the layout manager)
-	@Override
-	public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
-		// Create a new view.
-		View v = LayoutInflater.from(viewGroup.getContext())
-				.inflate(R.layout.rv_card, viewGroup, false);
+    // BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
+    // Replace the contents of a view (invoked by the layout manager)
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, final int position) {
+        if (jarr == null) return;
+        Log.d(TAG, "Element " + position + " set.");
+        // Get element from your dataset at this position and replace the contents of the view
+        // with that element
+        Log.e("jus", jarr.get(position).asJsonObject().getString("imageUrl"));
 
-		return new ViewHolder(v);
-	}
-	// END_INCLUDE(recyclerViewOnCreateViewHolder)
+        viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("imageUrl"),
+                imageLoader);
+        viewHolder.title.setText(jarr.get(position).asJsonObject().getString("title"));
+        viewHolder.author.setText(jarr.get(position).asJsonObject().getString("author"));
+        viewHolder.views.setText(jarr.get(position).asJsonObject().getInt("views").toString());
+        viewHolder.favorites.setText(jarr.get(position).asJsonObject().getInt("favorites")
+                .toString());
 
-	// BEGIN_INCLUDE(recyclerViewOnBindViewHolder)
-	// Replace the contents of a view (invoked by the layout manager)
-	@Override
-	public void onBindViewHolder(ViewHolder viewHolder, final int position) {
-		if (jarr == null) return;
-		Log.d(TAG, "Element " + position + " set.");
-		// Get element from your dataset at this position and replace the contents of the view
-		// with that element
-		Log.e("jus", jarr.get(position).asJsonObject().getString("imageUrl"));
+    }
+    // END_INCLUDE(recyclerViewOnBindViewHolder)
 
-		viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("imageUrl"), imageLoader);
-		viewHolder.title.setText(jarr.get(position).asJsonObject().getString("title"));
-		viewHolder.author.setText(jarr.get(position).asJsonObject().getString("author"));
-		viewHolder.views.setText(jarr.get(position).asJsonObject().getInt("views") + "");
-		viewHolder.favorites.setText(jarr.get(position).asJsonObject().getInt("favorites") + "");
-
-	}
-	// END_INCLUDE(recyclerViewOnBindViewHolder)
-
-	// Return the size of your dataset (invoked by the layout manager)
-	@Override
-	public int getItemCount() {
-		if (jarr == null) return 0;
-		return jarr.size();
-	}
+    // Return the size of your dataset (invoked by the layout manager)
+    @Override
+    public int getItemCount() {
+        if (jarr == null) return 0;
+        return jarr.size();
+    }
 
 
-	@Override
-	public int getItemViewType(int position) {
-		return 0;
-	}
+    @Override
+    public int getItemViewType(int position) {
+        return 0;
+    }
 
 
 }
