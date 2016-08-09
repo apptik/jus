@@ -24,6 +24,7 @@ compileJava {
 dependencies {
     compile project(':jus-java')
     compile rootProject.ext.rxjava
+    compile rootProject.ext.rxhub
 }
 
 task mappings << {
