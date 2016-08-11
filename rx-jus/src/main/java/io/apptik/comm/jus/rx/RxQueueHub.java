@@ -5,13 +5,11 @@ import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestListener;
 import io.apptik.comm.jus.RequestQueue;
 import io.apptik.comm.jus.rx.event.ErrorEvent;
-import io.apptik.comm.jus.rx.event.JusEvent;
 import io.apptik.comm.jus.rx.event.MarkerEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
 import io.apptik.comm.jus.rx.request.RxRequest;
 import io.apptik.rxhub.AbstractRxHub;
 import rx.Observable;
-import rx.functions.Func1;
 
 
 /**
@@ -44,16 +42,6 @@ public class RxQueueHub extends AbstractRxHub {
 
     public Observable<ResultEvent> getResults(Object tag) {
         return getNodeFiltered(tag, ResultEvent.class);
-    }
-
-    @SuppressWarnings("unchecked")
-    public <T> Observable<T> getNodeFiltered(Object tag, final Class<T> cls) {
-        return super.getNode(tag).filter(new Func1<JusEvent, Boolean>() {
-            @Override
-            public Boolean call(JusEvent jusEvent) {
-                return cls.isAssignableFrom(jusEvent.getClass());
-            }
-        });
     }
 
     public Observable<ErrorEvent> getErrors(Object tag) {
