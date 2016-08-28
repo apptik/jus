@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/apptik/jus.png?label=ready&title=Ready)](https://waffle.io/apptik/jus)
 # jus
 
 [JavaDocs](http://apptik.github.io/jus/)
