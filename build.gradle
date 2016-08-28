@@ -47,7 +47,7 @@ allprojects {
 ext {
     minSdkVersion = 15
     compileSdkVersion = 24
-    buildToolsVersion = '24.0.1'
+    buildToolsVersion = '24.0.2'
     supportDeps = "24.2.0"
 
     supportAnnotations = 'com.android.support:support-annotations:'+supportDeps
