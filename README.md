@@ -1,4 +1,3 @@
-[![Stories in Ready](https://badge.waffle.io/apptik/jus.png?label=ready&title=Ready)](https://waffle.io/apptik/jus)
 # jus
 
 [JavaDocs](http://apptik.github.io/jus/)
@@ -6,6 +5,7 @@
 [![Build Status](https://travis-ci.org/apptik/jus.svg?branch=master)](https://travis-ci.org/apptik/jus)
 [![Join the chat at https://gitter.im/apptik/jus](https://badges.gitter.im/apptik/jus.svg)](https://gitter.im/apptik/jus?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![StackExchange](https://img.shields.io/stackexchange/stackoverflow/t/jus.svg)](http://stackoverflow.com/questions/tagged/jus)
+[![Stories in Ready](https://badge.waffle.io/apptik/jus.png?label=ready&title=Ready)](https://waffle.io/apptik/jus)
 
 Jus is a flexible and easy HTTP/REST client library for Java and Android.
 
