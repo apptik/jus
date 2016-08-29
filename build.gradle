@@ -86,10 +86,10 @@ ext {
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
     protobuf = 'com.google.protobuf:protobuf-java:3.0.0'
     moshi = 'com.squareup.moshi:moshi:1.2.0'
-    jjsonCore = 'io.apptik.json:json-core:1.0.4-SNAPSHOT'
-    jjsonWrapper = 'io.apptik.json:json-wrapper:1.0.4-SNAPSHOT'
+    jjsonCore = 'io.apptik.json:json-core:1.0.4'
+    jjsonWrapper = 'io.apptik.json:json-wrapper:1.0.4'
 
-    rxhub = 'io.apptik.rxhub:core:0.0.1-SNAPSHOT'
+    rxhub = 'io.apptik.rxhub:core:0.0.1'
 }
 
 
