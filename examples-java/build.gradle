@@ -49,6 +49,21 @@ task getEasyBeer() {
     }
 }
 
+task getRxBeerHub() {
+    //println System.getProperty("java.home")
+    dependsOn assemble, compileJava
+    doFirst{
+        println(" ****** Getting reactive beer hub ****** ")
+    }
+    doLast {
+        javaexec {
+            main = "io.apptik.comm.jus.examples.RxHubJus"
+            classpath = sourceSets.main.runtimeClasspath
+            args = ['beer']
+        }
+    }
+}
+
 task getRxBeer() {
     //println System.getProperty("java.home")
     dependsOn assemble, compileJava

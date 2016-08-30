@@ -3,6 +3,7 @@ package io.apptik.comm.jus.examples;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.retro.http.GET;
 import io.apptik.comm.jus.retro.http.Path;
+import io.apptik.comm.jus.retro.http.Tag;
 
 public interface BeerService {
 
@@ -25,6 +26,7 @@ public interface BeerService {
             + "/" + userString + "/777";
 
 
+    @Tag("beer")
     @GET("locquery/{user}/{q}")
     Request<String> getBeer(
             @Path("user") String user,
