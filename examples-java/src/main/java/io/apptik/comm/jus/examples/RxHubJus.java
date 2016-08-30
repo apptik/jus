@@ -34,11 +34,13 @@ public class RxHubJus {
 
         beerHub.getNodeFiltered("beer", JusEvent.class).subscribe(new Observer<JusEvent>() {
 
+            //should not happen
             @Override
             public void onCompleted() {
                 System.out.println("RX: Completed");
             }
 
+            //should not happen
             @Override
             public void onError(Throwable e) {
                 System.out.println("RX: Error: " + e);
