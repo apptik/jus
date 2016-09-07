@@ -23,10 +23,10 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.text.TextUtils;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ImageView;
 
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.R;
 import io.apptik.comm.jus.error.JusError;
 import io.apptik.comm.jus.ui.ImageLoader.ImageContainer;
@@ -211,7 +211,7 @@ public class NetworkImageView extends ImageView {
                         //verify if we expect the same url
                         if (NetworkImageView.this.url == null ||
                                 !NetworkImageView.this.url.equals(response.getRequestUrl())) {
-                            Log.w("NetworkImageView", "received: " + response.getRequestUrl()
+                            JusLog.error("NetworkImageView received: " + response.getRequestUrl()
                                     + ", expected: " + NetworkImageView.this.url);
                             return;
                         }
@@ -233,8 +233,10 @@ public class NetworkImageView extends ImageView {
                         if (response.getBitmap() != null && isOk2Draw(response.getBitmap())) {
                             setImageBitmap(response.getBitmap());
                         } else if (defaultImageId != 0) {
-                            Log.w("NetworkImageView", "received null for: " + response
-                                    .getRequestUrl());
+                            if (!isImmediate) {
+                                JusLog.error("NetworkImageView received null for: " + response
+                                        .getRequestUrl());
+                            }
                             setImageResource(defaultImageId);
                         }
                     }

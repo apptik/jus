@@ -112,7 +112,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<RecyclerAdapter.ViewHo
         Log.d(TAG, "Element " + position + " set.");
         // Get element from your dataset at this position and replace the contents of the view
         // with that element
-        Log.e("jus", jarr.get(position).asJsonObject().getString("imageUrl"));
+        Log.d("jus", jarr.get(position).asJsonObject().getString("imageUrl"));
 
         viewHolder.niv.setImageUrl(jarr.get(position).asJsonObject().getString("imageUrl"),
                 imageLoader);
