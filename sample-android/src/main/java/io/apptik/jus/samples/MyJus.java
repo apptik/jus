@@ -58,6 +58,7 @@ public class MyJus {
                                 }
                             };
                         }
+
                         return null;
                     }
 
@@ -65,6 +66,13 @@ public class MyJus {
                     public Converter<?, NetworkRequest> toRequest(Type type, Annotation[]
                             annotations) {
                         return null;
+                    }
+                })
+                .addConverterFactory(new Converter.Factory() {
+                    @Override
+                    public Converter<NetworkResponse, ?> fromResponse(Type type, Annotation[]
+                            annotations) {
+                        return new JJsonObjectResponseConverter();
                     }
                 })
                 .build().create(Instructables.class);
@@ -132,7 +140,7 @@ public class MyJus {
 
     private static boolean hasAnnotatedTag(Annotation[] annotations, String tag) {
         for (Annotation annotation : annotations) {
-            if (Tag.class.isInstance(annotation) && Instructables.REQ_LIST.equals(((Tag)
+            if (Tag.class.isInstance(annotation) && tag.equals(((Tag)
                     annotation).value())) {
                 return true;
             }
