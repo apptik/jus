@@ -14,6 +14,7 @@ import io.apptik.comm.jus.NetworkRequest;
 import io.apptik.comm.jus.NetworkResponse;
 import io.apptik.comm.jus.Request;
 import io.apptik.comm.jus.RequestQueue;
+import io.apptik.comm.jus.converter.JJsonConverterFactory;
 import io.apptik.comm.jus.converter.JJsonObjectResponseConverter;
 import io.apptik.comm.jus.okhttp3.MarkerInterceptorFactory;
 import io.apptik.comm.jus.okhttp3.OkHttpStack;
@@ -58,6 +59,7 @@ public class MyJus {
                                 }
                             };
                         }
+
                         return null;
                     }
 
@@ -67,6 +69,7 @@ public class MyJus {
                         return null;
                     }
                 })
+                .addConverterFactory(new JJsonConverterFactory())
                 .build().create(Instructables.class);
         PooledBitmapLruCache defaultBitmapLruCache = new ExampleLruPooledCache();
         imageLoader = new ImageLoader(queue,
@@ -132,7 +135,7 @@ public class MyJus {
 
     private static boolean hasAnnotatedTag(Annotation[] annotations, String tag) {
         for (Annotation annotation : annotations) {
-            if (Tag.class.isInstance(annotation) && Instructables.REQ_LIST.equals(((Tag)
+            if (Tag.class.isInstance(annotation) && tag.equals(((Tag)
                     annotation).value())) {
                 return true;
             }
