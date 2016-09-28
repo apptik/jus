@@ -66,7 +66,7 @@ ext {
     assertjCore2 = 'org.assertj:assertj-core:2.5.0'
     assertjCore3 = 'org.assertj:assertj-core:3.5.2'
     mockitoCore = 'org.mockito:mockito-core:2.0.99-beta'
-    robolectric = 'org.robolectric:robolectric:3.1'
+    robolectric = 'org.robolectric:robolectric:3.1.2'
 
     mockwebserver = 'com.squareup.okhttp:mockwebserver:2.7.5'
     mockwebserver3 = 'com.squareup.okhttp3:mockwebserver:3.4.1'
@@ -76,7 +76,7 @@ ext {
 
     apacheHttp = 'org.apache.httpcomponents:httpclient:4.5.2'
 
-    rxjava = 'io.reactivex:rxjava:1.1.9'
+    rxjava = 'io.reactivex:rxjava:1.2.0'
 
     junit = 'junit:junit:4.12'
 
@@ -89,7 +89,7 @@ ext {
     jjsonCore = 'io.apptik.json:json-core:1.0.4'
     jjsonWrapper = 'io.apptik.json:json-wrapper:1.0.4'
 
-    rxhub = 'io.apptik.rxhub:core:0.0.1'
+    rxhub = 'io.apptik.rxhub:core:0.0.2'
 }
 
 

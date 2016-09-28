@@ -116,4 +116,9 @@ public final class RxQueueHub extends AbstractRxHub {
     public boolean isNodeThreadsafe(Object tag) {
         return true;
     }
+
+    @Override
+    public boolean canTriggerEmit(Object tag) {
+        return true;
+    }
 }
