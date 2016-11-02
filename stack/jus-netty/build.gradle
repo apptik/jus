@@ -32,11 +32,11 @@ test {
 
 dependencies {
     compile project(':jus-java')
-    compile 'io.netty:netty-transport:5.0.0.Alpha2'
-    compile 'io.netty:netty-handler:5.0.0.Alpha2'
-    compile 'io.netty:netty-codec-http:5.0.0.Alpha2'
-    compile 'io.netty:netty-codec-http2:5.0.0.Alpha2'
-    compile 'io.netty:netty-common:5.0.0.Alpha2'
+    compile 'io.netty:netty-transport:4.1.6.Final'
+    compile 'io.netty:netty-handler:4.1.6.Final'
+    compile 'io.netty:netty-codec-http:4.1.6.Final'
+    compile 'io.netty:netty-codec-http2:4.1.6.Final'
+    compile 'io.netty:netty-common:4.1.6.Final'
 
     testCompile rootProject.ext.assertjCore2
     testCompile rootProject.ext.mockitoCore
