@@ -43,13 +43,12 @@ public class RequestErrorOnSubscribe implements Observable.OnSubscribe<ErrorEven
                 }
             }
         };
-        request.addErrorListener(listener);
-
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
                 request.removeErrorListener(listener);
             }
         });
+        request.addErrorListener(listener);
     }
 }

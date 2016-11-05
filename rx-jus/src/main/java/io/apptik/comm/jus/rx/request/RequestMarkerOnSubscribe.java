@@ -41,13 +41,12 @@ public class RequestMarkerOnSubscribe implements Observable.OnSubscribe<MarkerEv
                 }
             }
         };
-        request.addMarkerListener(listener);
-
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
                 request.removeMarkerListener(listener);
             }
         });
+        request.addMarkerListener(listener);
     }
 }

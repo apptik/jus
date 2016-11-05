@@ -54,14 +54,14 @@ public class QRequestMarkerOnSubscribe<T> implements Observable.OnSubscribe<Mark
                     }
                 };
 
-        queue.addListenerFactory(listenerFactory);
-
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
                 queue.removeListenerFactory(listenerFactory);
             }
         });
+
+        queue.addListenerFactory(listenerFactory);
     }
 
 }
