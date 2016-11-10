@@ -55,14 +55,15 @@ public class QRequestErrorOnSubscribe<T> implements Observable.OnSubscribe<Error
                     }
                 };
 
-        queue.addListenerFactory(listenerFactory);
-
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
                 queue.removeListenerFactory(listenerFactory);
             }
         });
+
+        queue.addListenerFactory(listenerFactory);
+
     }
 
 }

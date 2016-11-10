@@ -30,9 +30,9 @@ import io.netty.buffer.ByteBufInputStream;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.HttpContent;
-import io.netty.handler.codec.http.HttpHeaderUtil;
 import io.netty.handler.codec.http.HttpObject;
 import io.netty.handler.codec.http.HttpResponse;
+import io.netty.handler.codec.http.HttpUtil;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.util.CharsetUtil;
 
@@ -50,7 +50,6 @@ public class NettyHttpClientHandler extends SimpleChannelInboundHandler<HttpObje
         this.byteArrayPool = byteArrayPool;
     }
 
-    @Override
     public void messageReceived(ChannelHandlerContext ctx, HttpObject msg) {
         if (msg instanceof HttpResponse) {
             HttpResponse response = (HttpResponse) msg;
@@ -75,7 +74,7 @@ public class NettyHttpClientHandler extends SimpleChannelInboundHandler<HttpObje
                 System.err.println();
             }
 
-            if (HttpHeaderUtil.isTransferEncodingChunked(response)) {
+            if (HttpUtil.isTransferEncodingChunked(response)) {
                 System.err.println("CHUNKED CONTENT {");
             } else {
                 System.err.println("CONTENT {");
@@ -181,5 +180,9 @@ public class NettyHttpClientHandler extends SimpleChannelInboundHandler<HttpObje
         return result;
     }
 
+    @Override
+    protected void channelRead0(ChannelHandlerContext ctx, HttpObject msg) throws Exception {
+        messageReceived(ctx, msg);
+    }
 }
 

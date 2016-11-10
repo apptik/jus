@@ -40,14 +40,13 @@ public class RequestResponseOnSubscribe<T> implements Observable.OnSubscribe<Res
                 }
             }
         };
-        request.addResponseListener(listener);
-
         subscriber.add(new BaseSubscription() {
             @Override
             protected void doUnsubscribe() {
                 request.removeResponseListener(listener);
             }
         });
+        request.addResponseListener(listener);
     }
 
 }
