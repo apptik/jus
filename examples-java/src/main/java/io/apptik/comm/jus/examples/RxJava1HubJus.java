@@ -12,13 +12,13 @@ import io.apptik.comm.jus.converter.Converters;
 import io.apptik.comm.jus.http.HttpUrl;
 import io.apptik.comm.jus.rx.RxQueueHub;
 import io.apptik.comm.jus.rx.event.JusEvent;
-import io.apptik.rxhub.RxHub;
+import io.apptik.rhub.RxJava1Hub;
 import rx.Observer;
 
-public class RxHubJus {
+public class RxJava1HubJus {
     public static void main(String[] args) {
         RequestQueue queue = Jus.newRequestQueue(new File("."));
-        RxHub beerHub = new RxQueueHub(queue);
+        RxJava1Hub beerHub = new RxQueueHub(queue);
         Set<String> opts = new HashSet<>();
         if (args != null) {
             Collections.addAll(opts, args);
@@ -32,7 +32,7 @@ public class RxHubJus {
             );
         }
 
-        beerHub.getNodeFiltered("beer", JusEvent.class).subscribe(new Observer<JusEvent>() {
+        beerHub.getPub("beer", JusEvent.class).subscribe(new Observer<JusEvent>() {
 
             //should not happen
             @Override

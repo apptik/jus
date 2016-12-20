@@ -57,7 +57,7 @@ task getRxBeerHub() {
     }
     doLast {
         javaexec {
-            main = "io.apptik.comm.jus.examples.RxHubJus"
+            main = "io.apptik.comm.jus.examples.RxJava1HubJus"
             classpath = sourceSets.main.runtimeClasspath
             args = ['beer']
         }
