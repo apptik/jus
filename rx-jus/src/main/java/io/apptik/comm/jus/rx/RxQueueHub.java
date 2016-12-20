@@ -13,7 +13,8 @@ import io.apptik.comm.jus.rx.event.ErrorEvent;
 import io.apptik.comm.jus.rx.event.MarkerEvent;
 import io.apptik.comm.jus.rx.event.ResultEvent;
 import io.apptik.comm.jus.rx.request.RxRequest;
-import io.apptik.rxhub.AbstractRxHub;
+import io.apptik.rhub.AbstractRxJava1Hub;
+import io.apptik.rhub.RxJava1ProxyType;
 import rx.Observable;
 import rx.functions.Func1;
 
@@ -21,7 +22,7 @@ import rx.functions.Func1;
  * More specific RequestQueue related RxHub.
  * It grabs all requests and sorts them in Subjects by their Tag if set
  */
-public final class RxQueueHub extends AbstractRxHub {
+public final class RxQueueHub extends AbstractRxJava1Hub {
 
     public RxQueueHub(RequestQueue queue) {
         queue.addListenerFactory(
@@ -31,7 +32,7 @@ public final class RxQueueHub extends AbstractRxHub {
                             (Request<?> request) {
                         Object rTag = request.getTag();
                         if (rTag != null) {
-                            RxQueueHub.this.addProvider(rTag, RxRequest
+                            RxQueueHub.this.addUpstream(rTag, RxRequest
                                     .allEventsObservable(request));
                         }
                         return null;
@@ -41,7 +42,7 @@ public final class RxQueueHub extends AbstractRxHub {
     }
 
     public Observable<MarkerEvent> markerEvents(Object tag) {
-        return getNodeFiltered(tag, MarkerEvent.class);
+        return getPub(tag, MarkerEvent.class);
     }
 
     public Observable<Map.Entry<Marker, Object[]>> markers(Object tag) {
@@ -54,7 +55,7 @@ public final class RxQueueHub extends AbstractRxHub {
     }
 
     public Observable<ResultEvent> resultEvents(Object tag) {
-        return getNodeFiltered(tag, ResultEvent.class);
+        return getPub(tag, ResultEvent.class);
     }
 
     public Observable<?> results(Object tag) {
@@ -80,7 +81,7 @@ public final class RxQueueHub extends AbstractRxHub {
     }
 
     public Observable<ErrorEvent> errorEvents(Object tag) {
-        return getNodeFiltered(tag, ErrorEvent.class);
+        return getPub(tag, ErrorEvent.class);
     }
 
     public Observable<JusError> errors(Object tag) {
@@ -106,15 +107,10 @@ public final class RxQueueHub extends AbstractRxHub {
         };
     }
 
-
     @Override
-    public NodeType getNodeType(Object tag) {
-        return NodeType.BehaviorRelay;
-    }
+    public RxJava1ProxyType getProxyType(Object tag) {
+        return RxJava1ProxyType.SerializedBehaviorRelayProxy;
 
-    @Override
-    public boolean isNodeThreadsafe(Object tag) {
-        return true;
     }
 
     @Override
