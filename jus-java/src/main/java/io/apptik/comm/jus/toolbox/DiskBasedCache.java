@@ -35,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import io.apptik.comm.jus.Cache;
+import io.apptik.comm.jus.JusLog;
 import io.apptik.comm.jus.http.Headers;
 
 /**
@@ -137,7 +138,11 @@ public class DiskBasedCache implements Cache {
             return entry.toCacheEntry(data);
         } catch (IOException e) {
             //todo add queue markers
-            //JusLog.d("%s: %s", file.getAbsolutePath(), e.toString());
+            JusLog.log(file.getAbsolutePath() + ": " + e.toString());
+            remove(key);
+            return null;
+        } catch (NegativeArraySizeException e) {
+            JusLog.log(file.getAbsolutePath() + ": " + e.toString());
             remove(key);
             return null;
         } finally {
@@ -159,7 +164,8 @@ public class DiskBasedCache implements Cache {
     public synchronized void initialize() {
         if (!mRootDirectory.exists()) {
             if (!mRootDirectory.mkdirs()) {
-                //silently ignoring no cache is not good so we throw and let the user decide what
+                //silently ignoring no cache is not good so we throw and let the user decide
+                // what
                 // to do
                 throw new IllegalStateException("Unable to create cache dir: " + mRootDirectory
                         .getAbsolutePath());
@@ -263,6 +269,7 @@ public class DiskBasedCache implements Cache {
      * @param key The key to generate a file name for.
      * @return A pseudo-unique filename.
      */
+
     private String getFilenameForKey(String key) {
         int firstHalfLength = key.length() / 2;
         String localFilename = String.valueOf(key.substring(0, firstHalfLength).hashCode());
@@ -271,9 +278,9 @@ public class DiskBasedCache implements Cache {
     }
 
 
-
     /**
      * Returns a file object for the given cache key.
+     *
      * @param key the Cache Key
      */
     public File getFileForKey(String key) {
