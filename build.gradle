@@ -63,16 +63,16 @@ ext {
     supportTestEspressoContrib = 'com.android.support.test.espresso:espresso-contrib:2.2.2'
 
     assertjCore1 = 'org.assertj:assertj-core:1.7.1'
-    assertjCore2 = 'org.assertj:assertj-core:2.5.0'
-    assertjCore3 = 'org.assertj:assertj-core:3.5.2'
-    mockitoCore = 'org.mockito:mockito-core:2.0.99-beta'
+    assertjCore2 = 'org.assertj:assertj-core:2.6.0'
+    assertjCore3 = 'org.assertj:assertj-core:3.6.1'
+    mockitoCore = 'org.mockito:mockito-core:2.5.0'
     robolectric = 'org.robolectric:robolectric:3.1.2'
 
     mockwebserver = 'com.squareup.okhttp:mockwebserver:2.7.5'
-    mockwebserver3 = 'com.squareup.okhttp3:mockwebserver:3.4.1'
+    mockwebserver3 = 'com.squareup.okhttp3:mockwebserver:3.5.0'
     okhttp = 'com.squareup.okhttp:okhttp:2.7.5'
-    okhttp3 = 'com.squareup.okhttp3:okhttp:3.4.1'
-    okio = 'com.squareup.okio:okio:1.10.0'
+    okhttp3 = 'com.squareup.okhttp3:okhttp:3.5.0'
+    okio = 'com.squareup.okio:okio:1.11.0'
 
     apacheHttp = 'org.apache.httpcomponents:httpclient:4.5.2'
 
@@ -80,16 +80,16 @@ ext {
 
     junit = 'junit:junit:4.12'
 
-    gson = 'com.google.code.gson:gson:2.7'
-    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
+    gson = 'com.google.code.gson:gson:2.8.0'
+    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.5'
     wireRuntime = 'com.squareup.wire:wire-runtime:2.2.0'
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
-    protobuf = 'com.google.protobuf:protobuf-java:3.0.0'
-    moshi = 'com.squareup.moshi:moshi:1.2.0'
+    protobuf = 'com.google.protobuf:protobuf-java:3.1.0'
+    moshi = 'com.squareup.moshi:moshi:1.3.1'
     jjsonCore = 'io.apptik.json:json-core:1.0.4'
     jjsonWrapper = 'io.apptik.json:json-wrapper:1.0.4'
 
-    rxhub = 'io.apptik.rhub:rxjava-v1:0.2.0-alpha1-SNAPSHOT'
+    rxhub = 'io.apptik.rhub:rxjava-v1:0.2.0-alpha1'
 }
 
 
