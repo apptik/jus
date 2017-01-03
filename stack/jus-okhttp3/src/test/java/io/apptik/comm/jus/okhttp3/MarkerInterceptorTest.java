@@ -32,7 +32,6 @@ public class MarkerInterceptorTest {
         when(request.getBody()).thenReturn(null);
         when(request.getUrlString()).thenReturn(server.url("/").toString());
 
-        okHttpStack.performRequest(request, null, new ByteArrayPool(100));
 
         okhttp3.Request expected = new okhttp3.Request.Builder()
                 .url(server.url("/"))
@@ -41,19 +40,20 @@ public class MarkerInterceptorTest {
                 .addHeader("Host", server.getHostName() + ":" + server.getPort())
                 .addHeader("Connection", "Keep-Alive")
                 .addHeader("Accept-Encoding", "gzip")
-                .addHeader("User-Agent", "okhttp/3.4.1")
+                .addHeader("User-Agent", "okhttp/3.5.0")
                 .build();
 
         ArgumentCaptor<String> name = ArgumentCaptor.forClass(String.class);
         ArgumentCaptor<okhttp3.Request> argument1 = ArgumentCaptor.forClass(okhttp3.Request.class);
         ArgumentCaptor<okhttp3.Headers> argument2 = ArgumentCaptor.forClass(okhttp3.Headers.class);
 
+        okHttpStack.performRequest(request, null, new ByteArrayPool(100));
         verify(request).addMarker(name.capture(),
                 argument1.capture(), argument2.capture());
 
         assertThat(name.getValue()).isEqualTo(AbstractMarkerInterceptor.OKHTTP3_INTERCEPT);
         assertThat(argument1.getAllValues().get(0).toString()).isEqualTo(expected.toString());
-        assertThat(argument2.getAllValues().get(1)).isEqualTo(expected.headers());
+        assertThat(argument2.getAllValues().get(0)).isEqualTo(expected.headers());
     }
 
 }
