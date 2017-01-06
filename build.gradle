@@ -76,7 +76,7 @@ ext {
 
     apacheHttp = 'org.apache.httpcomponents:httpclient:4.5.2'
 
-    rxjava = 'io.reactivex:rxjava:1.2.4'
+    rxjava = 'io.reactivex:rxjava:1.2.5'
 
     junit = 'junit:junit:4.12'
 
