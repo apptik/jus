@@ -1,6 +1,7 @@
 package io.apptik.jus.demoapp.adapter;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import io.apptik.json.JsonArray;
 import rx.Observable;

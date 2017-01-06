@@ -35,6 +35,7 @@ public class InstructablesListFragment extends Fragment {
 
 
     SwipeRefreshLayout swiperefresh;
+    RecyclerView recyclerView;
     int offset=0;
 
     public static InstructablesListFragment newInstance() {
@@ -62,10 +63,9 @@ public class InstructablesListFragment extends Fragment {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_imagelist, container, false);
         // Inflate the layout for this fragment
-        RecyclerAdapter recyclerAdapter = new RxAdapter(MyJus.hub().getList());
-        RecyclerView recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
+        recyclerView = (RecyclerView) v.findViewById(R.id.list_images);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(recyclerAdapter);
+        recyclerView.setAdapter(new RxAdapter(MyJus.hub().getList()));
         recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
             @Override
             public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
@@ -92,5 +92,15 @@ public class InstructablesListFragment extends Fragment {
         return v;
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        recyclerView.setAdapter(new RxAdapter(MyJus.hub().getList()));
+    }
 
+    @Override
+    public void onStop() {
+        super.onStop();
+        recyclerView.setAdapter(null);
+    }
 }
