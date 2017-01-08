@@ -3,6 +3,7 @@ package io.apptik.comm.jus.util;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Build;
 import android.util.LruCache;
 
 
@@ -21,7 +22,14 @@ public class PooledBitmapLruCache extends DefaultBitmapLruCache {
     BitmapLruPool bPool;
 
     public PooledBitmapLruCache() {
-        this(getDefaultLruCacheSize(), (int) (getDefaultLruCacheSize()*1.25));
+        this(getDefaultLruCacheSize(), getPoolCache(getDefaultLruCacheSize()));
+    }
+
+    private static int getPoolCache(int memCache) {
+        if(Build.VERSION.SDK_INT > 18) {
+            return (int) (memCache*1.25);
+        }
+        return 0;
     }
 
     public PooledBitmapLruCache(int maxSizeCache, int maxSizePool) {
