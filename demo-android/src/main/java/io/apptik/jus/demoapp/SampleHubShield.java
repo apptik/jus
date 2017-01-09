@@ -17,6 +17,10 @@ public class SampleHubShield {
         this.hub = new RxQueueHub(q);
     }
 
+    public void clean() {
+        hub.clearUpstream();
+    }
+
     Observable<JsonArray> getList() {
         return hub.results(REQ_LIST).cast(JsonArray.class);
     }

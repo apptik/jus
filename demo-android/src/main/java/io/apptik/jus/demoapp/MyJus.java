@@ -96,6 +96,16 @@ public class MyJus {
         inst = new MyJus(ctx);
     }
 
+    public static void shutdown(){
+        if(inst==null) return;
+        inst.queue.stop();
+        inst.queue = null;
+        inst.hub.clean();
+        inst.hub = null;
+        inst.imageLoader= null;
+        inst = null;
+    }
+
 
     public static MyJus get() {
         return inst;
