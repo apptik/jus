@@ -15,15 +15,15 @@
  */
 
 
-include ':android:jus-android', ':examples-android-volley-migration',
-        ':demo-android',
+include  ':rx-jus', ':retro-jus', ':jus-java',
+
+        ':android:jus-android',
+
         ':stack:jus-okhttp3',
         ':stack:jus-netty',
         ':stack:jus-apachehttp',
         ':stack:jus-okhttp',
-        ':examples-android',
-        ':rx-jus', ':retro-jus', ':jus-java',
-        ':examples-java',
+
         ':converter:jus-gson',
         ':converter:jus-jjson',
         ':converter:jus-jjson-wrapper',
@@ -31,4 +31,9 @@ include ':android:jus-android', ':examples-android-volley-migration',
         ':converter:jus-simplexml',
         ':converter:jus-protobuf',
         ':converter:jus-moshi',
-        ':converter:jus-jackson'
+        ':converter:jus-jackson',
+
+':examples-java',
+':examples-android',
+':examples-android-volley-migration',
+':demo-android'

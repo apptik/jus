@@ -9,12 +9,12 @@ Download [the latest JAR][mvn] or grab via Maven:
 <dependency>
   <groupId>io.apptik.comm</groupId>
   <artifactId>jus-okhttp3</artifactId>
-  <version>0.6.8</version>
+  <version>0.6.9</version>
 </dependency>
 ```
 or Gradle:
 ```groovy
-compile 'io.apptik.comm:jus-okhttp3:0.6.8'
+compile 'io.apptik.comm:jus-okhttp3:0.6.9'
 ```
 
 Downloads of the released versions are available in [Sonatype's `releases` repository][release].

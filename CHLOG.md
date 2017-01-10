@@ -1,13 +1,23 @@
 Change Log
 ==========
 
-NEXT Version 0.7.0 *(FUTURE-2016)*
+NEXT Version 0.7.0 *(FUTURE-2017)*
 ----------------------------------
+
+Version 0.6.9 *(10-01-2017)*
+----------------------------------
+
+* Fix: networkimageview do not reuse bitmap for api<=18 #71
+* Fix: NegativeArraySizeException in DiskBasedCache.streamToBytes #79
+* Fix: add Unsubscribe action before setting listeners #75
+* Upd:  Update(downgrade) Netty to 4.1.x #76 
+* New: Better Demo App
+* New: Use new external RHub to implement RxHub 
 
 Version 0.6.8 *(01-08-2016)*
 ----------------------------------
 
-* Bug: redirected temp requests will not send stack markers #66 
+* Fix: redirected temp requests will not send stack markers #66 
 * Upd: use okio for Base64 encoding #64
 * New: add jus markers for okhttp3 stack #63
 * New: add Request RxHub to rx-jus package #62 
