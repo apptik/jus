@@ -1,0 +1,30 @@
+apply plugin: 'java'
+
+compileJava {
+    sourceCompatibility = 1.7
+    targetCompatibility = 1.7
+    options.encoding = "UTF-8"
+}
+
+sourceSets {
+    perf
+}
+
+dependencies {
+    perfCompile rootProject.ext.jmhCore
+    perfCompile rootProject.ext.jmhGen
+    perfCompile project
+
+    perfCompile project(':jus-java')
+    perfCompile project(':retro-jus')
+    perfCompile project(':converter:jus-gson')
+    perfCompile project(':converter:jus-jjson')
+    perfCompile project(':stack:jus-apachehttp')
+    perfCompile project(':stack:jus-okhttp')
+    perfCompile project(':stack:jus-okhttp3')
+    perfCompile project(':stack:jus-netty')
+    perfCompile rootProject.ext.mockwebserver3
+}
+
+apply from: "../perf.gradle"
+

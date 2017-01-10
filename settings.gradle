@@ -15,7 +15,7 @@
  */
 
 
-include  ':rx-jus', ':retro-jus', ':jus-java',
+include ':rx-jus', ':retro-jus', ':jus-java', ':benchmark',
 
         ':android:jus-android',
 
@@ -33,7 +33,7 @@ include  ':rx-jus', ':retro-jus', ':jus-java',
         ':converter:jus-moshi',
         ':converter:jus-jackson',
 
-':examples-java',
-':examples-android',
-':examples-android-volley-migration',
-':demo-android'
+        ':examples-java',
+        ':examples-android',
+        ':examples-android-volley-migration',
+        ':demo-android'

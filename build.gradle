@@ -29,6 +29,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.3'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.3'
     }
 }
 
@@ -90,6 +91,10 @@ ext {
     jjsonWrapper = 'io.apptik.json:json-wrapper:1.0.4'
 
     rxhub = 'io.apptik.rhub:rxjava-v1:0.2.0-alpha1'
+
+    jmhCore = 'org.openjdk.jmh:jmh-core:1.17.3'
+    jmhGen = 'org.openjdk.jmh:jmh-generator-annprocess:1.17.3'
+
 }
 
 

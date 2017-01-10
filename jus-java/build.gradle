@@ -1,5 +1,4 @@
 apply plugin: 'java'
-
 apply plugin: 'jacoco'
 
 
@@ -24,7 +23,6 @@ compileJava {
     targetCompatibility = 1.7
     options.encoding = "UTF-8"
 }
-
 
 dependencies {
     compile rootProject.ext.okio
