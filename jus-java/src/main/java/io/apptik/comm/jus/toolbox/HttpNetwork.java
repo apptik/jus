@@ -248,7 +248,7 @@ public class HttpNetwork implements Network {
             } catch (MalformedURLException e) {
                 throw new RuntimeException("Bad URL " + request.getUrlString(), e);
             } catch (IOException e) {
-                NetworkResponse networkResponse = null;
+                NetworkResponse networkResponse;
                 if (httpResponse != null) {
                     networkResponse = httpResponse;
                 } else {
@@ -277,7 +277,9 @@ public class HttpNetwork implements Network {
                         throw new JusError(networkResponse, e);
                     }
                 } else {
-                    throw new NetworkError();
+                    //this can result doe to many reasons and the implementations may have some
+                    // means to know if a retry is needed
+                    attemptRetryOnException("network", request, new NetworkError());
                 }
             } catch (AuthError authError) {
                 //we have failed to get a token so give it up

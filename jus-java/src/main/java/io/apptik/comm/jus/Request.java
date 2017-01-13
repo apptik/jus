@@ -284,7 +284,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      */
     public static final String EVENT_DELIVER_RESPONSE = "deliver response";
     /**
-     *just before the error is delivered i.e.
+     * just before the error is delivered i.e.
      * {@link RequestListener.ErrorListener#onError(JusError)} will be called
      */
     public static final String EVENT_DELIVER_ERROR = "deliver error";
@@ -298,17 +298,60 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     /**
      * Supported request methods.
      */
-    public interface Method {
+    public static final class Method {
 
+        private Method() {
+            throw new RuntimeException("don't do that!");
+        }
 
-        String GET = "GET";
-        String POST = "POST";
-        String PUT = "PUT";
-        String DELETE = "DELETE";
-        String HEAD = "HEAD";
-        String OPTIONS = "OPTIONS";
-        String TRACE = "TRACE";
-        String PATCH = "PATCH";
+        public static final String GET = "GET";
+        public static final String POST = "POST";
+        public static final String PUT = "PUT";
+        public static final String DELETE = "DELETE";
+        public static final String HEAD = "HEAD";
+        public static final String OPTIONS = "OPTIONS";
+        public static final String TRACE = "TRACE";
+        public static final String PATCH = "PATCH";
+        public static final String REPORT = "REPORT";
+        public static final String PROPFIND = "PROPFIND";
+        public static final String SEARCH = "SEARCH";
+        public static final String PRI = "PRI";
+        public static final String PROPPATCH = "PROPPATCH";
+        public static final String MKCOL = "MKCOL";
+        public static final String COPY = "COPY";
+        public static final String MOVE = "MOVE";
+        public static final String UNLOCK = "UNLOCK";
+
+        static boolean isSafe(String method) {
+            return (GET.equals(method) ||
+                    HEAD.equals(method) ||
+                    OPTIONS.equals(method) ||
+                    REPORT.equals(method) ||
+                    PROPFIND.equals(method) ||
+                    SEARCH.equals(method) ||
+                    PRI.equals(method));
+        }
+
+        static boolean isIdempotent(String method) {
+            return (GET.equals(method) ||
+                    HEAD.equals(method) ||
+                    PUT.equals(method) ||
+                    DELETE.equals(method) ||
+                    OPTIONS.equals(method) ||
+                    TRACE.equals(method) ||
+                    PROPFIND.equals(method) ||
+                    PROPPATCH.equals(method) ||
+                    MKCOL.equals(method) ||
+                    COPY.equals(method) ||
+                    MOVE.equals(method) ||
+                    UNLOCK.equals(method) ||
+                    PRI.equals(method));
+        }
+
+        static boolean canRetry(String method) {
+            return  isSafe(method) ||  isIdempotent(method);
+        }
+
 
     }
 
@@ -837,7 +880,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
 
         }
         if (retryPolicy == null) {
-            setRetryPolicy(new DefaultRetryPolicy());
+            setRetryPolicy(new DefaultRetryPolicy(this));
         }
         this.requestQueue = requestQueue;
         return (R) this;

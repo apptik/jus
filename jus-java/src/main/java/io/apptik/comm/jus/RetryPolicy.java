@@ -51,7 +51,7 @@ public interface RetryPolicy {
 
     abstract class Factory {
         public RetryPolicy get(Request request) {
-            return new DefaultRetryPolicy();
+            return new DefaultRetryPolicy(request);
         }
     }
 }

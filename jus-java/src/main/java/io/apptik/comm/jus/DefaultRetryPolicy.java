@@ -22,6 +22,10 @@ import io.apptik.comm.jus.error.JusError;
 
 /**
  * Default retry policy for requests.
+ *
+ *  https://tools.ietf.org/html/rfc7230#section-6.3.1
+ *  https://mnot.github.io/I-D/httpbis-retry/
+ *
  */
 public class DefaultRetryPolicy implements RetryPolicy {
 
@@ -51,8 +55,13 @@ public class DefaultRetryPolicy implements RetryPolicy {
     /**
      * Constructs a new retry policy using the default timeouts.
      */
-    public DefaultRetryPolicy() {
-        this(DEFAULT_TIMEOUT_MS, DEFAULT_MAX_RETRIES, DEFAULT_BACKOFF_MULT);
+    public DefaultRetryPolicy(final Request<?> request) {
+        this(DEFAULT_TIMEOUT_MS, DEFAULT_MAX_RETRIES, DEFAULT_BACKOFF_MULT, new JusErrorFilter() {
+            @Override
+            public boolean apply(JusError jusError) {
+                return Request.Method.canRetry(request.getMethod());
+            }
+        });
     }
 
     /**
