@@ -451,7 +451,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     private boolean logSlowRequests = false;
 
     private NetworkRequest networkRequest;
-    private Converter<NetworkResponse, T> converterFromResponse;
+    private Converter<NetworkResponse, ? extends T> converterFromResponse;
 
     private Authenticator serverAuthenticator;
     private Authenticator proxyAuthenticator;
@@ -473,11 +473,11 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         this(method, url, (Converter) null);
     }
 
-    public Request(String method, String url, Class<T> responseType) {
+    public <TT extends T> Request(String method, String url, Class<TT> responseType) {
         this(method, HttpUrl.parse(url), responseType);
     }
 
-    public Request(String method, HttpUrl url, Class<T> responseType) {
+    public <TT extends T> Request(String method, HttpUrl url, Class<TT> responseType) {
         this(method, url);
         this.responseType = responseType;
     }
@@ -488,7 +488,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
      * delivery of responses is provided by subclasses, who have a better idea of how to deliver
      * an already-parsed response.
      */
-    public Request(String method, HttpUrl url, Converter<NetworkResponse, T>
+    public <TT extends T> Request(String method, HttpUrl url, Converter<NetworkResponse, TT>
             converterFromResponse) {
         this.method = method;
         this.url = url;
@@ -496,7 +496,7 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
         mDefaultTrafficStatsTag = findDefaultTrafficStatsTag(url);
     }
 
-    public Request(String method, String url, Converter<NetworkResponse, T> converterFromResponse) {
+    public <TT extends T> Request(String method, String url, Converter<NetworkResponse, TT> converterFromResponse) {
         this(method, HttpUrl.parse(url), converterFromResponse);
     }
 
@@ -511,13 +511,13 @@ public class Request<T> implements Comparable<Request<T>>, Cloneable {
     }
 
     public Request<T> clone() {
-        Request<T> cloned = new Request<>(getMethod(), getUrlString(), converterFromResponse)
+        Request<T> cloned = new Request<T>(getMethod(), getUrlString(), converterFromResponse)
                 .setNetworkRequest(networkRequest);
         cloned.futureRequestQueue = requestQueue;
         return cloned;
     }
 
-    public Converter<NetworkResponse, T> getConverterFromResponse() {
+    public Converter<NetworkResponse, ? extends T> getConverterFromResponse() {
         return converterFromResponse;
     }
 
