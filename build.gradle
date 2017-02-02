@@ -77,12 +77,19 @@ ext {
 
     apacheHttp = 'org.apache.httpcomponents:httpclient:4.5.2'
 
+    nettyVer = '4.1.6.Final'
+    nettyTransport = 'io.netty:netty-transport:'+nettyVer
+    nettyHandler = 'io.netty:netty-handler:'+nettyVer
+    nettyCodecHttp = 'io.netty:netty-codec-http:'+nettyVer
+    nettyCodecHttp2 = 'io.netty:netty-codec-http2:'+nettyVer
+    nettyCommon = 'io.netty:netty-common:'+nettyVer
+
     rxjava = 'io.reactivex:rxjava:1.2.5'
 
     junit = 'junit:junit:4.12'
 
     gson = 'com.google.code.gson:gson:2.8.0'
-    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.5'
+    jacksonDatabind = 'com.fasterxml.jackson.core:jackson-databind:2.8.6'
     wireRuntime = 'com.squareup.wire:wire-runtime:2.2.0'
     simpleXml = 'org.simpleframework:simple-xml:2.7.1'
     protobuf = 'com.google.protobuf:protobuf-java:3.1.0'
