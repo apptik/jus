@@ -121,6 +121,14 @@ public class NetworkImageView extends ImageView {
         loadImageIfNecessary(false);
     }
 
+	/**
+     *
+     * @return the image URL
+     */
+    public String getImageUrl() {
+        return this.url;
+    }
+
     public void resetImage() {
         url = null;
         if (imageContainer != null) {
